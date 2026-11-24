@@ -1,0 +1,40 @@
+---
+title: Email and WhatsApp first, SMS later
+description: V1 sends email and WhatsApp. SMS comes in V2.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Hotels in Tunisia reach guests through several channels, and SMS is the obvious one.
+
+## Decision
+
+V1 ships email and WhatsApp template messages. SMS comes in V2, and the sender ID paperwork starts during V1.
+
+## Why
+
+- SMS is one way only, there are three operators, and the sender ID registration is slow.
+- An operator API needs a direct contract.
+- WhatsApp is where Tunisians already talk.
+- SMS lifts survey replies 30 to 50 percent (vendor claim), so it stays on the roadmap.
+
+## Why not
+
+- SMS on day one: slow paperwork would delay the first pilot.
+
+## Consequences
+
+- WhatsApp is billed per delivered template since July 2025 and the Tunisia rate is unknown (to verify). We use a prepaid balance.
+- WhatsApp template approval takes time, so templates are submitted in week 1.
+
+## Revisit when
+
+The SMS paperwork completes early, or pilots show guests do not answer on WhatsApp or email.
+
+## Related
+
+- [Market and research](/docs/market)
+- [Risks](/docs/risks)
+- [What we could not confirm](/docs/not-confirmed)

@@ -1,0 +1,40 @@
+---
+title: Capture first, no PMS connector in V1
+description: Start with a QR page and CSV import. Skip a PMS connector in V1.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Hotels are the source of every guest contact, but many hold none. Tour operator and booking site guests arrive with masked or missing contacts. A PMS connector looks attractive because it would sync guests automatically.
+
+## Decision
+
+V1 captures guests with a public QR page, staff add and CSV import. There is no PMS connector.
+
+## Why
+
+- Hotels may hold no contacts at all, so there would be nothing to sync.
+- The Xlia API is unknown (to verify), and Xlia runs in 400 plus hotels.
+- PMS integration is the top competitor complaint: it breaks and support is slow.
+- No contact means nothing to automate, so capture has to come first.
+
+## Why not
+
+- PMS connector in V1: slow to build, depends on vendors we cannot reach yet, and does not fix hotels with no contacts.
+
+## Consequences
+
+- Staff may type twice if the hotel also uses a PMS. CSV import covers the gap for now.
+- The data model stays open so a connector can sync guests in V3.
+
+## Revisit when
+
+Xlia confirms an API, or pilots show capture works and staff double entry is the main blocker.
+
+## Related
+
+- [Market and research](/docs/market)
+- [Risks](/docs/risks)
+- [Roadmap](/docs/roadmap)
