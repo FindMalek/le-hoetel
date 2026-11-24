@@ -26,6 +26,7 @@
     "structure",
     "hotels",
     "scripts",
-    "deploy"
+    "deploy",
+    "observability"
   ]
 }
