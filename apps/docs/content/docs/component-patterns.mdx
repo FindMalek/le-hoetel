@@ -1,0 +1,68 @@
+---
+title: Component patterns
+description: Mobile first patterns and the UI rules every agent follows.
+---
+
+These are the rules for any UI change. They are also summarized in the agent rules (`.ruler/AGENTS.md`). The numbers behind them are in the [design system](/docs/design-system).
+
+## Rules
+
+1. **Mobile first.** Write the layout for 360 px wide, then add `md:` and `lg:`. The desktop version must be as good: use the extra width for columns, tables and side panels, not for stretching a phone layout
+2. **Tokens only.** Colors, radius and fonts come from the theme. No hex, `rgb()`, `bg-white`, `text-black`, and no arbitrary values like `w-[317px]` or `text-[10px]` (the lint warns about them). Hotels re-theme `--primary`, so a hard coded color breaks branding
+3. **Logical properties only.** Arabic is right to left. Use `ms-` `me-` `ps-` `pe-` `start-` `end-` `text-start` `text-end` `border-s` `border-e` `rounded-s` `rounded-e` `inset-x`. Never `ml-` `mr-` `pl-` `pr-` `left-` `right-` `text-left` `text-right`. Icons that point (arrows, chevrons) get `rtl:rotate-180`. Phone numbers, emails and codes are shown `dir="ltr"`
+4. **44 px touch targets.** Anything tappable is 44 px tall and wide, or becomes so on touch (`coarse:` variant), with 8 px between targets. Use the shared components, they already follow it
+5. **16 px inputs on mobile.** Never set `text-sm` on a mobile input, iOS zooms the page
+6. **Accessible by default.** Every input has a visible `Label` (or `FieldLabel`), errors use `FieldError` so they are announced, icon only buttons have an `aria-label`, focus is visible (do not remove outlines), contrast is AA (4.5:1 body text), never use color alone to show state, honor `prefers-reduced-motion` (handled globally)
+7. **Every string is translated.** No literal text in components, use the `next-intl` messages in en, fr and ar. Labels for spinners and skeletons are passed by the caller
+8. **Every async surface has states.** Loading skeleton, empty state, error state. See below
+9. **Fast.** Server components by default, no client component for static content, images sized and lazy, no extra font. Think about a 3G phone with a cheap CPU
+10. **Test both themes and both directions** (light, dark, ltr, rtl) before you hand off a UI change
+
+## Patterns
+
+### Page layout
+
+- one column on mobile with `px-4` and `gap-4` or `gap-6`; from `md`, a page header plus content in a max width container
+- primary action reachable by thumb: a full width `Button` at the bottom on guest pages, in the page header on desktop
+- dashboard navigation is the `Sidebar` on desktop and a `Sheet` on mobile (the sidebar component handles it)
+
+### Forms
+
+- `FieldGroup` of `Field`s, one column on mobile, two on `md` only when fields are short
+- each `Field` has `FieldLabel`, the control, optional `FieldDescription`, and `FieldError` bound to the validation error. Set `data-invalid` on the field and `aria-invalid` on the control
+- the submit button is `<Button loading={pending}>`, disabled while pending so a double tap cannot send twice
+- phone: `PhoneInput` with the dial code select. Default `+216`. Normalize and validate in the api
+- consent: separate unchecked `Checkbox` per channel (email, whatsapp), each with its own wording, never pre checked
+- success and failure use a toast (`toast.success`, `toast.error`) unless the user must act, then an `Alert`
+
+### Lists and tables
+
+- mobile: a list of cards or `Item` rows, one tap target per row. Do not shrink a table to fit
+- desktop: `Table` with start aligned text, numbers end aligned
+- search and filters above the list. Pagination or "load more", not infinite scroll without a way to the footer
+
+### Overlays
+
+- `Dialog` for short focused tasks on desktop, `Sheet side="bottom"` for the same task on mobile; `AlertDialog` only for destructive confirmation (delete a guest, delete a hotel), with the consequence in the text
+- a `Sheet` that slides from a side uses `start` or `end`, never `left` or `right`
+- every overlay has a title and a way to close it that is at least 44 px
+
+### Loading, empty and error
+
+```tsx
+if (isPending) return <ListSkeleton rows={5} label={t("loading")} />
+if (error) return <Alert variant="destructive">...</Alert>
+if (!items.length)
+  return (
+    <EmptyState
+      icon={<UsersIcon />}
+      title={t("guests.empty.title")}
+      description={t("guests.empty.description")}
+      action={<Button>{t("guests.add")}</Button>}
+    />
+  )
+```
+
+### Hotel branding
+
+Hotel colors only change `--primary` (and one accent). Use `bg-primary text-primary-foreground` pairs, never `bg-primary` with a fixed text color. The admin panel warns when a hotel color fails contrast.

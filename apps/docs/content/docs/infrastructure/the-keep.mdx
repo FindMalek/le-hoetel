@@ -15,20 +15,20 @@ The Keep is a single Ubuntu box at home that runs Dokploy (docker swarm plus com
 | backup disk | 1.8 TB hdd at `/srv/backup-hdd`, 72% used |
 | load | around 2 on 8 threads |
 | docker | 196 containers, 67 GB of images (about 9.5 GB reclaimable), 130 volumes (about 3.5 GB reclaimable) |
-| remote access | ssh and tailscale. Dokploy ui on port 3000, traefik on 80 and 443 |
+| remote access | private, key based |
 
 ## What runs
 
 | Service | Role | Notes |
 | --- | --- | --- |
 | Dokploy | deploys, domains, previews | v0.31, swarm mode |
-| Traefik | reverse proxy and tls | ports 80 and 443 only |
-| Postgres | one container per app and per preview | the preview databases publish a host port, see risks |
+| Traefik | reverse proxy and tls | public web traffic only |
+| Postgres | one container per app and per preview | one per app and preview, see risks |
 | Redis, Valkey | queues and caches of other projects | not used by Le Hoetel |
 | OpenObserve | logs and traces | already deployed as a compose service |
 | GlitchTip | errors (web and worker) | already deployed as a compose service |
 | Umami | web analytics | already deployed as a compose service |
-| Garage | s3 compatible object storage | already deployed, s3 api port open on the host |
+| Garage | s3 compatible object storage | already deployed |
 | Backrest | restic backups to the hdd | repo at `/srv/backup-hdd/restic-repo` |
 | trigger.dev | job runner of another project | eight containers (webapp, supervisor, clickhouse, electric, s2, postgres, redis, proxy) |
 | other projects | api, web and dashboard per preview, demos, a few self hosted tools | around 16 live previews of one project alone |
@@ -38,10 +38,10 @@ The Le Hoetel preview workflow already deploys one preview per pull request thro
 ## Risks
 
 - **Home connection.** One consumer line and no failover that we know of. If it drops, staging, previews and the pilot are down. Use a tunnel or a static address for public hostnames, and never put a hotel's qr pages behind it without a plan b.
-- **Power.** No ups or battery was detected. A cut means a hard stop of every database on the box. Add a small ups before any hotel depends on it, and check that postgres comes back clean after a reboot.
+- **Power.** A power cut stops every database on the box. Protect against it before any hotel depends on it, and check that postgres comes back clean after a reboot.
 - **Backups.** The only backup target found is the local hdd, in the same room as the data. It is also 72% full. A fire, theft or power surge loses both. No off-site copy and no restore test was found.
 - **Previews eat resources.** Every pull request of every project adds an api, a web, a dashboard and a postgres. Memory is already at 13.5 GB used with swap in use. Without a cleanup job, the box fills up slowly and the oldest previews keep running for days.
-- **Exposed postgres ports.** Preview databases publish random high ports on `0.0.0.0`. Unless the router and firewall block them, that is an open door. Bind them to localhost or drop the published port.
+- **Network exposure.** Keep databases and internal services private. Audit what is reachable from outside before any hotel depends on it.
 - **Shared fate.** Builds, previews, logs, errors, analytics and storage all share one disk, one kernel and one docker daemon. A runaway build can starve staging.
 - **Guest data.** Real guest data (names, phones, consent) must not sit on this box until backups are off-site and encrypted, and until there is a restore drill.
 

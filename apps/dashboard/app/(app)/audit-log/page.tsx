@@ -31,7 +31,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
                   <TableHead>Who</TableHead>
                   <TableHead>Target</TableHead>
                   <TableHead>IP</TableHead>
-                  <TableHead className="text-right">When</TableHead>
+                  <TableHead className="text-end">When</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -41,7 +41,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
                     <TableCell>{entry.actorEmail ?? "system"}</TableCell>
                     <TableCell className="text-muted-foreground">{entry.targetId ?? ""}</TableCell>
                     <TableCell className="text-muted-foreground">{entry.ip ?? ""}</TableCell>
-                    <TableCell className="text-right text-muted-foreground">
+                    <TableCell className="text-end text-muted-foreground">
                       <LocalDate value={entry.createdAt} />
                     </TableCell>
                   </TableRow>

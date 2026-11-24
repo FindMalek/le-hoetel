@@ -37,6 +37,35 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 - better-auth: configured once in `packages/auth`. Sessions are cookies, signed-in calls send `x-csrf-token: orpc`
 - env: every variable goes through `packages/env` and `.env.example`. App code reads env through `packages/env`, not `process.env`. No secrets in diffs
 - UI: reuse shadcn components from `@le-hoetel/ui` and theme tokens. No hard-coded colors
+- UI rules (mobile first, 44px targets, logical css only, a11y, states): `apps/docs/content/docs/component-patterns.mdx`, read it before any UI change
+
+## Product and data rules
+
+- Hotel = better-auth organization. Every guest row and every query is scoped by hotel id. Guests are not better-auth users
+- Guest data: must have name, phone, language, consent. Optional birthday, email. Optional with consent: country, city, stay dates, next destination, survey answers. Never: continuous location, passport or ID numbers, payment cards
+- Consent is logged per channel (email, whatsapp) with timestamp, source and wording version in an append-only log. Every message has unsubscribe or STOP. Export and delete per guest and per hotel
+- Never log phone, email or name in plain text, use the logger redaction
+- Branding is config (logo, two colors, display name, reply-to, language), never code per hotel
+- Email and WhatsApp only, no SMS in v1. No points or tiers: recognition and simple perks
+- Languages en, fr, ar (RTL) everywhere. Use logical CSS (`ms-`, `me-`, `ps-`, `pe-`, `start`, `end`), never left or right
+- Previews, tests, local and staging never send real messages (log-only providers)
+
+## Design system
+
+Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@le-hoetel/ui`. No hard-coded colors. Fonts, type scale and components: `design-system.mdx`; rules: `component-patterns.mdx` (both in `apps/docs/content/docs`). Read them before building UI.
+
+## Agents and workflow
+
+Agents live in `.opencode/agents/` (OpenCode) and `.claude/agents/` (Claude Code), same four in both: `researcher`, `builder`, `reviewer`, `qa`. Edit both when you change one.
+
+One issue = one worktree = one branch = one PR:
+
+1. `researcher` comments on the issue first when it is marked `needs-research` or the choice is unclear
+2. `wt new lh-<N>` (branch `lh-<N>`, never purely numeric), work only there, never in the main checkout
+3. `builder` implements the issue "Done when", commits `type(scope): subject`, opens the PR with `lh-pr <N> "<title>"`. The PR copies the issue labels and milestone and must carry `milestone:N`, a priority P0 to P3, `area:*`, `owner:*`, `type:*` and `size:S|M|L` (the `labels` check fails otherwise)
+4. `reviewer` loops on the PR with the builder. The reviewer account has no token, so approval is a review comment plus the `agent-approved` label
+5. `qa` tests the PR on its preview (phone width, en fr ar, unhappy paths)
+6. Squash merge with the PR title as subject and an empty body, then `wt rm lh-<N>`
 
 ## Code
 
