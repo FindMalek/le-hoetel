@@ -1,0 +1,26 @@
+---
+title: Hotels
+description: How a hotel is modeled, who can do what, and where branding lives.
+---
+
+A hotel is a better-auth organization. Guests are not auth users: they are rows scoped by the hotel id.
+
+## Roles
+
+| Role | Can |
+|---|---|
+| `owner` | everything, including deleting the hotel |
+| `manager` | branding, team, guests, export and delete |
+| `staff` | read, add and edit guests |
+
+The app admin (user role `admin`) sees every hotel: a call can name any hotel with the `x-hotel-id` header and then acts as its owner. For everyone else the header can only repeat their own hotel, a different one is refused. Roles and their permissions live in `packages/auth/src/access.ts`.
+
+Hotels are created by the app admin (`admin.hotels.create`, for an existing user who becomes the owner). Self-serve organization creation is off.
+
+## Branding is config
+
+`hotel_settings` has one row per hotel, created with the organization: display name, logo key, two colors, reply-to, default language (`en`, `fr`, `ar`, default `fr`), timezone (default `Africa/Tunis`), Google review link, manager WhatsApp and Telegram contacts. Owners and managers edit it with `hotel.update`. Plan, status and pilot end date are `admin.hotels.update` only.
+
+## Hotel scoped procedures
+
+Use `hotelProcedure` for anything about a hotel. It puts `context.hotel` (`hotelId`, `role`, `superAdmin`) on the call, and every query filters on `context.hotel.hotelId`, never on an id from the input. Narrow it with `can({ guest: ["export"] })`.

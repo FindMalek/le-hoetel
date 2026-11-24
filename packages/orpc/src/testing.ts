@@ -58,8 +58,34 @@ export async function createTestApp() {
     return { id: created.user.id, headers, client: clientFor(headers) }
   }
 
+  type Account = Awaited<ReturnType<typeof signUp>>
+
+  /** Creates a hotel the way the app admin does: an organization owned by `owner`. Returns its id. */
+  async function createHotel(slug: string, owner: Account) {
+    const created = await auth.api.createOrganization({ body: { name: slug, slug, userId: owner.id } })
+    return created!.id
+  }
+
+  /** Makes `account` a member with `role` (unless the owner already) and returns it with that hotel active in its session. */
+  async function joinHotel(account: Account, hotelId: string, role: "owner" | "manager" | "staff") {
+    if (role !== "owner") await auth.api.addMember({ body: { userId: account.id, role, organizationId: hotelId } })
+    const switched = await auth.api.setActiveOrganization({
+      body: { organizationId: hotelId },
+      headers: account.headers,
+      returnHeaders: true,
+    })
+    const jar = new Map<string, string>()
+    for (const line of [account.headers.get("cookie") ?? "", ...switched.headers.getSetCookie()]) {
+      for (const part of line.split("; ")) jar.set(part.split("=")[0] ?? "", part.split(";")[0] ?? "")
+    }
+    const headers = new Headers({ cookie: [...jar.values()].join("; "), "x-csrf-token": "orpc" })
+    return { id: account.id, headers, client: clientFor(headers) }
+  }
+
   return {
     services,
+    createHotel,
+    joinHotel,
     anonymous: clientFor(new Headers({ "x-csrf-token": "orpc" })),
     clientFor,
     signUp,

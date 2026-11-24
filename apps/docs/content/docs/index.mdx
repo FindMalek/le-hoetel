@@ -1,23 +1,43 @@
 ---
 title: Introduction
-description: What Le Hoetel is made of and where to find things.
+description: What Le Hoetel is, who it is for, and where to find things.
 ---
 
-Le Hoetel is a turborepo with a landing page, a dashboard with login, and an api, wired to postgres, auth and typed rpc. These pages describe the project as it was generated. Edit them in `apps/docs/content/docs`, they are plain mdx.
+Le Hoetel is a loyalty and guest relationship tool for hotels in Tunisia. A guest scans a QR code in the room or at the restaurant table, leaves a real contact and a clear consent, and the hotel can then talk to that guest on WhatsApp and email in French, Arabic and English: welcome, birthday, offers, and a short survey after the stay. The hotel owns the relationship with the guest, not the booking site or the tour operator.
 
-## What is in the repo
+This site is the single source of truth. Everything we decided, and why, lives here.
 
-- `apps/web`: the landing page. It only talks to the api
-- `apps/dashboard`: login and the app shell. It only talks to the api
-- `apps/api`: orpc on bun. The only app that touches the database, auth and providers
-- `apps/docs`: this site
-- `packages/*`: shared code, see [structure](/docs/structure)
+<Callout type="warn" title="Read this first">
+Facts marked (vendor claim) or (to verify) are not confirmed. All prices are our own untested guesses. See [what we could not confirm](/docs/not-confirmed).
+</Callout>
+
+## The product in one flow
+
+1. A guest scans the hotel's QR code.
+2. They enter name, phone, language and tick consent separately for WhatsApp and for email. The consent is logged.
+3. The hotel now owns a real contact.
+4. Messages go out on their own: welcome, birthday, holidays, offers.
+5. 24 hours after checkout a short survey runs. A low score alerts the manager, who fixes it the same day. Every guest gets the Google review invite.
+6. The guest books direct again.
 
 ## Where to go next
 
 <Cards>
-  <Card title="Setup" href="/docs/setup">Install, start postgres, run the apps.</Card>
-  <Card title="Environment" href="/docs/environment">Every key in the root `.env`.</Card>
-  <Card title="Structure" href="/docs/structure">Apps, packages and the rules between them.</Card>
-  <Card title="Deploy" href="/docs/deploy">Vercel or your own server.</Card>
+  <Card title="Vision" href="/docs/vision">Principles, segments and why a hotel says yes.</Card>
+  <Card title="Market and research" href="/docs/market">Tunisia, channels and the rules that apply.</Card>
+  <Card title="Decisions" href="/docs/decisions">Every choice with its why and why not.</Card>
+  <Card title="Data and consent rules" href="/docs/data-rules">What we collect, what we never collect.</Card>
+  <Card title="Pitch playbook" href="/docs/pitch">Discovery questions, objections, demo and pilot.</Card>
+  <Card title="How we work" href="/docs/how-we-work">Agents loop, labels, PR and merge rules.</Card>
+  <Card title="Engineering guide" href="/docs/engineering">Stack, packages and commands.</Card>
+  <Card title="What we could not confirm" href="/docs/not-confirmed">Open questions we are still chasing.</Card>
 </Cards>
+
+## What is in the repo
+
+- `apps/web`: the landing page and the public guest pages. It only talks to the api
+- `apps/dashboard`: login and the hotel and admin app. It only talks to the api
+- `apps/api`: orpc on bun. The only app that touches the database, auth, storage and providers
+- `apps/docs`: this site
+- `packages/*`: shared code, see [structure](/docs/structure)
+- `docs/plan`: the original planning board, see [the plan](/docs/plan)

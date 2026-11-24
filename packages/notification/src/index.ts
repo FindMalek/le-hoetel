@@ -1,3 +1,4 @@
+import { type Logger, logger } from "@le-hoetel/logger"
 import { createEmailChannel } from "./channels/email"
 import { createTelegramChannel } from "./channels/telegram"
 import { createWhatsAppChannel } from "./channels/whatsapp"
@@ -12,6 +13,9 @@ export type Channel = (typeof CHANNELS)[number]
 
 /** The slice of the api env the notifier reads. Every key is optional: a channel is on when its keys are set. */
 export interface NotificationEnv {
+  NODE_ENV?: string
+  /** Real sends need `NODE_ENV=production` and `MESSAGING_LIVE=true`. Anything else only logs. */
+  MESSAGING_LIVE?: string
   RESEND_API_KEY?: string
   EMAIL_FROM?: string
   TELEGRAM_BOT_TOKEN?: string
@@ -28,6 +32,7 @@ export interface NotifierOptions {
   /** Public url of the app, shown in the email footer. */
   appUrl?: string
   fetch?: typeof fetch
+  log?: Logger
 }
 
 export interface SendInput<Name extends TemplateName = TemplateName> {
@@ -40,7 +45,7 @@ export interface SendInput<Name extends TemplateName = TemplateName> {
 
 export interface SendResult {
   channel: Channel
-  /** False when the channel isn't configured. */
+  /** False when the channel isn't configured or messaging isn't live. */
   sent: boolean
   id?: string
   error?: string
@@ -57,28 +62,42 @@ export interface Notifier {
   handleTelegramWebhook: (request: Request) => Promise<Response>
 }
 
-/** One entry point for email, Telegram and WhatsApp. Channels without keys are simply off. */
+export const isMessagingLive = (env: NotificationEnv): boolean =>
+  env.NODE_ENV === "production" && env.MESSAGING_LIVE === "true"
+
+/**
+ * One entry point for email, Telegram and WhatsApp. Channels without keys are simply off.
+ * Outside live messaging every channel is on but only logs the channel and template, never the recipient or the text.
+ */
 export function createNotifier(env: NotificationEnv, options: NotifierOptions = {}): Notifier {
-  const email = createEmailChannel({
-    apiKey: env.RESEND_API_KEY,
-    from: env.EMAIL_FROM ?? "onboarding@resend.dev",
-    fetch: options.fetch,
-  })
-  const telegram = createTelegramChannel({
-    token: env.TELEGRAM_BOT_TOKEN,
-    chatId: env.TELEGRAM_CHAT_ID,
-    webhookSecret: env.TELEGRAM_WEBHOOK_SECRET,
-    fetch: options.fetch,
-  })
-  const whatsapp = createWhatsAppChannel({
-    apiKey: env.KAPSO_API_KEY,
-    phoneNumberId: env.WHATSAPP_PHONE_NUMBER_ID,
-    to: env.WHATSAPP_NOTIFY_TO,
-    templateName: env.WHATSAPP_TEMPLATE_NAME ?? "app_notification",
-    templateLanguage: env.WHATSAPP_TEMPLATE_LANGUAGE ?? "en_US",
-    fetch: options.fetch,
-  })
-  const channels = CHANNELS.filter((channel) => ({ email, telegram, whatsapp })[channel])
+  const live = isMessagingLive(env)
+  const log = options.log ?? logger
+  const email = !live
+    ? null
+    : createEmailChannel({
+        apiKey: env.RESEND_API_KEY,
+        from: env.EMAIL_FROM ?? "onboarding@resend.dev",
+        fetch: options.fetch,
+      })
+  const telegram = !live
+    ? null
+    : createTelegramChannel({
+        token: env.TELEGRAM_BOT_TOKEN,
+        chatId: env.TELEGRAM_CHAT_ID,
+        webhookSecret: env.TELEGRAM_WEBHOOK_SECRET,
+        fetch: options.fetch,
+      })
+  const whatsapp = !live
+    ? null
+    : createWhatsAppChannel({
+        apiKey: env.KAPSO_API_KEY,
+        phoneNumberId: env.WHATSAPP_PHONE_NUMBER_ID,
+        to: env.WHATSAPP_NOTIFY_TO,
+        templateName: env.WHATSAPP_TEMPLATE_NAME ?? "app_notification",
+        templateLanguage: env.WHATSAPP_TEMPLATE_LANGUAGE ?? "en_US",
+        fetch: options.fetch,
+      })
+  const channels = live ? CHANNELS.filter((channel) => ({ email, telegram, whatsapp })[channel]) : [...CHANNELS]
 
   const on = (channel: Channel) => channels.includes(channel)
 
@@ -93,6 +112,10 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
   return {
     channels,
     async send({ channel, to, template, data }) {
+      if (!live) {
+        log.info("message not sent, log-only provider", { channel, template })
+        return { channel, sent: false }
+      }
       if (!on(channel)) return { channel, sent: false }
       if (channel === "email") {
         if (!to) throw new Error("Email needs a `to` address.")
@@ -106,6 +129,12 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
     },
     async notify(text, notifyOptions = {}) {
       const targets = notifyOptions.channels ?? channels
+      if (!live) {
+        return targets.map((channel) => {
+          log.info("message not sent, log-only provider", { channel })
+          return { channel, sent: false }
+        })
+      }
       return Promise.all(
         targets.map(async (channel): Promise<SendResult> => {
           if (channel === "email" || !on(channel)) return { channel, sent: false }
