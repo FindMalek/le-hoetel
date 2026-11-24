@@ -12,8 +12,7 @@
     "./server": "./src/server-client.ts",
     "./proxy": "./src/proxy.ts",
     "./testing": "./src/testing.ts",
-    "./unsubscribe": "./src/lib/unsubscribe.ts",
-    "./messages": "./src/lib/messages.ts"
+    "./unsubscribe": "./src/lib/unsubscribe.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
@@ -28,6 +27,7 @@
     "@orpc/tanstack-query": "catalog:",
     "@tanstack/react-query": "catalog:",
     "drizzle-orm": "catalog:",
+    "qrcode": "^1.5.4",
     "zod": "catalog:",
     "@le-hoetel/jobs": "workspace:*",
     "@le-hoetel/notification": "workspace:*",
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@le-hoetel/config": "workspace:*",
     "@types/bun": "catalog:",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "catalog:",
     "typescript": "catalog:"
   }

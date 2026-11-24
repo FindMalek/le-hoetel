@@ -9,13 +9,18 @@ import {
   hotelSettings,
   member,
   notes,
+  offerCodes,
+  offerRedemptions,
+  offers,
   organization,
   user,
 } from "../schema"
 import { buildHotelScenario } from "./hotels"
+import { buildOfferScenario } from "./offers"
 import { buildScenario } from "./scenario"
 
 export { buildHotelScenario } from "./hotels"
+export { buildOfferScenario } from "./offers"
 export { buildScenario } from "./scenario"
 
 export interface SeedOptions {
@@ -36,6 +41,7 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
   const now = new Date()
   const scenario = buildScenario(now, opts)
   const hotels = buildHotelScenario(now, await opts.hashPassword(opts.demoPassword || DEFAULT_DEMO_PASSWORD))
+  const offerRows = buildOfferScenario(now, hotels)
   await db.transaction(async (tx) => {
     await tx.insert(user).values(scenario.users).onConflictDoNothing()
     await tx.insert(notes).values(scenario.notes)
@@ -48,6 +54,10 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
     await tx.insert(guests).values(hotels.guests)
     await tx.insert(guestConsents).values(hotels.guestConsents)
     await tx.insert(consentEvents).values(hotels.consentEvents)
+
+    await tx.insert(offers).values(offerRows.offers)
+    await tx.insert(offerCodes).values(offerRows.offerCodes)
+    await tx.insert(offerRedemptions).values(offerRows.offerRedemptions)
   })
   return true
 }

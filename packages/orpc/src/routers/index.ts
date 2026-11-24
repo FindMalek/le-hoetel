@@ -6,9 +6,9 @@ import { guestsRouter } from "./guests"
 import { adminHotelsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
 import { inboxAdminRouter, inboxRouter } from "./inbox"
 import { jobsRouter } from "./jobs"
-import { messagesRouter } from "./messages"
 import { notesRouter } from "./notes"
 import { notificationRouter } from "./notification"
+import { offersRouter } from "./offers"
 import { privacyRouter } from "./privacy"
 import { publicRouter } from "./public"
 import { statusRouter } from "./status"
@@ -31,7 +31,7 @@ export const appRouter = {
   feedback: feedbackRouter,
   hotel: { ...hotelRouter, logo: hotelLogoRouter },
   guests: guestsRouter,
-  messages: messagesRouter,
+  offers: offersRouter,
   me: meRouter,
   notes,
   privacy: privacyRouter,
