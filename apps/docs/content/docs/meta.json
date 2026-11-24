@@ -25,7 +25,9 @@
     "environment",
     "structure",
     "i18n",
+    "hotels",
     "scripts",
-    "deploy"
+    "deploy",
+    "observability"
   ]
 }

@@ -1,0 +1,41 @@
+---
+title: Observability
+description: Logs, request ids, traces and errors, and what never gets logged.
+---
+
+## Logs
+
+The api and the Next servers log json lines through `@le-hoetel/logger` (one readable line in dev). `console.*` calls are routed through the same logger.
+
+Before a line is written, every field passes the redaction:
+
+- keys that look like a secret (`password`, `token`, `authorization`, `cookie`, `api key`, `session`, `dsn`) are replaced with `[redacted]`
+- keys that look like guest data (`phone`, `mobile`, `whatsapp`, `email`, `name`, `firstName`, `fullName`, ...) are replaced with `[redacted]`
+- email addresses inside any string, including error messages and stacks, are masked
+
+Log the guest id and the hotel id, never the guest. If a new field carries personal data under another key name, add it to `PII_KEY` in `packages/logger/src/redact.ts` and a case to its test.
+
+## Request ids
+
+The api gives every request an id, the inbound `x-request-id` when it is short and plain, a new uuid otherwise. Every log line written while the request runs carries it as `requestId`, and the response returns it in the `x-request-id` header. A guest or hotel reporting a problem can send that header value to find the whole request.
+
+## Traces and logs: OpenObserve
+
+Set these in `.env` (all optional, empty means off):
+
+| Key | What it is |
+| --- | --- |
+| `OPENOBSERVE_URL` | base url of your OpenObserve |
+| `OPENOBSERVE_ORG` | organization, `default` unless you changed it |
+| `OPENOBSERVE_USER`, `OPENOBSERVE_PASSWORD` | the ingest user |
+
+Log lines carry `trace_id` and `span_id`, so a log line links to its trace and back.
+
+## Errors: GlitchTip
+
+| Key | What it is |
+| --- | --- |
+| `GLITCHTIP_DSN` | dsn of the api project, from the GlitchTip project settings |
+| `NEXT_PUBLIC_GLITCHTIP_DSN` | dsn of the browser project |
+
+GlitchTip speaks the sentry protocol, so the sentry sdk is used as is. Errors are tagged with `DEPLOY_ENV`, so staging and previews stay apart from production. See [The Keep](/docs/infrastructure/the-keep) for where both run.
