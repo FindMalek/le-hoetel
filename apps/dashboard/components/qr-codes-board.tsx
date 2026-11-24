@@ -13,12 +13,47 @@ import { DownloadIcon } from "lucide-react"
 import { type FormEvent, useState } from "react"
 import { toast } from "sonner"
 
-const SOURCES: { value: CaptureSource; label: string; stored: string; hint: string }[] = [
-  { value: "room", label: "Rooms", stored: "qr_room", hint: "101-120, 201-220" },
-  { value: "table", label: "Tables", stored: "qr_table", hint: "T1, T2, Terrace" },
-  { value: "desk", label: "Front desk", stored: "qr_front_desk", hint: "Leave empty for one code" },
+const LABEL_KEYS = [
+  "newTitle",
+  "newDescription",
+  "where",
+  "rooms",
+  "tables",
+  "desk",
+  "room",
+  "table",
+  "roomHint",
+  "tableHint",
+  "deskHint",
+  "spots",
+  "spotsHint",
+  "generate",
+  "guestsSoFar",
+  "alt",
+  "tableTitle",
+  "tableDescription",
+  "empty",
+  "colWhere",
+  "colSpot",
+  "colGuests",
+] as const
+export type QrCodesLabels = Record<(typeof LABEL_KEYS)[number], string>
+
+const SOURCES: {
+  value: CaptureSource
+  label: "rooms" | "tables" | "desk"
+  stored: string
+  hint: "roomHint" | "tableHint" | "deskHint"
+}[] = [
+  { value: "room", label: "rooms", stored: "qr_room", hint: "roomHint" },
+  { value: "table", label: "tables", stored: "qr_table", hint: "tableHint" },
+  { value: "desk", label: "desk", stored: "qr_front_desk", hint: "deskHint" },
 ]
-const SOURCE_LABEL: Record<string, string> = { qr_room: "Room", qr_table: "Table", qr_front_desk: "Front desk" }
+const SOURCE_LABEL: Record<string, "room" | "table" | "desk"> = {
+  qr_room: "room",
+  qr_table: "table",
+  qr_front_desk: "desk",
+}
 
 const svgUrl = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
 const fileName = (source: string, location: string | null, ext: string) =>
@@ -42,13 +77,14 @@ async function savePng(name: string, svg: string) {
   save(name, canvas.toDataURL("image/png"))
 }
 
-export function QrCodesBoard() {
+export function QrCodesBoard({ labels }: { labels: QrCodesLabels }) {
   const { data: stats } = useSuspenseQuery(orpc.hotel.captureStats.queryOptions())
   const [source, setSource] = useState<CaptureSource>("room")
   const generate = useMutation(
     orpc.hotel.qrCodes.mutationOptions({ onError: (error: Error) => toast.error(errorMessage(error)) }),
   )
   const current = SOURCES.find((item) => item.value === source) ?? SOURCES[0]!
+  const currentLabel = labels[current.label]
   const guestsAt = (location: string | null) =>
     stats.find((row) => row.source === current.stored && row.location === location)?.guests ?? 0
 
@@ -62,14 +98,14 @@ export function QrCodesBoard() {
     <div className="grid gap-4 p-4 md:p-6 lg:grid-cols-3">
       <Card className="self-start">
         <CardHeader>
-          <CardTitle>New QR codes</CardTitle>
-          <CardDescription>One code per spot, so you see which one captures the most guests.</CardDescription>
+          <CardTitle>{labels.newTitle}</CardTitle>
+          <CardDescription>{labels.newDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={submit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="source">Where</FieldLabel>
+                <FieldLabel htmlFor="source">{labels.where}</FieldLabel>
                 <select
                   id="source"
                   value={source}
@@ -78,20 +114,18 @@ export function QrCodesBoard() {
                 >
                   {SOURCES.map((item) => (
                     <option key={item.value} value={item.value}>
-                      {item.label}
+                      {labels[item.label]}
                     </option>
                   ))}
                 </select>
               </Field>
               <Field>
-                <FieldLabel htmlFor="spots">Spots</FieldLabel>
-                <Textarea id="spots" name="spots" rows={4} placeholder={current.hint} />
-                <FieldDescription>
-                  Names or numbers, split by commas or lines. Ranges like 101-120 work.
-                </FieldDescription>
+                <FieldLabel htmlFor="spots">{labels.spots}</FieldLabel>
+                <Textarea id="spots" name="spots" rows={4} placeholder={labels[current.hint]} />
+                <FieldDescription>{labels.spotsHint}</FieldDescription>
               </Field>
               <Button type="submit" disabled={generate.isPending}>
-                Generate
+                {labels.generate}
               </Button>
             </FieldGroup>
           </form>
@@ -104,12 +138,18 @@ export function QrCodesBoard() {
             {generate.data.map((code) => (
               <Card key={code.url}>
                 <CardHeader>
-                  <CardTitle>{code.location ?? current.label}</CardTitle>
-                  <CardDescription>{guestsAt(code.location)} guests so far</CardDescription>
+                  <CardTitle>{code.location ?? currentLabel}</CardTitle>
+                  <CardDescription>
+                    {labels.guestsSoFar.replace("{count}", String(guestsAt(code.location)))}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
                   {/* biome-ignore lint/performance/noImgElement: a generated data url, nothing to optimize */}
-                  <img src={svgUrl(code.svg)} alt={`QR code ${code.location ?? current.label}`} className="w-full" />
+                  <img
+                    src={svgUrl(code.svg)}
+                    alt={labels.alt.replace("{spot}", code.location ?? currentLabel)}
+                    className="w-full"
+                  />
                   <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
@@ -133,25 +173,27 @@ export function QrCodesBoard() {
         )}
         <Card>
           <CardHeader>
-            <CardTitle>Guests by spot</CardTitle>
-            <CardDescription>Which QR codes bring in guests.</CardDescription>
+            <CardTitle>{labels.tableTitle}</CardTitle>
+            <CardDescription>{labels.tableDescription}</CardDescription>
           </CardHeader>
           <CardContent>
             {stats.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No guest signed up from a QR code yet.</p>
+              <p className="text-muted-foreground text-sm">{labels.empty}</p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-start text-muted-foreground">
-                    <th className="py-1 text-start font-medium">Where</th>
-                    <th className="py-1 text-start font-medium">Spot</th>
-                    <th className="py-1 text-end font-medium">Guests</th>
+                    <th className="py-1 text-start font-medium">{labels.colWhere}</th>
+                    <th className="py-1 text-start font-medium">{labels.colSpot}</th>
+                    <th className="py-1 text-end font-medium">{labels.colGuests}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {stats.map((row) => (
                     <tr key={`${row.source}-${row.location}`} className="border-t">
-                      <td className="py-1.5">{SOURCE_LABEL[row.source] ?? row.source}</td>
+                      <td className="py-1.5">
+                        {SOURCE_LABEL[row.source] ? labels[SOURCE_LABEL[row.source]!] : row.source}
+                      </td>
                       <td className="py-1.5">{row.location ?? "-"}</td>
                       <td className="py-1.5 text-end">{row.guests}</td>
                     </tr>

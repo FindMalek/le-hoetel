@@ -1,0 +1,45 @@
+---
+title: Guest delete is a hard delete
+description: Deleting a guest removes the row, consents and consent events. The audit log keeps one row with a hash of the guest id and nothing else.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+A guest, or the hotel for them, can ask for deletion, and a hotel can leave and ask for all its guests to go. The consent log is append only, and it holds proof of consent, which we also want to keep. These pull in opposite directions.
+
+## Decision
+
+Delete is a hard delete. In one statement the guest row goes and the foreign keys cascade to `guest_consents` and `consent_events`, so no table keeps a name, phone, email, birthday or any detail. We do not keep consent events with only a guest id hash.
+
+The audit log gets one row: `guest.delete` (or `guest.delete-all` with a count), the actor, the hotel id and, for one guest, the SHA-256 of the guest id. A person who still holds the old id can check it matches, nobody can go from the hash back to a person.
+
+Audit rows written before the delete (an export, a consent change) keep the plain guest id. It is a random uuid, it names nobody once the row is gone, and the audit log is append only.
+
+Who: owners and managers (and the app admin acting on a hotel). Staff cannot export or delete. Delete all also needs the exact guest count, and the dashboard asks the user to type the hotel name.
+
+## Why
+
+- A request to erase has to leave nothing about the person. Consent events carry the channel, time and source of that person, so they are personal data too.
+- The proof we need is that we deleted on request, and the audit row is that proof.
+- Nothing to join on later: no table can be linked back to a deleted guest.
+
+## Why not
+
+- Keeping consent events with a hash of the guest id: it would still tie a phone number's consent history to one record, and a hash of a short value is guessable. The proof of consent is only useful while the guest exists.
+- Soft delete (a `deleted_at` flag): the data would still be there.
+
+## Consequences
+
+- If the same person is captured again, they are a new guest with a new consent log.
+- Legal review may require keeping proof of consent for a period. If so we revisit this and keep a minimal, separate record.
+
+## Revisit when
+
+Legal review changes what has to be kept after a deletion request.
+
+## Related
+
+- [The consent log is append only](/docs/decisions/consent-log-append-only)
+- [Data and consent rules](/docs/data-rules)

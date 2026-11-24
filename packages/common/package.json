@@ -9,8 +9,11 @@
     "./schemas": "./src/schemas/index.ts",
     "./utils": "./src/utils/index.ts",
     "./hotel": "./src/hotel.ts",
+    "./color": "./src/color.ts",
     "./consent": "./src/consent.ts",
     "./phone": "./src/phone.ts",
+    "./guest-export": "./src/guest-export.ts",
+    "./unsubscribe": "./src/unsubscribe.ts",
     "./qr": "./src/qr.ts",
     "./demo": "./src/demo.ts"
   },

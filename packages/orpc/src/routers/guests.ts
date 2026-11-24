@@ -1,3 +1,4 @@
+import { guestsToCsv } from "@le-hoetel/common/guest-export"
 import {
   consentEventSchema,
   consentSetSchema,
@@ -17,7 +18,7 @@ import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
-import { clearExtras, hotelGuest, recordConsent, upsertGuest, withConsents } from "../lib/guests"
+import { clearExtras, hashGuestId, hotelGuest, recordConsent, upsertGuest, withConsents } from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
 
 const notFound = () => new ORPCError("NOT_FOUND", { message: "Guest not found." })
@@ -182,6 +183,38 @@ export const guestsRouter = {
       }
     }),
 
+  exportCsv: hotelProcedure
+    .use(can({ guest: ["export"] }))
+    .route({
+      method: "GET",
+      path: "/guests/export.csv",
+      summary: "The guest list as csv, or one guest when `id` is given",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid().optional() }).default({}))
+    .output(z.object({ filename: z.string(), csv: z.string() }))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const rows = await context.db
+        .select()
+        .from(guests)
+        .where(input.id ? hotelGuest(hotelId, input.id) : eq(guests.hotelId, hotelId))
+        .orderBy(guests.createdAt)
+      if (input.id && !rows.length) throw notFound()
+      const all = await withConsents(context.db, hotelId, rows)
+      const events = await eventsOf(context.db, hotelId, input.id ? [input.id] : null)
+      await audit(context, {
+        action: input.id ? "guest.export" : "guest.export-all",
+        targetId: input.id,
+        metadata: { hotelId, format: "csv", count: all.length },
+      })
+      const day = context.now().toISOString().slice(0, 10)
+      return {
+        filename: input.id ? `guest-${day}.csv` : `guests-${day}.csv`,
+        csv: guestsToCsv(all.map((guest) => ({ guest, consentEvents: events.filter((e) => e.guestId === guest.id) }))),
+      }
+    }),
+
   remove: hotelProcedure
     .use(can({ guest: ["delete"] }))
     .route({
@@ -196,8 +229,32 @@ export const guestsRouter = {
       const { hotelId } = context.hotel
       const removed = await context.db.delete(guests).where(hotelGuest(hotelId, input.id)).returning({ id: guests.id })
       if (!removed.length) throw notFound()
-      await audit(context, { action: "guest.delete", targetId: input.id, metadata: { hotelId } })
+      const hash = hashGuestId(input.id)
+      await audit(context, { action: "guest.delete", targetId: hash, metadata: { hotelId } })
       return { ok: true as const }
+    }),
+
+  removeAll: hotelProcedure
+    .use(can({ guest: ["delete"] }))
+    .route({
+      method: "DELETE",
+      path: "/guests",
+      summary: "Delete every guest of the hotel and everything stored about them",
+      tags: ["guests"],
+    })
+    .input(z.object({ confirmCount: z.number().int().min(0) }))
+    .output(z.object({ deleted: z.number() }))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const deleted = await context.db.transaction(async (tx) => {
+        const [total] = await tx.select({ n: count() }).from(guests).where(eq(guests.hotelId, hotelId))
+        if ((total?.n ?? 0) !== input.confirmCount) {
+          throw new ORPCError("CONFLICT", { message: "The guest list changed. Reload and confirm again." })
+        }
+        return tx.delete(guests).where(eq(guests.hotelId, hotelId)).returning({ id: guests.id })
+      })
+      await audit(context, { action: "guest.delete-all", metadata: { hotelId, count: deleted.length } })
+      return { deleted: deleted.length }
     }),
 
   consentHistory: hotelProcedure
