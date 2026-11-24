@@ -45,18 +45,6 @@
     "privacy": "Politique de confidentialité",
     "languageLabel": "Langue"
   },
-  "hotelSettings": {
-    "title": "Hôtel",
-    "description": "Le logo et l’identité visuelle de votre hôtel.",
-    "logo": "Logo",
-    "logoHint": "PNG, JPEG ou WebP, 1 Mo maximum.",
-    "upload": "Téléverser le logo",
-    "remove": "Supprimer le logo",
-    "saved": "Logo enregistré.",
-    "removed": "Logo supprimé.",
-    "invalidFile": "Utilisez une image PNG, JPEG ou WebP de 1 Mo maximum.",
-    "noHotel": "Choisissez d’abord un hôtel."
-  },
   "adminHotels": {
     "title": "Hôtels",
     "description": "Tous les hôtels de la plateforme, avec leurs clients et leur santé.",
@@ -85,5 +73,25 @@
       "no-owner": "Propriétaire pas encore inscrit",
       "suspended": "Suspendu"
     }
+  },
+  "hotelSettings": {
+    "title": "Hôtel",
+    "description": "Le logo et l’identité visuelle de votre hôtel.",
+    "logo": "Logo",
+    "logoHint": "PNG, JPEG ou WebP, 1 Mo maximum.",
+    "upload": "Téléverser le logo",
+    "remove": "Supprimer le logo",
+    "saved": "Logo enregistré.",
+    "removed": "Logo supprimé.",
+    "invalidFile": "Utilisez une image PNG, JPEG ou WebP de 1 Mo maximum.",
+    "noHotel": "Choisissez d’abord un hôtel.",
+    "branding": "Couleurs",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d’accent",
+    "save": "Enregistrer",
+    "brandingSaved": "Couleurs enregistrées.",
+    "sample": "Aa texte",
+    "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
+    "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
   }
 }

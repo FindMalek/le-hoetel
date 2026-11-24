@@ -11,7 +11,11 @@ import { call } from "@/lib/api"
 export const metadata: Metadata = { title: "Hotels" }
 
 export default async function AdminHotelsPage() {
-  const [t, hotels] = await Promise.all([getTranslations("adminHotels"), call((api) => api.admin.hotels.list())])
+  const [t, tBrand, hotels] = await Promise.all([
+    getTranslations("adminHotels"),
+    getTranslations("hotelSettings"),
+    call((api) => api.admin.hotels.list()),
+  ])
   const health = {
     healthy: t("health.healthy"),
     quiet: t("health.quiet"),
@@ -35,6 +39,9 @@ export default async function AdminHotelsPage() {
             language: t("language"),
             submit: t("submit"),
             created: t("created"),
+            sample: tBrand("sample"),
+            contrastLight: tBrand("contrastLight"),
+            contrastDark: tBrand("contrastDark"),
           }}
         />
         <Card className="lg:col-span-2">

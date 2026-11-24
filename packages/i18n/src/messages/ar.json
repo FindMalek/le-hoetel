@@ -45,18 +45,6 @@
     "privacy": "سياسة الخصوصية",
     "languageLabel": "اللغة"
   },
-  "hotelSettings": {
-    "title": "الفندق",
-    "description": "شعار فندقكم وهويته البصرية.",
-    "logo": "الشعار",
-    "logoHint": "PNG أو JPEG أو WebP، بحد أقصى 1 ميغابايت.",
-    "upload": "رفع الشعار",
-    "remove": "حذف الشعار",
-    "saved": "تم حفظ الشعار.",
-    "removed": "تم حذف الشعار.",
-    "invalidFile": "استخدم صورة PNG أو JPEG أو WebP لا يتجاوز حجمها 1 ميغابايت.",
-    "noHotel": "اختر فندقاً أولاً."
-  },
   "adminHotels": {
     "title": "الفنادق",
     "description": "كل فنادق المنصة مع نزلائها وحالتها.",
@@ -85,5 +73,25 @@
       "no-owner": "لم ينضم المالك بعد",
       "suspended": "معلّق"
     }
+  },
+  "hotelSettings": {
+    "title": "الفندق",
+    "description": "شعار فندقكم وهويته البصرية.",
+    "logo": "الشعار",
+    "logoHint": "PNG أو JPEG أو WebP، بحد أقصى 1 ميغابايت.",
+    "upload": "رفع الشعار",
+    "remove": "حذف الشعار",
+    "saved": "تم حفظ الشعار.",
+    "removed": "تم حذف الشعار.",
+    "invalidFile": "استخدم صورة PNG أو JPEG أو WebP لا يتجاوز حجمها 1 ميغابايت.",
+    "noHotel": "اختر فندقاً أولاً.",
+    "branding": "الألوان",
+    "primaryColor": "اللون الأساسي",
+    "accentColor": "لون التمييز",
+    "save": "حفظ",
+    "brandingSaved": "تم حفظ الألوان.",
+    "sample": "Aa نص",
+    "contrastLight": "هذا اللون يصعب رؤيته على خلفية فاتحة. اختر لوناً أغمق.",
+    "contrastDark": "هذا اللون يصعب رؤيته في الوضع الداكن. اختر لوناً أفتح."
   }
 }
