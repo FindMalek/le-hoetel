@@ -52,7 +52,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 
 ## Design system
 
-Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@le-hoetel/ui`. No hard-coded colors. Component patterns and design rules are documented in `apps/docs` (design system pages) once they land; read them before building UI.
+Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@le-hoetel/ui`. No hard-coded colors. Fonts, type scale and components: `design-system.mdx`; rules: `component-patterns.mdx` (both in `apps/docs/content/docs`). Read them before building UI.
 
 ## Agents and workflow
 
