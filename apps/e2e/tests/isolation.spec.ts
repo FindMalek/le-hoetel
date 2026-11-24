@@ -81,6 +81,14 @@ test("one hotel can never read, change, export or delete another hotel's guests 
     })
     expect(created.status()).toBe(200)
     hotels[key] = (await created.json()).id
+    const db = postgres(e2eDatabaseUrl(), { max: 1, onnotice: () => {} })
+    const [invite] = await db`select id from invitation where organization_id = ${hotels[key]}`
+    await db.end()
+    const accepted = await request.post(`${URLS.api}/auth/organization/accept-invitation`, {
+      headers: { origin: URLS.dashboard, cookie: cookieHeader(owner.jar) },
+      data: { invitationId: invite?.id },
+    })
+    expect(accepted.status()).toBe(200)
     const active = await request.post(`${URLS.api}/auth/organization/set-active`, {
       headers: { origin: URLS.dashboard, cookie: cookieHeader(owner.jar) },
       data: { organizationId: hotels[key] },
