@@ -33,6 +33,7 @@ export function CaptureForm(props: {
   slug: string
   source: string
   location: string
+  renderedAt: number
   language: HotelLanguage
   copy: CaptureCopy
 }) {
@@ -57,6 +58,13 @@ export function CaptureForm(props: {
       <input type="hidden" name="slug" value={props.slug} />
       <input type="hidden" name="source" value={props.source} />
       <input type="hidden" name="location" value={props.location} />
+      <input type="hidden" name="renderedAt" value={props.renderedAt} />
+      <div aria-hidden className="sr-only">
+        <label>
+          Website
+          <input name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
       <input type="hidden" name="phone" value={`${dialCode}${national.replace(/\s/g, "").replace(/^0+/, "")}`} />
 
       <label className="flex flex-col gap-1.5 text-sm">

@@ -24,6 +24,8 @@ export async function captureAction(_previous: CaptureState, form: FormData): Pr
     birthday: field(form, "birthday") || null,
     source: source in CAPTURE_SOURCES ? (source as CaptureSource) : "desk",
     location: field(form, "location") || null,
+    website: field(form, "website") || null,
+    renderedAt: Number(field(form, "renderedAt")) || 0,
     consents: { whatsapp: form.get("whatsapp") === "on", email: form.get("emailConsent") === "on" && !!email },
   })
 }
