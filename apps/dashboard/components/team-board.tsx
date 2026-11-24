@@ -117,7 +117,7 @@ export function TeamBoard() {
               onSubmit={(event) => {
                 event.preventDefault()
                 if (email.trim()) {
-                  void run(orgClient.organization.inviteMember({ email: email.trim(), role: "member" }), () => {
+                  void run(orgClient.organization.inviteMember({ email: email.trim(), role: "staff" }), () => {
                     setEmail("")
                     toast.success("Invitation sent.")
                   })

@@ -554,6 +554,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@le-hoetel/common':
+        specifier: workspace:*
+        version: link:../common
       '@le-hoetel/db':
         specifier: workspace:*
         version: link:../db
@@ -622,6 +625,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@le-hoetel/common':
+        specifier: workspace:*
+        version: link:../common
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.10.0)(bun-types@1.4.3)(kysely@0.29.6)(pg@8.23.1)(postgres@4.0.0)
