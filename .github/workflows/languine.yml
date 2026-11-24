@@ -1,0 +1,100 @@
+name: languine
+
+# Translates the English messages into fr and ar and opens one pull request for review.
+# Runs when a release is published, or by hand from the Actions tab.
+# Skips cleanly until the self hosted Languine secrets exist:
+#   LANGUINE_API_KEY, LANGUINE_BASE_URL (secrets), LANGUINE_PROJECT_ID (optional, else languine.json)
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: languine
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  translate:
+    name: translate fr and ar
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      LANGUINE_API_KEY: ${{ secrets.LANGUINE_API_KEY }}
+      LANGUINE_BASE_URL: ${{ secrets.LANGUINE_BASE_URL }}
+      LANGUINE_PROJECT_ID: ${{ secrets.LANGUINE_PROJECT_ID }}
+    steps:
+      - name: check secrets
+        id: gate
+        run: |
+          if [ -z "$LANGUINE_API_KEY" ] || [ -z "$LANGUINE_BASE_URL" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=languine skipped::LANGUINE_API_KEY and LANGUINE_BASE_URL are not set, nothing to translate"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: look for an open translation pull request
+        id: open
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          existing=$(gh pr list -R "$GITHUB_REPOSITORY" --state open --json number,headRefName \
+            --jq '[.[] | select(.headRefName | startswith("i18n/"))][0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "::notice title=languine skipped::translation pull request #$existing is still open, review or close it first"
+          fi
+          echo "pr=$existing" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v7
+        if: steps.gate.outputs.enabled == 'true' && steps.open.outputs.pr == ''
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - uses: actions/setup-node@v7
+        if: steps.gate.outputs.enabled == 'true' && steps.open.outputs.pr == ''
+        with:
+          node-version: 24
+
+      - uses: oven-sh/setup-bun@v2
+        if: steps.gate.outputs.enabled == 'true' && steps.open.outputs.pr == ''
+
+      - name: translate
+        id: translate
+        if: steps.gate.outputs.enabled == 'true' && steps.open.outputs.pr == ''
+        run: |
+          npx --yes languine@selfhosted translate
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=languine::translations are already up to date"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: keys still line up
+        if: steps.translate.outputs.changed == 'true'
+        run: bun packages/i18n/src/check-cli.ts
+
+      - name: open the pull request
+        if: steps.translate.outputs.changed == 'true'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          branch="i18n/${RELEASE_TAG:-manual-$GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add -A
+          git commit -m "chore(i18n): translate fr and ar"
+          git push origin "$branch"
+          url=$(gh pr create --base "${{ github.event.repository.default_branch }}" --head "$branch" \
+            --title "chore(i18n): translate fr and ar" --body-file .github/translation-pr-body.md \
+            --label area:i18n --label type:chore)
+          echo "$url"
+          grep -vE '^\s*(#|$)' .github/translation-reviewers | while read -r login; do
+            gh pr edit "$url" --add-reviewer "$login" || echo "::warning title=reviewer::could not request $login"
+          done
