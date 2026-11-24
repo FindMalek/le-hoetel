@@ -2,6 +2,7 @@ import { hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel
 import { captureUrl } from "@le-hoetel/common/qr"
 import {
   adminHotelSchema,
+  CAPTURE_SOURCES,
   captureStatSchema,
   hotelAdminUpdateSchema,
   hotelCreateSchema,
@@ -15,7 +16,7 @@ import {
 import { guests, hotelSettings, member, organization } from "@le-hoetel/db"
 import { hotelPublicPrefix } from "@le-hoetel/storage"
 import { ORPCError } from "@orpc/server"
-import { and, asc, count, eq, like, max, sql } from "drizzle-orm"
+import { and, asc, count, eq, inArray, like, max, sql } from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -89,7 +90,7 @@ export const hotelRouter = {
       context.db
         .select({ source: guests.source, location: guests.captureLocation, guests: count() })
         .from(guests)
-        .where(and(eq(guests.hotelId, context.hotel.hotelId), like(guests.source, "qr\\_%")))
+        .where(and(eq(guests.hotelId, context.hotel.hotelId), inArray(guests.source, Object.values(CAPTURE_SOURCES))))
         .groupBy(guests.source, guests.captureLocation)
         .orderBy(sql`count(*) desc`, guests.source, guests.captureLocation),
     ),
