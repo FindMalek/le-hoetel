@@ -28,7 +28,7 @@ export function FeedbackButton() {
   )
 
   return (
-    <div className="fixed bottom-4 left-4 z-40">
+    <div className="fixed start-4 bottom-4 z-40">
       {open ? (
         <form
           className="grid w-72 gap-2 border bg-card p-3 shadow-lg"
@@ -52,7 +52,7 @@ export function FeedbackButton() {
             tabIndex={-1}
             autoComplete="off"
             aria-hidden
-            className="absolute -left-[9999px]"
+            className="sr-only"
             name="website"
             value={website}
             onChange={(event) => setWebsite(event.target.value)}
