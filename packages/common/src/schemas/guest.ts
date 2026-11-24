@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { CONSENT_CHANNELS, CONSENT_SOURCES, GUEST_SOURCES } from "../consent"
 import { HOTEL_LANGUAGES } from "../hotel"
+import { isWhatsappCapable, parsePhone } from "../phone"
 
 export const GUEST_LIST_MAX = 200
 
@@ -9,7 +10,18 @@ const email = z
   .email()
   .max(200)
   .transform((value) => value.toLowerCase())
-const phoneE164 = z.string().regex(/^\+[1-9]\d{7,14}$/, "Use the international format, like +21620123456.")
+/** What a person types (`20 123 456`, `00216…`, `+33…`) in, a clean E.164 number out. */
+export const phoneInputSchema = z
+  .string()
+  .max(40)
+  .transform((value, ctx) => {
+    const parsed = parsePhone(value)
+    if (!parsed) {
+      ctx.addIssue({ code: "custom", message: "Enter a valid phone number, like 20 123 456 or +33 6 12 34 56 78." })
+      return z.NEVER
+    }
+    return parsed.e164
+  })
 const day = z.iso.date()
 const birthday = day.refine(
   (value) => value >= "1900-01-01" && value <= new Date().toISOString().slice(0, 10),
@@ -59,7 +71,7 @@ const hasExtras = (value: Partial<Record<(typeof GUEST_EXTRA_FIELDS)[number], un
 export const guestCreateSchema = z
   .object({
     name,
-    phone: phoneE164,
+    phone: phoneInputSchema,
     language: z.enum(HOTEL_LANGUAGES),
     email: email.nullish(),
     birthday: birthday.nullish(),
@@ -74,6 +86,10 @@ export const guestCreateSchema = z
   .refine((value) => !value.consents.email || !!value.email, {
     path: ["email"],
     message: "Email consent needs an email.",
+  })
+  .refine((value) => !value.consents.whatsapp || isWhatsappCapable(value.phone), {
+    path: ["consents", "whatsapp"],
+    message: "This number can't receive WhatsApp.",
   })
   .refine((value) => value.consents.profile || !hasExtras(value), {
     path: ["consents", "profile"],
@@ -99,6 +115,8 @@ export const guestListInputSchema = z.object({
   limit: z.number().int().min(1).max(GUEST_LIST_MAX).default(50),
   offset: z.number().int().min(0).default(0),
 })
+
+export const guestUpsertResultSchema = guestSchema.extend({ merged: z.boolean() })
 
 export const guestListSchema = z.object({ items: z.array(guestSchema), total: z.number() })
 

@@ -42,6 +42,12 @@ Every extra question lowers the number of guests who finish the form, and every 
 - Channels are `email`, `whatsapp` and `profile`. `profile` is the consent for the optional tier (country, city, stay dates, next destination): those fields are refused without it and cleared when it is withdrawn.
 - Deleting a guest is a hard delete: the guest, its consents and its events go together, so nothing personal is left. The audit log keeps only a row without personal data.
 
+### Phone numbers and duplicates
+
+- Phones are stored as E.164 (`+21620123456`). `parsePhone` in `packages/common/src/phone.ts` accepts the Tunisian local 8 digits, `+216…`, `00216…`, other international numbers, separators and Arabic-Indic digits. Tunisian landlines (starting 3, 7, 8) are valid but can't take WhatsApp, so a WhatsApp consent is refused for them.
+- Same hotel and same phone is the same guest. A second capture (`guests.create`) merges into the existing guest: name, email, birthday, country and city only fill gaps, language and stay details take the latest value.
+- Merging never downgrades consent silently. A guest scanning again can withdraw (it is logged), a "no" coming from staff or a csv import never overrides an existing "yes".
+
 ## Isolation
 
 - Every guest row and every query is scoped by hotel id. See [hotel is an organization](/docs/decisions/hotel-is-organization).
