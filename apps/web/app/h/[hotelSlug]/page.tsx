@@ -74,6 +74,7 @@ export default async function CapturePage({ params, searchParams }: Props) {
           slug={hotel.slug}
           source={source}
           location={location}
+          renderedAt={Date.now()}
           language={language}
           copy={{
             name: t("name"),

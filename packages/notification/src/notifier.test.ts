@@ -119,3 +119,26 @@ test("outside live messaging nothing is sent and the log carries no recipient or
   expect(lines[0]).toBe('{"message":"message not sent, log-only provider","channel":"email","template":"verifyEmail"}')
   expect(lines.join()).not.toMatch(/ada|hello/i)
 })
+
+test("a footer ends the email in both bodies and the whatsapp text", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier(
+    {
+      ...LIVE,
+      RESEND_API_KEY: "re_test",
+      KAPSO_API_KEY: "k",
+      WHATSAPP_PHONE_NUMBER_ID: "1",
+      WHATSAPP_NOTIFY_TO: "+21620000000",
+    },
+    { fetch: doFetch },
+  )
+  const footer = "Unsubscribe: https://web.test/u/abc"
+
+  await notifier.send({ channel: "email", to: "ada@example.com", template: "test", data: { url: "x" }, footer })
+  await notifier.send({ channel: "whatsapp", template: "test", data: { url: "x" }, footer })
+
+  const body = calls[0]?.body as { html: string; text: string }
+  expect(body.text.endsWith(footer)).toBe(true)
+  expect(body.html).toContain('<a href="https://web.test/u/abc">')
+  expect(JSON.stringify(calls[1]?.body)).toContain(footer)
+})
