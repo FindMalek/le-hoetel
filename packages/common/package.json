@@ -11,6 +11,7 @@
     "./hotel": "./src/hotel.ts",
     "./consent": "./src/consent.ts",
     "./phone": "./src/phone.ts",
+    "./qr": "./src/qr.ts",
     "./demo": "./src/demo.ts"
   },
   "scripts": {

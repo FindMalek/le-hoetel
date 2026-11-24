@@ -1,5 +1,6 @@
 export * from "./consent"
 export * from "./constants"
 export * from "./hotel"
+export * from "./qr"
 export * from "./schemas"
 export * from "./utils"

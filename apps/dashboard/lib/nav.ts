@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon, NotebookPenIcon, SettingsIcon, UsersIcon } from "lucide-react"
+import { LayoutDashboardIcon, NotebookPenIcon, QrCodeIcon, SettingsIcon, UsersIcon } from "lucide-react"
 import type { Route } from "next"
 
 export interface NavItem {
@@ -13,6 +13,7 @@ export const NAV: NavItem[] = [
   { href: "/", label: "Overview", icon: LayoutDashboardIcon },
   { href: "/inbox", label: "Inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "Notes", icon: NotebookPenIcon },
+  { href: "/qr-codes", label: "QR codes", icon: QrCodeIcon },
   { href: "/team", label: "Team", icon: UsersIcon },
   { href: "/users", label: "Users", icon: UsersIcon, admin: true },
   { href: "/audit-log", label: "Audit log", icon: SettingsIcon, admin: true },
