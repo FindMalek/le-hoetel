@@ -120,6 +120,9 @@ catalogs:
     fumadocs-ui:
       specifier: 16.17.8
       version: 16.17.8
+    libphonenumber-js:
+      specifier: 1.13.17
+      version: 1.13.17
     lucide-react:
       specifier: 1.59.0
       version: 1.59.0
@@ -582,6 +585,9 @@ importers:
 
   packages/common:
     dependencies:
+      libphonenumber-js:
+        specifier: 'catalog:'
+        version: 1.13.17
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -5221,6 +5227,9 @@ packages:
 
   leac@0.6.0:
     resolution: {integrity: sha512-y+SqErxb8h7nE/fiEX07jsbuhrpO9lL8eca7/Y1nuWV2moNlXhyd59iDGcRf6moVyDMbmTNzL40SUyrFU/yDpg==}
+
+  libphonenumber-js@1.13.17:
+    resolution: {integrity: sha512-V92dxRHhYTsHF5B6IjR8rtKW6qL7xKuERPFFqZt7XQl8A+NikbwEzjhxGpM+R6JnWjaL7/wokWSdTG/eyYAscQ==}
 
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
@@ -10434,6 +10443,8 @@ snapshots:
   kysely@0.29.6: {}
 
   leac@0.6.0: {}
+
+  libphonenumber-js@1.13.17: {}
 
   lightningcss-android-arm64@1.32.0:
     optional: true

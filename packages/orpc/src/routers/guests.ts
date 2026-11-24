@@ -7,6 +7,7 @@ import {
   guestListSchema,
   guestSchema,
   guestUpdateSchema,
+  guestUpsertResultSchema,
 } from "@le-hoetel/common/schemas"
 import { consentEvents, guests } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
@@ -14,7 +15,7 @@ import { and, count, desc, eq, ilike, or } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
-import { hotelGuest, recordConsent, withConsents } from "../lib/guests"
+import { clearExtras, hotelGuest, recordConsent, upsertGuest, withConsents } from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
 
 const notFound = () => new ORPCError("NOT_FOUND", { message: "Guest not found." })
@@ -61,36 +62,18 @@ export const guestsRouter = {
 
   create: hotelProcedure
     .use(can({ guest: ["create"] }))
-    .route({ method: "POST", path: "/guests", summary: "Add a guest with their consent answers", tags: ["guests"] })
+    .route({
+      method: "POST",
+      path: "/guests",
+      summary: "Add a guest, or merge into the guest with the same phone",
+      tags: ["guests"],
+    })
     .input(guestCreateSchema)
-    .output(guestSchema)
+    .output(guestUpsertResultSchema)
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
-      const { consents, phone, ...fields } = input
-      const at = context.now()
-      const id = await context.db.transaction(async (tx) => {
-        const [taken] = await tx
-          .select({ id: guests.id })
-          .from(guests)
-          .where(and(eq(guests.hotelId, hotelId), eq(guests.phoneE164, phone)))
-        if (taken) throw new ORPCError("CONFLICT", { message: "A guest with this phone already exists." })
-        const [row] = await tx
-          .insert(guests)
-          .values({ ...fields, phoneE164: phone, hotelId })
-          .returning({ id: guests.id })
-        for (const [channel, granted] of Object.entries(consents)) {
-          await recordConsent(tx, {
-            hotelId,
-            guestId: row!.id,
-            channel: channel as keyof typeof consents,
-            granted,
-            source: fields.source,
-            at,
-          })
-        }
-        return row!.id
-      })
-      return loadGuest(context.db, hotelId, id)
+      const { id, merged } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, input, context.now()))
+      return { ...(await loadGuest(context.db, hotelId, id)), merged }
     }),
 
   update: hotelProcedure
@@ -132,10 +115,7 @@ export const guestsRouter = {
       await context.db.transaction(async (tx) => {
         await recordConsent(tx, { hotelId, ...input, at: context.now() })
         if (input.channel === "profile" && !input.granted) {
-          await tx
-            .update(guests)
-            .set({ country: null, city: null, stayCheckIn: null, stayCheckOut: null, nextDestination: null })
-            .where(hotelGuest(hotelId, input.guestId))
+          await clearExtras(tx, hotelId, input.guestId)
         }
       })
       await audit(context, {

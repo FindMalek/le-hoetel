@@ -71,13 +71,55 @@ test("tiers: extra details need the profile consent and go away with it", async 
   await expect(client.guests.update({ id: guest.id, city: "Paris" })).rejects.toMatchObject({ code: "BAD_REQUEST" })
 })
 
-test("one phone is one guest per hotel, and the same phone can be a guest of another hotel", async () => {
+test("one phone is one guest per hotel: a second capture merges, and only a guest can withdraw consent", async () => {
   const one = await hotelAs("phone-one")
   const two = await hotelAs("phone-two")
-  await one.client.guests.create(newGuest)
-  await expect(one.client.guests.create(newGuest)).rejects.toMatchObject({ code: "CONFLICT" })
-  await expect(two.client.guests.create(newGuest)).resolves.toMatchObject({ phoneE164: "+21620123456" })
+  const first = await one.client.guests.create({
+    ...newGuest,
+    phone: "20 123 456",
+    email: null,
+    consents: { email: false, whatsapp: true, profile: false },
+  })
+  expect(first).toMatchObject({ merged: false, phoneE164: "+21620123456" })
+
+  const again = await one.client.guests.create({
+    ...newGuest,
+    name: "Someone else",
+    phone: "0021620123456",
+    source: "csv",
+    consents: { email: true, whatsapp: false, profile: false },
+  })
+  expect(again).toMatchObject({
+    id: first.id,
+    merged: true,
+    name: "Amel Ben Salah",
+    email: "amel@example.test",
+    consents: { email: true, whatsapp: true },
+  })
+
+  const rescan = await one.client.guests.create({
+    ...newGuest,
+    phone: "+216 20 123 456",
+    consents: { email: true, whatsapp: false, profile: false },
+  })
+  expect(rescan.consents.whatsapp).toBe(false)
+  const events = await one.client.guests.consentHistory({ id: first.id })
+  expect(events.filter((event) => event.channel === "whatsapp").map((event) => event.granted)).toEqual([false, true])
+
+  await expect(two.client.guests.create(newGuest)).resolves.toMatchObject({ merged: false })
   expect((await one.client.guests.list({})).total).toBe(1)
+})
+
+test("a landline can't be asked for WhatsApp consent", async () => {
+  const { client } = await hotelAs("landline")
+  await expect(client.guests.create({ ...newGuest, phone: "71 123 456" })).rejects.toThrow()
+  await expect(
+    client.guests.create({
+      ...newGuest,
+      phone: "71 123 456",
+      consents: { email: true, whatsapp: false, profile: false },
+    }),
+  ).resolves.toMatchObject({ phoneE164: "+21671123456" })
 })
 
 test("the database refuses a consent event that points at another hotel's guest", async () => {
