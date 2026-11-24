@@ -13,6 +13,13 @@ Hotels have logos, QR posters and exports that need storage.
 
 One bucket, a folder prefix per hotel, and access always resolved from the hotel id.
 
+## How it works
+
+- Every hotel key starts with `hotels/<hotelId>/` (after the preview prefix `pr-<n>/` on previews). Keys are built only by `hotelPrefix` and `hotelPublicPrefix` in `@le-hoetel/storage`, from the hotel id of the session, never from input.
+- Public files (logos) live in `hotels/<hotelId>/public/`. Everything else under a hotel is private.
+- Logo upload is three calls: `hotel.logo.uploadUrl` (type and size checked, returns a 5 minute presigned PUT), the browser PUTs the file straight to the bucket (the bucket needs a CORS rule allowing PUT from the dashboard origin), then `hotel.logo.set` checks the key is in that hotel's public folder, reads the stored type and size (PNG, JPEG or WebP, 1 MB at most, anything else is deleted) and saves `hotel_settings.logo_key`. `logoKey` can't be set through `hotel.update`.
+- `/files/<key>` is unauthenticated and only redirects for avatars and `hotels/<id>/public/` keys. Another hotel's private prefix is a 404.
+
 ## Why
 
 - Less operations work: one bucket to back up, monitor and secure.

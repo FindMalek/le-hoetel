@@ -1,5 +1,6 @@
 import type { Auth } from "@le-hoetel/auth"
 import { appRouter, createContext, type Services } from "@le-hoetel/orpc"
+import { isPublicKey } from "@le-hoetel/storage"
 import { OpenAPIHandler } from "@orpc/openapi/fetch"
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins"
 import { onError } from "@orpc/server"
@@ -73,7 +74,9 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
     }
     if (pathname.startsWith("/files/")) {
       if (!services.storage) return Response.json({ message: "Storage is not configured." }, { status: 404 })
-      const location = services.storage.url(decodeURIComponent(pathname.slice("/files/".length)))
+      const key = decodeURIComponent(pathname.slice("/files/".length))
+      if (!isPublicKey(services.storage, key)) return Response.json({ message: "Not found." }, { status: 404 })
+      const location = services.storage.url(key)
       return new Response(null, { status: 302, headers: { location, "cache-control": "public, max-age=3000" } })
     }
 

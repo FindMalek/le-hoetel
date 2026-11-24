@@ -3,7 +3,7 @@ import { adminRouter, meRouter } from "./account"
 import { auditRouter } from "./audit"
 import { feedbackRouter } from "./feedback"
 import { guestsRouter } from "./guests"
-import { adminHotelsRouter, hotelRouter } from "./hotel"
+import { adminHotelsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
 import { inboxAdminRouter, inboxRouter } from "./inbox"
 import { jobsRouter } from "./jobs"
 import { notesRouter } from "./notes"
@@ -28,7 +28,7 @@ const admin = {
 export const appRouter = {
   public: publicRouter,
   feedback: feedbackRouter,
-  hotel: hotelRouter,
+  hotel: { ...hotelRouter, logo: hotelLogoRouter },
   guests: guestsRouter,
   me: meRouter,
   notes,
