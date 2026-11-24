@@ -140,3 +140,14 @@ export const consentEventSchema = z.object({
 })
 
 export type Guest = z.infer<typeof guestSchema>
+
+export const guestExportSchema = z.object({
+  exportedAt: z.date(),
+  guest: guestSchema,
+  consentEvents: z.array(consentEventSchema),
+})
+
+export const hotelGuestsExportSchema = z.object({
+  exportedAt: z.date(),
+  guests: z.array(guestExportSchema.omit({ exportedAt: true })),
+})
