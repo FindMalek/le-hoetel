@@ -49,6 +49,7 @@ const schema = z.object({
 
   GLITCHTIP_DSN: optional,
 
+  MESSAGING_LIVE: z.enum(["true", "false"]).default("false"),
   RESEND_API_KEY: optional,
   EMAIL_FROM: z.string().default("Le Hoetel <onboarding@resend.dev>"),
   TELEGRAM_BOT_TOKEN: optional,
