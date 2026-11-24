@@ -1,0 +1,11 @@
+{
+  "locale": {
+    "source": "en",
+    "targets": ["fr", "ar"]
+  },
+  "files": {
+    "json": {
+      "include": ["packages/i18n/src/messages/[locale].json"]
+    }
+  }
+}

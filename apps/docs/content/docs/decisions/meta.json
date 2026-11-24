@@ -11,6 +11,7 @@
     "free-pilot-then-paid",
     "hotel-is-organization",
     "guests-are-not-auth-users",
-    "consent-log-append-only"
+    "consent-log-append-only",
+    "languine-per-release"
   ]
 }
