@@ -752,6 +752,9 @@ importers:
       '@kapso/whatsapp-cloud-api':
         specifier: 'catalog:'
         version: 0.4.0
+      '@le-hoetel/common':
+        specifier: workspace:*
+        version: link:../common
       '@le-hoetel/i18n':
         specifier: workspace:*
         version: link:../i18n

@@ -158,5 +158,27 @@
     "colWhere": "أين",
     "colSpot": "المكان",
     "colGuests": "الضيوف"
+  },
+  "messages": {
+    "title": "الرسائل",
+    "description": "كل رسالة أُرسلت إلى نزلائك ونتيجتها. لا نعرض النص ولا بيانات الاتصال.",
+    "empty": "لا توجد رسائل بعد.",
+    "guest": "النزيل",
+    "channel": "القناة",
+    "template": "الرسالة",
+    "language": "اللغة",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "channels": {
+      "email": "البريد الإلكتروني",
+      "whatsapp": "واتساب"
+    },
+    "statuses": {
+      "queued": "في الانتظار",
+      "sent": "أُرسلت",
+      "delivered": "وصلت",
+      "failed": "فشلت",
+      "skipped_no_consent": "بدون موافقة"
+    }
   }
 }
