@@ -1,0 +1,62 @@
+name: staging
+
+# Deploys main to the staging compose service on Dokploy once ci is green on main.
+# Needs repo variables DOKPLOY_URL and DOKPLOY_STAGING_COMPOSE_ID and secret DOKPLOY_TOKEN.
+# Optional: variable STAGING_API_URL (public api url, checked at /health after the deploy).
+# Without them the job exits green with a note in the summary.
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: dokploy staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    env:
+      DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+      DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
+      COMPOSE_ID: ${{ vars.DOKPLOY_STAGING_COMPOSE_ID }}
+      STAGING_API_URL: ${{ vars.STAGING_API_URL }}
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - name: skip without secrets
+        id: gate
+        run: |
+          if [ -z "$DOKPLOY_URL" ] || [ -z "$DOKPLOY_TOKEN" ] || [ -z "$COMPOSE_ID" ]; then
+            echo "staging deploy skipped: set DOKPLOY_URL, DOKPLOY_STAGING_COMPOSE_ID and the DOKPLOY_TOKEN secret" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: deploy
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          curl -fsS -X POST "${DOKPLOY_URL%/}/api/compose.deploy" \
+            -H "x-api-key: $DOKPLOY_TOKEN" -H "content-type: application/json" \
+            -d "{\"composeId\":\"$COMPOSE_ID\",\"title\":\"main ${SHA::7}\"}" > /dev/null
+          echo "staging deploy started for ${SHA::7}" >> "$GITHUB_STEP_SUMMARY"
+      - name: wait for health
+        if: steps.gate.outputs.run == 'true' && env.STAGING_API_URL != ''
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS "${STAGING_API_URL%/}/health" > /dev/null; then
+              echo "staging api healthy" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "staging api not healthy after 20 minutes" | tee -a "$GITHUB_STEP_SUMMARY"
+          exit 1

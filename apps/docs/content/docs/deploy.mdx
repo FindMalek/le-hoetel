@@ -29,3 +29,23 @@ Next apps are built with `output: "standalone"` and ship a healthcheck. Pass the
 ## Dokploy
 
 Create a project with a postgres database, add one application per app with build type Dockerfile, path `apps/<app>/Dockerfile` and `.` as the context, set the env keys, and attach your domains. Use the api service's internal address for `API_URL`.
+
+## Staging from main
+
+`.github/workflows/staging.yml` deploys `main` to a Dokploy compose service every time `ci` goes green on main. It does nothing, and stays green, until these are set in the repo settings:
+
+| Where | Name | What it is |
+| --- | --- | --- |
+| variable | `DOKPLOY_URL` | base url of Dokploy |
+| variable | `DOKPLOY_STAGING_COMPOSE_ID` | id of the staging compose service |
+| secret | `DOKPLOY_TOKEN` | Dokploy api key |
+| variable | `STAGING_API_URL` | optional, the job waits for its `/health` |
+
+Setup, once, in Dokploy:
+
+1. create a Compose service from this repo on `main`, compose path `./docker-compose.yml`, auto deploy off (the workflow deploys)
+2. set the env in its Environment tab: `BETTER_AUTH_SECRET`, `POSTGRES_PASSWORD`, `DEPLOY_ENV=staging`, `WEB_URL`, `DASHBOARD_URL`, `API_PUBLIC_URL`, `DOCS_URL`, and the observability keys
+3. attach the domains to the `web`, `dashboard`, `api` and `docs` services
+4. copy the service id into `DOKPLOY_STAGING_COMPOSE_ID`
+
+Staging never sends real messages: `MESSAGING_LIVE` stays `false` there, see [environment](/docs/environment). Run the workflow by hand from the Actions tab with `workflow_dispatch`.
