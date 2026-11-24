@@ -1,0 +1,38 @@
+---
+title: Languages and RTL
+description: English, French and Arabic, and how right to left works across the apps.
+---
+
+`@le-hoetel/i18n` owns the languages. `en` is the default, `fr` and `ar` are translated. Arabic is right to left.
+
+## Where the language comes from
+
+| App | Source |
+| --- | --- |
+| `web` | the url: `/` is English, `/fr` is French, `/ar` is Arabic. The proxy rewrites the prefix and sets `x-locale` |
+| `dashboard` | the language switcher cookie, else the browser's `Accept-Language` |
+| `docs` | English only for now. Fumadocs i18n needs a translated copy of every page, so it waits until the product copy is stable |
+
+## Direction and metadata
+
+Use the helpers from `@le-hoetel/i18n` (or `@le-hoetel/i18n/config` when you only need the pure functions, like in emails):
+
+- `htmlAttributes(locale)` returns `{ lang, dir }` for `<html>` and email layouts
+- `getDirection(locale)` is `"ltr"` or `"rtl"`
+- `LOCALE_META[locale]` has `dir`, `hreflang` and `ogLocale`
+- `alternateUrls(origin, pathname)` is the hreflang map, with `x-default`. The web layout writes it into every page and the sitemap
+
+Email layouts take a `locale` prop and set `lang` and `dir` from it. Guest pages must use the same helpers.
+
+## Missing keys
+
+`getMessages(locale)` merges the locale over `en`, so a key that is not translated yet shows the English text instead of an error. English is the source of truth and its keys type `t("...")`.
+
+## Writing RTL safe css
+
+- use logical classes: `ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`, `border-s`. Never `ml-`, `pr-`, `left-`, `text-left`
+- icons that point somewhere (arrows, chevrons) get `rtl:rotate-180`
+- the dashboard sidebar moves to the right in Arabic
+- translating a string: add the key to `messages/en.json`, then `fr.json` and `ar.json`
+
+The Arabic font is part of the design tokens and fonts work, not of this module.

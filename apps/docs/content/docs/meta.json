@@ -24,6 +24,7 @@
     "setup",
     "environment",
     "structure",
+    "i18n",
     "design-system",
     "component-patterns",
     "hotels",

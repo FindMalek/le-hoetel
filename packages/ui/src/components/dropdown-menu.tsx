@@ -118,7 +118,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ms-auto" />
+      <ChevronRightIcon className="ms-auto rtl:rotate-180" />
     </MenuPrimitive.SubmenuTrigger>
   )
 }
