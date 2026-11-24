@@ -29,6 +29,13 @@
       "when": 1793473583835,
       "tag": "0007_inbox",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795557300062,
+      "tag": "0008_pink_anthem",
+      "breakpoints": true
     }
   ]
 }
