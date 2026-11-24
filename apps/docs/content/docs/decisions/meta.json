@@ -13,6 +13,7 @@
     "guests-are-not-auth-users",
     "consent-log-append-only",
     "guest-delete-is-a-hard-delete",
+    "unsubscribe-links-are-signed-tokens",
     "languine-per-release"
   ]
 }
