@@ -1,9 +1,10 @@
 import { consentWording } from "@le-hoetel/common/consent"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
 import { CAPTURE_SOURCES } from "@le-hoetel/common/schemas"
-import { getDirection, getMessages, localizedPath } from "@le-hoetel/i18n"
+import { getDirection, localizedPath } from "@le-hoetel/i18n"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import type { CSSProperties } from "react"
 import { CaptureForm } from "@/components/capture-form"
 import { brandColor } from "@/lib/branding"
@@ -25,7 +26,7 @@ export default async function CapturePage({ params, searchParams }: Props) {
   const location = (query.loc ?? "").slice(0, 40)
   const primary = brandColor(hotel.primaryColor)
   const accent = brandColor(hotel.accentColor)
-  const t = getMessages(language).capture
+  const t = await getTranslations({ locale: language, namespace: "capture" })
   const withHotel = (text: string) => text.replaceAll("{hotel}", hotel.displayName)
   const switchTo = (to: HotelLanguage) => {
     const next = new URLSearchParams({ src: source, lang: to })
@@ -48,7 +49,7 @@ export default async function CapturePage({ params, searchParams }: Props) {
       }
     >
       <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
-        <nav aria-label={t.languageLabel} className="flex justify-end gap-3 text-sm">
+        <nav aria-label={t("languageLabel")} className="flex justify-end gap-3 text-sm">
           {HOTEL_LANGUAGES.map((to) => (
             <a
               key={to}
@@ -62,12 +63,12 @@ export default async function CapturePage({ params, searchParams }: Props) {
           ))}
         </nav>
         <header>
-          <h1 className="font-heading font-semibold text-2xl">{withHotel(t.welcome)}</h1>
-          <p className="mt-2 text-muted-foreground">{t.intro}</p>
+          <h1 className="font-heading font-semibold text-2xl">{withHotel(t("welcome"))}</h1>
+          <p className="mt-2 text-muted-foreground">{t("intro")}</p>
         </header>
         <section className="border bg-accent p-4 text-accent-foreground">
-          <h2 className="font-medium">{t.perkTitle}</h2>
-          <p className="mt-1 text-sm">{withHotel(t.perkBody)}</p>
+          <h2 className="font-medium">{t("perkTitle")}</h2>
+          <p className="mt-1 text-sm">{withHotel(t("perkBody"))}</p>
         </section>
         <CaptureForm
           slug={hotel.slug}
@@ -75,15 +76,28 @@ export default async function CapturePage({ params, searchParams }: Props) {
           location={location}
           language={language}
           copy={{
-            ...t,
-            thanksBody: withHotel(t.thanksBody),
+            name: t("name"),
+            phone: t("phone"),
+            dialCode: t("dialCode"),
+            language: t("language"),
+            birthday: t("birthday"),
+            email: t("email"),
+            consentTitle: t("consentTitle"),
+            consentHint: t("consentHint"),
+            emailNeeded: t("emailNeeded"),
+            submit: t("submit"),
+            sending: t("sending"),
+            thanksTitle: t("thanksTitle"),
+            errorInvalid: t("errorInvalid"),
+            errorTooMany: t("errorTooMany"),
+            thanksBody: withHotel(t("thanksBody")),
             whatsappWording: consentWording("whatsapp", language, hotel.displayName),
             emailWording: consentWording("email", language, hotel.displayName),
           }}
         />
         <footer className="text-center text-muted-foreground text-xs">
           <a href={localizedPath(language, "/privacy")} className="underline">
-            {t.privacy}
+            {t("privacy")}
           </a>
         </footer>
       </main>
