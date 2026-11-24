@@ -108,7 +108,7 @@
   "capture": {
     "welcome": "Welcome. Join in ten seconds and we will take care of you.",
     "perkTitle": "Welcome gift",
-    "perkBody": "A small gift from {hotel} is waiting for you. Show this page at the front desk.",
+    "perkBody": "A small gift from {hotel} is waiting for you at the front desk.",
     "name": "Your name",
     "nameError": "Add your name.",
     "phone": "Phone number",
@@ -128,7 +128,7 @@
     "submitHint": "No message is sent unless you switch one on.",
     "thanksTitle": "You are in, {name}",
     "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
-    "thanksPerk": "Show this at the front desk to get your gift.",
+    "thanksPerk": "Show this screen at the front desk to get it.",
     "errorInvalid": "Please check your name and phone number.",
     "errorTooMany": "Too many tries. Please wait a moment and try again.",
     "privacy": "Privacy",

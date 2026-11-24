@@ -68,8 +68,10 @@ function Check() {
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray="22"
-          style={{ strokeDashoffset: drawn ? 0 : 22 }}
-          className="transition-[stroke-dashoffset] delay-150 duration-400 ease-out motion-reduce:transition-none"
+          className={cn(
+            "transition-[stroke-dashoffset] delay-150 duration-400 ease-out motion-reduce:transition-none",
+            drawn ? "[stroke-dashoffset:0]" : "[stroke-dashoffset:22]",
+          )}
         />
       </svg>
     </span>
@@ -229,7 +231,7 @@ export function CaptureForm(props: {
           <legend className="font-medium text-sm">{copy.consentTitle}</legend>
           <p className="text-muted-foreground text-sm leading-relaxed">{copy.consentHint}</p>
           <ConsentToggle name="whatsapp" title={copy.whatsappTitle} wording={copy.whatsappWording} />
-          <Toggle
+          <ConsentToggle
             name="emailConsent"
             title={copy.emailTitle}
             wording={copy.emailWording}
@@ -290,7 +292,7 @@ export function CaptureForm(props: {
 
         <div
           aria-live="polite"
-          className="sticky bottom-0 z-10 -mx-5 grid gap-2 border-t bg-background/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm"
+          className="sticky bottom-0 z-10 -mx-5 grid sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none gap-2 border-t bg-background/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm"
         >
           {status === "invalid" || status === "tooMany" ? (
             <p role="alert" className="flex items-center gap-1.5 text-destructive text-sm">

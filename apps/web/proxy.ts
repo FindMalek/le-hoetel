@@ -14,4 +14,5 @@ export function proxy(request: NextRequest) {
   return localeProxy(request)
 }
 
-export const config = { matcher: ["/((?!api|_next|.*\\..*).*)"] }
+/** `/u/` carries a signed token with a dot in it, which the generic matcher would read as a file. */
+export const config = { matcher: ["/((?!api|_next|.*\\..*).*)", "/u/:path*"] }

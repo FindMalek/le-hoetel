@@ -14,7 +14,7 @@ export function ConsentToggle({
         className,
       )}
     >
-      <input type="checkbox" role="switch" className="peer sr-only" {...input} />
+      <input type="checkbox" className="peer sr-only" {...input} />
       <span className="order-1 grid flex-1 gap-1">
         <span className="font-medium">{title}</span>
         <span className="text-muted-foreground text-xs leading-relaxed rtl:text-[0.8125rem]">{wording}</span>

@@ -20,7 +20,7 @@ export function GuestHero({
   children?: React.ReactNode
 }) {
   return (
-    <header className="relative isolate overflow-hidden border-b bg-primary/5 px-5 pt-16 pb-8">
+    <header className="relative isolate overflow-hidden border-b bg-primary/5 px-5 pt-20 pb-8">
       <Zellige className="-z-10 text-primary/20" />
       {children}
       <div className="mx-auto flex max-w-md flex-col items-center gap-4 text-center">

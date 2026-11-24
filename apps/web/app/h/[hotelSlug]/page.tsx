@@ -8,7 +8,7 @@ import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { CaptureForm } from "@/components/capture-form"
 import { GuestHero } from "@/components/guest-hero"
-import { brandStyle } from "@/lib/branding"
+import { guestBrand } from "@/lib/branding"
 import { getPublicHotel } from "@/lib/capture"
 
 type Props = { params: Promise<{ hotelSlug: string }>; searchParams: Promise<Record<string, string | undefined>> }
@@ -33,13 +33,13 @@ export default async function CapturePage({ params, searchParams }: Props) {
   }
 
   const perk = (
-    <section className="flex items-start gap-4 rounded-xl border border-accent-foreground/15 bg-accent p-4 text-accent-foreground">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-foreground/10">
+    <section className="flex items-start gap-4 rounded-xl border border-brand-accent bg-brand-accent/15 p-4">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-accent text-brand-accent-foreground">
         <GiftIcon aria-hidden className="size-5" />
       </span>
       <div className="grid gap-1 text-start">
         <h2 className="font-semibold">{t("perkTitle")}</h2>
-        <p className="text-sm leading-relaxed opacity-85 rtl:leading-7">
+        <p className="text-muted-foreground text-sm leading-relaxed rtl:leading-7">
           {t("perkBody", { hotel: hotel.displayName })}
         </p>
       </div>
@@ -47,7 +47,13 @@ export default async function CapturePage({ params, searchParams }: Props) {
   )
 
   return (
-    <div lang={language} dir={getDirection(language)} style={brandStyle(hotel)} className="min-h-dvh bg-background">
+    <div
+      lang={language}
+      dir={getDirection(language)}
+      // oxlint-disable-next-line shadcn/no-inline-styles
+      style={guestBrand(hotel)}
+      className="min-h-dvh bg-background"
+    >
       <GuestHero hotel={hotel} line={t("welcome")}>
         <nav
           aria-label={t("languageLabel")}

@@ -5,7 +5,7 @@ import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"
 import { GuestHero } from "@/components/guest-hero"
 import { getUnsubscribePage } from "@/lib/api"
-import { brandStyle } from "@/lib/branding"
+import { guestBrand } from "@/lib/branding"
 import { UnsubscribeForm } from "./unsubscribe-form"
 
 export const metadata: Metadata = {
@@ -32,7 +32,13 @@ export default async function Page({ params }: PageProps<"/u/[token]">) {
   const t = await getTranslations({ locale: page.language, namespace: "unsubscribe" })
   const hotel = page.hotel.displayName
   return (
-    <div lang={page.language} dir={getDirection(page.language)} style={brandStyle(page.hotel)} className="min-h-dvh">
+    <div
+      lang={page.language}
+      dir={getDirection(page.language)}
+      // oxlint-disable-next-line shadcn/no-inline-styles
+      style={guestBrand(page.hotel)}
+      className="min-h-dvh"
+    >
       <GuestHero hotel={page.hotel} />
       <main className="mx-auto grid w-full max-w-md gap-6 px-5 py-8">
         <div className="grid gap-2">

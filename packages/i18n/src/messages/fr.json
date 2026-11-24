@@ -108,7 +108,7 @@
   "capture": {
     "welcome": "Bienvenue. Dix secondes pour vous inscrire, et nous prenons soin de vous.",
     "perkTitle": "Cadeau de bienvenue",
-    "perkBody": "Un petit cadeau de {hotel} vous attend. Montrez cette page à la réception.",
+    "perkBody": "Un petit cadeau de {hotel} vous attend à la réception.",
     "name": "Votre nom",
     "nameError": "Ajoutez votre nom.",
     "phone": "Numéro de téléphone",
@@ -128,7 +128,7 @@
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
     "thanksTitle": "C'est fait, {name}",
     "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
-    "thanksPerk": "Montrez ceci à la réception pour recevoir votre cadeau.",
+    "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
     "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
     "errorTooMany": "Trop d'essais. Patientez un instant puis réessayez.",
     "privacy": "Confidentialité",

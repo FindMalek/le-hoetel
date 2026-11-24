@@ -31,11 +31,11 @@ Every extra question lowers the number of guests who finish the form, and every 
 - Consent is logged per channel: email, WhatsApp, and later SMS.
 - Each entry records the timestamp, the source, and the wording version.
 - The log is append only. A change of mind is a new entry, never an edit. See [consent log is append only](/docs/decisions/consent-log-append-only).
-- WhatsApp and email have separate checkboxes on the capture page.
+- WhatsApp and email have separate toggles on the capture page, both off by default, each with the exact logged wording under it.
 - Every message carries an unsubscribe link or STOP. Messaging builds them with `packages/common/src/unsubscribe.ts`: `signUnsubscribeToken`, `unsubscribePageUrl`, `listUnsubscribeHeaders` (RFC 8058 one tap, for email) and `unsubscribeFooter` (the line every message ends with). The link opens `/u/<token>` on the web app (en, fr, ar, the hotel's branding): one switch per channel and one tap to stop everything. Each change is a consent event with source `unsubscribe_link`. Email clients that show their own button POST to `/unsubscribe/<token>` on the api.
 - An inbound WhatsApp message is checked with `isStopKeyword` (the whole message must be STOP, arrêt, توقف and the like). The webhook then calls `applyStopReply`, which withdraws WhatsApp consent with source `stop_reply`. See [unsubscribe links are signed tokens](/docs/decisions/unsubscribe-links-are-signed-tokens).
 - The consent text lives in one place so it can change after legal review: `packages/common/src/consent.ts` (`CONSENT_WORDING` in en, fr and ar, and `CONSENT_WORDING_VERSION`, bumped on every change).
-- `/privacy` and `/terms` (en, fr, ar) are placeholders in `apps/web`; the privacy page prints the live `CONSENT_WORDING`, so it can never drift from what the capture page shows.
+- `/privacy` and `/terms` (en, fr, ar) are short plain-language drafts in `apps/web`, not yet reviewed by a lawyer; the privacy page prints the live `CONSENT_WORDING`, so it can never drift from what the capture page shows.
 
 ### Changing the wording
 
@@ -45,8 +45,11 @@ Every extra question lowers the number of guests who finish the form, and every 
 
 ### The QR capture page
 
+- Guest pages (`/h/...` and `/u/<token>`) ship none of the site chrome and almost no client code: native radio chips, native toggles, a native `<details>` for the optional part. One small client component holds the form. The hero is the hotel's logo (or its initials) and name over a quiet zellige pattern in its primary color; the perk card uses its accent color. A language switcher (fr, ar, en) sits in the corner.
+- Fields: name, phone (country selector, +216 by default), message language, two consent toggles, then an "optional" section with birthday and email. The submit button is sticky on phones. Name and phone are checked on blur, so a wrong phone number rarely reaches the api.
+- Success shows at once (animated check, the perk, what to do at the front desk) while the request is sent. If the api refuses (invalid, rate limit) the form comes back with the guest's answers and an error.
 - Route `apps/web/app/h/[hotelSlug]?src=room|table|desk&loc=<spot>&lang=en|fr|ar`. `src` becomes the guest source (`qr_room`, `qr_table`, `qr_front_desk`), `loc` is stored as `guests.capture_location`.
-- Branding comes from `hotel_settings` through `public.hotel`, which returns only the display name, two colors, default language and slug. Everything else stays behind a session.
+- Branding comes from `hotel_settings` through `public.hotel`, which returns only the display name, two colors, logo url, default language and slug. Everything else stays behind a session.
 - `public.capture` is the one public write. It is scoped by the hotel slug, always sets `profile` consent to false, and goes through the same `upsertGuest` as staff and CSV, so a known phone merges and every answer lands in the consent log with the wording version.
 - The page loads in the hotel's default language with a link switcher (no JS needed), is `noindex`, and skips the site chrome (feedback button, consent banner, analytics) to stay small on a weak connection.
 - Abuse protection on `public.capture`: 10 sign-ups per ip per 10 minutes and 200 per hotel per hour (429 over that), a hidden `website` honeypot, a minimum fill time of 3 seconds (`renderedAt` of the page render), and names that are links. A bot caught by the honeypot, the timer or a link name gets a normal "ok" and nothing is stored. Only the ip and the hotel id are used as keys, never a phone, email or name. The web app forwards the guest's `x-forwarded-for` so the limit is per guest, not per web server. The ip is the first hop of that header, so the api must sit behind a proxy that sets it (Dokploy, Vercel, Cloudflare do). A client that sends its own header can pick a fresh ip each time, so the per-hotel cap is the real ceiling.

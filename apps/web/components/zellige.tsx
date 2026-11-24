@@ -8,8 +8,10 @@ export function Zellige({ className }: { className?: string }) {
     <svg
       aria-hidden
       focusable="false"
-      className={cn("pointer-events-none absolute inset-0 size-full", className)}
-      style={{ maskImage: "linear-gradient(to bottom, #000 30%, transparent)" }}
+      className={cn(
+        "pointer-events-none absolute inset-0 size-full mask-[linear-gradient(to_bottom,#000_30%,transparent)]",
+        className,
+      )}
     >
       <defs>
         <pattern id={id} width="48" height="48" patternUnits="userSpaceOnUse">

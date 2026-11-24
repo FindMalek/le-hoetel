@@ -5,14 +5,16 @@ import { ArrowLeftIcon } from "lucide-react"
 import { getLocale, getTranslations } from "next-intl/server"
 import { SITE } from "@/lib/site"
 
-const SECTIONS = {
-  privacy: ["collect", "use", "consent", "rights", "keep"],
-  terms: ["service", "duties", "pilot", "data", "end"],
-}
+const PRIVACY = ["collect", "use", "consent", "rights", "keep"] as const
+const TERMS = ["service", "duties", "pilot", "data", "end"] as const
 
 export async function LegalPage({ page, withConsent }: { page: "privacy" | "terms"; withConsent?: boolean }) {
   const [t, locale] = await Promise.all([getTranslations("legal"), getLocale()])
   const language = HOTEL_LANGUAGES.find((l) => l === locale) ?? "en"
+  const sections =
+    page === "privacy"
+      ? PRIVACY.map((id) => ({ id, title: t(`privacy.sections.${id}.title`), body: t(`privacy.sections.${id}.body`) }))
+      : TERMS.map((id) => ({ id, title: t(`terms.sections.${id}.title`), body: t(`terms.sections.${id}.body`) }))
   return (
     <>
       <main className="mx-auto w-full max-w-2xl flex-1 px-5 pt-8 pb-16">
@@ -29,10 +31,10 @@ export async function LegalPage({ page, withConsent }: { page: "privacy" | "term
           <p className="max-w-[65ch] text-lg text-muted-foreground leading-relaxed">{t(`${page}.intro`)}</p>
         </header>
         <div className="divide-y">
-          {SECTIONS[page].map((id) => (
+          {sections.map(({ id, title, body }) => (
             <section key={id} className="grid gap-2 py-6 sm:grid-cols-[11rem_1fr] sm:gap-8">
-              <h2 className="font-semibold text-balance">{t(`${page}.sections.${id}.title`)}</h2>
-              <p className="max-w-[65ch] text-muted-foreground leading-7">{t(`${page}.sections.${id}.body`)}</p>
+              <h2 className="font-semibold text-balance">{title}</h2>
+              <p className="max-w-[65ch] text-muted-foreground leading-7">{body}</p>
             </section>
           ))}
         </div>
