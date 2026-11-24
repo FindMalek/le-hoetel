@@ -142,3 +142,25 @@ test("a footer ends the email in both bodies and the whatsapp text", async () =>
   expect(body.html).toContain('<a href="https://web.test/u/abc">')
   expect(JSON.stringify(calls[1]?.body)).toContain(footer)
 })
+
+test("a rendered hotel email goes out from the hotel's name with reply-to and list headers", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier(
+    { ...LIVE, RESEND_API_KEY: "re_test", EMAIL_FROM: "Le Hoetel <hello@example.com>" },
+    { fetch: doFetch },
+  )
+
+  await notifier.sendEmail({
+    to: "ada@example.com",
+    email: { subject: "Hi", html: "<p>Hi</p>", text: "Hi" },
+    fromName: 'Dar "Amel" <Hotel>',
+    replyTo: "desk@dar-amel.test",
+    headers: { "List-Unsubscribe": "<https://api.test/unsubscribe/t>" },
+  })
+
+  expect(calls[0]?.body).toMatchObject({
+    from: '"Dar Amel Hotel" <hello@example.com>',
+    reply_to: ["desk@dar-amel.test"],
+    headers: { "List-Unsubscribe": "<https://api.test/unsubscribe/t>" },
+  })
+})
