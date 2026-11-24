@@ -1,0 +1,1 @@
+{ "extends": "@le-hoetel/config/bun.json", "include": ["src"] }

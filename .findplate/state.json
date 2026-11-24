@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "cliVersion": "0.1.0",
+  "templateVersion": "0.1.0",
+  "answers": {
+    "name": "le-hoetel",
+    "pitch": "Loyalty and guest relationships for hotels in Tunisia",
+    "preset": "monochrome",
+    "profile": "custom",
+    "modules": [
+      "i18n",
+      "docs",
+      "storage",
+      "rate-limit",
+      "orgs",
+      "audit-log",
+      "compliance",
+      "feedback",
+      "inbox",
+      "jobs",
+      "webhooks",
+      "notification",
+      "logger",
+      "e2e",
+      "openobserve",
+      "glitchtip",
+      "umami",
+      "ai",
+      "status"
+    ],
+    "postgresPort": 5432,
+    "adminEmail": "admin@le-hoetel.local"
+  },
+  "done": [
+    "generate",
+    "agents",
+    "skills",
+    "install",
+    "format"
+  ]
+}

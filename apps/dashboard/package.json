@@ -1,0 +1,44 @@
+{
+  "name": "dashboard",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3002",
+    "build": "next build",
+    "start": "next start --port 3002",
+    "check-types": "next typegen && tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@le-hoetel/common": "workspace:*",
+    "@le-hoetel/compliance": "workspace:*",
+    "@le-hoetel/env": "workspace:*",
+    "@le-hoetel/logger": "workspace:*",
+    "@le-hoetel/i18n": "workspace:*",
+    "@le-hoetel/orpc": "workspace:*",
+    "@le-hoetel/ui": "workspace:*",
+    "@next/env": "catalog:",
+    "@sentry/nextjs": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "lucide-react": "catalog:",
+    "next": "catalog:",
+    "next-intl": "catalog:",
+    "next-themes": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "server-only": "catalog:",
+    "@le-hoetel/auth": "workspace:*",
+    "sonner": "catalog:",
+    "@orpc/tanstack-query": "catalog:"
+  },
+  "devDependencies": {
+    "@le-hoetel/config": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
+  }
+}

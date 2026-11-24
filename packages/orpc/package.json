@@ -1,0 +1,44 @@
+{
+  "name": "@le-hoetel/orpc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./errors": "./src/errors.ts",
+    "./flags": "./src/flags.tsx",
+    "./react": "./src/react.tsx",
+    "./server": "./src/server-client.ts",
+    "./proxy": "./src/proxy.ts",
+    "./testing": "./src/testing.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@le-hoetel/auth": "workspace:*",
+    "@le-hoetel/common": "workspace:*",
+    "@le-hoetel/db": "workspace:*",
+    "@orpc/client": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/tanstack-query": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:",
+    "@le-hoetel/jobs": "workspace:*",
+    "@le-hoetel/notification": "workspace:*",
+    "@le-hoetel/storage": "workspace:*",
+    "ai": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@le-hoetel/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

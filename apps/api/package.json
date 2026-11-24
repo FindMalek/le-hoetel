@@ -1,0 +1,37 @@
+{
+  "name": "api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch --env-file=../../.env src/index.ts",
+    "start": "bun src/index.ts",
+    "check-types": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@le-hoetel/ai": "workspace:*",
+    "@le-hoetel/auth": "workspace:*",
+    "@le-hoetel/db": "workspace:*",
+    "@le-hoetel/env": "workspace:*",
+    "@le-hoetel/logger": "workspace:*",
+    "@le-hoetel/jobs": "workspace:*",
+    "@le-hoetel/notification": "workspace:*",
+    "@le-hoetel/orpc": "workspace:*",
+    "@le-hoetel/storage": "workspace:*",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@orpc/openapi": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/zod": "catalog:",
+    "@sentry/bun": "catalog:",
+    "ai": "catalog:",
+    "drizzle-orm": "catalog:"
+  },
+  "devDependencies": {
+    "@le-hoetel/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  }
+}

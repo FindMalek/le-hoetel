@@ -1,0 +1,29 @@
+{
+  "name": "@le-hoetel/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./orgs": "./src/orgs.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "test": "bun test",
+    "auth:schema": "pnpm dlx auth@1.7.10 generate --config auth.config.ts --output ../db/src/schema/auth.ts -y"
+  },
+  "dependencies": {
+    "@le-hoetel/db": "workspace:*",
+    "better-auth": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@le-hoetel/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  }
+}
