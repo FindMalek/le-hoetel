@@ -409,6 +409,9 @@ importers:
 
   apps/e2e:
     dependencies:
+      '@le-hoetel/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       postgres:
         specifier: 'catalog:'
         version: 4.0.0
