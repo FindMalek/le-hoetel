@@ -3,6 +3,156 @@
     "label": "Langue",
     "description": "La langue de cette application."
   },
+  "shell": {
+    "skip": "Aller au contenu",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher ou aller à…",
+    "noResults": "Aucun résultat.",
+    "goTo": "Aller à",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "language": "Langue",
+    "account": "Compte",
+    "signOut": "Se déconnecter",
+    "more": "Plus",
+    "notifications": "Notifications",
+    "unread": "{count} notifications non lues",
+    "mainNav": "Navigation principale",
+    "tabs": "Navigation rapide",
+    "appearance": "Apparence et langue",
+    "loading": "Chargement…"
+  },
+  "nav": {
+    "overview": "Accueil",
+    "guests": "Clients",
+    "inbox": "Boîte de réception",
+    "hotel": "Hôtel",
+    "team": "Équipe",
+    "data": "Données clients",
+    "hotels": "Hôtels",
+    "users": "Utilisateurs",
+    "auditLog": "Journal d'audit",
+    "settings": "Paramètres",
+    "admin": "Plateforme"
+  },
+  "home": {
+    "greeting": "Bonjour {name}",
+    "hotelDescription": "Voici où en est {hotel}.",
+    "adminDescription": "Tous les hôtels de la plateforme en un coup d'œil.",
+    "guests": "Clients",
+    "guestsHint": "ont laissé leurs coordonnées",
+    "hotels": "Hôtels",
+    "needAttention": "À surveiller",
+    "attentionHint": "calmes ou sans propriétaire",
+    "latest": "Derniers clients",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "language": "Langue",
+    "added": "Ajouté",
+    "emptyTitle": "Pas encore de clients",
+    "emptyBody": "Mettez votre QR code à la réception ou sur les tables, les clients apparaîtront ici.",
+    "captureTitle": "Votre page d'inscription clients",
+    "captureBody": "Vos clients l'ouvrent depuis votre QR code. Vous pouvez aussi la leur envoyer.",
+    "copy": "Copier le lien",
+    "copied": "Lien copié.",
+    "open": "Ouvrir la page",
+    "hotelColumn": "Hôtel",
+    "healthColumn": "État",
+    "tableCaption": "Derniers clients",
+    "hotelsCaption": "Hôtels",
+    "hotelsAction": "Gérer les hôtels",
+    "languages": {
+      "en": "Anglais",
+      "fr": "Français",
+      "ar": "Arabe"
+    },
+    "noHotelsTitle": "Pas encore d'hôtel",
+    "noHotelsBody": "Créez le premier hôtel et invitez son propriétaire. Il verra ses clients ici.",
+    "noAccessTitle": "Vous ne faites pas encore partie d'un hôtel",
+    "noAccessBody": "Demandez à votre responsable de vous inviter. L'invitation arrive par e-mail, ouvrez-la pour rejoindre l'hôtel."
+  },
+  "auth": {
+    "brandTitle": "Connaissez vos clients. Donnez-leur envie de revenir.",
+    "brandBody": "Recueillez les coordonnées avec leur accord, retenez leurs préférences et faites-les revenir dans votre hôtel.",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "or": "ou",
+    "github": "Continuer avec GitHub",
+    "back": "Retour à la connexion",
+    "signIn": {
+      "title": "Bon retour",
+      "description": "Connectez-vous pour suivre vos clients.",
+      "submit": "Se connecter",
+      "forgot": "Mot de passe oublié ?",
+      "noAccount": "Nouveau ici ?",
+      "create": "Créer un compte"
+    },
+    "signUp": {
+      "title": "Créez votre compte",
+      "description": "Cela prend moins d'une minute.",
+      "name": "Votre nom",
+      "submit": "Créer le compte",
+      "have": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "hint": "Au moins 10 caractères."
+    },
+    "forgot": {
+      "title": "Mot de passe oublié ?",
+      "description": "Saisissez votre e-mail, nous vous enverrons un lien pour en choisir un nouveau.",
+      "submit": "Envoyer le lien",
+      "sentTitle": "Vérifiez votre e-mail",
+      "sent": "Si un compte existe pour {email}, un lien de réinitialisation est en route. Il est valable une heure."
+    },
+    "reset": {
+      "title": "Choisissez un nouveau mot de passe",
+      "description": "Prenez-en un que vous n'utilisez nulle part ailleurs.",
+      "password": "Nouveau mot de passe",
+      "confirm": "Confirmez le mot de passe",
+      "submit": "Mettre à jour",
+      "mismatch": "Les deux mots de passe ne correspondent pas.",
+      "invalidTitle": "Ce lien a expiré",
+      "invalid": "Un lien ne fonctionne qu'une fois et pendant une heure. Demandez-en un nouveau.",
+      "again": "Recevoir un nouveau lien",
+      "done": "Mot de passe mis à jour. Vous pouvez vous connecter."
+    },
+    "errors": {
+      "required": "Remplissez ce champ.",
+      "email": "Saisissez une adresse e-mail valide.",
+      "passwordShort": "Utilisez au moins 10 caractères.",
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "exists": "Un compte existe déjà avec cet e-mail. Essayez de vous connecter.",
+      "tooMany": "Trop d'essais. Attendez une minute et réessayez.",
+      "generic": "Une erreur est survenue. Réessayez."
+    },
+    "invitation": {
+      "title": "Rejoignez {hotel}",
+      "description": "{inviter} vous invite en tant que {role}.",
+      "accept": "Accepter l'invitation",
+      "signedInAs": "Connecté en tant que {email}",
+      "wrongAccount": "Cette invitation a été envoyée à une autre adresse e-mail. Connectez-vous avec celle-ci pour l'accepter.",
+      "switchAccount": "Utiliser un autre compte",
+      "invalidTitle": "Cette invitation n'est pas valide",
+      "invalid": "Elle a peut-être expiré ou déjà été utilisée. Demandez-en une nouvelle à l'hôtel.",
+      "role": {
+        "owner": "propriétaire",
+        "manager": "responsable",
+        "staff": "membre de l'équipe"
+      }
+    }
+  },
+  "errorPages": {
+    "notFoundTitle": "Cette page n'existe pas",
+    "notFoundBody": "Le lien est peut-être ancien ou mal saisi. Revenons à l'accueil.",
+    "home": "Retour à l'accueil",
+    "errorTitle": "Une erreur est survenue",
+    "errorBody": "Le problème vient de notre côté. Réessayez, et s'il persiste, dites-le-nous.",
+    "retry": "Réessayer",
+    "reference": "Référence {digest}"
+  },
   "hero": {
     "badge": "accès anticipé",
     "getStarted": "Commencer",
@@ -132,5 +282,10 @@
     "sample": "Aa texte",
     "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
     "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
+  },
+  "hotel": {
+    "switch": "Changer d'hôtel",
+    "yours": "Vos hôtels",
+    "switchError": "Impossible de changer d'hôtel. Réessayez."
   }
 }

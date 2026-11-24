@@ -112,9 +112,27 @@
   }
 }
 
+/* Arabic letters join, so tracking would break the words. Unlayered to beat the tracking utilities. */
+:lang(ar) * {
+  letter-spacing: 0;
+}
+
 @utility touch-target {
   min-block-size: var(--spacing-touch);
   min-inline-size: var(--spacing-touch);
+}
+
+/* Keeps the center of a decorated block clear for its text. */
+@utility mask-fade-center {
+  mask-image: radial-gradient(closest-side, transparent 35%, black);
+}
+
+@utility bottom-nav {
+  bottom: var(--bottom-nav-height, 0px);
+}
+
+@utility pb-nav {
+  padding-block-end: var(--bottom-nav-height, 0px);
 }
 
 @utility pb-safe {

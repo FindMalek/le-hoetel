@@ -1,25 +1,44 @@
-import { BuildingIcon, DatabaseIcon, LayoutDashboardIcon, NotebookPenIcon, SettingsIcon, UsersIcon } from "lucide-react"
+import type { Messages } from "@le-hoetel/i18n"
+import {
+  BuildingIcon,
+  DatabaseIcon,
+  HistoryIcon,
+  HotelIcon,
+  InboxIcon,
+  LayoutDashboardIcon,
+  SettingsIcon,
+  UserCogIcon,
+  UsersIcon,
+} from "lucide-react"
 import type { Route } from "next"
 
 export interface NavItem {
   href: Route
-  label: string
+  label: keyof Messages["nav"]
   icon: typeof LayoutDashboardIcon
   admin?: boolean
+  /** Shown in the phone tab bar; everything else lives under "More". */
+  tab?: boolean
 }
 
-/** The sidebar and the command palette both read this list, so a module adds its page here once. */
+/** The sidebar, the phone tab bar and the command palette all read this list, so a page adds itself here once. */
+// i18n-used: nav
 export const NAV: NavItem[] = [
-  { href: "/", label: "Overview", icon: LayoutDashboardIcon },
-  { href: "/inbox", label: "Inbox", icon: NotebookPenIcon },
-  { href: "/notes", label: "Notes", icon: NotebookPenIcon },
-  { href: "/hotel", label: "Hotel", icon: BuildingIcon },
-  { href: "/team", label: "Team", icon: UsersIcon },
-  { href: "/data", label: "Guest data", icon: DatabaseIcon },
-  { href: "/admin/hotels", label: "Hotels", icon: BuildingIcon, admin: true },
-  { href: "/users", label: "Users", icon: UsersIcon, admin: true },
-  { href: "/audit-log", label: "Audit log", icon: SettingsIcon, admin: true },
-  { href: "/settings", label: "Settings", icon: SettingsIcon },
+  { href: "/", label: "overview", icon: LayoutDashboardIcon, tab: true },
+  { href: "/inbox", label: "inbox", icon: InboxIcon, tab: true },
+  { href: "/hotel", label: "hotel", icon: HotelIcon, tab: true },
+  { href: "/team", label: "team", icon: UsersIcon },
+  { href: "/data", label: "data", icon: DatabaseIcon },
+  { href: "/admin/hotels", label: "hotels", icon: BuildingIcon, admin: true },
+  { href: "/users", label: "users", icon: UserCogIcon, admin: true },
+  { href: "/audit-log", label: "auditLog", icon: HistoryIcon, admin: true },
+  { href: "/settings", label: "settings", icon: SettingsIcon },
 ]
 
 export const visibleNav = (role: string | null): NavItem[] => NAV.filter((item) => !item.admin || role === "admin")
+
+export const isActive = (href: string, pathname: string): boolean =>
+  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
+
+/** The nav entry a path belongs to, for the top bar title. */
+export const navFor = (pathname: string): NavItem | undefined => NAV.find((item) => isActive(item.href, pathname))
