@@ -40,7 +40,7 @@ const hotelColumns = {
 const selectHotels = (db: Context["db"]) =>
   db.select(hotelColumns).from(organization).innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
 
-async function loadHotel(db: Context["db"], hotelId: string) {
+export async function loadHotel(db: Context["db"], hotelId: string) {
   const [row] = await selectHotels(db).where(eq(organization.id, hotelId))
   if (!row) throw new ORPCError("NOT_FOUND", { message: "Hotel not found." })
   return row

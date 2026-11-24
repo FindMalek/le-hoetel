@@ -1,4 +1,12 @@
-import { BuildingIcon, DatabaseIcon, LayoutDashboardIcon, NotebookPenIcon, SettingsIcon, UsersIcon } from "lucide-react"
+import {
+  BuildingIcon,
+  DatabaseIcon,
+  LayoutDashboardIcon,
+  MailIcon,
+  NotebookPenIcon,
+  SettingsIcon,
+  UsersIcon,
+} from "lucide-react"
 import type { Route } from "next"
 
 export interface NavItem {
@@ -14,6 +22,7 @@ export const NAV: NavItem[] = [
   { href: "/inbox", label: "Inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "Notes", icon: NotebookPenIcon },
   { href: "/hotel", label: "Hotel", icon: BuildingIcon },
+  { href: "/emails", label: "Emails", icon: MailIcon },
   { href: "/team", label: "Team", icon: UsersIcon },
   { href: "/data", label: "Guest data", icon: DatabaseIcon },
   { href: "/admin/hotels", label: "Hotels", icon: BuildingIcon, admin: true },
