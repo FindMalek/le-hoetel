@@ -1,0 +1,38 @@
+---
+title: Hotel equals organization
+description: Each hotel is one better-auth organization. Staff are members with roles. Every query is scoped by that organization's id.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+We need multi-tenancy, roles for staff, and strict separation between hotels.
+
+## Decision
+
+A hotel is a better-auth organization with owner, manager and staff roles ([Hotels](/docs/hotels)). Hotels are created by the app admin only, who can act on any hotel through the `x-hotel-id` header. Every guest row and every query carries the hotel id.
+
+## Why
+
+- The template already provides organizations, members and roles.
+- One tenant concept for auth, data and storage is simple to reason about.
+- One hotel must never see another hotel's guests, which is a rule we test.
+
+## Why not
+
+- A custom tenant model: more code and more places to leak data.
+
+## Consequences
+
+- Multi-property groups (V2) need a parent concept on top of organizations.
+- Super admin tooling creates hotels, so it needs extra care.
+
+## Revisit when
+
+Multi-property or chain accounts need a different model.
+
+## Related
+
+- [Data and consent rules](/docs/data-rules)
+- [Engineering guide](/docs/engineering)

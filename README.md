@@ -1,4 +1,3 @@
-<!-- replace your-org with your github owner in the ci and license links below -->
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/grid.svg?title=Le+Hoetel&subtitle=Loyalty+and+guest+relationships+for+hotels+in+Tunisia&align=left&mode=dark" />
@@ -7,8 +6,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/your-org/le-hoetel/actions/workflows/ci.yml"><img alt="build" src="https://shieldcn.dev/github/ci/your-org/le-hoetel.svg?variant=secondary" /></a>
-  <a href="https://github.com/your-org/le-hoetel/blob/main/LICENSE"><img alt="license" src="https://shieldcn.dev/github/license/your-org/le-hoetel.svg?variant=secondary" /></a>
+  <a href="https://github.com/FindMalek/le-hoetel/actions/workflows/ci.yml"><img alt="build" src="https://shieldcn.dev/github/ci/FindMalek/le-hoetel.svg?variant=secondary" /></a>
+  <a href="https://github.com/FindMalek/le-hoetel/blob/main/LICENSE"><img alt="license" src="https://shieldcn.dev/github/license/FindMalek/le-hoetel.svg?variant=secondary" /></a>
   <img alt="Next.js" src="https://shieldcn.dev/badge/Next.js-16-black.svg?logo=nextdotjs&variant=secondary" />
   <img alt="TypeScript" src="https://shieldcn.dev/badge/TypeScript-5-black.svg?logo=typescript&variant=secondary" />
   <img alt="Bun" src="https://shieldcn.dev/badge/Bun-api-black.svg?logo=bun&variant=secondary" />
@@ -16,6 +15,15 @@
 </p>
 
 Loyalty and guest relationships for hotels in Tunisia
+
+Le Hoetel helps a hotel own its relationship with its guests, not the booking site or the tour operator. A guest scans a QR code in the room or at the restaurant table, leaves a name, a phone and a clear consent for WhatsApp and email, and the hotel can then talk to them in French, Arabic or English: a welcome, a birthday message, offers to fill low season, and a short survey after the stay. A low score alerts the manager the same day, and every guest gets the Google review invite.
+
+- **Recognition, not points.** Simple perks delivered as offers with a redemption QR.
+- **Consent first.** Consent is logged per channel in an append-only log, every message has an unsubscribe or STOP, and the hotel can export and delete guest data at any time.
+- **One hotel, one organization.** Every guest and every query is scoped to a hotel. Branding (logo, colors, name, language) is configuration, never custom code.
+- **Email and WhatsApp first.** SMS comes later. English, French and Arabic (right to left) everywhere.
+
+The product, the research behind it, the decisions and the roadmap are in the docs site (`apps/docs`, run `pnpm turbo dev -F docs`). Start with the vision, the decisions and the pitch playbook. Prices in the docs are untested guesses.
 
 ---
 

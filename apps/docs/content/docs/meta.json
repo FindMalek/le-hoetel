@@ -1,3 +1,31 @@
 {
-  "pages": ["index", "setup", "environment", "structure", "hotels", "scripts", "deploy"]
+  "pages": [
+    "index",
+    "---Product---",
+    "vision",
+    "market",
+    "competitors",
+    "guests",
+    "pricing",
+    "roadmap",
+    "risks",
+    "---Decisions---",
+    "decisions",
+    "data-rules",
+    "not-confirmed",
+    "plan",
+    "---People---",
+    "team",
+    "pitch",
+    "how-we-work",
+    "---Engineering---",
+    "engineering",
+    "infrastructure",
+    "setup",
+    "environment",
+    "structure",
+    "hotels",
+    "scripts",
+    "deploy"
+  ]
 }

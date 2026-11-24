@@ -1,0 +1,100 @@
+---
+title: Engineering guide
+description: The stack, the packages, the commands and the rules every change follows.
+---
+
+## Stack
+
+- pnpm workspace and turborepo, TypeScript everywhere, biome for format and lint plus oxlint
+- Next.js app router for `apps/web` (landing and public guest pages) and `apps/dashboard` (login and the hotel and admin app)
+- `apps/api`: oRPC on bun. The only app that touches the database, auth, storage and providers
+- Postgres with drizzle, better-auth, zod-validated env, shadcn components
+
+## Apps
+
+| App | What it is |
+|---|---|
+| `apps/web` | Landing page and the public guest pages. Calls the api only |
+| `apps/dashboard` | Login, hotel dashboard and admin panel. Calls the api only |
+| `apps/api` | oRPC api and the worker. Database, auth, storage and providers live here |
+| `apps/docs` | This site |
+| `apps/email` | react-email preview app |
+| `apps/e2e` | Playwright tests |
+
+## Packages
+
+| Package | What it holds |
+|---|---|
+| `@le-hoetel/ui` | shadcn components and the theme tokens |
+| `@le-hoetel/common` | zod schemas, constants and utils shared by api, web and dashboard |
+| `@le-hoetel/orpc` | procedures and typed clients |
+| `@le-hoetel/db` | drizzle schema, migrations, seed scenario |
+| `@le-hoetel/auth` | better-auth setup, organizations |
+| `@le-hoetel/env` | zod-validated env, one root `.env` |
+| `@le-hoetel/jobs` | background jobs on the same Postgres |
+| `@le-hoetel/notification` | channels, rendering and brand config for messages |
+| `@le-hoetel/storage` | S3 compatible storage |
+| `@le-hoetel/logger` | structured logger with redaction |
+| `@le-hoetel/i18n` | English, French and Arabic messages and locale switching |
+| `@le-hoetel/compliance` | consent helpers and banner |
+| `@le-hoetel/webhooks` | inbound webhooks |
+| `@le-hoetel/ai` | AI helpers |
+| `@le-hoetel/config` | shared tsconfig |
+
+More on the layout in [structure](/docs/structure).
+
+## The rule: the api only touches the database
+
+`apps/api` is the only app that touches the database, auth, storage and providers. `web` and `dashboard` call it through `@le-hoetel/orpc`, so secrets and data access live in one place. Never import `@le-hoetel/db` from `web` or `dashboard`.
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `pnpm dev` | Run every app |
+| `pnpm build` | Build everything with turbo |
+| `pnpm check` | Format and fix |
+| `pnpm lint` | The CI check |
+| `pnpm check-types` | TypeScript across the repo |
+| `pnpm test` | Tests in every package, against Postgres (`pnpm db:up` first) |
+| `pnpm test:e2e` | Playwright smoke test |
+| `pnpm db:generate` / `db:migrate` / `db:seed` | Drizzle |
+| `pnpm ui:add <component>` | Add a shadcn component |
+
+Run only what you touched while iterating, the whole suite before handing off. The full list is in [scripts](/docs/scripts) and the first run in [setup](/docs/setup).
+
+## Conventions
+
+- **oRPC:** procedures live in `packages/orpc/src/routers`, built from `publicProcedure` or `protectedProcedure`. Validate input and output with zod. Throw `ORPCError`, never raw errors.
+- **drizzle:** the schema is in `packages/db/src/schema`. Change the schema, then run `pnpm db:generate`. Never hand-write a migration.
+- **better-auth:** configured once in `packages/auth`. Sessions are cookies, signed-in calls send `x-csrf-token: orpc`.
+- **env:** every variable goes through `packages/env` and `.env.example`. App code reads env through `packages/env`, not `process.env`. No secrets in diffs.
+- **UI:** reuse shadcn components from `@le-hoetel/ui` and the theme tokens. No hard-coded colors.
+- **RTL:** English, French and Arabic everywhere. Use logical CSS properties (`ms-`, `me-`, `ps-`, `pe-`, `start`, `end`), never left or right.
+- **Files:** kebab-case. React components have a kebab-case file and a PascalCase export. Functions and variables are camelCase, module constants are UPPER_SNAKE_CASE.
+- **Code:** explicit types, no `any`, short functions, no duplicate types or helpers, no comments that restate the code, smallest diff that does the job.
+
+## Product rules the code must keep
+
+- Every guest row and every query is scoped by hotel id.
+- Guests are not auth users.
+- Consent is logged per channel in an append-only log.
+- Never log a phone, email or name in plain text.
+- Previews, tests, local and staging never send real messages.
+
+See [data and consent rules](/docs/data-rules) and [decisions](/docs/decisions).
+
+## Tests
+
+- One focused test per behavior or bug: it fails before the fix and passes after.
+- No happy-path padding, snapshot dumps, or tests of types or the framework.
+- Test through the public function or endpoint. Mock only external boundaries, never our own modules.
+- Tests run against a real Postgres. `createTestDb()` from `@le-hoetel/db/testing` gives a fresh migrated database and `createTestApp()` from `@le-hoetel/orpc/testing` the real services plus `signUp()` for signed-in clients.
+
+## Adding an endpoint
+
+See [structure](/docs/structure#adding-an-endpoint).
+
+## Docs for agents
+
+This site serves `/llms.txt` (index), `/llms-full.txt` (every page) and each page as markdown at `<page-url>.md`, or send `Accept: text/markdown`.

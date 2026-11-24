@@ -1,0 +1,37 @@
+---
+title: One bucket with a prefix per hotel
+description: All hotels share one S3 compatible bucket. Each hotel's files live under its own prefix.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Hotels have logos, QR posters and exports that need storage.
+
+## Decision
+
+One bucket, a folder prefix per hotel, and access always resolved from the hotel id.
+
+## Why
+
+- Less operations work: one bucket to back up, monitor and secure.
+- A bucket per client adds cost and setup for no gain unless a hotel asks for data separation.
+
+## Why not
+
+- A bucket per client: stronger separation, more to run.
+
+## Consequences
+
+- Every storage call must be scoped by hotel id. Isolation is enforced in code, not by the bucket.
+- We can move one hotel into its own bucket later if it asks.
+
+## Revisit when
+
+A hotel requires physical data separation.
+
+## Related
+
+- [Data and consent rules](/docs/data-rules)
+- [Infrastructure](/docs/infrastructure)
