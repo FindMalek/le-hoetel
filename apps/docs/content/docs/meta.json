@@ -24,12 +24,9 @@
     "setup",
     "environment",
     "structure",
-<<<<<<< HEAD
     "design-system",
     "component-patterns",
-=======
     "hotels",
->>>>>>> origin/main
     "scripts",
     "deploy"
   ]
