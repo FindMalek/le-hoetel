@@ -734,6 +734,9 @@ importers:
       '@le-hoetel/i18n':
         specifier: workspace:*
         version: link:../i18n
+      '@le-hoetel/logger':
+        specifier: workspace:*
+        version: link:../logger
       '@le-hoetel/webhooks':
         specifier: workspace:*
         version: link:../webhooks

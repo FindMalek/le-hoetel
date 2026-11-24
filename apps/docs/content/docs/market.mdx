@@ -1,0 +1,52 @@
+---
+title: Market and research
+description: The Tunisian hotel market, the channels we use, and the rules that apply. Research from November 2026.
+---
+
+<Callout type="warn" title="Confidence">
+Facts marked (vendor claim) or (to verify) are not confirmed. Where we could not find an answer, it is listed in [what we could not confirm](/docs/not-confirmed). We are not lawyers.
+</Callout>
+
+## Tunisia market
+
+- Over 11 million visitors in 2025. 2026 is slightly down, about minus 0.5 percent from January to August.
+- Occupancy was 35.3 percent in H1 2025 on 173,970 beds. 164 to 177 hotels are closed.
+- Tour operators squeeze prices and margins. Tunisians are over 45 percent of Hammamet reservations in one report.
+- Guest reviews complain about dated rooms, bland all-inclusive food, extras charged, and managers dismissing complaints.
+- Xlia (Arabsoft) is a PMS that runs in 400 plus hotels. Its API is unknown (to verify).
+
+What this means for us: most hotels live on tour operator packages and probably never see the guest contact, so capture comes first. Low occupancy makes offers to fill low season a real need. Reviews that mention ignored complaints make the unhappy guest alert a strong opener.
+
+## Channels and rules
+
+| Channel | What we know |
+|---|---|
+| SMS | One way only. Three operators. A sender ID must be registered. An operator API needs a direct contract. |
+| WhatsApp | Billed per delivered template since July 2025. The Tunisia rate is unknown (to verify). Template approval takes time, so we submit templates in week 1. |
+| Email | Booking sites mask guest emails, so we capture the real one directly. |
+| Social | Facebook has about 9.2 million users in Tunisia and Instagram about 4.3 million. |
+
+### Law and data
+
+- Law 2004-63 and the INPDP apply.
+- A draft law mentions fines up to 200,000 dinars. Its status is unknown.
+- Hosting guest data abroad may need a legal check. A lawyer checks consent wording and hosting before the first pilot.
+- This is our reading of the law, not legal advice.
+
+The rules we apply are in [data and consent rules](/docs/data-rules).
+
+### Payments
+
+Local payments include D17 and e-DINAR. Stripe may not work for Tunisia (to verify). Billing is manual at first, see [pricing](/docs/pricing).
+
+## How the research connects to decisions
+
+| Finding | Decision |
+|---|---|
+| Hotels may hold no contacts and the Xlia API is unknown | [Capture first](/docs/decisions/capture-first), no PMS connector in v1 |
+| SMS is one way and sender ID is slow | [Email and WhatsApp first](/docs/decisions/email-and-whatsapp-first) |
+| Tour operators own their guests | [Small local hotels first](/docs/decisions/small-local-hotels-first) |
+| Guests say programs lost value | [Recognition over points](/docs/decisions/recognition-over-points) |
+| Prices are untested | [Free pilot then paid](/docs/decisions/free-pilot-then-paid) |
+
+See also [competitors](/docs/competitors) and [guest insights](/docs/guests).

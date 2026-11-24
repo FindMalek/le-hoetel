@@ -1,0 +1,58 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Tunis
+    open-pull-requests-limit: 5
+    labels: [type:chore, area:infra, P3, size:S, owner:malek]
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      next-react:
+        patterns: [next, "next-*", "@next/*", react, react-dom, "@types/react", "@types/react-dom"]
+      tooling:
+        patterns: ["@biomejs/*", oxlint, "@shadcn/lint", turbo, typescript, "@types/*"]
+      radix-ui:
+        patterns: ["@radix-ui/*", radix-ui]
+      database:
+        patterns: [drizzle-orm, drizzle-kit, postgres]
+      auth:
+        patterns: [better-auth, "@better-auth/*"]
+      orpc:
+        patterns: ["@orpc/*"]
+      npm-minor-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Tunis
+    open-pull-requests-limit: 3
+    labels: [type:chore, area:ci-cd, P3, size:S, owner:malek]
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directories: [/docker, /apps/web, /apps/dashboard, /apps/api, /apps/docs]
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Tunis
+    open-pull-requests-limit: 2
+    labels: [type:chore, area:infra, P3, size:S, owner:malek]
+    commit-message:
+      prefix: "chore(docker)"
+    groups:
+      docker:
+        patterns: ["*"]

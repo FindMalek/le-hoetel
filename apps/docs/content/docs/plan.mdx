@@ -1,0 +1,46 @@
+---
+title: The plan board
+description: The Excalidraw board that holds the original plan, and what is on it.
+---
+
+The planning board is an Excalidraw file kept in the repo:
+
+[`docs/plan/hotel-loyalty-plan.excalidraw`](https://github.com/FindMalek/le-hoetel/blob/main/docs/plan/hotel-loyalty-plan.excalidraw)
+
+Open it by dropping the file on [excalidraw.com](https://excalidraw.com), or with the Excalidraw editor extension. It is a large file, so it is not rendered here.
+
+<Callout type="info" title="This site is the source of truth">
+The board was drawn in November 2026 as a one page overview. When it disagrees with these docs, the docs win. The board is a snapshot and is not updated with every change.
+</Callout>
+
+## What is on the board
+
+The board has eleven numbered sections, left to right:
+
+| Section | Topic | Docs page |
+|---|---|---|
+| 1 | The idea in one line and the guest journey from QR scan to rebooking | [Introduction](/docs) |
+| 2 | What we found out: competitors, guests, the Tunisia market, channels and rules | [Market](/docs/market), [competitors](/docs/competitors), [guests](/docs/guests) |
+| 3 | What we decide and why | [Decisions](/docs/decisions) |
+| 4 | The stack and what we still have to build | [Engineering guide](/docs/engineering) |
+| 5 | Roadmap V1 to V4 with gates | [Roadmap](/docs/roadmap) |
+| 6 | Price per hotel per month | [Pricing](/docs/pricing) |
+| 7 | What can go wrong | [Risks](/docs/risks) |
+| 8 | Who does what | [Team roles](/docs/team) |
+| 9 | Why a hotel says yes and how the pitch works | [Vision](/docs/vision), [pitch playbook](/docs/pitch) |
+| 10 | Data rules, the long game and the exit, self-hosting | [Data rules](/docs/data-rules), [roadmap](/docs/roadmap), [infrastructure](/docs/infrastructure) |
+| 11 | What to settle together and what to check | [Decisions](/docs/decisions#open-decisions), [what we could not confirm](/docs/not-confirmed) |
+
+## The guest journey on the board
+
+1. A guest stays at the hotel.
+2. They scan the QR code in the room or at the restaurant table.
+3. They enter name, phone, birthday and tick yes for WhatsApp and email. The consent is logged.
+4. The hotel now owns a real contact.
+5. Messages go out on their own: welcome, birthday, holidays, offers.
+6. A survey runs 24 hours after checkout. A low score alerts the manager. A high score gets a Google review invite, and everyone is asked, never only the happy ones.
+7. The guest books direct again.
+
+## Keeping it current
+
+If you change the plan on the board, replace the file in `docs/plan/` and update the matching docs page in the same PR.
