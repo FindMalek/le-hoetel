@@ -31,6 +31,8 @@ export async function createTestApp(options: { storage?: Storage } = {}) {
       githubAuth: false,
       webUrl: "http://localhost:3000",
       dashboardUrl: "http://localhost:3002",
+      apiUrl: "http://localhost:3001",
+      tokenSecret: SECRET,
     },
     rateLimiter: createRateLimiter({}),
     storage: options.storage ?? null,
