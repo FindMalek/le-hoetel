@@ -28,10 +28,10 @@ export function FeedbackButton() {
   )
 
   return (
-    <div className="fixed start-4 bottom-4 z-40">
+    <div className="fixed end-4 bottom-4 z-40">
       {open ? (
         <form
-          className="grid w-72 gap-2 border bg-card p-3 shadow-lg"
+          className="grid w-72 gap-2 rounded-lg border bg-card p-3 shadow-lg"
           onSubmit={(event) => {
             event.preventDefault()
             send.mutate({ message, email, website, page: window.location.pathname })
