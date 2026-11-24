@@ -225,17 +225,17 @@ export function Cta({ ctx, href, children }: { ctx: Ctx; href: string; children:
   )
 }
 
-const formatDate = (value: string, locale: Locale): string | null => {
-  const date = new Date(`${value}T00:00:00Z`)
-  if (Number.isNaN(date.getTime())) return null
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-TN" : locale, { dateStyle: "long", timeZone: "UTC" }).format(
-    date,
-  )
+/** Written from the copy, not `Intl`, so the output is the same on every runtime and ICU version. */
+const formatDate = (value: string, ctx: Ctx): string | null => {
+  const [, year, month, day] = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) ?? []
+  const name = ctx.copy.common.months[Number(month) - 1]
+  if (!year || !day || !name) return null
+  return ctx.t(ctx.copy.common.dateFormat, { year, month: name, day: String(Number(day)) })
 }
 
 export function OfferCard({ ctx, offer }: { ctx: Ctx; offer: EmailOffer }) {
-  const { theme, copy, t, locale } = ctx
-  const until = offer.validUntil ? formatDate(offer.validUntil, locale) : null
+  const { theme, copy, t } = ctx
+  const until = offer.validUntil ? formatDate(offer.validUntil, ctx) : null
   return (
     <Section
       className="e-sf e-bd"

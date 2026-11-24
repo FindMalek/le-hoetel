@@ -10,6 +10,8 @@ export const ar: Copy = {
     addressPlaceholder: "عنوان الفندق",
     offerValidUntil: "صالح حتى {date}",
     offerCode: "رمزك",
+    dateFormat: "{day} {month} {year}",
+    months: ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
   },
   welcome: {
     subject: "أهلاً بك في {hotel}",
