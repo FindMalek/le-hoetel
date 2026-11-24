@@ -8,7 +8,9 @@ test("auth hooks send the verification, reset and magic link mail through resend
     bodies.push(JSON.parse(String(init.body)))
     return Response.json({ id: "msg_1" })
   }) as unknown as typeof fetch
-  const hooks = authEmails(createNotifier({ RESEND_API_KEY: "re_test" }, { fetch: doFetch }))
+  const hooks = authEmails(
+    createNotifier({ NODE_ENV: "production", MESSAGING_LIVE: "true", RESEND_API_KEY: "re_test" }, { fetch: doFetch }),
+  )
   const ada = { email: "ada@example.com", name: "Ada" }
 
   await hooks.sendVerification?.(ada, "https://app.test/verify")
@@ -17,5 +19,5 @@ test("auth hooks send the verification, reset and magic link mail through resend
 
   expect(bodies.map((body) => body.subject)).toEqual(["Verify your email", "Reset your password", "Your sign-in link"])
   expect(String(bodies[2]?.html)).toContain("https://app.test/magic")
-  expect(authEmails(createNotifier({}))).toEqual({})
+  expect(authEmails(createNotifier({ NODE_ENV: "production", MESSAGING_LIVE: "true" }))).toEqual({})
 })
