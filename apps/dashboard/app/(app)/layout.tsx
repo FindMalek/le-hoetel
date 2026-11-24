@@ -4,11 +4,14 @@ import { InboxBell } from "@/components/inbox-bell"
 import { call } from "@/lib/api"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const me = await call((api) => api.me.get())
-  const { unread } = await call((api) => api.inbox.list())
+  const [me, { unread }, { hotels, activeId }] = await Promise.all([
+    call((api) => api.me.get()),
+    call((api) => api.inbox.list()),
+    call((api) => api.hotel.mine()),
+  ])
   return (
     <SidebarProvider>
-      <AppSidebar me={me} />
+      <AppSidebar me={me} hotels={hotels} activeHotelId={activeId} />
       <InboxBell unread={unread} />
       <SidebarInset className="min-w-0">{children}</SidebarInset>
     </SidebarProvider>

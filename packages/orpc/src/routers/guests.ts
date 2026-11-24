@@ -1,3 +1,4 @@
+import { type ConsentChannel, MESSAGE_CHANNELS } from "@le-hoetel/common/consent"
 import {
   consentEventSchema,
   consentSetSchema,
@@ -9,9 +10,9 @@ import {
   guestUpdateSchema,
   guestUpsertResultSchema,
 } from "@le-hoetel/common/schemas"
-import { consentEvents, guests } from "@le-hoetel/db"
+import { consentEvents, guestConsents, guests } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
-import { and, count, desc, eq, ilike, or } from "drizzle-orm"
+import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -38,8 +39,26 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       const q = input.q ? `%${escapeLike(input.q)}%` : null
+      const granted = (channels: ConsentChannel[]) =>
+        exists(
+          context.db
+            .select({ one: sql`1` })
+            .from(guestConsents)
+            .where(
+              and(
+                eq(guestConsents.guestId, guests.id),
+                eq(guestConsents.hotelId, hotelId),
+                eq(guestConsents.granted, true),
+                inArray(guestConsents.channel, channels),
+              ),
+            ),
+        )
+      const consent = input.consent
       const where = and(
         eq(guests.hotelId, hotelId),
+        input.source ? eq(guests.source, input.source) : undefined,
+        input.language ? eq(guests.language, input.language) : undefined,
+        consent === "none" ? not(granted(MESSAGE_CHANNELS.slice())) : consent ? granted([consent]) : undefined,
         q ? or(ilike(guests.name, q), ilike(guests.phoneE164, q), ilike(guests.email, q)) : undefined,
       )
       const [totals] = await context.db.select({ n: count() }).from(guests).where(where)

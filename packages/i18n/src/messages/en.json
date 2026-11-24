@@ -7,5 +7,70 @@
     "badge": "early access",
     "getStarted": "Get started",
     "apiDocs": "API docs"
+  },
+  "nav": {
+    "overview": "Overview",
+    "guests": "Guests",
+    "inbox": "Inbox",
+    "notes": "Notes",
+    "team": "Team",
+    "users": "Users",
+    "auditLog": "Audit log",
+    "settings": "Settings"
+  },
+  "hotel": {
+    "switch": "Switch hotel",
+    "yours": "Your hotels"
+  },
+  "guests": {
+    "title": "Guests",
+    "description": "Everyone who shared their details with your hotel.",
+    "search": "Search by name, phone or email",
+    "apply": "Search",
+    "reset": "Clear filters",
+    "filter": {
+      "consent": "Consent",
+      "source": "Source",
+      "language": "Language",
+      "any": "Any"
+    },
+    "consent": {
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "profile": "Profile",
+      "none": "No marketing consent"
+    },
+    "source": {
+      "qr_room": "Room QR",
+      "qr_table": "Table QR",
+      "qr_front_desk": "Front desk QR",
+      "staff": "Staff",
+      "csv": "CSV import"
+    },
+    "total": "{count, plural, one {# guest} other {# guests}}",
+    "columns": {
+      "guest": "Guest",
+      "phone": "Phone",
+      "language": "Language",
+      "source": "Source",
+      "consent": "Consent",
+      "added": "Added"
+    },
+    "empty": {
+      "title": "No guests yet",
+      "description": "Guests show up here once they scan your QR code or you add them."
+    },
+    "noMatch": {
+      "title": "No guest matches",
+      "description": "Try another search or clear the filters."
+    },
+    "noHotel": {
+      "title": "No hotel yet",
+      "description": "Ask the Le Hoetel team to add you to your hotel."
+    },
+    "loading": "Loading guests",
+    "page": "Page {page} of {pages}",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

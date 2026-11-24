@@ -138,3 +138,38 @@ test("the database refuses a consent event that points at another hotel's guest"
       }))(),
   ).rejects.toThrow()
 })
+
+test("list filters by consent, source and language inside one hotel", async () => {
+  const { client } = await hotelAs("filters")
+  const other = await hotelAs("filters-other")
+  const base = { ...newGuest, consents: { email: false, whatsapp: false, profile: false } }
+  await client.guests.create({
+    ...base,
+    name: "Mail",
+    phone: "+21620000001",
+    consents: { ...base.consents, email: true },
+  })
+  await client.guests.create({
+    ...base,
+    name: "Wa",
+    phone: "+21620000002",
+    consents: { ...base.consents, whatsapp: true },
+    language: "ar",
+    source: "csv",
+  })
+  await client.guests.create({ ...base, name: "Silent", phone: "+21620000003", email: null })
+  await other.client.guests.create({
+    ...base,
+    name: "Other hotel",
+    phone: "+21620000004",
+    consents: { ...base.consents, email: true },
+  })
+
+  const names = async (filter: Parameters<typeof client.guests.list>[0]) =>
+    (await client.guests.list(filter)).items.map((guest) => guest.name).sort()
+  expect(await names({ consent: "email" })).toEqual(["Mail"])
+  expect(await names({ consent: "none" })).toEqual(["Silent"])
+  expect(await names({ source: "csv" })).toEqual(["Wa"])
+  expect(await names({ language: "ar" })).toEqual(["Wa"])
+  expect(await names({ consent: "whatsapp", language: "fr" })).toEqual([])
+})
