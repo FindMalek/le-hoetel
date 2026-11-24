@@ -21,5 +21,34 @@
       "intro": "Ceci est un texte provisoire pour les conditions d'utilisation de le-hoetel. Le texte sera rédigé pour le produit, les hôtels et la loi tunisienne avant le premier pilote."
     },
     "hotel": "l'hôtel"
+  },
+  "adminHotels": {
+    "title": "Hôtels",
+    "description": "Tous les hôtels de la plateforme, avec leurs clients et leur santé.",
+    "createTitle": "Nouvel hôtel",
+    "name": "Nom de l’hôtel",
+    "slug": "Identifiant",
+    "ownerEmail": "E-mail du propriétaire",
+    "ownerHint": "Le propriétaire reçoit une invitation par e-mail.",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d’accent",
+    "language": "Langue par défaut",
+    "submit": "Créer l’hôtel et inviter le propriétaire",
+    "created": "Hôtel créé, invitation envoyée.",
+    "empty": "Aucun hôtel pour l’instant.",
+    "columns": {
+      "hotel": "Hôtel",
+      "guests": "Clients",
+      "owners": "Propriétaires",
+      "health": "Santé",
+      "created": "Créé le"
+    },
+    "health": {
+      "healthy": "En forme",
+      "quiet": "Aucun nouveau client depuis 2 semaines",
+      "no-guests": "Pas encore de clients",
+      "no-owner": "Propriétaire pas encore inscrit",
+      "suspended": "Suspendu"
+    }
   }
 }

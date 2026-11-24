@@ -21,5 +21,34 @@
       "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
     },
     "hotel": "the hotel"
+  },
+  "adminHotels": {
+    "title": "Hotels",
+    "description": "Every hotel on the platform, with its guests and health.",
+    "createTitle": "New hotel",
+    "name": "Hotel name",
+    "slug": "Slug",
+    "ownerEmail": "Owner email",
+    "ownerHint": "The owner gets an invitation by email.",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "language": "Default language",
+    "submit": "Create hotel and invite owner",
+    "created": "Hotel created, invitation sent.",
+    "empty": "No hotel yet.",
+    "columns": {
+      "hotel": "Hotel",
+      "guests": "Guests",
+      "owners": "Owners",
+      "health": "Health",
+      "created": "Created"
+    },
+    "health": {
+      "healthy": "Healthy",
+      "quiet": "No new guest for 2 weeks",
+      "no-guests": "No guests yet",
+      "no-owner": "Owner not joined",
+      "suspended": "Suspended"
+    }
   }
 }
