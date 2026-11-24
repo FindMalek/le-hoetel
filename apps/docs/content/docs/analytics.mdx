@@ -1,0 +1,13 @@
+---
+title: Analytics
+description: Umami on the public pages only, no cookies.
+---
+
+Umami runs on the public pages of `apps/web` only: the landing page, privacy, terms and status. Everything else is never tracked: the dashboard, the guest capture pages and the docs previews have no Umami script, and a new page in `apps/web` stays untracked until it is added to `PUBLIC_PATHS` in `apps/web/components/umami-script.tsx`.
+
+Umami sets no cookies and stores no personal data (no ip, no user id). The script honours the browser's do not track setting and drops the query string, and it only loads after the visitor accepted the consent banner.
+
+| Key | What it is |
+| --- | --- |
+| `NEXT_PUBLIC_UMAMI_URL` | base url of your Umami, defaults to Umami cloud |
+| `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | website id, empty means no analytics |

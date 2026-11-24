@@ -29,6 +29,7 @@
     "hotels",
     "scripts",
     "deploy",
-    "observability"
+    "observability",
+    "analytics"
   ]
 }
