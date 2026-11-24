@@ -1,0 +1,38 @@
+---
+title: Decisions
+description: Short decision records with the why and the why not, plus the decisions still open.
+---
+
+Every important choice gets a short record: context, decision, why, why not, consequences, and when to revisit it. Add a new file in `apps/docs/content/docs/decisions` and list it in `meta.json` when a PR changes a decision.
+
+## The table
+
+| We do | We skip | Why | Record |
+|---|---|---|---|
+| Capture first (QR page, CSV import) | PMS connector in V1 | Hotels may hold no contacts, the Xlia API is unknown, integration is the top competitor complaint | [Capture first](/docs/decisions/capture-first) |
+| Recognition and simple perks | Points and tiers | Guests think programs lost value, less to build | [Recognition over points](/docs/decisions/recognition-over-points) |
+| Branding is config | Custom code per client | Custom work turns a SaaS into an agency | [Branding is config](/docs/decisions/branding-is-config) |
+| One bucket, prefix per hotel | Bucket per client | Less ops, separate later if a hotel asks | [One bucket, prefix per hotel](/docs/decisions/one-bucket-prefix-per-hotel) |
+| Email and WhatsApp first | SMS on day one | SMS is one way, sender ID is slow, WhatsApp is where Tunisians talk | [Email and WhatsApp first](/docs/decisions/email-and-whatsapp-first) |
+| Small local hotels first | Tour operator resorts first | The owner decides fast, locals are reachable | [Small local hotels first](/docs/decisions/small-local-hotels-first) |
+| Free pilot then paid | Building for months before selling | Prices are untested | [Free pilot then paid](/docs/decisions/free-pilot-then-paid) |
+
+## Architecture decisions
+
+| We do | We skip | Record |
+|---|---|---|
+| A hotel is an organization | A custom tenant model | [Hotel is an organization](/docs/decisions/hotel-is-organization) |
+| Guests are hotel-scoped rows | Guests as auth users | [Guests are not auth users](/docs/decisions/guests-are-not-auth-users) |
+| Append-only consent log | A consent flag on the guest | [Consent log is append only](/docs/decisions/consent-log-append-only) |
+
+## Open decisions
+
+1. Which segment for the first three pilots.
+2. Is the first release scope right.
+3. Plan table and price points, see [pricing](/docs/pricing).
+4. Which legal entity invoices hotels.
+5. Product name and domain (tn or global).
+6. Does SMS have to be in the first release.
+7. The self-hosted server or a small VPS for the pilot, see [infrastructure](/docs/infrastructure).
+
+Things we could not confirm, which feed these decisions, are in [what we could not confirm](/docs/not-confirmed).
