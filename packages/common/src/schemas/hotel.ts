@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES, LOGO_MAX_BYTES, LOGO_TYPES } from "../hotel"
+import { HOTEL_HEALTHS, HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES, LOGO_MAX_BYTES, LOGO_TYPES } from "../hotel"
 
 const text = (max: number) => z.string().trim().min(1).max(max)
 const nullableText = (max: number) =>
@@ -81,6 +81,17 @@ export const hotelCreateSchema = z.object({
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Lowercase letters, digits and dashes.")
     .max(60),
   ownerEmail: z.email(),
+  displayName: text(80).optional(),
+  primaryColor: hexColor.optional(),
+  accentColor: hexColor.optional(),
+  defaultLanguage: z.enum(HOTEL_LANGUAGES).optional(),
+})
+
+export const adminHotelSchema = hotelSchema.extend({
+  guestCount: z.number().int(),
+  ownerCount: z.number().int(),
+  lastGuestAt: z.date().nullable(),
+  health: z.enum(HOTEL_HEALTHS),
 })
 
 export type Hotel = z.infer<typeof hotelSchema>

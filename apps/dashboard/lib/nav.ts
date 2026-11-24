@@ -15,6 +15,7 @@ export const NAV: NavItem[] = [
   { href: "/notes", label: "Notes", icon: NotebookPenIcon },
   { href: "/hotel", label: "Hotel", icon: BuildingIcon },
   { href: "/team", label: "Team", icon: UsersIcon },
+  { href: "/admin/hotels", label: "Hotels", icon: BuildingIcon, admin: true },
   { href: "/users", label: "Users", icon: UsersIcon, admin: true },
   { href: "/audit-log", label: "Audit log", icon: SettingsIcon, admin: true },
   { href: "/settings", label: "Settings", icon: SettingsIcon },

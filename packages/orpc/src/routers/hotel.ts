@@ -1,5 +1,6 @@
-import { LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
+import { hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
 import {
+  adminHotelSchema,
   hotelAdminUpdateSchema,
   hotelCreateSchema,
   hotelSchema,
@@ -7,10 +8,10 @@ import {
   logoUploadInputSchema,
   logoUploadSchema,
 } from "@le-hoetel/common/schemas"
-import { hotelSettings, organization, user } from "@le-hoetel/db"
+import { guests, hotelSettings, member, organization } from "@le-hoetel/db"
 import { hotelPublicPrefix } from "@le-hoetel/storage"
 import { ORPCError } from "@orpc/server"
-import { asc, eq } from "drizzle-orm"
+import { and, asc, count, eq, like, max } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -134,29 +135,74 @@ export const hotelLogoRouter = {
 
 export const adminHotelsRouter = {
   list: adminProcedure
-    .route({ method: "GET", path: "/admin/hotels", summary: "All hotels (admins only)", tags: ["admin"] })
-    .output(z.array(hotelSchema))
-    .handler(({ context }) => selectHotels(context.db).orderBy(asc(organization.name))),
+    .route({
+      method: "GET",
+      path: "/admin/hotels",
+      summary: "All hotels with guest counts and health",
+      tags: ["admin"],
+    })
+    .output(z.array(adminHotelSchema))
+    .handler(async ({ context }) => {
+      const { db } = context
+      const [hotels, guestStats, owners] = await Promise.all([
+        selectHotels(db).orderBy(asc(organization.name)),
+        db
+          .select({ hotelId: guests.hotelId, guestCount: count(), lastGuestAt: max(guests.createdAt) })
+          .from(guests)
+          .groupBy(guests.hotelId),
+        db
+          .select({ hotelId: member.organizationId, ownerCount: count() })
+          .from(member)
+          .where(like(member.role, "%owner%"))
+          .groupBy(member.organizationId),
+      ])
+      const guestsOf = new Map(guestStats.map((row) => [row.hotelId, row]))
+      const ownersOf = new Map(owners.map((row) => [row.hotelId, row.ownerCount]))
+      const now = context.now()
+      return hotels.map((hotel) => {
+        const guestCount = guestsOf.get(hotel.id)?.guestCount ?? 0
+        const lastGuestAt = guestsOf.get(hotel.id)?.lastGuestAt ?? null
+        const ownerCount = ownersOf.get(hotel.id) ?? 0
+        const health = hotelHealth({ status: hotel.status, ownerCount, guestCount, lastGuestAt, now })
+        return { ...hotel, guestCount, ownerCount, lastGuestAt, health }
+      })
+    }),
 
   create: adminProcedure
-    .route({ method: "POST", path: "/admin/hotels", summary: "Create a hotel for an existing user", tags: ["admin"] })
+    .route({
+      method: "POST",
+      path: "/admin/hotels",
+      summary: "Create a hotel with its branding and invite its owner by email",
+      tags: ["admin"],
+    })
     .input(hotelCreateSchema)
     .output(hotelSchema)
     .handler(async ({ context, input }) => {
-      const [owner] = await context.db
-        .select({ id: user.id })
-        .from(user)
-        .where(eq(user.email, input.ownerEmail.toLowerCase()))
-      if (!owner) throw new ORPCError("NOT_FOUND", { message: "No user with that email: create the user first." })
+      const { ownerEmail, name, slug, ...branding } = input
       const [taken] = await context.db
         .select({ id: organization.id })
         .from(organization)
-        .where(eq(organization.slug, input.slug))
+        .where(eq(organization.slug, slug))
       if (taken) throw new ORPCError("CONFLICT", { message: "That slug is taken." })
-      const created = await context.auth.api.createOrganization({
-        body: { name: input.name, slug: input.slug, userId: owner.id },
-      })
+      // better-auth needs a member to invite from: the admin joins for a moment, the owner replaces them.
+      const created = await context.auth.api.createOrganization({ body: { name, slug, userId: context.user.id } })
       if (!created) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "The hotel could not be created." })
+      try {
+        await context.auth.api.createInvitation({
+          body: { email: ownerEmail.toLowerCase(), role: "owner", organizationId: created.id },
+          headers: context.headers,
+        })
+        await context.db
+          .delete(member)
+          .where(and(eq(member.organizationId, created.id), eq(member.userId, context.user.id)))
+        const patch = Object.fromEntries(Object.entries(branding).filter(([, value]) => value !== undefined))
+        if (Object.keys(patch).length) {
+          await context.db.update(hotelSettings).set(patch).where(eq(hotelSettings.organizationId, created.id))
+        }
+      } catch (error) {
+        await context.db.delete(organization).where(eq(organization.id, created.id))
+        throw error
+      }
       await audit(context, { action: "hotel.create", targetId: created.id })
       return loadHotel(context.db, created.id)
     }),
