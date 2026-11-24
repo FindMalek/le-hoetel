@@ -7,5 +7,17 @@
     "badge": "وصول مبكر",
     "getStarted": "ابدأ الآن",
     "apiDocs": "وثائق واجهة البرمجة"
+  },
+  "hotelSettings": {
+    "title": "الفندق",
+    "description": "شعار فندقكم وهويته البصرية.",
+    "logo": "الشعار",
+    "logoHint": "PNG أو JPEG أو WebP، بحد أقصى 1 ميغابايت.",
+    "upload": "رفع الشعار",
+    "remove": "حذف الشعار",
+    "saved": "تم حفظ الشعار.",
+    "removed": "تم حذف الشعار.",
+    "invalidFile": "استخدم صورة PNG أو JPEG أو WebP لا يتجاوز حجمها 1 ميغابايت.",
+    "noHotel": "اختر فندقاً أولاً."
   }
 }
