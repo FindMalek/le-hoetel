@@ -22,18 +22,6 @@
     },
     "hotel": "the hotel"
   },
-  "hotelSettings": {
-    "title": "Hotel",
-    "description": "Your hotel's logo and branding.",
-    "logo": "Logo",
-    "logoHint": "PNG, JPEG or WebP, 1 MB at most.",
-    "upload": "Upload logo",
-    "remove": "Remove logo",
-    "saved": "Logo saved.",
-    "removed": "Logo removed.",
-    "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
-    "noHotel": "Pick a hotel first."
-  },
   "adminHotels": {
     "title": "Hotels",
     "description": "Every hotel on the platform, with its guests and health.",
@@ -62,5 +50,25 @@
       "no-owner": "Owner not joined",
       "suspended": "Suspended"
     }
+  },
+  "hotelSettings": {
+    "title": "Hotel",
+    "description": "Your hotel's logo and branding.",
+    "logo": "Logo",
+    "logoHint": "PNG, JPEG or WebP, 1 MB at most.",
+    "upload": "Upload logo",
+    "remove": "Remove logo",
+    "saved": "Logo saved.",
+    "removed": "Logo removed.",
+    "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
+    "noHotel": "Pick a hotel first.",
+    "branding": "Colors",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "save": "Save",
+    "brandingSaved": "Colors saved.",
+    "sample": "Aa text",
+    "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
+    "contrastDark": "This color is hard to see in dark mode. Pick a lighter one."
   }
 }
