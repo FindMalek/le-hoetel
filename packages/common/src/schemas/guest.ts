@@ -34,6 +34,8 @@ const text = (max: number) =>
     .max(max)
     .transform((value) => value || null)
 
+export const guestFields = { name, email, birthday }
+
 /** The optional-with-consent tier: only stored while the guest's `profile` consent is granted. */
 export const GUEST_EXTRA_FIELDS = ["country", "city", "stayCheckIn", "stayCheckOut", "nextDestination"] as const
 
@@ -76,6 +78,7 @@ export const guestCreateSchema = z
     email: email.nullish(),
     birthday: birthday.nullish(),
     source: z.enum(GUEST_SOURCES),
+    captureLocation: text(40).nullish(),
     consents: guestConsentsSchema,
     country: extras.country.nullish(),
     city: extras.city.nullish(),

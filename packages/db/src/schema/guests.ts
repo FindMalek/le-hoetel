@@ -37,6 +37,8 @@ export const guests = pgTable(
     email: text("email"),
     birthday: date("birthday", { mode: "string" }),
     source: guestSource("source").notNull(),
+    /** The spot of the QR code that captured the guest (a room number, a table), as printed on the code. */
+    captureLocation: text("capture_location"),
     country: text("country"),
     city: text("city"),
     stayCheckIn: date("stay_check_in", { mode: "string" }),

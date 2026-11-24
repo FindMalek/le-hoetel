@@ -42,6 +42,14 @@ Every extra question lowers the number of guests who finish the form, and every 
 - Bump `CONSENT_WORDING_VERSION` (`YYYY-MM-<label>-<n>`) in the same change, for any edit, even a typo in one language. Every consent event stores the version the guest saw, so old events stay true.
 - Adding a channel or a language is also a bump. Old events are never rewritten.
 
+### The QR capture page
+
+- Route `apps/web/app/h/[hotelSlug]?src=room|table|desk&loc=<spot>&lang=en|fr|ar`. `src` becomes the guest source (`qr_room`, `qr_table`, `qr_front_desk`), `loc` is stored as `guests.capture_location`.
+- Branding comes from `hotel_settings` through `public.hotel`, which returns only the display name, two colors, default language and slug. Everything else stays behind a session.
+- `public.capture` is the one public write. It is scoped by the hotel slug, always sets `profile` consent to false, and goes through the same `upsertGuest` as staff and CSV, so a known phone merges and every answer lands in the consent log with the wording version.
+- The page loads in the hotel's default language with a link switcher (no JS needed), is `noindex`, and skips the site chrome (feedback button, consent banner, analytics) to stay small on a weak connection.
+- Known limit: a phone number is not verified, so someone could sign up another person's number. Consent is per channel and withdrawable with STOP or the unsubscribe link.
+
 ### How it is stored
 
 - `guests` is unique per hotel and phone (`hotel_id`, `phone_e164`). Every row carries `hotel_id`, and the consent tables point at `(guest_id, hotel_id)` so a row can never reference another hotel's guest.

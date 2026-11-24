@@ -21,5 +21,28 @@
       "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
     },
     "hotel": "the hotel"
+  },
+  "capture": {
+    "welcome": "Welcome to {hotel}",
+    "intro": "Leave your details and we will take care of you during your stay.",
+    "perkTitle": "Your welcome perk",
+    "perkBody": "A small gift from {hotel} is waiting for you. Ask at the front desk after you sign up.",
+    "name": "Your name",
+    "phone": "Phone number",
+    "dialCode": "Country code",
+    "language": "Your language",
+    "birthday": "Birthday (optional)",
+    "email": "Email (optional)",
+    "consentTitle": "Stay in touch",
+    "consentHint": "Both are optional and unticked. You can change your mind at any time.",
+    "emailNeeded": "Add your email to get offers by email.",
+    "submit": "Sign up",
+    "sending": "Sending...",
+    "thanksTitle": "Thank you",
+    "thanksBody": "You are all set. Enjoy your stay at {hotel}.",
+    "errorInvalid": "Please check your name and phone number.",
+    "errorTooMany": "Too many tries. Please wait a moment and try again.",
+    "privacy": "Privacy policy",
+    "languageLabel": "Language"
   }
 }
