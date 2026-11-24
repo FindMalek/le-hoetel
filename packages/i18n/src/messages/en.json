@@ -36,5 +36,17 @@
       "no-owner": "Owner not joined",
       "suspended": "Suspended"
     }
+  },
+  "hotelSettings": {
+    "title": "Hotel",
+    "description": "Your hotel's logo and branding.",
+    "logo": "Logo",
+    "logoHint": "PNG, JPEG or WebP, 1 MB at most.",
+    "upload": "Upload logo",
+    "remove": "Remove logo",
+    "saved": "Logo saved.",
+    "removed": "Logo removed.",
+    "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
+    "noHotel": "Pick a hotel first."
   }
 }

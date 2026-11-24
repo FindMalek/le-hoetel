@@ -32,3 +32,5 @@ export function hotelHealth(hotel: {
   const quietSince = hotel.now.getTime() - QUIET_AFTER_DAYS * 24 * 60 * 60 * 1000
   return hotel.lastGuestAt.getTime() < quietSince ? "quiet" : "healthy"
 }
+export const LOGO_TYPES: Record<string, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" }
+export const LOGO_MAX_BYTES = 1024 * 1024
