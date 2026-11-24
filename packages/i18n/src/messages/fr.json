@@ -7,5 +7,30 @@
     "badge": "accès anticipé",
     "getStarted": "Commencer",
     "apiDocs": "Docs de l'API"
+  },
+  "guestData": {
+    "title": "Données des clients",
+    "description": "Exportez ou supprimez ce que vous conservez sur vos clients. Réservé aux propriétaires et aux managers.",
+    "forbidden": "Seuls les propriétaires et les managers peuvent exporter ou supprimer les données des clients.",
+    "hotelTitle": "Tous les clients",
+    "hotelDescription": "Une copie de tous les clients de l'hôtel avec leur historique de consentement, ou une suppression complète.",
+    "exportJson": "Exporter en JSON",
+    "exportCsv": "Exporter en CSV",
+    "deleteAll": "Supprimer tous les clients",
+    "deleteAllTitle": "Supprimer tous les clients ?",
+    "deleteAllBody": "Cela supprime définitivement {count} clients de {hotel} avec leur historique de consentement. Impossible d'annuler. Exportez d'abord si vous voulez une copie.",
+    "typeName": "Saisissez {hotel} pour confirmer",
+    "cancel": "Annuler",
+    "confirm": "Supprimer définitivement",
+    "deleted": "Supprimé.",
+    "exported": "Export prêt.",
+    "guestTitle": "Un client",
+    "guestDescription": "Trouvez un client par nom, téléphone ou e-mail.",
+    "search": "Rechercher un client",
+    "noResults": "Aucun client trouvé.",
+    "deleteGuest": "Supprimer",
+    "deleteGuestTitle": "Supprimer ce client ?",
+    "deleteGuestBody": "Cela supprime définitivement {name} et son historique de consentement. Impossible d'annuler.",
+    "error": "Une erreur est survenue. Réessayez."
   }
 }

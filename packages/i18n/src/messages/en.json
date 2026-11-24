@@ -7,5 +7,30 @@
     "badge": "early access",
     "getStarted": "Get started",
     "apiDocs": "API docs"
+  },
+  "guestData": {
+    "title": "Guest data",
+    "description": "Export or delete what you store about your guests. Owners and managers only.",
+    "forbidden": "Only owners and managers can export or delete guest data.",
+    "hotelTitle": "All guests",
+    "hotelDescription": "A copy of every guest of the hotel with their consent log, or a full deletion.",
+    "exportJson": "Export JSON",
+    "exportCsv": "Export CSV",
+    "deleteAll": "Delete all guests",
+    "deleteAllTitle": "Delete every guest?",
+    "deleteAllBody": "This permanently deletes {count} guests of {hotel} with their consent history. It cannot be undone. Export first if you need a copy.",
+    "typeName": "Type {hotel} to confirm",
+    "cancel": "Cancel",
+    "confirm": "Delete permanently",
+    "deleted": "Deleted.",
+    "exported": "Export ready.",
+    "guestTitle": "One guest",
+    "guestDescription": "Find a guest by name, phone or email.",
+    "search": "Search guests",
+    "noResults": "No guest found.",
+    "deleteGuest": "Delete",
+    "deleteGuestTitle": "Delete this guest?",
+    "deleteGuestBody": "This permanently deletes {name} and their consent history. It cannot be undone.",
+    "error": "Something went wrong. Try again."
   }
 }
