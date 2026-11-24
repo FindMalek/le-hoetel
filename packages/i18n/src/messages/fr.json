@@ -47,6 +47,14 @@
     "saved": "Logo enregistré.",
     "removed": "Logo supprimé.",
     "invalidFile": "Utilisez une image PNG, JPEG ou WebP de 1 Mo maximum.",
-    "noHotel": "Choisissez d’abord un hôtel."
+    "noHotel": "Choisissez d’abord un hôtel.",
+    "branding": "Couleurs",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d’accent",
+    "save": "Enregistrer",
+    "brandingSaved": "Couleurs enregistrées.",
+    "sample": "Aa texte",
+    "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
+    "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
   }
 }

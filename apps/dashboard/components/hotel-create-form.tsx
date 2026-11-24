@@ -11,8 +11,9 @@ import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { type FormEvent, useRef } from "react"
 import { toast } from "sonner"
+import { ColorField, type ColorLabels } from "./color-field"
 
-interface Labels {
+interface Labels extends ColorLabels {
   title: string
   name: string
   slug: string
@@ -99,22 +100,8 @@ export function HotelCreateForm({ labels }: { labels: Labels }) {
               <Input id="ownerEmail" name="ownerEmail" type="email" required dir="ltr" />
               <FieldDescription>{labels.ownerHint}</FieldDescription>
             </Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field>
-                <FieldLabel htmlFor="primaryColor">{labels.primaryColor}</FieldLabel>
-                <Input
-                  id="primaryColor"
-                  name="primaryColor"
-                  placeholder="#0a7c66"
-                  pattern="#[0-9a-fA-F]{6}"
-                  dir="ltr"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="accentColor">{labels.accentColor}</FieldLabel>
-                <Input id="accentColor" name="accentColor" placeholder="#f2b134" pattern="#[0-9a-fA-F]{6}" dir="ltr" />
-              </Field>
-            </div>
+            <ColorField name="primaryColor" label={labels.primaryColor} placeholder="#0a7c66" labels={labels} />
+            <ColorField name="accentColor" label={labels.accentColor} placeholder="#f2b134" labels={labels} />
             <Field>
               <FieldLabel htmlFor="defaultLanguage">{labels.language}</FieldLabel>
               <select
