@@ -8,6 +8,20 @@
     "getStarted": "Get started",
     "apiDocs": "API docs"
   },
+  "legal": {
+    "updated": "Draft, not yet reviewed by a lawyer.",
+    "consentTitle": "What guests agree to",
+    "consentVersion": "Wording version",
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "This is a placeholder for the privacy policy of le-hoetel. Hotels collect a guest's name, phone and language with their consent. Optional details are kept only if the guest agrees. We never collect continuous location, ID numbers or payment cards. A guest can ask a hotel to export or delete their data at any time."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
+    },
+    "hotel": "the hotel"
+  },
   "adminHotels": {
     "title": "Hotels",
     "description": "Every hotel on the platform, with its guests and health.",

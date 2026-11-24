@@ -11,6 +11,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@le-hoetel/common": "workspace:*",
     "@le-hoetel/compliance": "workspace:*",
     "@le-hoetel/env": "workspace:*",
     "@le-hoetel/logger": "workspace:*",
