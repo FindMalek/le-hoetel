@@ -1,6 +1,8 @@
+import { hashPassword } from "better-auth/crypto"
 import { createDb } from "./index"
 import { seedDemo } from "./seed/index"
 
 const db = createDb(process.env.DATABASE_URL!)
-console.info((await seedDemo(db)) ? "seeded" : "database not empty, nothing seeded")
+const demoPassword = process.env.DEMO_PASSWORD
+console.info((await seedDemo(db, { hashPassword, demoPassword })) ? "seeded" : "database not empty, nothing seeded")
 await db.close()
