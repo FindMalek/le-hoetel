@@ -53,6 +53,7 @@ jobs:
           restore-keys: turbo-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - run: pnpm i18n:check
       - name: Migrations match the schema
         run: |
           pnpm db:generate

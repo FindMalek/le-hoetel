@@ -7,7 +7,8 @@
     ".": "./src/index.ts",
     "./constants": "./src/constants.ts",
     "./schemas": "./src/schemas/index.ts",
-    "./utils": "./src/utils/index.ts"
+    "./utils": "./src/utils/index.ts",
+    "./hotel": "./src/hotel.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
