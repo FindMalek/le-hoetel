@@ -32,7 +32,8 @@ Every extra question lowers the number of guests who finish the form, and every 
 - Each entry records the timestamp, the source, and the wording version.
 - The log is append only. A change of mind is a new entry, never an edit. See [consent log is append only](/docs/decisions/consent-log-append-only).
 - WhatsApp and email have separate checkboxes on the capture page.
-- Every message carries an unsubscribe link or STOP.
+- Every message carries an unsubscribe link or STOP. Messaging builds them with `packages/common/src/unsubscribe.ts`: `signUnsubscribeToken`, `unsubscribePageUrl`, `listUnsubscribeHeaders` (RFC 8058 one tap, for email) and `unsubscribeFooter` (the line every message ends with). The link opens `/u/<token>` on the web app (en, fr, ar, the hotel's branding): one switch per channel and one tap to stop everything. Each change is a consent event with source `unsubscribe_link`. Email clients that show their own button POST to `/unsubscribe/<token>` on the api.
+- An inbound WhatsApp message is checked with `isStopKeyword` (the whole message must be STOP, arrêt, توقف and the like). The webhook then calls `applyStopReply`, which withdraws WhatsApp consent with source `stop_reply`. See [unsubscribe links are signed tokens](/docs/decisions/unsubscribe-links-are-signed-tokens).
 - The consent text lives in one place so it can change after legal review: `packages/common/src/consent.ts` (`CONSENT_WORDING` in en, fr and ar, and `CONSENT_WORDING_VERSION`, bumped on every change).
 
 ### How it is stored

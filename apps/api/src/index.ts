@@ -54,6 +54,8 @@ const fetch = createServer(
       githubToken: env.GITHUB_TOKEN,
       webUrl: env.WEB_URL,
       dashboardUrl: env.DASHBOARD_URL,
+      apiUrl: env.API_PUBLIC_URL,
+      tokenSecret: env.BETTER_AUTH_SECRET,
     },
     jobs,
     rateLimiter: createRateLimiter({

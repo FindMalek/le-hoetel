@@ -12,6 +12,7 @@
     "hotel-is-organization",
     "guests-are-not-auth-users",
     "consent-log-append-only",
+    "unsubscribe-links-are-signed-tokens",
     "languine-per-release"
   ]
 }

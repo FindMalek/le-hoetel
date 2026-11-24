@@ -1,5 +1,6 @@
 import type { Auth } from "@le-hoetel/auth"
-import { appRouter, createContext, type Services } from "@le-hoetel/orpc"
+import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@le-hoetel/orpc"
+import { unsubscribeAll } from "@le-hoetel/orpc/unsubscribe"
 import { OpenAPIHandler } from "@orpc/openapi/fetch"
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins"
 import { onError } from "@orpc/server"
@@ -24,6 +25,7 @@ type Interceptors = NonNullable<NonNullable<ConstructorParameters<typeof RPCHand
  *   /v1/*         the same procedures as REST, docs at /v1/docs, spec at /v1/openapi.json
  *   /files/<key>  redirect to a short-lived url for an uploaded file
  *   /billing/webhook  Stripe or Polar events (signature checked)
+ *   /unsubscribe/<token>  POST: one tap unsubscribe from a mail client's List-Unsubscribe header (RFC 8058)
  *   /telegram/webhook  Telegram bot updates (secret header checked)
  *   /health       for Dokploy and uptime checks
  */
@@ -67,6 +69,18 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
         .then(() => true)
         .catch(() => false)
       return Response.json({ ok: db, db, env: services.config.deployEnv }, { status: db ? 200 : 503 })
+    }
+    if (pathname.startsWith("/unsubscribe/") && request.method === "POST") {
+      const ip = clientIp(request.headers)
+      if (ip && !(await services.rateLimiter.hit(`unsubscribe:${ip}`, RATE_LIMITS.default)).ok) {
+        return Response.json({ ok: false }, { status: 429 })
+      }
+      const token = decodeURIComponent(pathname.slice("/unsubscribe/".length))
+      const done = await unsubscribeAll(services, token).then(
+        () => true,
+        () => false,
+      )
+      return Response.json({ ok: done }, { status: done ? 200 : 404 })
     }
     if (pathname === "/telegram/webhook" && request.method === "POST") {
       return services.notification.handleTelegramWebhook(request)
