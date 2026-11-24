@@ -34,7 +34,8 @@ services:
       target: runner
     environment:
       <<: *app-env
-      DEPLOY_ENV: production
+      DEPLOY_ENV: ${DEPLOY_ENV:-production}
+      MESSAGING_LIVE: ${MESSAGING_LIVE:-false}
       DATABASE_URL: postgres://le_hoetel:${POSTGRES_PASSWORD:-le_hoetel}@postgres:5432/le_hoetel
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET, openssl rand -base64 32}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
