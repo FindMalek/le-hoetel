@@ -1,0 +1,38 @@
+---
+title: Guests are not auth users
+description: Guests are rows owned by a hotel. They do not sign up and they do not have a login.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Guests give a contact and a consent in under a minute. A login would stop most of them.
+
+## Decision
+
+A guest is a hotel-scoped record with consent entries. Guest actions such as unsubscribe, export and delete work without a login.
+
+## Why
+
+- Any extra step lowers capture, which is our biggest risk.
+- Guests belong to a hotel, not to our platform: the same person at two hotels is two relationships.
+- Auth users are for staff and admins only, which keeps the auth surface small.
+
+## Why not
+
+- Guests as better-auth users: friction, and it mixes staff and guest identities.
+
+## Consequences
+
+- Guest actions (unsubscribe, export, delete) need a link or request flow that does not depend on a session.
+- A guest web app in V3 will need its own identity design.
+
+## Revisit when
+
+V3 guest web app or the destination network needs a guest account.
+
+## Related
+
+- [Data and consent rules](/docs/data-rules)
+- [Roadmap](/docs/roadmap)

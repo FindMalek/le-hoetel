@@ -1,0 +1,73 @@
+---
+title: How we work
+description: The agents loop, labels, pull request rules and the merge rule.
+---
+
+## Source of truth
+
+- Everything we decide lives in this docs site. A PR that changes behavior, data, pricing or a decision updates the docs in the same PR.
+- Important choices get a short [decision record](/docs/decisions) with the why and the why not.
+- Work is tracked as GitHub issues on a GitHub Project, grouped by the eight [milestones](/docs/roadmap).
+- Anything we decide not to do now becomes a labeled issue in a later milestone, never a forgotten idea.
+
+## The agents loop
+
+Four roles work together on each issue:
+
+| Agent | Job |
+|---|---|
+| Builder | Takes one issue, works in its own git worktree and branch, writes code and tests, opens a PR that links the issue and copies its labels |
+| Reviewer | Reads every PR diff with fresh eyes: correctness, security, hotel scoping, consent and privacy rules, accessibility, RTL, performance, tests, docs and translations |
+| QA | Runs end to end tests against the PR preview, checks mobile and desktop in all three languages, reports bugs on the PR |
+| Researcher | Before a feature is built, comments on the issue with what competitors do, what guests and owners want, and how we can do better |
+
+The Reviewer's findings loop back to the Builder on every push until the Reviewer is satisfied. GitHub does not let one account approve its own PR, so the Reviewer comments and adds the `agent-approved` label instead of a formal approval.
+
+## Labels
+
+Every issue and every PR carries all of these. A CI check fails the PR when labels are missing.
+
+| Group | Values |
+|---|---|
+| Milestone | `milestone:1` to `milestone:8` |
+| Priority | `P0` blocker, `P1` must have, `P2` should have, `P3` nice to have |
+| Area | `area:capture`, `area:messaging`, `area:automations`, `area:dashboard`, `area:admin`, `area:design-system`, `area:i18n`, `area:email`, `area:seo`, `area:infra`, `area:ci-cd`, `area:testing`, `area:docs`, `area:legal`, `area:sales`, `area:research`, `area:data` |
+| Owner | `owner:malek`, `owner:ryan`, `owner:yasin` |
+| Type | `type:feature`, `type:bug`, `type:chore`, `type:research`, `type:docs` |
+| Size | `size:S`, `size:M`, `size:L` |
+| Flags | `needs-human`, `needs-research`, `ux-critical`, `blocked` |
+
+## Branches and commits
+
+- One issue is one branch is one pull request, in its own worktree.
+- Branch names are never purely numeric. Use `lh-<issue number>`.
+- Commit messages are `type(scope): subject`. Types: `feat`, `fix`, `perf`, `refactor`, `chore`, `test`, `docs`, `ci`. Scope is always present. The subject is at most 5 words, lowercase, imperative, no period. Example: `fix(auth): expired token`.
+- The PR title is a short plain description and the body starts with `closes #<issue number>`.
+- Update a branch with merge, never rebase.
+
+## Pull request rules
+
+- Keep the diff small and inside the issue scope.
+- Add one focused test per behavior. Tests run on a real Postgres.
+- Run lint, type check, the touched tests and the build before opening the PR.
+- New user facing strings get English keys, plus French and Arabic.
+- Previews, tests and staging never send real messages.
+- PR, issue and review comments are written like a developer typed them fast to a teammate: one idea, plain words, file names in backticks.
+
+## Merge rule
+
+A PR can be squash merged when:
+
+1. The Reviewer is satisfied, shown by the `agent-approved` label
+2. CI is green
+3. QA passes
+
+PRs labeled `needs-human` wait for a person: database migrations, auth, consent and legal wording, billing, infrastructure, anything touching guest data export or delete. Merges are squash and merge, with the PR title as the subject and an empty body.
+
+<Callout type="info" title="Current practice">
+During the foundation milestone the human wait is relaxed. Changes in the areas above are still merged with extra care and flagged for a human look later.
+</Callout>
+
+## Token and context discipline
+
+Work one issue per branch, keep context small, run only affected tasks and touched tests while iterating, and run the full suite in CI.

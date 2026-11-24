@@ -1,0 +1,49 @@
+---
+title: Vision and principles
+description: What we are building, the principles behind it, who we sell to first, and why a hotel says yes.
+---
+
+A loyalty and guest relationship tool for hotels in Tunisia. The hotel owns the relationship with the guest, not the booking site or the tour operator.
+
+## Principles
+
+1. **Own the relationship, not the booking.** The hotel keeps the contact, whoever sold the room.
+2. **Capture first.** No contact means nothing to automate. See [capture first](/docs/decisions/capture-first).
+3. **Local channels.** WhatsApp and email first, SMS later, in French, Arabic and English.
+4. **Configuration, not customization.** Branding is config, never code per client. See [branding is config](/docs/decisions/branding-is-config).
+5. **Feedback leads to action leads to revenue.** A survey that nobody reads is noise.
+6. **Recognition over points.** See [recognition over points](/docs/decisions/recognition-over-points).
+7. **Long term: a destination network** across hotels, restaurants and spas.
+
+## Segments
+
+The buyer is the owner or the general manager.
+
+| Order | Segment | Note |
+|---|---|---|
+| 1 | Guesthouses and boutique hotels up to 30 rooms | First. The owner decides fast. |
+| 2 | Hotels with a large Tunisian clientele | Locals are reachable and rebook. |
+| 3 | Spa and restaurant hotels | Offers have a clear place to land. |
+| 4 | Tour operator all-inclusive resorts | Later. They do not own their guests. |
+| 5 | Groups and chains | Later. |
+
+Which segment the first three pilots come from is still an [open decision](/docs/decisions#open-decisions).
+
+## Why a hotel says yes, in order of speed
+
+| When | What the hotel gets |
+|---|---|
+| Week 1 | Unhappy guest alerts. The manager fixes it the same day. |
+| Month 1 | More Google reviews, because every guest gets the invite. |
+| Months 2 to 3 | A contact list the hotel owns, and offers to fill low season, the spa and the restaurant. |
+| Month 6 plus | Direct rebooking saves the tour operator or booking site commission. |
+
+The biggest gain is the slowest to show, so the pitch opens with the fastest one. See the [pitch playbook](/docs/pitch).
+
+## Why a guest scans
+
+A small perk for scanning, recognition on the next visit and on their birthday, a real person who reads the feedback, and offers that fit instead of spam.
+
+<Callout type="warn" title="Our biggest risk">
+Without a perk the QR code gets ignored. See [risks](/docs/risks).
+</Callout>
