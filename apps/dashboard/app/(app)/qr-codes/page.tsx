@@ -2,35 +2,10 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { PageHeader } from "@/components/page-header"
-import { QrCodesBoard, type QrCodesLabels } from "@/components/qr-codes-board"
+import { QrCodesBoard } from "@/components/qr-codes-board"
 import { getQueryClient, serverOrpc } from "@/lib/api"
 
 export const metadata: Metadata = { title: "QR codes" }
-
-const LABELS = [
-  "newTitle",
-  "newDescription",
-  "where",
-  "rooms",
-  "tables",
-  "desk",
-  "room",
-  "table",
-  "roomHint",
-  "tableHint",
-  "deskHint",
-  "spots",
-  "spotsHint",
-  "generate",
-  "guestsSoFar",
-  "alt",
-  "tableTitle",
-  "tableDescription",
-  "empty",
-  "colWhere",
-  "colSpot",
-  "colGuests",
-] as const
 
 export default async function QrCodesPage() {
   const t = await getTranslations("qrCodes")
@@ -40,7 +15,32 @@ export default async function QrCodesPage() {
     <>
       <PageHeader title={t("title")} description={t("description")} />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <QrCodesBoard labels={Object.fromEntries(LABELS.map((key) => [key, t(key)])) as QrCodesLabels} />
+        <QrCodesBoard
+          labels={{
+            newTitle: t("newTitle"),
+            newDescription: t("newDescription"),
+            where: t("where"),
+            rooms: t("rooms"),
+            tables: t("tables"),
+            desk: t("desk"),
+            room: t("room"),
+            table: t("table"),
+            roomHint: t("roomHint"),
+            tableHint: t("tableHint"),
+            deskHint: t("deskHint"),
+            spots: t("spots"),
+            spotsHint: t("spotsHint"),
+            generate: t("generate"),
+            guestsSoFar: t("guestsSoFar"),
+            alt: t("alt"),
+            tableTitle: t("tableTitle"),
+            tableDescription: t("tableDescription"),
+            empty: t("empty"),
+            colWhere: t("colWhere"),
+            colSpot: t("colSpot"),
+            colGuests: t("colGuests"),
+          }}
+        />
       </HydrationBoundary>
     </>
   )
