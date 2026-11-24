@@ -1,0 +1,59 @@
+---
+title: Infrastructure
+description: Where le-hoetel runs, the self-hosted plan for the pilot, and the risks to settle first.
+---
+
+<Callout type="warn" title="Placeholder">
+This is the plan, not what runs today. The first step is a read-only inventory of the self-hosted server ("The Keep"), and the tables below are filled in after it. Nothing is wired until the plan is approved.
+</Callout>
+
+## Environments
+
+| Environment | How it is deployed | Notes |
+|---|---|---|
+| Preview | One per PR | Own database and storage prefix, log-only providers, deleted when the PR closes, with resource limits |
+| Staging | Automatically from `main` | Log-only providers |
+| Production | On a release | Migrations run safely first. Healthchecks, a rollback path and a short deploy note |
+
+Previews, tests, local and staging never send real messages.
+
+## Planned use of the self-hosted server
+
+| Need | Planned tool | Status |
+|---|---|---|
+| Deploy apps and previews | Dokploy | To confirm after the inventory |
+| Background jobs | The built-in jobs on Postgres, or Trigger.dev | To decide, with the reason recorded |
+| Logs and traces | OpenObserve through the logger, with request IDs | To confirm |
+| Errors | GlitchTip | To confirm |
+| Anonymous visits | Umami on public pages only, no cookies, no personal data | To confirm |
+| Translations | Languine | To confirm |
+| Storage | S3 compatible, one bucket and a prefix per hotel | See [the decision](/docs/decisions/one-bucket-prefix-per-hotel) |
+| Database | Postgres | To confirm |
+| Build cache | A Turborepo remote cache, with the GitHub Actions cache as fallback | To confirm |
+
+## Inventory to fill in
+
+| Item | Value |
+|---|---|
+| Running containers | |
+| Dokploy projects | |
+| Databases | |
+| Object storage | |
+| Reverse proxy and exposed ports | |
+| Disk and memory | |
+| Backups | |
+
+## Risks to settle
+
+- Guest data on a self-hosted server and a home connection.
+- Power and internet cuts.
+- Backups: propose off-site backups for the pilot.
+- Previews eating resources when many PRs are open.
+- A small VPS for paying hotels would change the uptime and the hosting story.
+- Hosting guest data abroad may need a legal check, see [data and consent rules](/docs/data-rules).
+
+The choice between the self-hosted server and a small VPS for the pilot is an [open decision](/docs/decisions#open-decisions).
+
+## Deploying the apps
+
+How to build and run the apps is in [deploy](/docs/deploy). The keys are in [environment](/docs/environment).
