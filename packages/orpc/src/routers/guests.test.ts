@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@le-hoetel/common/consent"
-import { consentEvents } from "@le-hoetel/db"
+import { auditLog, consentEvents } from "@le-hoetel/db"
+import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -137,4 +138,17 @@ test("the database refuses a consent event that points at another hotel's guest"
         wordingVersion: CONSENT_WORDING_VERSION,
       }))(),
   ).rejects.toThrow()
+})
+
+test("deleting a guest removes their consent log too and leaves an audit row without personal data", async () => {
+  const { client } = await hotelAs("erase")
+  const guest = await client.guests.create(newGuest)
+  await client.guests.remove({ id: guest.id })
+
+  await expect(client.guests.get({ id: guest.id })).rejects.toMatchObject({ code: "NOT_FOUND" })
+  const left = await app.services.db.select().from(consentEvents).where(eq(consentEvents.guestId, guest.id))
+  expect(left).toEqual([])
+  const [entry] = await app.services.db.select().from(auditLog).where(eq(auditLog.targetId, guest.id))
+  expect(entry?.action).toBe("guest.delete")
+  expect(JSON.stringify(entry)).not.toContain("20123456")
 })

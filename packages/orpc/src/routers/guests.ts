@@ -3,15 +3,17 @@ import {
   consentSetSchema,
   GUEST_EXTRA_FIELDS,
   guestCreateSchema,
+  guestExportSchema,
   guestListInputSchema,
   guestListSchema,
   guestSchema,
   guestUpdateSchema,
   guestUpsertResultSchema,
+  hotelGuestsExportSchema,
 } from "@le-hoetel/common/schemas"
 import { consentEvents, guests } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
-import { and, count, desc, eq, ilike, or } from "drizzle-orm"
+import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -25,6 +27,22 @@ async function loadGuest(db: Context["db"], hotelId: string, guestId: string) {
   if (!row) throw notFound()
   const [guest] = await withConsents(db, hotelId, [row])
   return guest!
+}
+
+async function eventsOf(db: Context["db"], hotelId: string, guestIds: string[] | null) {
+  return db
+    .select({
+      id: consentEvents.id,
+      guestId: consentEvents.guestId,
+      channel: consentEvents.channel,
+      granted: consentEvents.granted,
+      source: consentEvents.source,
+      wordingVersion: consentEvents.wordingVersion,
+      at: consentEvents.at,
+    })
+    .from(consentEvents)
+    .where(and(eq(consentEvents.hotelId, hotelId), guestIds ? inArray(consentEvents.guestId, guestIds) : undefined))
+    .orderBy(desc(consentEvents.at))
 }
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&")
@@ -126,6 +144,62 @@ export const guestsRouter = {
       return loadGuest(context.db, hotelId, input.guestId)
     }),
 
+  export: hotelProcedure
+    .use(can({ guest: ["export"] }))
+    .route({
+      method: "GET",
+      path: "/guests/{id}/export",
+      summary: "Everything stored about one guest",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(guestExportSchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const guest = await loadGuest(context.db, hotelId, input.id)
+      await audit(context, { action: "guest.export", targetId: input.id, metadata: { hotelId } })
+      return { exportedAt: context.now(), guest, consentEvents: await eventsOf(context.db, hotelId, [input.id]) }
+    }),
+
+  exportAll: hotelProcedure
+    .use(can({ guest: ["export"] }))
+    .route({
+      method: "GET",
+      path: "/guests/export",
+      summary: "Every guest of the hotel with their consent log",
+      tags: ["guests"],
+    })
+    .output(hotelGuestsExportSchema)
+    .handler(async ({ context }) => {
+      const { hotelId } = context.hotel
+      const rows = await context.db.select().from(guests).where(eq(guests.hotelId, hotelId)).orderBy(guests.createdAt)
+      const all = await withConsents(context.db, hotelId, rows)
+      const events = await eventsOf(context.db, hotelId, null)
+      await audit(context, { action: "guest.export-all", metadata: { hotelId, count: all.length } })
+      return {
+        exportedAt: context.now(),
+        guests: all.map((guest) => ({ guest, consentEvents: events.filter((event) => event.guestId === guest.id) })),
+      }
+    }),
+
+  remove: hotelProcedure
+    .use(can({ guest: ["delete"] }))
+    .route({
+      method: "DELETE",
+      path: "/guests/{id}",
+      summary: "Delete a guest and everything stored about them",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(z.object({ ok: z.literal(true) }))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const removed = await context.db.delete(guests).where(hotelGuest(hotelId, input.id)).returning({ id: guests.id })
+      if (!removed.length) throw notFound()
+      await audit(context, { action: "guest.delete", targetId: input.id, metadata: { hotelId } })
+      return { ok: true as const }
+    }),
+
   consentHistory: hotelProcedure
     .use(can({ guest: ["read"] }))
     .route({
@@ -139,17 +213,6 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       await loadGuest(context.db, hotelId, input.id)
-      return context.db
-        .select({
-          id: consentEvents.id,
-          channel: consentEvents.channel,
-          granted: consentEvents.granted,
-          source: consentEvents.source,
-          wordingVersion: consentEvents.wordingVersion,
-          at: consentEvents.at,
-        })
-        .from(consentEvents)
-        .where(and(eq(consentEvents.hotelId, hotelId), eq(consentEvents.guestId, input.id)))
-        .orderBy(desc(consentEvents.at))
+      return eventsOf(context.db, hotelId, [input.id])
     }),
 }
