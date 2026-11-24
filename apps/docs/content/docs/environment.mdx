@@ -22,6 +22,7 @@ There is one `.env` at the repo root. Every app loads it, and `packages/env` val
 | `DATABASE_URL` | postgres connection string |
 | `POSTGRES_PORT` | host port of the local docker postgres |
 | `SEED` | `demo` fills an empty database with sample data, `none` never seeds |
+| `DEMO_PASSWORD` | password of the seeded demo accounts, default `demo-le-hoetel-2026` (fake, local and previews only) |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32`, generated for you |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | the first admin, created or reset on every api start |
 | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | optional github sign-in |
