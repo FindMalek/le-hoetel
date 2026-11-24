@@ -6,6 +6,7 @@ import { Toaster } from "@le-hoetel/ui/components/sonner"
 import { TooltipProvider } from "@le-hoetel/ui/components/tooltip"
 import { cn } from "@le-hoetel/ui/lib/utils"
 import type { Metadata } from "next"
+import { NextIntlClientProvider } from "next-intl"
 import { getLocale } from "next-intl/server"
 import { FeedbackButton } from "@/components/feedback-button"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -31,10 +32,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={lang} dir={dir} suppressHydrationWarning className={cn("antialiased", fontVariables, "font-sans")}>
       <body className="bg-background text-foreground">
         <ThemeProvider>
-          <QueryProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-            <FeedbackButton />
-          </QueryProvider>
+          <NextIntlClientProvider>
+            <QueryProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+              <FeedbackButton />
+            </QueryProvider>
+          </NextIntlClientProvider>
           <Toaster position="top-center" />
           <ConsentBanner />
         </ThemeProvider>

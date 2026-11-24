@@ -14,6 +14,7 @@ import { Kbd } from "@le-hoetel/ui/components/kbd"
 import { SidebarMenuButton, SidebarMenuItem } from "@le-hoetel/ui/components/sidebar"
 import { LanguagesIcon, LogOutIcon, MonitorIcon, MoonIcon, SearchIcon, SunIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { visibleNav } from "@/lib/nav"
@@ -21,6 +22,7 @@ import { visibleNav } from "@/lib/nav"
 export function CommandPalette({ role }: { role: string | null }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
+  const t = useTranslations("nav")
   const { setTheme } = useTheme()
 
   useEffect(() => {
@@ -53,9 +55,9 @@ export function CommandPalette({ role }: { role: string | null }) {
           <CommandEmpty>No results.</CommandEmpty>
           <CommandGroup heading="Go to">
             {visibleNav(role).map((item) => (
-              <CommandItem key={item.href} value={`go ${item.label}`} onSelect={run(() => router.push(item.href))}>
+              <CommandItem key={item.href} value={`go ${t(item.label)}`} onSelect={run(() => router.push(item.href))}>
                 <item.icon />
-                {item.label}
+                {t(item.label)}
               </CommandItem>
             ))}
           </CommandGroup>
