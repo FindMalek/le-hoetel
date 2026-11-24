@@ -1,4 +1,5 @@
 import {
+  CAPTURE_MIN_FILL_MS,
   CAPTURE_SOURCES,
   captureInputSchema,
   guestCreateSchema,
@@ -12,6 +13,7 @@ import { z } from "zod"
 import type { Context } from "../context"
 import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
+import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
 import { publicProcedure } from "../procedures"
 
 const hotelNotFound = () => new ORPCError("NOT_FOUND", { message: "Hotel not found." })
@@ -31,6 +33,13 @@ async function findPublicHotel(db: Context["db"], slug: string) {
     .where(and(eq(organization.slug, slug), ne(hotelSettings.status, "suspended")))
   if (!hotel) throw hotelNotFound()
   return hotel
+}
+
+/** Bots get the same "ok" a guest gets, so they learn nothing: a filled honeypot, a form sent too fast, a link as a name. */
+function looksLikeBot(input: z.output<typeof captureInputSchema>, now: Date): boolean {
+  return (
+    !!input.website || now.getTime() - input.renderedAt < CAPTURE_MIN_FILL_MS || /https?:\/\/|www\./i.test(input.name)
+  )
 }
 
 export const publicRouter = {
@@ -88,7 +97,10 @@ export const publicRouter = {
     .input(captureInputSchema)
     .output(z.object({ ok: z.literal(true) }))
     .handler(async ({ context, input }) => {
+      await enforceRateLimit(context, "capture.ip", RATE_LIMITS.captureIp)
       const hotel = await findPublicHotel(context.db, input.slug)
+      if (looksLikeBot(input, context.now())) return { ok: true as const }
+      await enforceKey(context.rateLimiter, `public.capture:hotel:${hotel.id}`, RATE_LIMITS.captureHotel)
       const guest = guestCreateSchema.safeParse({
         name: input.name,
         phone: input.phone,

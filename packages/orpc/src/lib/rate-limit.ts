@@ -21,6 +21,8 @@ export const RATE_LIMITS = {
   auth: { limit: 10, windowMs: 60_000 },
   waitlist: { limit: 5, windowMs: 10 * 60_000 },
   feedback: { limit: 3, windowMs: 10 * 60_000 },
+  captureIp: { limit: 10, windowMs: 10 * 60_000 },
+  captureHotel: { limit: 200, windowMs: 60 * 60_000 },
 } satisfies Record<string, RateLimitRule>
 
 const MAX_KEYS = 10_000
@@ -91,6 +93,18 @@ export function clientIp(headers: Headers): string | null {
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("x-real-ip") || null
 }
 
+/** Counts one hit on `key`. Throws 429 when over the rule. */
+export async function enforceKey(limiter: RateLimiter, key: string, rule: RateLimitRule): Promise<void> {
+  const result = await limiter.hit(key, rule)
+  if (!result.ok) {
+    const seconds = Math.ceil(result.retryAfterMs / 1000)
+    throw new ORPCError("TOO_MANY_REQUESTS", {
+      message: `Too many requests. Try again in ${seconds}s.`,
+      data: { retryAfterMs: result.retryAfterMs },
+    })
+  }
+}
+
 /**
  * Counts a call per route and caller (user id when signed in, ip otherwise). Throws 429 when over the rule.
  * Callers with neither, like server components calling the api directly, are not counted: they would share one bucket.
@@ -101,13 +115,5 @@ export async function enforceRateLimit(
   rule: RateLimitRule,
 ): Promise<void> {
   const who = caller.session?.user.id ?? clientIp(caller.headers)
-  if (!who) return
-  const result = await caller.rateLimiter.hit(`${route}:${who}`, rule)
-  if (!result.ok) {
-    const seconds = Math.ceil(result.retryAfterMs / 1000)
-    throw new ORPCError("TOO_MANY_REQUESTS", {
-      message: `Too many requests. Try again in ${seconds}s.`,
-      data: { retryAfterMs: result.retryAfterMs },
-    })
-  }
+  if (who) await enforceKey(caller.rateLimiter, `${route}:${who}`, rule)
 }
