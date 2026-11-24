@@ -50,6 +50,7 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
     "accentColor",
     "defaultLanguage",
     "displayName",
+    "logoUrl",
     "primaryColor",
     "slug",
   ])

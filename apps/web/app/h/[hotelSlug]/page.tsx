@@ -2,12 +2,13 @@ import { consentWording } from "@le-hoetel/common/consent"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
 import { CAPTURE_SOURCES } from "@le-hoetel/common/schemas"
 import { getDirection, localizedPath } from "@le-hoetel/i18n"
+import { GiftIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
-import type { CSSProperties } from "react"
 import { CaptureForm } from "@/components/capture-form"
-import { brandColor } from "@/lib/branding"
+import { GuestHero } from "@/components/guest-hero"
+import { brandStyle } from "@/lib/branding"
 import { getPublicHotel } from "@/lib/capture"
 
 type Props = { params: Promise<{ hotelSlug: string }>; searchParams: Promise<Record<string, string | undefined>> }
@@ -24,83 +25,92 @@ export default async function CapturePage({ params, searchParams }: Props) {
   const language = HOTEL_LANGUAGES.find((l) => l === query.lang) ?? hotel.defaultLanguage
   const source = query.src && query.src in CAPTURE_SOURCES ? query.src : "desk"
   const location = (query.loc ?? "").slice(0, 40)
-  const primary = brandColor(hotel.primaryColor)
-  const accent = brandColor(hotel.accentColor)
   const t = await getTranslations({ locale: language, namespace: "capture" })
-  const withHotel = (text: string) => text.replaceAll("{hotel}", hotel.displayName)
   const switchTo = (to: HotelLanguage) => {
     const next = new URLSearchParams({ src: source, lang: to })
     if (location) next.set("loc", location)
     return `?${next}`
   }
 
+  const perk = (
+    <section className="flex items-start gap-4 rounded-xl border border-accent-foreground/15 bg-accent p-4 text-accent-foreground">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-foreground/10">
+        <GiftIcon aria-hidden className="size-5" />
+      </span>
+      <div className="grid gap-1 text-start">
+        <h2 className="font-semibold">{t("perkTitle")}</h2>
+        <p className="text-sm leading-relaxed opacity-85 rtl:leading-7">
+          {t("perkBody", { hotel: hotel.displayName })}
+        </p>
+      </div>
+    </section>
+  )
+
   return (
-    <div
-      lang={language}
-      dir={getDirection(language)}
-      style={
-        {
-          "--primary": primary?.color,
-          "--ring": primary?.color,
-          "--primary-foreground": primary?.on,
-          "--accent": accent?.color,
-          "--accent-foreground": accent?.on,
-        } as CSSProperties
-      }
-    >
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 py-8">
-        <nav aria-label={t("languageLabel")} className="flex justify-end gap-3 text-sm">
+    <div lang={language} dir={getDirection(language)} style={brandStyle(hotel)} className="min-h-dvh bg-background">
+      <GuestHero hotel={hotel} line={t("welcome")}>
+        <nav
+          aria-label={t("languageLabel")}
+          className="absolute end-4 top-4 flex rounded-full border bg-background/80 p-0.5 text-sm backdrop-blur-sm"
+        >
           {HOTEL_LANGUAGES.map((to) => (
             <a
               key={to}
               href={switchTo(to)}
               lang={to}
+              hrefLang={to}
               aria-current={to === language ? "true" : undefined}
-              className={to === language ? "font-semibold text-primary" : "text-muted-foreground"}
+              className="flex h-9 min-w-11 items-center justify-center rounded-full px-3 text-muted-foreground transition-colors duration-150 aria-[current=true]:bg-primary aria-[current=true]:text-primary-foreground"
             >
               {LANGUAGE_NAMES[to]}
             </a>
           ))}
         </nav>
-        <header>
-          <h1 className="font-heading font-semibold text-2xl">{withHotel(t("welcome"))}</h1>
-          <p className="mt-2 text-muted-foreground">{t("intro")}</p>
-        </header>
-        <section className="border bg-accent p-4 text-accent-foreground">
-          <h2 className="font-medium">{t("perkTitle")}</h2>
-          <p className="mt-1 text-sm">{withHotel(t("perkBody"))}</p>
-        </section>
+      </GuestHero>
+      <main className="mx-auto flex w-full max-w-md flex-col px-5 pt-6">
         <CaptureForm
           slug={hotel.slug}
           source={source}
           location={location}
+          renderedAt={Date.now()}
           language={language}
+          perk={perk}
           copy={{
             name: t("name"),
+            nameError: t("nameError"),
             phone: t("phone"),
+            phoneError: t("phoneError"),
             dialCode: t("dialCode"),
             language: t("language"),
+            optionalTitle: t("optionalTitle"),
+            optionalHint: t("optionalHint"),
             birthday: t("birthday"),
             email: t("email"),
             consentTitle: t("consentTitle"),
             consentHint: t("consentHint"),
+            whatsappTitle: t("whatsappTitle"),
+            emailTitle: t("emailTitle"),
             emailNeeded: t("emailNeeded"),
             submit: t("submit"),
-            sending: t("sending"),
-            thanksTitle: t("thanksTitle"),
+            submitHint: t("submitHint"),
+            thanksTitle: t("thanksTitle", { name: "{name}" }),
+            thanksBody: t("thanksBody", { hotel: hotel.displayName }),
+            thanksPerk: t("thanksPerk"),
             errorInvalid: t("errorInvalid"),
             errorTooMany: t("errorTooMany"),
-            thanksBody: withHotel(t("thanksBody")),
             whatsappWording: consentWording("whatsapp", language, hotel.displayName),
             emailWording: consentWording("email", language, hotel.displayName),
           }}
         />
-        <footer className="text-center text-muted-foreground text-xs">
-          <a href={localizedPath(language, "/privacy")} className="underline">
-            {t("privacy")}
-          </a>
-        </footer>
       </main>
+      <footer className="mx-auto flex max-w-md justify-center gap-6 px-5 py-6 text-muted-foreground text-xs">
+        <a href={localizedPath(language, "/privacy")} className="flex min-h-11 items-center underline">
+          {t("privacy")}
+        </a>
+        <a href={localizedPath(language, "/terms")} className="flex min-h-11 items-center underline">
+          {t("terms")}
+        </a>
+      </footer>
     </div>
   )
 }

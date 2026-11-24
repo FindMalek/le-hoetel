@@ -1,21 +1,18 @@
 "use client"
 
-import { orpc } from "@le-hoetel/orpc/react"
-import { Button } from "@le-hoetel/ui/components/button"
-import { Switch } from "@le-hoetel/ui/components/switch"
-import { useMutation } from "@tanstack/react-query"
-import { useState } from "react"
-
-type Channel = "email" | "whatsapp"
-type States = { channel: Channel; granted: boolean }[]
+import { CircleAlertIcon } from "lucide-react"
+import { useState, useTransition } from "react"
+import { ConsentToggle } from "@/components/consent-toggle"
+import { type ChannelStates, setChannel, stopAll } from "./actions"
 
 interface Props {
   token: string
-  initial: States
+  initial: ChannelStates
   wording: Record<string, string>
   copy: {
     email: string
     whatsapp: string
+    turnsOn: string
     stopAll: string
     stoppedTitle: string
     stopped: string
@@ -25,61 +22,72 @@ interface Props {
 }
 
 export function UnsubscribeForm({ token, initial, wording, copy }: Props) {
-  const [states, setStates] = useState<States>(initial)
+  const [states, setStates] = useState<ChannelStates>(initial)
   const [note, setNote] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
-  const handlers = {
-    onSuccess: (next: States) => {
-      setStates(next)
-      setFailed(false)
-      setNote(next.some((state) => state.granted) ? copy.saved : copy.stopped)
-    },
-    onError: () => {
-      setFailed(true)
-      setNote(copy.error)
-    },
-  }
-  const update = useMutation(orpc.public.unsubscribe.update.mutationOptions(handlers))
-  const stopAll = useMutation(orpc.public.unsubscribe.all.mutationOptions(handlers))
-  const busy = update.isPending || stopAll.isPending
+  const [busy, startTransition] = useTransition()
   const anyOn = states.some((state) => state.granted)
+
+  const apply = (call: Promise<ChannelStates | null>, previous: ChannelStates) =>
+    startTransition(async () => {
+      const next = await call
+      setFailed(!next)
+      if (!next) {
+        setStates(previous)
+        setNote(copy.error)
+        return
+      }
+      setStates(next)
+      setNote(next.some((state) => state.granted) ? copy.saved : null)
+    })
 
   return (
     <div className="grid gap-4">
-      <ul className="grid gap-3">
-        {states.map(({ channel, granted }) => {
-          const id = `channel-${channel}`
-          return (
-            <li key={channel} className="grid gap-1">
-              <div className="flex items-center justify-between gap-3">
-                <label htmlFor={id} className="font-medium text-base">
-                  {copy[channel]}
-                </label>
-                <Switch
-                  id={id}
-                  checked={granted}
-                  disabled={busy}
-                  onCheckedChange={(checked) => update.mutate({ token, [channel]: checked })}
-                />
-              </div>
-              {!granted ? <p className="text-muted-foreground text-xs">{wording[channel]}</p> : null}
-            </li>
-          )
-        })}
-      </ul>
+      <div className="grid gap-3">
+        {states.map(({ channel, granted }) => (
+          <ConsentToggle
+            key={channel}
+            title={copy[channel]}
+            wording={granted ? (wording[channel] ?? "") : copy.turnsOn.replace("{wording}", wording[channel] ?? "")}
+            checked={granted}
+            disabled={busy}
+            onChange={(event) => {
+              const previous = states
+              setStates(
+                states.map((state) =>
+                  state.channel === channel ? { ...state, granted: event.target.checked } : state,
+                ),
+              )
+              apply(setChannel(token, channel, event.target.checked), previous)
+            }}
+          />
+        ))}
+      </div>
       {anyOn ? (
-        <Button
-          size="lg"
-          variant="outline"
-          className="min-h-11"
+        <button
+          type="button"
           disabled={busy}
-          onClick={() => stopAll.mutate({ token })}
+          onClick={() => {
+            const previous = states
+            setStates(states.map((state) => ({ ...state, granted: false })))
+            apply(stopAll(token), previous)
+          }}
+          className="h-12 rounded-xl border font-medium text-sm transition-colors duration-150 hover:bg-muted disabled:opacity-60"
         >
           {copy.stopAll}
-        </Button>
-      ) : null}
-      <p role={failed ? "alert" : "status"} className={failed ? "text-destructive text-sm" : "text-sm"}>
-        {!anyOn ? <strong className="block">{copy.stoppedTitle}</strong> : null}
+        </button>
+      ) : (
+        <div role="status" className="grid gap-1 rounded-xl border bg-muted/50 p-4">
+          <strong className="font-semibold">{copy.stoppedTitle}</strong>
+          <span className="text-muted-foreground text-sm">{copy.stopped}</span>
+        </div>
+      )}
+      <p
+        role={failed ? "alert" : "status"}
+        className="flex min-h-5 items-center gap-1.5 text-sm data-[failed=true]:text-destructive"
+        data-failed={failed}
+      >
+        {failed ? <CircleAlertIcon aria-hidden className="size-4 shrink-0" /> : null}
         {note}
       </p>
     </div>

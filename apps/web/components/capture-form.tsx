@@ -2,148 +2,311 @@
 
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
 import { PhoneInput } from "@le-hoetel/ui/components/phone-input"
-import { useActionState, useState } from "react"
-import { type CaptureState, captureAction } from "@/app/h/[hotelSlug]/actions"
+import { cn } from "@le-hoetel/ui/lib/utils"
+import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
+import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
+import { captureAction } from "@/app/h/[hotelSlug]/actions"
+import { ConsentToggle } from "./consent-toggle"
 
 export interface CaptureCopy {
   name: string
+  nameError: string
   phone: string
+  phoneError: string
   dialCode: string
   language: string
+  optionalTitle: string
+  optionalHint: string
   birthday: string
   email: string
   consentTitle: string
   consentHint: string
+  whatsappTitle: string
+  emailTitle: string
   emailNeeded: string
   submit: string
-  sending: string
+  submitHint: string
   thanksTitle: string
   thanksBody: string
+  thanksPerk: string
   errorInvalid: string
   errorTooMany: string
   whatsappWording: string
   emailWording: string
 }
 
+type Status = "idle" | "done" | "invalid" | "tooMany"
+
 const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
 const CONTROL =
-  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus:border-ring focus:ring-1 focus:ring-ring/50 md:text-sm"
+  "h-12 w-full min-w-0 rounded-xl border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 aria-invalid:border-destructive"
+
+const nationalDigits = (national: string) => national.replace(/\D/g, "").replace(/^0+/, "")
+
+function FieldError({ id, children }: { id: string; children?: ReactNode }) {
+  return (
+    <p id={id} role="alert" className="flex items-center gap-1.5 text-destructive text-sm" hidden={!children}>
+      {children ? <CircleAlertIcon aria-hidden className="size-4 shrink-0" /> : null}
+      {children}
+    </p>
+  )
+}
+
+function Check() {
+  const [drawn, setDrawn] = useState(false)
+  useEffect(() => setDrawn(true), [])
+  return (
+    <span
+      className={cn(
+        "flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-300 ease-out motion-reduce:transition-none",
+        drawn ? "scale-100" : "scale-75",
+      )}
+    >
+      <svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+        <path
+          d="M5 12.5l4.5 4.5L19 7.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="22"
+          style={{ strokeDashoffset: drawn ? 0 : 22 }}
+          className="transition-[stroke-dashoffset] delay-150 duration-400 ease-out motion-reduce:transition-none"
+        />
+      </svg>
+    </span>
+  )
+}
 
 export function CaptureForm(props: {
   slug: string
   source: string
   location: string
+  renderedAt: number
   language: HotelLanguage
+  perk: ReactNode
   copy: CaptureCopy
 }) {
   const { copy } = props
-  const [state, action, pending] = useActionState<CaptureState, FormData>(captureAction, "idle")
+  const [status, setStatus] = useState<Status>("idle")
+  const [name, setName] = useState("")
   const [dialCode, setDialCode] = useState("+216")
   const [national, setNational] = useState("")
   const [email, setEmail] = useState("")
   const [emailConsent, setEmailConsent] = useState(false)
+  const [optionalOpen, setOptionalOpen] = useState(false)
+  const [touched, setTouched] = useState({ name: false, phone: false })
+  const [tried, setTried] = useState(false)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
 
-  if (state === "done") {
-    return (
-      <div role="status" className="border bg-card p-5">
-        <h2 className="font-heading font-semibold text-xl">{copy.thanksTitle}</h2>
-        <p className="mt-2 text-muted-foreground">{copy.thanksBody}</p>
-      </div>
-    )
+  const digits = nationalDigits(national)
+  const nameBad = name.trim().length < 2
+  const phoneBad = digits.length < 6 || digits.length > 12
+  const emailMissing = emailConsent && !email.trim()
+  const showName = (touched.name || tried) && nameBad
+  const showPhone = (touched.phone || tried) && phoneBad
+  const firstName = name.trim().split(/\s+/)[0] ?? ""
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setTried(true)
+    if (nameBad) {
+      nameRef.current?.focus()
+      return
+    }
+    if (phoneBad) {
+      phoneRef.current?.focus()
+      return
+    }
+    if (emailMissing) {
+      setOptionalOpen(true)
+      setTimeout(() => emailRef.current?.focus(), 0)
+      return
+    }
+    const data = new FormData(event.currentTarget)
+    setStatus("done")
+    const result = await captureAction("idle", data)
+    if (result !== "done") setStatus(result)
   }
 
   return (
-    <form action={action} className="flex flex-col gap-4">
-      <input type="hidden" name="slug" value={props.slug} />
-      <input type="hidden" name="source" value={props.source} />
-      <input type="hidden" name="location" value={props.location} />
-      <input type="hidden" name="phone" value={`${dialCode}${national.replace(/\s/g, "").replace(/^0+/, "")}`} />
+    <>
+      {status === "done" ? (
+        <div role="status" className="flex flex-col items-center gap-6 py-10 text-center">
+          <Check />
+          <div className="grid gap-2">
+            <h2 className="text-balance font-semibold text-2xl tracking-tight">
+              {copy.thanksTitle.replace("{name}", firstName)}
+            </h2>
+            <p className="text-muted-foreground">{copy.thanksBody}</p>
+          </div>
+          <div className="grid w-full gap-3">
+            {props.perk}
+            <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
+          </div>
+        </div>
+      ) : null}
+      <form onSubmit={submit} noValidate hidden={status === "done"} className="flex flex-col gap-6">
+        {props.perk}
+        <input type="hidden" name="slug" value={props.slug} />
+        <input type="hidden" name="source" value={props.source} />
+        <input type="hidden" name="location" value={props.location} />
+        <input type="hidden" name="renderedAt" value={props.renderedAt} />
+        <input type="hidden" name="phone" value={`${dialCode}${digits}`} />
+        <div aria-hidden className="sr-only">
+          <label>
+            Website
+            <input name="website" tabIndex={-1} autoComplete="off" />
+          </label>
+        </div>
 
-      <label className="flex flex-col gap-1.5 text-sm">
-        {copy.name}
-        <input name="name" required maxLength={120} autoComplete="name" className={CONTROL} />
-      </label>
-
-      <div className="flex flex-col gap-1.5 text-sm">
-        <label htmlFor="capture-phone">{copy.phone}</label>
-        <PhoneInput
-          id="capture-phone"
-          required
-          value={national}
-          onValueChange={setNational}
-          dialCode={dialCode}
-          onDialCodeChange={setDialCode}
-          dialCodeLabel={copy.dialCode}
-        />
-      </div>
-
-      <label className="flex flex-col gap-1.5 text-sm">
-        {copy.language}
-        <select name="language" defaultValue={props.language} className={CONTROL}>
-          {HOTEL_LANGUAGES.map((language) => (
-            <option key={language} value={language}>
-              {LANGUAGE_NAMES[language]}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="flex flex-col gap-1.5 text-sm">
-        {copy.birthday}
-        <input type="date" name="birthday" autoComplete="bday" className={CONTROL} />
-      </label>
-
-      <label className="flex flex-col gap-1.5 text-sm">
-        {copy.email}
-        <input
-          type="email"
-          name="email"
-          maxLength={200}
-          autoComplete="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          className={CONTROL}
-        />
-      </label>
-
-      <fieldset className="flex flex-col gap-3 border p-3">
-        <legend className="px-1 font-medium text-sm">{copy.consentTitle}</legend>
-        <p className="text-muted-foreground text-xs">{copy.consentHint}</p>
-        <label className="flex items-start gap-3 text-sm">
-          <input type="checkbox" name="whatsapp" className="mt-0.5 size-5 shrink-0 accent-primary" />
-          <span>{copy.whatsappWording}</span>
-        </label>
-        <label className="flex items-start gap-3 text-sm">
+        <div className="grid gap-2">
+          <label htmlFor="capture-name" className="font-medium text-sm">
+            {copy.name}
+          </label>
           <input
-            type="checkbox"
-            name="emailConsent"
-            checked={emailConsent}
-            onChange={(event) => setEmailConsent(event.target.checked)}
-            className="mt-0.5 size-5 shrink-0 accent-primary"
+            ref={nameRef}
+            id="capture-name"
+            name="name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            onBlur={() => setTouched((current) => ({ ...current, name: true }))}
+            maxLength={120}
+            autoComplete="name"
+            enterKeyHint="next"
+            aria-invalid={showName}
+            aria-describedby="capture-name-error"
+            className={CONTROL}
           />
-          <span>{copy.emailWording}</span>
-        </label>
-        {emailConsent && !email && <p className="text-destructive text-xs">{copy.emailNeeded}</p>}
-      </fieldset>
+          <FieldError id="capture-name-error">{showName ? copy.nameError : null}</FieldError>
+        </div>
 
-      {state === "invalid" && (
-        <p role="alert" className="text-destructive text-sm">
-          {copy.errorInvalid}
-        </p>
-      )}
-      {state === "tooMany" && (
-        <p role="alert" className="text-destructive text-sm">
-          {copy.errorTooMany}
-        </p>
-      )}
+        <div className="grid gap-2">
+          <label htmlFor="capture-phone" className="font-medium text-sm">
+            {copy.phone}
+          </label>
+          <PhoneInput
+            ref={phoneRef}
+            id="capture-phone"
+            value={national}
+            onValueChange={setNational}
+            onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
+            dialCode={dialCode}
+            onDialCodeChange={setDialCode}
+            dialCodeLabel={copy.dialCode}
+            enterKeyHint="done"
+            aria-invalid={showPhone}
+            aria-describedby="capture-phone-error"
+            className="h-12 rounded-xl bg-background"
+          />
+          <FieldError id="capture-phone-error">{showPhone ? copy.phoneError : null}</FieldError>
+        </div>
 
-      <button
-        type="submit"
-        disabled={pending || (emailConsent && !email)}
-        className="h-11 rounded-lg bg-primary px-4 font-medium text-primary-foreground text-sm disabled:opacity-50"
-      >
-        {pending ? copy.sending : copy.submit}
-      </button>
-    </form>
+        <fieldset className="grid gap-2">
+          <legend className="mb-2 font-medium text-sm">{copy.language}</legend>
+          <div className="grid grid-cols-3 gap-2">
+            {HOTEL_LANGUAGES.map((language) => (
+              <label key={language} className="cursor-pointer">
+                <input
+                  type="radio"
+                  name="language"
+                  value={language}
+                  defaultChecked={language === props.language}
+                  className="peer sr-only"
+                />
+                <span
+                  lang={language}
+                  className="flex h-11 items-center justify-center rounded-xl border font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-3 peer-focus-visible:ring-ring/40"
+                >
+                  {LANGUAGE_NAMES[language]}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className="grid gap-3">
+          <legend className="font-medium text-sm">{copy.consentTitle}</legend>
+          <p className="text-muted-foreground text-sm leading-relaxed">{copy.consentHint}</p>
+          <ConsentToggle name="whatsapp" title={copy.whatsappTitle} wording={copy.whatsappWording} />
+          <Toggle
+            name="emailConsent"
+            title={copy.emailTitle}
+            wording={copy.emailWording}
+            checked={emailConsent}
+            onChange={(event) => {
+              setEmailConsent(event.target.checked)
+              if (event.target.checked && !email.trim()) setOptionalOpen(true)
+            }}
+          />
+          <FieldError id="capture-email-needed">{tried && emailMissing ? copy.emailNeeded : null}</FieldError>
+        </fieldset>
+
+        <details
+          open={optionalOpen}
+          onToggle={(event) => setOptionalOpen(event.currentTarget.open)}
+          className="group rounded-xl border"
+        >
+          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
+            <span className="grid gap-0.5">
+              <span className="font-medium text-sm">{copy.optionalTitle}</span>
+              <span className="text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.optionalHint}</span>
+            </span>
+            <ChevronDownIcon
+              aria-hidden
+              className="size-5 shrink-0 text-muted-foreground transition-transform duration-150 group-open:rotate-180"
+            />
+          </summary>
+          <div className="grid gap-6 border-t p-4">
+            <div className="grid gap-2">
+              <label htmlFor="capture-birthday" className="font-medium text-sm">
+                {copy.birthday}
+              </label>
+              <input id="capture-birthday" type="date" name="birthday" autoComplete="bday" className={CONTROL} />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="capture-email" className="font-medium text-sm">
+                {copy.email}
+              </label>
+              <input
+                ref={emailRef}
+                id="capture-email"
+                type="email"
+                name="email"
+                dir="ltr"
+                maxLength={200}
+                autoComplete="email"
+                inputMode="email"
+                enterKeyHint="done"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                aria-invalid={tried && emailMissing}
+                aria-describedby="capture-email-needed"
+                className={CONTROL}
+              />
+            </div>
+          </div>
+        </details>
+
+        <div
+          aria-live="polite"
+          className="sticky bottom-0 z-10 -mx-5 grid gap-2 border-t bg-background/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm"
+        >
+          {status === "invalid" || status === "tooMany" ? (
+            <p role="alert" className="flex items-center gap-1.5 text-destructive text-sm">
+              <CircleAlertIcon aria-hidden className="size-4 shrink-0" />
+              {status === "invalid" ? copy.errorInvalid : copy.errorTooMany}
+            </p>
+          ) : null}
+          <button
+            type="submit"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 font-medium text-base text-primary-foreground transition-opacity duration-150 active:opacity-90"
+          >
+            {copy.submit}
+          </button>
+          <p className="text-center text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.submitHint}</p>
+        </div>
+      </form>
+    </>
   )
 }

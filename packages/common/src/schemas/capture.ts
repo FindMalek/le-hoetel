@@ -18,6 +18,7 @@ export const publicHotelSchema = z.object({
   primaryColor: z.string().nullable(),
   accentColor: z.string().nullable(),
   defaultLanguage: z.enum(HOTEL_LANGUAGES),
+  logoUrl: z.string().nullable(),
 })
 export type PublicHotel = z.infer<typeof publicHotelSchema>
 

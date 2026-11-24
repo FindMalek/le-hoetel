@@ -53,35 +53,86 @@
     "consentVersion": "Version du texte",
     "privacy": {
       "title": "Politique de confidentialité",
-      "intro": "Ceci est un texte provisoire pour la politique de confidentialité de le-hoetel. Les hôtels collectent le nom, le téléphone et la langue du client avec son accord. Les détails facultatifs ne sont conservés que si le client l'accepte. Nous ne collectons jamais de localisation continue, de numéro de pièce d'identité ni de carte bancaire. Un client peut demander à tout moment à l'hôtel d'exporter ou de supprimer ses données."
+      "intro": "Ce que l'hôtel et le-hoetel gardent sur vous, pourquoi, et comment le reprendre.",
+      "sections": {
+        "collect": {
+          "title": "Ce qui est collecté",
+          "body": "Votre nom, numéro de téléphone et langue, car l'hôtel en a besoin pour vous accueillir. Votre date de naissance et votre e-mail seulement si vous les ajoutez. Rien d'autre sans un oui clair : jamais votre position, votre pièce d'identité ou passeport, ni votre carte bancaire."
+        },
+        "use": {
+          "title": "Pourquoi",
+          "body": "Pour que l'hôtel vous accueille, vous souhaite votre anniversaire, vous demande comment s'est passé votre séjour et vous réponde en cas de problème."
+        },
+        "consent": {
+          "title": "Messages et votre accord",
+          "body": "Les offres et nouvelles arrivent par WhatsApp ou e-mail seulement si vous avez activé ce canal. Nous enregistrons quand, où et avec quel texte vous avez dit oui. Chaque message contient un lien pour arrêter, et répondre STOP sur WhatsApp fonctionne aussi."
+        },
+        "rights": {
+          "title": "Vos droits",
+          "body": "Demandez à l'hôtel une copie de vos données ou leur suppression à tout moment. La suppression est complète. Vous pouvez aussi retirer votre accord avec le lien de n'importe quel message. La loi tunisienne sur la protection des données personnelles s'applique (loi organique 2004-63)."
+        },
+        "keep": {
+          "title": "Qui les voit et combien de temps",
+          "body": "Seulement l'équipe de l'hôtel où vous vous êtes inscrit. Les hôtels ne voient jamais les clients des autres. Les données sont gardées tant que l'hôtel utilise le-hoetel et supprimées sur votre demande ou quand l'hôtel part."
+        }
+      }
     },
     "terms": {
       "title": "Conditions d'utilisation",
-      "intro": "Ceci est un texte provisoire pour les conditions d'utilisation de le-hoetel. Le texte sera rédigé pour le produit, les hôtels et la loi tunisienne avant le premier pilote."
+      "intro": "Les règles simples pour les hôtels qui utilisent le-hoetel.",
+      "sections": {
+        "service": {
+          "title": "Le service",
+          "body": "le-hoetel aide un hôtel à recueillir ses clients avec leur accord, à envoyer les messages acceptés et à entendre tôt les clients mécontents. Il est en pilote : les fonctions et les prix peuvent changer."
+        },
+        "duties": {
+          "title": "Ce que l'hôtel promet",
+          "body": "Ne recueillir que des clients ayant dit oui, respecter chaque demande d'arrêt, ne jamais envoyer de spam et répondre aux demandes d'export et de suppression."
+        },
+        "pilot": {
+          "title": "Pilote et prix",
+          "body": "Le pilote est gratuit pendant 60 à 90 jours. Rien n'est facturé sans accord écrit. Les prix montrés pendant le pilote ne sont pas définitifs."
+        },
+        "data": {
+          "title": "Vos données",
+          "body": "L'hôtel est propriétaire de sa liste de clients et peut l'exporter ou la supprimer à tout moment. Nous ne la vendons ni ne la partageons."
+        },
+        "end": {
+          "title": "Fin du service",
+          "body": "Chaque partie peut arrêter à tout moment. À la fin, l'hôtel peut récupérer ses données et nous supprimons le reste."
+        }
+      }
     },
     "hotel": "l'hôtel"
   },
   "capture": {
-    "welcome": "Bienvenue à {hotel}",
-    "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
-    "perkTitle": "Votre avantage de bienvenue",
-    "perkBody": "Un petit cadeau de {hotel} vous attend. Demandez-le à la réception après votre inscription.",
+    "welcome": "Bienvenue. Dix secondes pour vous inscrire, et nous prenons soin de vous.",
+    "perkTitle": "Cadeau de bienvenue",
+    "perkBody": "Un petit cadeau de {hotel} vous attend. Montrez cette page à la réception.",
     "name": "Votre nom",
+    "nameError": "Ajoutez votre nom.",
     "phone": "Numéro de téléphone",
+    "phoneError": "Vérifiez votre numéro.",
     "dialCode": "Indicatif du pays",
-    "language": "Votre langue",
-    "birthday": "Date de naissance (facultatif)",
-    "email": "E-mail (facultatif)",
+    "language": "Langue de nos messages",
+    "optionalTitle": "Un peu plus sur vous",
+    "optionalHint": "Facultatif : date de naissance et e-mail.",
+    "birthday": "Date de naissance",
+    "email": "E-mail",
     "consentTitle": "Restons en contact",
-    "consentHint": "Les deux sont facultatifs et décochés. Vous pouvez changer d'avis à tout moment.",
-    "emailNeeded": "Ajoutez votre e-mail pour recevoir les offres par e-mail.",
-    "submit": "S'inscrire",
-    "sending": "Envoi...",
-    "thanksTitle": "Merci",
-    "thanksBody": "C'est fait. Bon séjour à {hotel}.",
+    "consentHint": "Facultatif et désactivé par défaut. Chaque message contient un lien pour arrêter.",
+    "whatsappTitle": "WhatsApp",
+    "emailTitle": "E-mail",
+    "emailNeeded": "Ajoutez votre e-mail ci-dessus pour recevoir les offres par e-mail.",
+    "submit": "Rejoindre",
+    "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
+    "thanksTitle": "C'est fait, {name}",
+    "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
+    "thanksPerk": "Montrez ceci à la réception pour recevoir votre cadeau.",
     "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
     "errorTooMany": "Trop d'essais. Patientez un instant puis réessayez.",
-    "privacy": "Politique de confidentialité",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
     "languageLabel": "Langue"
   },
   "adminHotels": {
@@ -132,5 +183,10 @@
     "sample": "Aa texte",
     "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
     "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Le lien est peut-être incorrect, ou la page a changé d'adresse.",
+    "home": "Retour à l'accueil"
   }
 }

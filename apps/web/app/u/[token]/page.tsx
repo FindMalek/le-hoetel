@@ -1,11 +1,11 @@
 import { consentWording } from "@le-hoetel/common/consent"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@le-hoetel/ui/components/card"
+import { getDirection } from "@le-hoetel/i18n"
 import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"
-import type { CSSProperties } from "react"
+import { GuestHero } from "@/components/guest-hero"
 import { getUnsubscribePage } from "@/lib/api"
-import { brandColor } from "./brand"
+import { brandStyle } from "@/lib/branding"
 import { UnsubscribeForm } from "./unsubscribe-form"
 
 export const metadata: Metadata = {
@@ -17,68 +17,46 @@ export const metadata: Metadata = {
 export default async function Page({ params }: PageProps<"/u/[token]">) {
   await connection()
   const { token } = await params
-  const [t, page] = await Promise.all([getTranslations("unsubscribe"), getUnsubscribePage(token)])
+  const page = await getUnsubscribePage(token)
 
   if (!page) {
+    const t = await getTranslations("unsubscribe")
     return (
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("invalidTitle")}</CardTitle>
-            <CardDescription>{t("invalid")}</CardDescription>
-          </CardHeader>
-        </Card>
+      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-2 px-5 py-10">
+        <h1 className="font-semibold text-h2 tracking-tight">{t("invalidTitle")}</h1>
+        <p className="text-muted-foreground leading-relaxed">{t("invalid")}</p>
       </main>
     )
   }
 
+  const t = await getTranslations({ locale: page.language, namespace: "unsubscribe" })
   const hotel = page.hotel.displayName
-  const primary = brandColor(page.hotel.primaryColor)
-  const accent = brandColor(page.hotel.accentColor)
   return (
-    <main
-      style={
-        {
-          "--primary": primary?.color,
-          "--primary-foreground": primary?.on,
-          "--ring": primary?.color,
-          "--accent": accent?.color,
-          "--accent-foreground": accent?.on,
-        } as CSSProperties
-      }
-      className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10"
-    >
-      <Card>
-        <CardHeader>
-          {page.hotel.logoUrl ? (
-            // biome-ignore lint/performance/noImgElement: the logo is a hotel upload served by the api, not a static asset
-            <img src={page.hotel.logoUrl} alt={hotel} className="mb-2 h-12 w-auto self-start object-contain" />
-          ) : null}
-          <CardTitle className="text-xl">{t("title", { hotel })}</CardTitle>
-          <CardDescription>{t("intro", { hotel })}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <UnsubscribeForm
-            token={token}
-            initial={page.channels}
-            wording={Object.fromEntries(
-              page.channels.map(({ channel }) => [
-                channel,
-                t("consentOn", { wording: consentWording(channel, page.language, hotel) }),
-              ]),
-            )}
-            copy={{
-              email: t("email"),
-              whatsapp: t("whatsapp"),
-              stopAll: t("stopAll"),
-              stoppedTitle: t("stoppedTitle"),
-              stopped: t("stopped", { hotel }),
-              saved: t("saved"),
-              error: t("error"),
-            }}
-          />
-        </CardContent>
-      </Card>
-    </main>
+    <div lang={page.language} dir={getDirection(page.language)} style={brandStyle(page.hotel)} className="min-h-dvh">
+      <GuestHero hotel={page.hotel} />
+      <main className="mx-auto grid w-full max-w-md gap-6 px-5 py-8">
+        <div className="grid gap-2">
+          <h2 className="text-balance font-semibold text-h3 tracking-tight">{t("title", { hotel })}</h2>
+          <p className="text-muted-foreground leading-relaxed">{t("intro", { hotel })}</p>
+        </div>
+        <UnsubscribeForm
+          token={token}
+          initial={page.channels}
+          wording={Object.fromEntries(
+            page.channels.map(({ channel }) => [channel, consentWording(channel, page.language, hotel)]),
+          )}
+          copy={{
+            email: t("email"),
+            whatsapp: t("whatsapp"),
+            turnsOn: t("consentOn", { wording: "{wording}" }),
+            stopAll: t("stopAll"),
+            stoppedTitle: t("stoppedTitle"),
+            stopped: t("stopped", { hotel }),
+            saved: t("saved"),
+            error: t("error"),
+          }}
+        />
+      </main>
+    </div>
   )
 }
