@@ -28,6 +28,8 @@
     "design-system",
     "component-patterns",
     "hotels",
+    "hotel-emails",
+    "messaging",
     "scripts",
     "deploy",
     "observability",

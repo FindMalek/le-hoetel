@@ -6,6 +6,7 @@ import { renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
 
 export { type AuthEmails, authEmails } from "./auth"
+export * from "./hotel-email"
 export { type TemplateData, type TemplateName, templates } from "./templates"
 
 export const CHANNELS = ["email", "telegram", "whatsapp"] as const
@@ -41,6 +42,8 @@ export interface SendInput<Name extends TemplateName = TemplateName> {
   to?: string
   template: Name
   data: TemplateData<Name>
+  /** The unsubscribe or STOP line, appended last. Guest messages always carry one. */
+  footer?: string
 }
 
 export interface SendResult {
@@ -52,6 +55,8 @@ export interface SendResult {
 }
 
 export interface Notifier {
+  /** False outside production or without `MESSAGING_LIVE=true`: every send is only logged. */
+  live: boolean
   /** The channels that have their keys set. */
   channels: Channel[]
   /** Renders a template for the channel and sends it. An unconfigured channel is skipped, a provider failure throws. */
@@ -110,8 +115,9 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
   }
 
   return {
+    live,
     channels,
-    async send({ channel, to, template, data }) {
+    async send({ channel, to, template, data, footer }) {
       if (!live) {
         log.info("message not sent, log-only provider", { channel, template })
         return { channel, sent: false }
@@ -119,11 +125,11 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       if (!on(channel)) return { channel, sent: false }
       if (channel === "email") {
         if (!to) throw new Error("Email needs a `to` address.")
-        const result = await email?.send(to, await renderEmail(template, data, options.appUrl))
+        const result = await email?.send(to, await renderEmail(template, data, options.appUrl, footer))
         return { channel, sent: true, id: result?.id }
       }
       const summary = summarize(template, data)
-      const text = channel === "telegram" ? toTelegram(summary) : toWhatsApp(summary)
+      const text = channel === "telegram" ? toTelegram(summary) : toWhatsApp(summary, footer)
       const result = await sendChat(channel, to, text, channel === "telegram")
       return { channel, sent: true, id: result.id }
     },

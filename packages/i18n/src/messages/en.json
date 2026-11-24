@@ -184,6 +184,28 @@
     "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
     "contrastDark": "This color is hard to see in dark mode. Pick a lighter one."
   },
+  "messages": {
+    "title": "Messages",
+    "description": "Every message sent to your guests and how it ended. Never the text or the contact.",
+    "empty": "No message yet.",
+    "guest": "Guest",
+    "channel": "Channel",
+    "template": "Message",
+    "language": "Language",
+    "status": "Status",
+    "date": "Date",
+    "channels": {
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "skipped_no_consent": "No consent"
+    }
+  },
   "notFound": {
     "title": "Page not found",
     "body": "The link may be wrong, or the page has moved.",
