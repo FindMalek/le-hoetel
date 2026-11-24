@@ -59,8 +59,8 @@ catalog:
   oxlint: 1.88.0
   pg-boss: 12.38.0
   postgres: 4.0.0
-  react: 19.3.0
-  react-dom: 19.3.0
+  react: 19.3.1
+  react-dom: 19.3.1
   react-email: 6.11.4
   server-only: 0.0.1
   shadcn: 4.22.0
