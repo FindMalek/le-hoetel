@@ -11,7 +11,7 @@ We need multi-tenancy, roles for staff, and strict separation between hotels.
 
 ## Decision
 
-A hotel is a better-auth organization with owner and staff roles. Every guest row and every query carries the hotel id.
+A hotel is a better-auth organization with owner, manager and staff roles ([Hotels](/docs/hotels)). Hotels are created by the app admin only, who can act on any hotel through the `x-hotel-id` header. Every guest row and every query carries the hotel id.
 
 ## Why
 
