@@ -33,7 +33,14 @@ Every extra question lowers the number of guests who finish the form, and every 
 - The log is append only. A change of mind is a new entry, never an edit. See [consent log is append only](/docs/decisions/consent-log-append-only).
 - WhatsApp and email have separate checkboxes on the capture page.
 - Every message carries an unsubscribe link or STOP.
-- The consent text lives in one place so it can change after legal review.
+- The consent text lives in one place so it can change after legal review: `packages/common/src/consent.ts` (`CONSENT_WORDING` in en, fr and ar, and `CONSENT_WORDING_VERSION`, bumped on every change).
+
+### How it is stored
+
+- `guests` is unique per hotel and phone (`hotel_id`, `phone_e164`). Every row carries `hotel_id`, and the consent tables point at `(guest_id, hotel_id)` so a row can never reference another hotel's guest.
+- `guest_consents` holds the current answer per guest and channel. `consent_events` holds every change: channel, granted or not, time, source, wording version, optional ip hash. A first "no" is logged too, an unchanged answer is not.
+- Channels are `email`, `whatsapp` and `profile`. `profile` is the consent for the optional tier (country, city, stay dates, next destination): those fields are refused without it and cleared when it is withdrawn.
+- Deleting a guest is a hard delete: the guest, its consents and its events go together, so nothing personal is left. The audit log keeps only a row without personal data.
 
 ## Isolation
 

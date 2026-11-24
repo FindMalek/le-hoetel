@@ -1,3 +1,4 @@
+export * from "./consent"
 export * from "./constants"
 export * from "./hotel"
 export * from "./schemas"
