@@ -43,6 +43,13 @@
       "when": 1795557643047,
       "tag": "0009_tiny_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795561018765,
+      "tag": "0010_solid_purple_man",
+      "breakpoints": true
     }
   ]
 }

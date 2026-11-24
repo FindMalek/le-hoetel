@@ -109,5 +109,27 @@
     "sample": "Aa texte",
     "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
     "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Chaque message envoyé à vos clients et son issue. Jamais le texte ni le contact.",
+    "empty": "Aucun message pour le moment.",
+    "guest": "Client",
+    "channel": "Canal",
+    "template": "Message",
+    "language": "Langue",
+    "status": "Statut",
+    "date": "Date",
+    "channels": {
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "En attente",
+      "sent": "Envoyé",
+      "delivered": "Délivré",
+      "failed": "Échec",
+      "skipped_no_consent": "Sans consentement"
+    }
   }
 }
