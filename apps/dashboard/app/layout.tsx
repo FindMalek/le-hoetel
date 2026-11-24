@@ -9,7 +9,6 @@ import type { Metadata } from "next"
 import { getLocale } from "next-intl/server"
 import { FeedbackButton } from "@/components/feedback-button"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Umami } from "@/components/umami"
 import { dashboardUrl, SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
 
@@ -32,7 +31,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={lang} dir={dir} suppressHydrationWarning className={cn("antialiased", fontVariables, "font-sans")}>
       <body className="bg-background text-foreground">
         <ThemeProvider>
-          <Umami />
           <QueryProvider>
             <TooltipProvider>{children}</TooltipProvider>
             <FeedbackButton />

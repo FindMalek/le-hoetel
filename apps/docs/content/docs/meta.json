@@ -25,9 +25,12 @@
     "environment",
     "structure",
     "i18n",
+    "design-system",
+    "component-patterns",
     "hotels",
     "scripts",
     "deploy",
-    "observability"
+    "observability",
+    "analytics"
   ]
 }

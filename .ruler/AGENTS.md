@@ -33,6 +33,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 - better-auth: configured once in `packages/auth`. Sessions are cookies, signed-in calls send `x-csrf-token: orpc`
 - env: every variable goes through `packages/env` and `.env.example`. App code reads env through `packages/env`, not `process.env`. No secrets in diffs
 - UI: reuse shadcn components from `@le-hoetel/ui` and theme tokens. No hard-coded colors
+- UI rules (mobile first, 44px targets, logical css only, a11y, states): `apps/docs/content/docs/component-patterns.mdx`, read it before any UI change
 
 ## Product and data rules
 
@@ -47,7 +48,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 
 ## Design system
 
-Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@le-hoetel/ui`. No hard-coded colors. Component patterns and design rules are documented in `apps/docs` (design system pages) once they land; read them before building UI.
+Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@le-hoetel/ui`. No hard-coded colors. Fonts, type scale and components: `design-system.mdx`; rules: `component-patterns.mdx` (both in `apps/docs/content/docs`). Read them before building UI.
 
 ## Agents and workflow
 

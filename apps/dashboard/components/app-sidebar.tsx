@@ -27,15 +27,14 @@ interface Me {
   role: string | null
 }
 
-export function AppSidebar({ me, side }: { me: Me; side: "left" | "right" }) {
+export function AppSidebar({ me }: { me: Me }) {
   const pathname = usePathname()
-
   const signOut = async () => {
     await authClient.signOut()
     window.location.assign("/sign-in")
   }
   return (
-    <Sidebar collapsible="icon" variant="inset" side={side}>
+    <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

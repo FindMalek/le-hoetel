@@ -25,7 +25,7 @@ Each entry stores the guest, hotel, channel (email, WhatsApp, later SMS), the ac
 
 ## Consequences
 
-- Deleting a guest at their request removes the guest data, and what is kept in the log must be agreed with legal review.
+- Deleting a guest at their request removes the guest, their current consents and their log entries (hard delete), and the audit log keeps a row without personal data. Legal review can still change what is kept.
 - Reads need the latest entry per channel, so we keep a derived state or a query for it.
 
 ## Revisit when

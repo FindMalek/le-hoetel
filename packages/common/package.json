@@ -8,7 +8,8 @@
     "./constants": "./src/constants.ts",
     "./schemas": "./src/schemas/index.ts",
     "./utils": "./src/utils/index.ts",
-    "./hotel": "./src/hotel.ts"
+    "./hotel": "./src/hotel.ts",
+    "./consent": "./src/consent.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

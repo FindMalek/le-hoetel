@@ -1,6 +1,7 @@
 export * from "./app"
 export * from "./audit"
 export * from "./auth"
+export * from "./guests"
 export * from "./hotels"
 export * from "./inbox"
 export * from "./orgs"
