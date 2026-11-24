@@ -2,6 +2,7 @@ import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@le-hoetel/common/consent"
 import { guests } from "@le-hoetel/db"
 import { eq } from "drizzle-orm"
+import { RATE_LIMITS } from "../lib/rate-limit"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -10,7 +11,9 @@ beforeAll(async () => {
 })
 afterAll(() => app.close())
 
+const anHourAgo = () => Date.now() - 3_600_000
 const scan = {
+  renderedAt: anHourAgo(),
   name: "Amel Ben Salah",
   phone: "20 123 456",
   language: "ar",
@@ -58,4 +61,39 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
   await expect(
     app.anonymous.public.capture({ slug: "capture-brand", ...scan, consents: { email: true, whatsapp: false } }),
   ).rejects.toThrow("Email consent needs an email.")
+})
+
+test("bots are dropped silently: honeypot, a form sent too fast, a link as a name", async () => {
+  const owner = await app.signUp("capture-bots@le-hoetel.test")
+  const hotelId = await app.createHotel("capture-bots", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const bot = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.0.1" }))
+
+  for (const patch of [{ website: "https://spam.test" }, { renderedAt: Date.now() }, { name: "see www.spam.test" }]) {
+    expect(await bot.public.capture({ slug: "capture-bots", ...scan, ...patch })).toEqual({ ok: true })
+  }
+  expect((await client.guests.list({})).total).toBe(0)
+})
+
+test("capture is limited per ip and per hotel", async () => {
+  const owner = await app.signUp("capture-limit@le-hoetel.test")
+  const hotelId = await app.createHotel("capture-limit", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const from = (ip: string) => app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": ip }))
+
+  const one = from("10.0.1.1")
+  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
+    await one.public.capture({ slug: "capture-limit", ...scan, phone: `+2162012${1000 + i}` })
+  }
+  await expect(one.public.capture({ slug: "capture-limit", ...scan })).rejects.toThrow("Too many requests")
+
+  for (let i = RATE_LIMITS.captureIp.limit; i < RATE_LIMITS.captureHotel.limit; i++) {
+    await from(`10.1.${i >> 8}.${i & 255}`).public.capture({
+      slug: "capture-limit",
+      ...scan,
+      phone: `+2162012${1000 + i}`,
+    })
+  }
+  await expect(from("10.2.0.1").public.capture({ slug: "capture-limit", ...scan })).rejects.toThrow("Too many requests")
+  expect((await client.guests.list({})).total).toBe(RATE_LIMITS.captureHotel.limit)
 })
