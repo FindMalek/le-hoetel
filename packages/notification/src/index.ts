@@ -6,6 +6,7 @@ import { renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
 
 export { type AuthEmails, authEmails } from "./auth"
+export * from "./hotel-email"
 export { type TemplateData, type TemplateName, templates } from "./templates"
 
 export const CHANNELS = ["email", "telegram", "whatsapp"] as const
