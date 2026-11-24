@@ -23,7 +23,8 @@
     "dev:email": "turbo dev -F email",
     "email:export": "turbo export -F email",
     "dev:worker": "bun --watch --env-file=.env apps/api/src/worker.ts",
-    "test:e2e": "pnpm --filter e2e run e2e"
+    "test:e2e": "pnpm --filter e2e run e2e",
+    "i18n:check": "bun packages/i18n/src/check-cli.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
