@@ -24,3 +24,9 @@ Hotels are created by the app admin (`admin.hotels.create`, for an existing user
 ## Hotel scoped procedures
 
 Use `hotelProcedure` for anything about a hotel. It puts `context.hotel` (`hotelId`, `role`, `superAdmin`) on the call, and every query filters on `context.hotel.hotelId`, never on an id from the input. Narrow it with `can({ guest: ["export"] })`.
+
+## Isolation is tested
+
+One hotel can never read, change, export or delete another hotel's guests. `packages/orpc/src/routers/isolation.test.ts` calls every guest procedure of hotel A with an id of hotel B (always a plain "not found"), checks lists, search and the hotel export, the `x-hotel-id` header, removed members, and fails when a new guest procedure is added without being covered. `apps/e2e/tests/isolation.spec.ts` repeats the core of it over http against the running api.
+
+Guest procedures (`guests.*`): `list`, `get`, `create` (adds or merges by phone), `update`, `setConsent`, `consentHistory`, `export` (one guest), `exportAll` (the hotel), `remove`. Export and delete need the owner or manager role, and both write an audit row without personal data.
