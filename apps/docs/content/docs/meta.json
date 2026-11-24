@@ -24,6 +24,8 @@
     "setup",
     "environment",
     "structure",
+    "design-system",
+    "component-patterns",
     "hotels",
     "scripts",
     "deploy",

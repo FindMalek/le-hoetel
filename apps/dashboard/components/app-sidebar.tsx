@@ -74,11 +74,11 @@ export function AppSidebar({ me }: { me: Me }) {
                 {me.image && <AvatarImage src={me.image} alt="" />}
                 <AvatarFallback>{me.name.slice(0, 1).toUpperCase()}</AvatarFallback>
               </Avatar>
-              <span className="grid flex-1 text-left text-sm leading-tight">
+              <span className="grid flex-1 text-start text-sm leading-tight">
                 <span className="truncate font-medium">{me.name}</span>
                 <span className="truncate text-muted-foreground text-xs">{me.email}</span>
               </span>
-              <LogOutIcon className="ml-auto" />
+              <LogOutIcon className="ms-auto" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

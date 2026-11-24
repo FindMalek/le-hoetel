@@ -19,12 +19,12 @@ function Row({ label, value, ok }: { label: string; value: string; ok?: boolean 
 export function StatusWindow() {
   const { data, isError } = useQuery({ ...orpc.public.status.queryOptions(), refetchInterval: 10_000 })
   return (
-    <div className="w-full max-w-xl border bg-card text-left shadow-sm">
+    <div className="w-full max-w-xl border bg-card text-start shadow-sm">
       <div className="flex items-center gap-2 border-b px-4 py-2.5">
         <span className="size-2.5 rounded-full bg-muted-foreground/30" />
         <span className="size-2.5 rounded-full bg-muted-foreground/30" />
         <span className="size-2.5 rounded-full bg-muted-foreground/30" />
-        <span className="ml-2 text-muted-foreground text-xs">status — live from the api</span>
+        <span className="ms-2 text-muted-foreground text-xs">status — live from the api</span>
       </div>
       <div className="flex flex-col gap-2 px-4 py-4 font-mono text-sm">
         {isError ? (

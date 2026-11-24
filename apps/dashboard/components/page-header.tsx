@@ -13,8 +13,8 @@ export function PageHeader({
   return (
     <header className="flex flex-col gap-4 border-b px-4 pt-3 pb-5 md:px-6">
       <div className="flex items-center gap-2">
-        <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-1 data-[orientation=vertical]:h-4" />
+        <SidebarTrigger className="-ms-1" />
+        <Separator orientation="vertical" className="me-1 data-[orientation=vertical]:h-4" />
         <span className="text-muted-foreground text-sm">{title}</span>
       </div>
       <div className="flex flex-wrap items-end justify-between gap-4">
