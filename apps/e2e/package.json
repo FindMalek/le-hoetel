@@ -9,6 +9,7 @@
     "install:browser": "playwright install chromium"
   },
   "dependencies": {
+    "@le-hoetel/common": "workspace:*",
     "postgres": "catalog:"
   },
   "devDependencies": {
