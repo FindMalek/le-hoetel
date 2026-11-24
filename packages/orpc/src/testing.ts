@@ -2,6 +2,7 @@ import { createAuth } from "@le-hoetel/auth"
 import { user } from "@le-hoetel/db"
 import { createTestDb, type TestDb } from "@le-hoetel/db/testing"
 import { createNotifier } from "@le-hoetel/notification"
+import type { Storage } from "@le-hoetel/storage"
 import { createRouterClient } from "@orpc/server"
 import { eq } from "drizzle-orm"
 import { createContext, type Services } from "./context"
@@ -12,7 +13,7 @@ const SECRET = "test-secret-test-secret-test-secret!"
 const PASSWORD = "correct horse battery"
 
 /** The real services on a throwaway Postgres database: real auth, real router, only the outside world (mail, s3, models) is off. */
-export async function createTestApp() {
+export async function createTestApp(options: { storage?: Storage } = {}) {
   const testDb: TestDb = await createTestDb()
   const auth = createAuth({
     db: testDb.db,
@@ -30,9 +31,11 @@ export async function createTestApp() {
       githubAuth: false,
       webUrl: "http://localhost:3000",
       dashboardUrl: "http://localhost:3002",
+      apiUrl: "http://localhost:3001",
+      tokenSecret: SECRET,
     },
     rateLimiter: createRateLimiter({}),
-    storage: null,
+    storage: options.storage ?? null,
     jobs: { enqueue: async () => ({ ok: true, id: null }), list: async () => [] },
     notification: createNotifier({}),
     model: null,

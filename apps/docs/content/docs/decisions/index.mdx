@@ -24,6 +24,8 @@ Every important choice gets a short record: context, decision, why, why not, con
 | A hotel is an organization | A custom tenant model | [Hotel is an organization](/docs/decisions/hotel-is-organization) |
 | Guests are hotel-scoped rows | Guests as auth users | [Guests are not auth users](/docs/decisions/guests-are-not-auth-users) |
 | Append-only consent log | A consent flag on the guest | [Consent log is append only](/docs/decisions/consent-log-append-only) |
+| Deleting a guest removes everything, the audit keeps a hash | Keeping consent events as proof | [Guest delete is a hard delete](/docs/decisions/guest-delete-is-a-hard-delete) |
+| Signed unsubscribe link per guest, hotel and channel | A token table, or a login to unsubscribe | [Unsubscribe links are signed tokens](/docs/decisions/unsubscribe-links-are-signed-tokens) |
 | Machine translate fr and ar once per release | A translation pull request per merged PR | [Languine per release](/docs/decisions/languine-per-release) |
 
 ## Open decisions

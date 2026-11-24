@@ -101,7 +101,19 @@ test("membership is checked on every call: a removed member or a user without a 
 })
 
 test("every guest procedure needs a session, and a new one must be added to the isolation tests above", async () => {
-  const covered = ["list", "get", "create", "update", "setConsent", "export", "exportAll", "remove", "consentHistory"]
+  const covered = [
+    "list",
+    "get",
+    "create",
+    "update",
+    "setConsent",
+    "export",
+    "exportAll",
+    "exportCsv",
+    "remove",
+    "removeAll",
+    "consentHistory",
+  ]
   expect(Object.keys(guestsRouter).sort()).toEqual([...covered].sort())
   const calls = {
     list: () => app.anonymous.guests.list({}),
@@ -117,7 +129,9 @@ test("every guest procedure needs a session, and a new one must be added to the 
       }),
     export: () => app.anonymous.guests.export({ id: crypto.randomUUID() }),
     exportAll: () => app.anonymous.guests.exportAll(),
+    exportCsv: () => app.anonymous.guests.exportCsv({}),
     remove: () => app.anonymous.guests.remove({ id: crypto.randomUUID() }),
+    removeAll: () => app.anonymous.guests.removeAll({ confirmCount: 0 }),
     consentHistory: () => app.anonymous.guests.consentHistory({ id: crypto.randomUUID() }),
   }
   for (const [name, call] of Object.entries(calls)) {
