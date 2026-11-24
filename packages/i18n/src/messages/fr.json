@@ -7,5 +7,19 @@
     "badge": "accès anticipé",
     "getStarted": "Commencer",
     "apiDocs": "Docs de l'API"
+  },
+  "legal": {
+    "updated": "Brouillon, pas encore relu par un juriste.",
+    "consentTitle": "Ce que les clients acceptent",
+    "consentVersion": "Version du texte",
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "intro": "Ceci est un texte provisoire pour la politique de confidentialité de le-hoetel. Les hôtels collectent le nom, le téléphone et la langue du client avec son accord. Les détails facultatifs ne sont conservés que si le client l'accepte. Nous ne collectons jamais de localisation continue, de numéro de pièce d'identité ni de carte bancaire. Un client peut demander à tout moment à l'hôtel d'exporter ou de supprimer ses données."
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "intro": "Ceci est un texte provisoire pour les conditions d'utilisation de le-hoetel. Le texte sera rédigé pour le produit, les hôtels et la loi tunisienne avant le premier pilote."
+    },
+    "hotel": "l'hôtel"
   }
 }
