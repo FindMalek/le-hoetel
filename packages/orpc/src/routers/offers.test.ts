@@ -57,6 +57,10 @@ test("a guest link opens the offer with one stable code and a QR, a forged link 
   expect(page.code).toMatch(/^[A-Z2-9]{4}-[A-Z2-9]{4}$/)
   expect(page.qrSvg).toContain("<svg")
   expect((await app.anonymous.public.offer({ token })).code).toBe(page.code)
+
+  await app.services.db.insert(offerRedemptions).values({ offerId: offer.id, hotelId: hotel.hotelId, guestId: amel.id })
+  expect((await app.anonymous.public.offer({ token })).state).toBe("redeemed")
+  expect(await hotel.client.offers.list().then((rows) => rows[0]?.redeemed)).toBe(1)
   expect(JSON.stringify(page)).not.toContain("Amel")
 
   const forged = signOfferToken("another-secret-another-secret-123", {
