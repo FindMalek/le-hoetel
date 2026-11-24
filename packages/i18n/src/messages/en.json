@@ -21,5 +21,68 @@
     "invalidTitle": "This link is not valid",
     "invalid": "The link is wrong or no longer active. If you keep getting messages, reply STOP to the message.",
     "consentOn": "Turning this on means: {wording}"
+  },
+  "legal": {
+    "updated": "Draft, not yet reviewed by a lawyer.",
+    "consentTitle": "What guests agree to",
+    "consentVersion": "Wording version",
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "This is a placeholder for the privacy policy of le-hoetel. Hotels collect a guest's name, phone and language with their consent. Optional details are kept only if the guest agrees. We never collect continuous location, ID numbers or payment cards. A guest can ask a hotel to export or delete their data at any time."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
+    },
+    "hotel": "the hotel"
+  },
+  "adminHotels": {
+    "title": "Hotels",
+    "description": "Every hotel on the platform, with its guests and health.",
+    "createTitle": "New hotel",
+    "name": "Hotel name",
+    "slug": "Slug",
+    "ownerEmail": "Owner email",
+    "ownerHint": "The owner gets an invitation by email.",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "language": "Default language",
+    "submit": "Create hotel and invite owner",
+    "created": "Hotel created, invitation sent.",
+    "empty": "No hotel yet.",
+    "columns": {
+      "hotel": "Hotel",
+      "guests": "Guests",
+      "owners": "Owners",
+      "health": "Health",
+      "created": "Created"
+    },
+    "health": {
+      "healthy": "Healthy",
+      "quiet": "No new guest for 2 weeks",
+      "no-guests": "No guests yet",
+      "no-owner": "Owner not joined",
+      "suspended": "Suspended"
+    }
+  },
+  "hotelSettings": {
+    "title": "Hotel",
+    "description": "Your hotel's logo and branding.",
+    "logo": "Logo",
+    "logoHint": "PNG, JPEG or WebP, 1 MB at most.",
+    "upload": "Upload logo",
+    "remove": "Remove logo",
+    "saved": "Logo saved.",
+    "removed": "Logo removed.",
+    "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
+    "noHotel": "Pick a hotel first.",
+    "branding": "Colors",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "save": "Save",
+    "brandingSaved": "Colors saved.",
+    "sample": "Aa text",
+    "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
+    "contrastDark": "This color is hard to see in dark mode. Pick a lighter one."
   }
 }

@@ -1,17 +1,12 @@
 import type { Metadata } from "next"
-import { SITE } from "@/lib/site"
+import { getTranslations } from "next-intl/server"
+import { LegalPage } from "@/components/legal-page"
 
-export const metadata: Metadata = { title: "Privacy policy" }
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("legal")
+  return { title: t("privacy.title") }
+}
 
-/** A starting point, not legal advice: replace the text with your own before you launch. */
 export default function Page() {
-  return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
-      <h1 className="font-heading font-semibold text-3xl">Privacy policy</h1>
-      <p className="mt-4 text-muted-foreground">
-        This is a placeholder for the Privacy policy of {SITE.name}. Replace it with the real text, written for your
-        product, your data and your country.
-      </p>
-    </main>
-  )
+  return <LegalPage page="privacy" withConsent />
 }
