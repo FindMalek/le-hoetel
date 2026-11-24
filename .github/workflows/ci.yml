@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 20
     env:
       DATABASE_URL: postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel
+      TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
     services:
       postgres:
         image: postgres:17-alpine
