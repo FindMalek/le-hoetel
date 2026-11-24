@@ -163,5 +163,27 @@
       "fr": "Français",
       "ar": "العربية"
     }
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Every message sent to your guests and how it ended. Never the text or the contact.",
+    "empty": "No message yet.",
+    "guest": "Guest",
+    "channel": "Channel",
+    "template": "Message",
+    "language": "Language",
+    "status": "Status",
+    "date": "Date",
+    "channels": {
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "skipped_no_consent": "No consent"
+    }
   }
 }
