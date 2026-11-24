@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto"
 import {
   CONSENT_CHANNELS,
   CONSENT_WORDING_VERSION,
@@ -13,6 +14,9 @@ type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0]
 
 /** The only way to read one hotel's guests: a guest id alone never selects a row. */
 export const hotelGuest = (hotelId: string, guestId: string) => and(eq(guests.hotelId, hotelId), eq(guests.id, guestId))
+
+/** What the audit log keeps of a deleted guest: enough to prove a deletion, nothing that points back to a person. */
+export const hashGuestId = (guestId: string): string => createHash("sha256").update(guestId).digest("hex")
 
 export interface ConsentChange {
   hotelId: string
