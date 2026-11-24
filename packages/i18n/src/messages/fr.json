@@ -9,6 +9,10 @@
     "apiDocs": "Docs de l'API"
   },
   "nav": {
+    "hotelNav": "Hôtel",
+    "messages": "Messages",
+    "data": "Données clients",
+    "hotels": "Hôtels",
     "overview": "Vue d'ensemble",
     "guests": "Clients",
     "inbox": "Boîte de réception",
@@ -72,5 +76,152 @@
     "page": "Page {page} sur {pages}",
     "previous": "Précédent",
     "next": "Suivant"
+  },
+  "guestData": {
+    "title": "Données des clients",
+    "description": "Exportez ou supprimez ce que vous conservez sur vos clients. Réservé aux propriétaires et aux managers.",
+    "forbidden": "Seuls les propriétaires et les managers peuvent exporter ou supprimer les données des clients.",
+    "hotelTitle": "Tous les clients",
+    "hotelDescription": "Une copie de tous les clients de l'hôtel avec leur historique de consentement, ou une suppression complète.",
+    "exportJson": "Exporter en JSON",
+    "exportCsv": "Exporter en CSV",
+    "deleteAll": "Supprimer tous les clients",
+    "deleteAllTitle": "Supprimer tous les clients ?",
+    "deleteAllBody": "Cela supprime définitivement {count} clients de {hotel} avec leur historique de consentement. Impossible d'annuler. Exportez d'abord si vous voulez une copie.",
+    "typeName": "Saisissez {hotel} pour confirmer",
+    "cancel": "Annuler",
+    "confirm": "Supprimer définitivement",
+    "deleted": "Supprimé.",
+    "exported": "Export prêt.",
+    "guestTitle": "Un client",
+    "guestDescription": "Trouvez un client par nom, téléphone ou e-mail.",
+    "search": "Rechercher un client",
+    "noResults": "Aucun client trouvé.",
+    "deleteGuest": "Supprimer",
+    "deleteGuestTitle": "Supprimer ce client ?",
+    "deleteGuestBody": "Cela supprime définitivement {name} et son historique de consentement. Impossible d'annuler.",
+    "error": "Une erreur est survenue. Réessayez."
+  },
+  "unsubscribe": {
+    "title": "Vos messages de {hotel}",
+    "intro": "Choisissez ce que {hotel} peut vous envoyer. Vous pouvez changer à tout moment.",
+    "email": "E-mail",
+    "whatsapp": "WhatsApp",
+    "stopAll": "Me désabonner de tout",
+    "stoppedTitle": "Vous êtes désabonné(e)",
+    "stopped": "{hotel} ne vous enverra plus aucun message.",
+    "saved": "Enregistré.",
+    "error": "Une erreur est survenue. Réessayez.",
+    "invalidTitle": "Ce lien n'est pas valide",
+    "invalid": "Le lien est incorrect ou n'est plus actif. Si vous recevez encore des messages, répondez STOP au message.",
+    "consentOn": "Activer ceci signifie : {wording}"
+  },
+  "legal": {
+    "updated": "Brouillon, pas encore relu par un juriste.",
+    "consentTitle": "Ce que les clients acceptent",
+    "consentVersion": "Version du texte",
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "intro": "Ceci est un texte provisoire pour la politique de confidentialité de le-hoetel. Les hôtels collectent le nom, le téléphone et la langue du client avec son accord. Les détails facultatifs ne sont conservés que si le client l'accepte. Nous ne collectons jamais de localisation continue, de numéro de pièce d'identité ni de carte bancaire. Un client peut demander à tout moment à l'hôtel d'exporter ou de supprimer ses données."
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "intro": "Ceci est un texte provisoire pour les conditions d'utilisation de le-hoetel. Le texte sera rédigé pour le produit, les hôtels et la loi tunisienne avant le premier pilote."
+    },
+    "hotel": "l'hôtel"
+  },
+  "capture": {
+    "welcome": "Bienvenue à {hotel}",
+    "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
+    "perkTitle": "Votre avantage de bienvenue",
+    "perkBody": "Un petit cadeau de {hotel} vous attend. Demandez-le à la réception après votre inscription.",
+    "name": "Votre nom",
+    "phone": "Numéro de téléphone",
+    "dialCode": "Indicatif du pays",
+    "language": "Votre langue",
+    "birthday": "Date de naissance (facultatif)",
+    "email": "E-mail (facultatif)",
+    "consentTitle": "Restons en contact",
+    "consentHint": "Les deux sont facultatifs et décochés. Vous pouvez changer d'avis à tout moment.",
+    "emailNeeded": "Ajoutez votre e-mail pour recevoir les offres par e-mail.",
+    "submit": "S'inscrire",
+    "sending": "Envoi...",
+    "thanksTitle": "Merci",
+    "thanksBody": "C'est fait. Bon séjour à {hotel}.",
+    "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
+    "errorTooMany": "Trop d'essais. Patientez un instant puis réessayez.",
+    "privacy": "Politique de confidentialité",
+    "languageLabel": "Langue"
+  },
+  "adminHotels": {
+    "title": "Hôtels",
+    "description": "Tous les hôtels de la plateforme, avec leurs clients et leur santé.",
+    "createTitle": "Nouvel hôtel",
+    "name": "Nom de l’hôtel",
+    "slug": "Identifiant",
+    "ownerEmail": "E-mail du propriétaire",
+    "ownerHint": "Le propriétaire reçoit une invitation par e-mail.",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d’accent",
+    "language": "Langue par défaut",
+    "submit": "Créer l’hôtel et inviter le propriétaire",
+    "created": "Hôtel créé, invitation envoyée.",
+    "empty": "Aucun hôtel pour l’instant.",
+    "columns": {
+      "hotel": "Hôtel",
+      "guests": "Clients",
+      "owners": "Propriétaires",
+      "health": "Santé",
+      "created": "Créé le"
+    },
+    "health": {
+      "healthy": "En forme",
+      "quiet": "Aucun nouveau client depuis 2 semaines",
+      "no-guests": "Pas encore de clients",
+      "no-owner": "Propriétaire pas encore inscrit",
+      "suspended": "Suspendu"
+    }
+  },
+  "hotelSettings": {
+    "title": "Hôtel",
+    "description": "Le logo et l’identité visuelle de votre hôtel.",
+    "logo": "Logo",
+    "logoHint": "PNG, JPEG ou WebP, 1 Mo maximum.",
+    "upload": "Téléverser le logo",
+    "remove": "Supprimer le logo",
+    "saved": "Logo enregistré.",
+    "removed": "Logo supprimé.",
+    "invalidFile": "Utilisez une image PNG, JPEG ou WebP de 1 Mo maximum.",
+    "noHotel": "Choisissez d’abord un hôtel.",
+    "branding": "Couleurs",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d’accent",
+    "save": "Enregistrer",
+    "brandingSaved": "Couleurs enregistrées.",
+    "sample": "Aa texte",
+    "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
+    "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Chaque message envoyé à vos clients et son issue. Jamais le texte ni le contact.",
+    "empty": "Aucun message pour le moment.",
+    "guest": "Client",
+    "channel": "Canal",
+    "template": "Message",
+    "language": "Langue",
+    "status": "Statut",
+    "date": "Date",
+    "channels": {
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "En attente",
+      "sent": "Envoyé",
+      "delivered": "Délivré",
+      "failed": "Échec",
+      "skipped_no_consent": "Sans consentement"
+    }
   }
 }

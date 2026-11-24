@@ -1,5 +1,13 @@
 import type { Messages } from "@le-hoetel/i18n"
-import { BedDoubleIcon, LayoutDashboardIcon, NotebookPenIcon, SettingsIcon, UsersIcon } from "lucide-react"
+import {
+  BuildingIcon,
+  DatabaseIcon,
+  LayoutDashboardIcon,
+  MessageSquareIcon,
+  NotebookPenIcon,
+  SettingsIcon,
+  UsersIcon,
+} from "lucide-react"
 import type { Route } from "next"
 
 export interface NavItem {
@@ -13,10 +21,14 @@ export interface NavItem {
 // i18n-used: nav
 export const NAV: NavItem[] = [
   { href: "/", label: "overview", icon: LayoutDashboardIcon },
-  { href: "/guests", label: "guests", icon: BedDoubleIcon },
+  { href: "/guests", label: "guests", icon: UsersIcon },
   { href: "/inbox", label: "inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "notes", icon: NotebookPenIcon },
+  { href: "/hotel", label: "hotelNav", icon: BuildingIcon },
+  { href: "/messages", label: "messages", icon: MessageSquareIcon },
   { href: "/team", label: "team", icon: UsersIcon },
+  { href: "/data", label: "data", icon: DatabaseIcon },
+  { href: "/admin/hotels", label: "hotels", icon: BuildingIcon, admin: true },
   { href: "/users", label: "users", icon: UsersIcon, admin: true },
   { href: "/audit-log", label: "auditLog", icon: SettingsIcon, admin: true },
   { href: "/settings", label: "settings", icon: SettingsIcon },

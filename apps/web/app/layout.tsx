@@ -13,6 +13,9 @@ import { siteUrl } from "@/lib/seo"
 import { SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
 
+/** The guest QR page ships none of the site chrome (feedback, consent banner, analytics): it must load fast on a weak connection. */
+const CAPTURE_PATH = "/h/"
+
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, pathname] = await Promise.all([getLocale(), headers().then((h) => h.get(PATHNAME_HEADER) ?? "/")])
   const languages = alternateUrls(siteUrl(), pathname)
@@ -35,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const locale = await getLocale()
+  const [locale, pathname] = await Promise.all([getLocale(), headers().then((h) => h.get(PATHNAME_HEADER) ?? "/")])
   const { lang, dir } = htmlAttributes(isLocale(locale) ? locale : DEFAULT_LOCALE)
   return (
     <html
@@ -45,18 +48,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full antialiased", fontVariables, "font-sans")}
     >
       <body className="relative flex min-h-full flex-col bg-background text-foreground">
-        <ThemeProvider>
-          <Umami />
-          <QueryProvider>
-            <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-              <div className="absolute inset-x-0 top-0 h-128 bg-glow" />
-              <div className="absolute inset-0 bg-dots" />
-            </div>
-            {children}
-            <FeedbackButton />
-          </QueryProvider>
-          <ConsentBanner />
-        </ThemeProvider>
+        {pathname.startsWith(CAPTURE_PATH) ? (
+          children
+        ) : (
+          <ThemeProvider>
+            <Umami />
+            <QueryProvider>
+              <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
+                <div className="absolute inset-x-0 top-0 h-128 bg-glow" />
+                <div className="absolute inset-0 bg-dots" />
+              </div>
+              {children}
+              <FeedbackButton />
+            </QueryProvider>
+            <ConsentBanner />
+          </ThemeProvider>
+        )}
       </body>
     </html>
   )

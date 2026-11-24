@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { hotelSettings } from "@le-hoetel/db"
+import { hotelSettings, invitation } from "@le-hoetel/db"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 
@@ -9,33 +9,50 @@ beforeAll(async () => {
 })
 afterAll(() => app.close())
 
-test("the app admin creates a hotel for a user, who becomes its owner with default settings", async () => {
+test("the app admin creates a hotel with branding and invites the owner, who joins on accepting", async () => {
   const admin = await app.signUp("hotel-admin@le-hoetel.test", { role: "admin" })
   const owner = await app.signUp("hotel-owner@le-hoetel.test")
+  const input = {
+    name: "Hotel Medina",
+    slug: "hotel-medina",
+    ownerEmail: "Hotel-Owner@le-hoetel.test",
+    primaryColor: "#0a7c66",
+    defaultLanguage: "ar",
+  } as const
 
-  await expect(
-    owner.client.admin.hotels.create({ name: "Nope", slug: "nope", ownerEmail: "hotel-owner@le-hoetel.test" }),
-  ).rejects.toMatchObject({ code: "FORBIDDEN" })
+  await expect(owner.client.admin.hotels.create(input)).rejects.toMatchObject({ code: "FORBIDDEN" })
   await expect(
     app.services.auth.api.createOrganization({ body: { name: "Self", slug: "self" }, headers: owner.headers }),
   ).rejects.toThrow()
 
-  const hotel = await admin.client.admin.hotels.create({
-    name: "Hotel Medina",
-    slug: "hotel-medina",
-    ownerEmail: "hotel-owner@le-hoetel.test",
-  })
+  const hotel = await admin.client.admin.hotels.create(input)
   expect(hotel).toMatchObject({
     displayName: "Hotel Medina",
-    defaultLanguage: "fr",
+    primaryColor: "#0a7c66",
+    defaultLanguage: "ar",
     timezone: "Africa/Tunis",
     status: "pilot",
-    plan: "starter",
   })
+  await expect(admin.client.admin.hotels.create(input)).rejects.toMatchObject({ code: "CONFLICT" })
 
+  const listed = async () => (await admin.client.admin.hotels.list()).find((h) => h.id === hotel.id)
+  expect(await listed()).toMatchObject({ guestCount: 0, ownerCount: 0, health: "no-owner" })
+
+  const [invite] = await app.services.db.select().from(invitation).where(eq(invitation.organizationId, hotel.id))
+  expect(invite).toMatchObject({ email: "hotel-owner@le-hoetel.test", role: "owner" })
+  await app.services.auth.api.acceptInvitation({ body: { invitationId: invite!.id }, headers: owner.headers })
+
+  expect(await listed()).toMatchObject({ ownerCount: 1, health: "no-guests" })
   const active = await app.joinHotel(owner, hotel.id, "owner")
-  expect((await active.client.hotel.get()).slug).toBe("hotel-medina")
-  expect((await admin.client.admin.hotels.list()).map((h) => h.slug)).toContain("hotel-medina")
+  await active.client.guests.create({
+    name: "Amel Ben Salah",
+    phone: "+21620123456",
+    language: "fr",
+    email: null,
+    source: "qr_room",
+    consents: { email: false, whatsapp: true, profile: false },
+  })
+  expect(await listed()).toMatchObject({ guestCount: 1, health: "healthy" })
 })
 
 test("branding: owner and manager edit it, staff only read it, plan and status stay with the admin", async () => {

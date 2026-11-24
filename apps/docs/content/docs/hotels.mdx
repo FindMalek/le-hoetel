@@ -15,11 +15,13 @@ A hotel is a better-auth organization. Guests are not auth users: they are rows 
 
 The app admin (user role `admin`) sees every hotel: a call can name any hotel with the `x-hotel-id` header and then acts as its owner. For everyone else the header can only repeat their own hotel, a different one is refused. Roles and their permissions live in `packages/auth/src/access.ts`.
 
-Hotels are created by the app admin (`admin.hotels.create`, for an existing user who becomes the owner). Self-serve organization creation is off.
+Hotels are created by the app admin, never self-served. In the dashboard, admins open **Hotels** (`/admin/hotels`), fill the name, slug, owner email and optional colors and language, and `admin.hotels.create` creates the organization with its `hotel_settings` and emails the owner an invitation (`role: owner`). The owner joins by accepting it. The same page lists every hotel (`admin.hotels.list`) with guest count, owner count and a health badge.
+
+Health is the first problem found, by `hotelHealth` in `packages/common/src/hotel.ts`: `suspended`, `no-owner` (invitation not accepted yet), `no-guests`, `quiet` (no new guest for 14 days), else `healthy`.
 
 ## Branding is config
 
-`hotel_settings` has one row per hotel, created with the organization: display name, logo key, two colors, reply-to, default language (`en`, `fr`, `ar`, default `fr`), timezone (default `Africa/Tunis`), Google review link, manager WhatsApp and Telegram contacts. Owners and managers edit it with `hotel.update`. Plan, status and pilot end date are `admin.hotels.update` only.
+`hotel_settings` has one row per hotel, created with the organization: display name, logo key, two colors, reply-to, default language (`en`, `fr`, `ar`, default `fr`), timezone (default `Africa/Tunis`), Google review link, manager WhatsApp and Telegram contacts. Owners and managers edit it with `hotel.update` (the **Hotel** page in the dashboard, with a contrast warning on the colors) and the logo with `hotel.logo.*`. Plan, status and pilot end date are `admin.hotels.update` only.
 
 ## Hotel scoped procedures
 

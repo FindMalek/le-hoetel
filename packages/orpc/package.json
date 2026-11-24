@@ -11,7 +11,9 @@
     "./react": "./src/react.tsx",
     "./server": "./src/server-client.ts",
     "./proxy": "./src/proxy.ts",
-    "./testing": "./src/testing.ts"
+    "./testing": "./src/testing.ts",
+    "./unsubscribe": "./src/lib/unsubscribe.ts",
+    "./messages": "./src/lib/messages.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

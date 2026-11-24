@@ -21,6 +21,7 @@
   "dependencies": {
     "@le-hoetel/common": "workspace:*",
     "drizzle-orm": "catalog:",
+    "better-auth": "catalog:",
     "postgres": "catalog:"
   },
   "devDependencies": {

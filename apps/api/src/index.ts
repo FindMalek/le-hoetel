@@ -40,7 +40,11 @@ const auth = createAuth({
 })
 
 const adminId = await ensureAdmin(db, auth, env.ADMIN_EMAIL, env.ADMIN_PASSWORD)
-if (env.SEED === "demo" && (await seedDemo(db, { ownerId: adminId }))) console.info("seeded demo data")
+if (env.SEED === "demo") {
+  const hashPassword = (await auth.$context).password.hash
+  if (await seedDemo(db, { ownerId: adminId, hashPassword, demoPassword: env.DEMO_PASSWORD }))
+    console.info("seeded demo data")
+}
 
 const fetch = createServer(
   {
@@ -54,6 +58,8 @@ const fetch = createServer(
       githubToken: env.GITHUB_TOKEN,
       webUrl: env.WEB_URL,
       dashboardUrl: env.DASHBOARD_URL,
+      apiUrl: env.API_PUBLIC_URL,
+      tokenSecret: env.BETTER_AUTH_SECRET,
     },
     jobs,
     rateLimiter: createRateLimiter({
