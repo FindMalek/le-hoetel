@@ -10,6 +10,8 @@ const schema = z.object({
   DEPLOY_ENV: z.string().default("local"),
   DATABASE_URL: z.string().min(1),
   SEED: z.enum(["none", "demo"]).default("demo"),
+  /** Password of every seeded demo account (fake, on @demo.le-hoetel.test). Defaults to the one in the docs. */
+  DEMO_PASSWORD: optional,
 
   /** Public origins: the api's own, and the two apps that proxy to it. */
   API_PUBLIC_URL: z.url().default("http://localhost:3001"),

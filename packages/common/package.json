@@ -11,7 +11,8 @@
     "./hotel": "./src/hotel.ts",
     "./consent": "./src/consent.ts",
     "./phone": "./src/phone.ts",
-    "./guest-export": "./src/guest-export.ts"
+    "./guest-export": "./src/guest-export.ts",
+    "./demo": "./src/demo.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

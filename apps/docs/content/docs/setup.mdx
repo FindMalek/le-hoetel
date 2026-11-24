@@ -13,6 +13,16 @@ pnpm dev
 
 `pnpm db:up` starts a local postgres from `docker/docker-compose.yml`. The api applies migrations on start and, when `SEED=demo`, fills an empty database with sample data.
 
+## Demo data
+
+`pnpm db:seed`, the api with `SEED=demo` and the Playwright run all use the same deterministic seed (`packages/db/src/seed`, fixed random seed, only dates move with today). It runs on an empty database only and is all fake:
+
+- four hotels with their own branding: Dar Zitouna (Monastir guesthouse), Sunset Bay Resort (Hammamet), Villa Mimosa Spa (Djerba), Riad Dattier (Tozeur)
+- about 440 guests with Tunisian, French, Arabic and international names and phone formats, in fr, ar and en, with consents and an append-only `consent_events` log (some withdrawn)
+- accounts on `@demo.le-hoetel.test`, never deliverable: a super admin `admin@demo.le-hoetel.test` and one owner per hotel, `owner.dar-zitouna@`, `owner.sunset-bay@`, `owner.villa-mimosa@`, `owner.riad-dattier@`. They share the password `DEMO_PASSWORD` (default `demo-le-hoetel-2026`)
+
+A feature that adds tables adds its own section to `seedDemo` and a test in `packages/db/src/seed`.
+
 | App | Url |
 | --- | --- |
 | web | http://localhost:3000 |
