@@ -1,5 +1,5 @@
 import { offerCreateSchema, offerSchema, offerUpdateSchema } from "@le-hoetel/common/schemas"
-import { offerRedemptions, offers } from "@le-hoetel/db"
+import { offers } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { and, desc, eq, getTableColumns, sql } from "drizzle-orm"
 import { z } from "zod"
@@ -12,7 +12,7 @@ const codeTaken = () => new ORPCError("CONFLICT", { message: "That promo code is
 const isUniqueViolation = (error: unknown): boolean =>
   [error, (error as { cause?: unknown } | null)?.cause].some((e) => (e as { code?: string } | null)?.code === "23505")
 
-const redeemedOf = sql<number>`(select count(*)::int from ${offerRedemptions} where ${offerRedemptions.offerId} = ${offers.id})`
+const redeemedOf = sql<number>`(select count(*)::int from "offer_redemptions" r where r."offer_id" = "offers"."id")`
 
 const withRedeemed = { ...getTableColumns(offers), redeemed: redeemedOf.as("redeemed") }
 
