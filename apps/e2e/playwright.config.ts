@@ -31,7 +31,7 @@ export default defineConfig({
         DATABASE_URL: e2eDatabaseUrl(),
         BETTER_AUTH_SECRET: "e2e-secret-e2e-secret-e2e-secret-0123",
         PORT: port(URLS.api),
-        SEED: "none",
+        SEED: "demo",
         DEPLOY_ENV: "e2e",
       },
     },
