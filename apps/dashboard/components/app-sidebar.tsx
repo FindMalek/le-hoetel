@@ -27,14 +27,15 @@ interface Me {
   role: string | null
 }
 
-export function AppSidebar({ me }: { me: Me }) {
+export function AppSidebar({ me, side }: { me: Me; side: "left" | "right" }) {
   const pathname = usePathname()
+
   const signOut = async () => {
     await authClient.signOut()
     window.location.assign("/sign-in")
   }
   return (
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar collapsible="icon" variant="inset" side={side}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -74,11 +75,11 @@ export function AppSidebar({ me }: { me: Me }) {
                 {me.image && <AvatarImage src={me.image} alt="" />}
                 <AvatarFallback>{me.name.slice(0, 1).toUpperCase()}</AvatarFallback>
               </Avatar>
-              <span className="grid flex-1 text-left text-sm leading-tight">
+              <span className="grid flex-1 text-start text-sm leading-tight">
                 <span className="truncate font-medium">{me.name}</span>
                 <span className="truncate text-muted-foreground text-xs">{me.email}</span>
               </span>
-              <LogOutIcon className="ml-auto" />
+              <LogOutIcon className="ms-auto" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

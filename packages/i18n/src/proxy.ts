@@ -1,5 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE, LOCALE_HEADER, localizedPath, splitLocale } from "./config"
+import {
+  DEFAULT_LOCALE,
+  isLocale,
+  LOCALE_COOKIE,
+  LOCALE_HEADER,
+  localizedPath,
+  PATHNAME_HEADER,
+  splitLocale,
+} from "./config"
 
 /**
  * Locale prefixes for the public site without moving a single page. `/fr/roadmap` is served by the page at
@@ -13,6 +21,7 @@ export function localeProxy(request: NextRequest): NextResponse {
   if (locale && locale !== DEFAULT_LOCALE) {
     const headers = new Headers(request.headers)
     headers.set(LOCALE_HEADER, locale)
+    headers.set(PATHNAME_HEADER, bare)
     const response = NextResponse.rewrite(new URL(`${bare}${search}`, request.url), { request: { headers } })
     response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" })
     return response
@@ -27,5 +36,7 @@ export function localeProxy(request: NextRequest): NextResponse {
   if (isLocale(preferred) && preferred !== DEFAULT_LOCALE) {
     return NextResponse.redirect(new URL(`${localizedPath(preferred, pathname)}${search}`, request.url))
   }
-  return NextResponse.next()
+  const headers = new Headers(request.headers)
+  headers.set(PATHNAME_HEADER, pathname)
+  return NextResponse.next({ request: { headers } })
 }

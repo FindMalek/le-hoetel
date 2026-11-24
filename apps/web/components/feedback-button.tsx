@@ -28,7 +28,7 @@ export function FeedbackButton() {
   )
 
   return (
-    <div className="fixed bottom-4 left-4 z-40">
+    <div className="fixed bottom-4 start-4 z-40">
       {open ? (
         <form
           className="grid w-72 gap-2 border bg-card p-3 shadow-lg"

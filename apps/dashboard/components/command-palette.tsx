@@ -44,7 +44,7 @@ export function CommandPalette({ role }: { role: string | null }) {
         <SidebarMenuButton tooltip="Search" onClick={() => setOpen(true)}>
           <SearchIcon />
           <span>Search</span>
-          <Kbd className="ml-auto">⌘K</Kbd>
+          <Kbd className="ms-auto">⌘K</Kbd>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <CommandDialog open={open} onOpenChange={setOpen}>

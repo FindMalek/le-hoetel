@@ -19,7 +19,7 @@ export async function Hero({ dashboardUrl, docsUrl }: { dashboardUrl: string; do
       <p className="max-w-lg text-lg text-muted-foreground leading-relaxed">{SITE.tagline}</p>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button size="lg" render={<a href={`${dashboardUrl}/sign-up` as Route} />} nativeButton={false}>
-          {copy.start} <ArrowRightIcon data-icon="inline-end" />
+          {copy.start} <ArrowRightIcon data-icon="inline-end" className="rtl:rotate-180" />
         </Button>
         <Button size="lg" variant="outline" render={<a href={docsUrl} />} nativeButton={false}>
           {copy.docs}
