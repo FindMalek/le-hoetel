@@ -1,4 +1,5 @@
 export * from "./account"
+export * from "./guest"
 export * from "./hotel"
 export * from "./notes"
 export * from "./public"

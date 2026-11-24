@@ -2,6 +2,7 @@ import type { RouterClient } from "@orpc/server"
 import { adminRouter, meRouter } from "./account"
 import { auditRouter } from "./audit"
 import { feedbackRouter } from "./feedback"
+import { guestsRouter } from "./guests"
 import { adminHotelsRouter, hotelRouter } from "./hotel"
 import { inboxAdminRouter, inboxRouter } from "./inbox"
 import { jobsRouter } from "./jobs"
@@ -28,6 +29,7 @@ export const appRouter = {
   public: publicRouter,
   feedback: feedbackRouter,
   hotel: hotelRouter,
+  guests: guestsRouter,
   me: meRouter,
   notes,
   privacy: privacyRouter,
