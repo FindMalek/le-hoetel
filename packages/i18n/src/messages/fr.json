@@ -8,6 +8,20 @@
     "getStarted": "Commencer",
     "apiDocs": "Docs de l'API"
   },
+  "unsubscribe": {
+    "title": "Vos messages de {hotel}",
+    "intro": "Choisissez ce que {hotel} peut vous envoyer. Vous pouvez changer à tout moment.",
+    "email": "E-mail",
+    "whatsapp": "WhatsApp",
+    "stopAll": "Me désabonner de tout",
+    "stoppedTitle": "Vous êtes désabonné(e)",
+    "stopped": "{hotel} ne vous enverra plus aucun message.",
+    "saved": "Enregistré.",
+    "error": "Une erreur est survenue. Réessayez.",
+    "invalidTitle": "Ce lien n'est pas valide",
+    "invalid": "Le lien est incorrect ou n'est plus actif. Si vous recevez encore des messages, répondez STOP au message.",
+    "consentOn": "Activer ceci signifie : {wording}"
+  },
   "legal": {
     "updated": "Brouillon, pas encore relu par un juriste.",
     "consentTitle": "Ce que les clients acceptent",

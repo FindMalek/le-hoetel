@@ -12,6 +12,7 @@
     "./color": "./src/color.ts",
     "./consent": "./src/consent.ts",
     "./phone": "./src/phone.ts",
+    "./unsubscribe": "./src/unsubscribe.ts",
     "./demo": "./src/demo.ts"
   },
   "scripts": {
