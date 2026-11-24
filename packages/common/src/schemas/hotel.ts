@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { HOTEL_HEALTHS, HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "../hotel"
+import { HOTEL_HEALTHS, HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES, LOGO_MAX_BYTES, LOGO_TYPES } from "../hotel"
 
 const text = (max: number) => z.string().trim().min(1).max(max)
 const nullableText = (max: number) =>
@@ -43,7 +43,19 @@ export const hotelBrandingInputSchema = z.object({
   managerTelegram: nullableText(80),
 })
 
-export const hotelUpdateSchema = hotelBrandingInputSchema.partial()
+/** `logoKey` is not editable here: it is only ever set by `hotel.setLogo`, which checks the key belongs to the hotel. */
+export const hotelUpdateSchema = hotelBrandingInputSchema.omit({ logoKey: true }).partial()
+
+export const logoUploadInputSchema = z.object({
+  type: z.enum(Object.keys(LOGO_TYPES) as [string, ...string[]]),
+  size: z.number().int().positive().max(LOGO_MAX_BYTES),
+})
+
+export const logoUploadSchema = z.object({
+  key: z.string(),
+  url: z.string(),
+  headers: z.record(z.string(), z.string()),
+})
 
 export const hotelAdminUpdateSchema = hotelUpdateSchema.extend({
   plan: z.enum(HOTEL_PLANS).optional(),
