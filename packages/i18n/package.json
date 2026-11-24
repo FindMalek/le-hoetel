@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./config": "./src/config.ts",
     "./proxy": "./src/proxy.ts",
     "./switcher": "./src/locale-switcher.tsx"
   },

@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import { NextRequest } from "next/server"
-import { alternateUrls, localizedPath, negotiateLocale, splitLocale } from "./config"
+import { alternateUrls, getDirection, htmlAttributes, localizedPath, negotiateLocale, splitLocale } from "./config"
+import { getMessages, withFallback } from "./index"
 import { localeProxy } from "./proxy"
 
 test("a locale prefix is split off and put back, the default locale has none", () => {
@@ -20,6 +21,7 @@ test("hreflang alternates point at one url per language", () => {
   expect(alternateUrls("https://le-hoetel.dev", "/roadmap")).toEqual({
     en: "https://le-hoetel.dev/roadmap",
     fr: "https://le-hoetel.dev/fr/roadmap",
+    ar: "https://le-hoetel.dev/ar/roadmap",
     "x-default": "https://le-hoetel.dev/roadmap",
   })
 })
@@ -37,4 +39,20 @@ test("the proxy serves /fr from the same page and sends a returning french visit
   const english = localeProxy(new NextRequest("http://localhost:3000/en/roadmap"))
   expect(english.headers.get("location")).toBe("http://localhost:3000/roadmap")
   expect(english.cookies.get("NEXT_LOCALE")?.value).toBe("en")
+})
+
+test("arabic is right to left and the rest are left to right", () => {
+  expect(getDirection("ar")).toBe("rtl")
+  expect(htmlAttributes("ar")).toEqual({ lang: "ar", dir: "rtl" })
+  expect(htmlAttributes("fr")).toEqual({ lang: "fr", dir: "ltr" })
+  expect(negotiateLocale("ar-TN,ar;q=0.9,en;q=0.5")).toBe("ar")
+})
+
+test("a key missing from a translation falls back to english", () => {
+  const en = { a: "Hello", nested: { b: "Bye", c: "Thanks" } }
+  expect(withFallback(en, { nested: { b: "Au revoir" } })).toEqual({
+    a: "Hello",
+    nested: { b: "Au revoir", c: "Thanks" },
+  })
+  expect(getMessages("ar").hero.getStarted).not.toBe(getMessages("en").hero.getStarted)
 })

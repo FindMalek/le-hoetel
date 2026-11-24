@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE, htmlAttributes, type Locale } from "@le-hoetel/i18n/config"
 import { Body, Button, Container, Head, Hr, Html, Link, Preview, Section, Text } from "@react-email/components"
 import type { CSSProperties, ReactNode } from "react"
 import { BRAND } from "../brand"
@@ -27,10 +28,21 @@ const DARK_CSS = `
 
 const base: CSSProperties = { margin: 0, fontFamily: BRAND.fontSans, color: light.foreground }
 
-export function Layout({ preview, appUrl, children }: { preview: string; appUrl?: string; children: ReactNode }) {
+export function Layout({
+  preview,
+  appUrl,
+  locale = DEFAULT_LOCALE,
+  children,
+}: {
+  preview: string
+  appUrl?: string
+  locale?: Locale
+  children: ReactNode
+}) {
+  const { lang, dir } = htmlAttributes(locale)
   const host = appUrl?.replace(/^https?:\/\//, "").replace(/\/$/, "")
   return (
-    <Html lang="en" style={{ backgroundColor: light.background }} className="e-bg">
+    <Html lang={lang} dir={dir} style={{ backgroundColor: light.background }} className="e-bg">
       <Head>
         <meta name="color-scheme" content="light dark" />
         <meta name="supported-color-schemes" content="light dark" />

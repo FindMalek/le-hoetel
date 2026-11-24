@@ -1,0 +1,94 @@
+---
+title: The Keep
+description: What runs on our home server, what can go wrong, and how staging and the pilot should use it.
+---
+
+The Keep is a single Ubuntu box at home that runs Dokploy (docker swarm plus compose). Previews, staging and the shared tooling live on it. This page is a read only survey taken on 2026-11-24 (nothing was changed) and a proposal for Le Hoetel.
+
+## Machine
+
+| | |
+| --- | --- |
+| cpu and memory | 8 threads, 31 GB ram, 8 GB swap (3.5 GB swap in use, about 17 GB still available) |
+| system disk | 216 GB ssd, 25% used |
+| data disk | 938 GB at `/srv`, 41% used |
+| backup disk | 1.8 TB hdd at `/srv/backup-hdd`, 72% used |
+| load | around 2 on 8 threads |
+| docker | 196 containers, 67 GB of images (about 9.5 GB reclaimable), 130 volumes (about 3.5 GB reclaimable) |
+| remote access | private, key based |
+
+## What runs
+
+| Service | Role | Notes |
+| --- | --- | --- |
+| Dokploy | deploys, domains, previews | v0.31, swarm mode |
+| Traefik | reverse proxy and tls | public web traffic only |
+| Postgres | one container per app and per preview | one per app and preview, see risks |
+| Redis, Valkey | queues and caches of other projects | not used by Le Hoetel |
+| OpenObserve | logs and traces | already deployed as a compose service |
+| GlitchTip | errors (web and worker) | already deployed as a compose service |
+| Umami | web analytics | already deployed as a compose service |
+| Garage | s3 compatible object storage | already deployed |
+| Backrest | restic backups to the hdd | local disk only |
+| trigger.dev | job runner of another project | eight containers (webapp, supervisor, clickhouse, electric, s2, postgres, redis, proxy) |
+| other projects | api, web and dashboard per preview, demos, a few self hosted tools | around 16 live previews of one project alone |
+
+The Le Hoetel preview workflow already deploys one preview per pull request through the Dokploy api, see the repo `.github/workflows/preview.yml`. Dokploy projects were not listed through its api because no token was available on the box.
+
+## Risks
+
+- **Home connection.** One consumer line and no failover that we know of. If it drops, staging, previews and the pilot are down. Use a tunnel or a static address for public hostnames, and never put a hotel's qr pages behind it without a plan b.
+- **Power.** A power cut stops every database on the box. Protect against it before any hotel depends on it, and check that postgres comes back clean after a reboot.
+- **Backups.** The only backup target found is the local hdd, in the same room as the data. It is also 72% full. A fire, theft or power surge loses both. No off-site copy and no restore test was found.
+- **Previews eat resources.** Every pull request of every project adds an api, a web, a dashboard and a postgres. Memory is already at 13.5 GB used with swap in use. Without a cleanup job, the box fills up slowly and the oldest previews keep running for days.
+- **Network exposure.** Keep databases and internal services private. Audit what is reachable from outside before any hotel depends on it.
+- **Shared fate.** Builds, previews, logs, errors, analytics and storage all share one disk, one kernel and one docker daemon. A runaway build can starve staging.
+- **Guest data.** Real guest data (names, phones, consent) must not sit on this box until backups are off-site and encrypted, and until there is a restore drill.
+
+## Proposal
+
+### Deploys
+
+Dokploy keeps doing deploys. Staging deploys from `main` through a compose service built from the repo root `docker-compose.yml`, previews stay one per pull request. Staging and previews run log only messaging providers, see [deploy](/docs/deploy).
+
+### Jobs
+
+Use pg-boss through the plate `jobs` module, not trigger.dev. It runs in the api process on the postgres we already have, so there is one less service to run, back up and patch. The trigger.dev stack on the box is eight containers with its own postgres, redis and clickhouse, and a hotel loyalty app only needs retries, delays and a few schedules (birthdays, journeys, exports). Revisit if jobs ever need long running isolated workers.
+
+### Observability
+
+- **OpenObserve** for logs and traces. The api ships logs with `OPENOBSERVE_*` env. Redact phone, email and name before anything is sent.
+- **GlitchTip** for errors, sentry compatible, through `GLITCHTIP_DSN`.
+- **Umami** for the public pages only (landing). Not in the dashboard, the guest capture pages or docs previews.
+
+All three already run on The Keep, so staging only needs a project or a website in each.
+
+### Translations
+
+Languine runs on release to fill the fr and ar keys from en. Until then keys are translated by hand in the pull request.
+
+### Storage
+
+Use s3 compatible storage (Garage on The Keep, any provider later) with one bucket and a prefix per hotel: `hotels/<hotel-id>/...`. One bucket keeps credentials and backups simple, the prefix keeps export and delete per hotel a single list and delete. Never put a hotel's name in the key.
+
+### Build cache
+
+Turbo remote cache so CI and Dokploy builds share artifacts. A self hosted cache on The Keep is enough for now. A cold build is the slowest part of a preview.
+
+### Backups for the pilot
+
+Before the first pilot hotel:
+
+1. keep Backrest to the hdd for fast restores
+2. add an encrypted off-site copy (restic to any s3 compatible bucket or a storage box in another country) of the postgres dumps and the storage bucket
+3. run a restore drill into a fresh postgres and write the date here
+4. alert when the last backup is older than 26 hours
+
+### When hotels pay
+
+A small VPS (2 vcpu, 4 GB, about the price of a coffee a month) with managed postgres or its own backups changes the picture:
+
+- production moves off the home line and power, staging and previews stay on The Keep
+- one public address, real uptime and a normal ip reputation for email
+- The Keep becomes the place where we can break things
+- cost is small compared to losing a hotel's guest list, so this is the first thing to buy once a hotel pays, and the pilot should already have the off-site backup above

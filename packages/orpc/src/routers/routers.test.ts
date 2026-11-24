@@ -82,7 +82,7 @@ test("audit log: actions are recorded and only admins can read them", async () =
 })
 
 test("orgs: notes follow the active organization and only members can switch to it", async () => {
-  const ada = await app.signUp("ada-org@le-hoetel.test")
+  const ada = await app.signUp("ada-org@le-hoetel.test", { role: "admin" })
   const bob = await app.signUp("bob-org@le-hoetel.test")
   const created = await app.services.auth.api.createOrganization({
     body: { name: "Le Hoetel", slug: "le-hoetel" },

@@ -26,4 +26,15 @@ There is one `.env` at the repo root. Every app loads it, and `packages/env` val
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | the first admin, created or reset on every api start |
 | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | optional github sign-in |
 
+## Messaging
+
+| Key | What it is |
+| --- | --- |
+| `MESSAGING_LIVE` | `true` lets email, whatsapp and telegram really send, default `false` |
+| `RESEND_API_KEY`, `EMAIL_FROM` | email through Resend |
+| `KAPSO_API_KEY`, `WHATSAPP_PHONE_NUMBER_ID` | whatsapp through Kapso |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | telegram alerts |
+
+Messages only leave the server when `NODE_ENV=production` and `MESSAGING_LIVE=true`. Everywhere else (local, tests, previews, staging) every channel logs `message not sent, log-only provider` with the channel and template name, never the recipient or the text. Only the production deploy sets `MESSAGING_LIVE=true`, so a preview can never message a real guest even with real keys in its env.
+
 Keys for modules you left out of the project are not in `.env.example`. Adding a key means adding it to the zod schema in `packages/env` first.

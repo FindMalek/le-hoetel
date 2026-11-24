@@ -1,6 +1,8 @@
 import { expect, test } from "bun:test"
 import { createNotifier } from "./index"
 
+const LIVE = { NODE_ENV: "production", MESSAGING_LIVE: "true" }
+
 function recorder() {
   const calls: { url: string; body: Record<string, unknown> }[] = []
   const doFetch = (async (url: string, init: RequestInit) => {
@@ -12,7 +14,10 @@ function recorder() {
 
 test("only channels with keys are on, and the others are skipped", async () => {
   const { calls, doFetch } = recorder()
-  const notifier = createNotifier({ TELEGRAM_BOT_TOKEN: "123:abc", TELEGRAM_CHAT_ID: "42" }, { fetch: doFetch })
+  const notifier = createNotifier(
+    { ...LIVE, TELEGRAM_BOT_TOKEN: "123:abc", TELEGRAM_CHAT_ID: "42" },
+    { fetch: doFetch },
+  )
 
   expect(notifier.channels).toEqual(["telegram"])
   expect(
@@ -33,6 +38,7 @@ test("send renders the template for each channel it goes to", async () => {
   const { calls, doFetch } = recorder()
   const notifier = createNotifier(
     {
+      ...LIVE,
       RESEND_API_KEY: "re_test",
       EMAIL_FROM: "Le Hoetel <hello@example.com>",
       TELEGRAM_BOT_TOKEN: "123:abc",
@@ -57,7 +63,7 @@ test("send renders the template for each channel it goes to", async () => {
 test("whatsapp sends the template as one line through kapso", async () => {
   const { calls, doFetch } = recorder()
   const notifier = createNotifier(
-    { KAPSO_API_KEY: "k", WHATSAPP_PHONE_NUMBER_ID: "555", WHATSAPP_NOTIFY_TO: "+15551234567" },
+    { ...LIVE, KAPSO_API_KEY: "k", WHATSAPP_PHONE_NUMBER_ID: "555", WHATSAPP_NOTIFY_TO: "+15551234567" },
     { fetch: doFetch },
   )
 
@@ -76,8 +82,8 @@ test("telegram links keep a closing paren and whatsapp titles dont get a double 
 })
 
 test("the telegram webhook rejects calls without the secret and answers 404 when off", async () => {
-  const on = createNotifier({ TELEGRAM_BOT_TOKEN: "123:abc", TELEGRAM_WEBHOOK_SECRET: "s3cret" })
-  const off = createNotifier({})
+  const on = createNotifier({ ...LIVE, TELEGRAM_BOT_TOKEN: "123:abc", TELEGRAM_WEBHOOK_SECRET: "s3cret" })
+  const off = createNotifier(LIVE)
   const request = (secret?: string) =>
     new Request("http://api/telegram/webhook", {
       method: "POST",
@@ -88,4 +94,28 @@ test("the telegram webhook rejects calls without the secret and answers 404 when
   expect((await on.handleTelegramWebhook(request())).status).toBe(403)
   expect((await on.handleTelegramWebhook(request("s3cret"))).status).toBe(200)
   expect((await off.handleTelegramWebhook(request("s3cret"))).status).toBe(404)
+})
+
+test("outside live messaging nothing is sent and the log carries no recipient or text", async () => {
+  const { calls, doFetch } = recorder()
+  const lines: string[] = []
+  const log = { info: (message: string, fields?: object) => lines.push(JSON.stringify({ message, ...fields })) }
+  const keys = { RESEND_API_KEY: "re_test", TELEGRAM_BOT_TOKEN: "123:abc", TELEGRAM_CHAT_ID: "42" }
+  const options = { fetch: doFetch, log: log as never }
+
+  for (const env of [{ ...keys, NODE_ENV: "production" }, { ...keys, MESSAGING_LIVE: "true" }, keys]) {
+    const notifier = createNotifier(env, options)
+    const result = await notifier.send({
+      channel: "email",
+      to: "ada@example.com",
+      template: "verifyEmail",
+      data: { name: "Ada", url: "https://app.test/verify?t=1" },
+    })
+    await notifier.notify("hello Ada")
+    expect(result).toEqual({ channel: "email", sent: false })
+  }
+
+  expect(calls).toHaveLength(0)
+  expect(lines[0]).toBe('{"message":"message not sent, log-only provider","channel":"email","template":"verifyEmail"}')
+  expect(lines.join()).not.toMatch(/ada|hello/i)
 })

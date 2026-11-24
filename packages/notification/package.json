@@ -16,6 +16,8 @@
     "whatsapp:setup": "bun --env-file=../../.env src/setup/whatsapp.ts"
   },
   "dependencies": {
+    "@le-hoetel/i18n": "workspace:*",
+    "@le-hoetel/logger": "workspace:*",
     "@le-hoetel/webhooks": "workspace:*",
     "@kapso/whatsapp-cloud-api": "catalog:",
     "@opencoredev/email-sdk": "catalog:",

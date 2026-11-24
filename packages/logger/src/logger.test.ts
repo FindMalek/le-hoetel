@@ -30,3 +30,18 @@ test("an inbound request id is kept only when it is plain", () => {
   expect(resolveRequestId("abc-12345678")).toBe("abc-12345678")
   expect(resolveRequestId("bad id\nwith newline")).not.toContain("\n")
 })
+
+test("guest phone, email and name never reach a log line", () => {
+  const entry = redact({
+    guest: { name: "Ada Lovelace", phone: "+21612345678", email: "ada@example.com", language: "fr" },
+    whatsappNumber: "+21612345678",
+    err: new Error("bounce for ada@example.com"),
+    hostname: "api-1",
+  }) as { guest: unknown; whatsappNumber: string; err: { message: string }; hostname: string }
+
+  expect(entry.guest).toEqual({ name: REDACTED, phone: REDACTED, email: REDACTED, language: "fr" })
+  expect(entry.whatsappNumber).toBe(REDACTED)
+  expect(entry.err.message).toBe(`bounce for ${REDACTED}`)
+  expect(entry.hostname).toBe("api-1")
+  expect(JSON.stringify(entry)).not.toMatch(/Ada|2161234|ada@/)
+})

@@ -1,0 +1,59 @@
+---
+title: Data and consent rules
+description: What guest data we collect, what we never collect, how consent is logged, and who owns the data.
+---
+
+<Callout type="warn" title="Not legal advice">
+Law 2004-63 and the INPDP apply. We are not lawyers. A lawyer checks the consent wording and hosting before the first pilot.
+</Callout>
+
+## Ownership
+
+- The hotel owns the guest data. We only process it, and the contract says so.
+- Data is stored in our database, per hotel, so our AI can learn from it later.
+- We never sell or reuse a raw guest list.
+- Anonymous combined stats are ours to use.
+- The hotel can export and delete at any time, per guest and per hotel.
+
+## Data tiers
+
+| Tier | Fields |
+|---|---|
+| Must have | Name, phone, language, consent |
+| Optional | Birthday, email |
+| Optional with consent | Origin (country, city), stay dates, length of stay, where they go next, survey answers |
+| Never | Continuous phone location, passport or ID numbers, payment cards |
+
+Every extra question lowers the number of guests who finish the form, and every field is something we must protect. Do not add a field the hotel would never use.
+
+## Consent
+
+- Consent is logged per channel: email, WhatsApp, and later SMS.
+- Each entry records the timestamp, the source, and the wording version.
+- The log is append only. A change of mind is a new entry, never an edit. See [consent log is append only](/docs/decisions/consent-log-append-only).
+- WhatsApp and email have separate checkboxes on the capture page.
+- Every message carries an unsubscribe link or STOP.
+- The consent text lives in one place so it can change after legal review: `packages/common/src/consent.ts` (`CONSENT_WORDING` in en, fr and ar, and `CONSENT_WORDING_VERSION`, bumped on every change).
+
+### How it is stored
+
+- `guests` is unique per hotel and phone (`hotel_id`, `phone_e164`). Every row carries `hotel_id`, and the consent tables point at `(guest_id, hotel_id)` so a row can never reference another hotel's guest.
+- `guest_consents` holds the current answer per guest and channel. `consent_events` holds every change: channel, granted or not, time, source, wording version, optional ip hash. A first "no" is logged too, an unchanged answer is not.
+- Channels are `email`, `whatsapp` and `profile`. `profile` is the consent for the optional tier (country, city, stay dates, next destination): those fields are refused without it and cleared when it is withdrawn.
+- Deleting a guest is a hard delete: the guest, its consents and its events go together, so nothing personal is left. The audit log keeps only a row without personal data.
+
+## Isolation
+
+- Every guest row and every query is scoped by hotel id. See [hotel is an organization](/docs/decisions/hotel-is-organization).
+- Guests are not auth users. See [guests are not auth users](/docs/decisions/guests-are-not-auth-users).
+- Files live in one bucket with a prefix per hotel. See [one bucket, prefix per hotel](/docs/decisions/one-bucket-prefix-per-hotel).
+
+## Logging and non-production
+
+- Never log a phone, email or name in plain text. Use the logger redaction.
+- Previews, tests, local and staging never send real messages. Providers are log-only there.
+- Seeds, previews and tests use fake data only, never real guests.
+
+## Parked: location tracking
+
+Dawarich or any location tracking is parked. If it ever returns it is opt in, one time, on guest request, and only after a legal check.

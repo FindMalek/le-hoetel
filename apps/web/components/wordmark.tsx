@@ -17,7 +17,7 @@ export function Wordmark({ text }: { text: string }) {
       <span aria-hidden className="text-muted-foreground/40">
         {text.slice(shown)}
       </span>
-      <span aria-hidden className="ml-1 h-12 w-1 animate-caret bg-primary sm:h-20" />
+      <span aria-hidden className="ms-1 h-12 w-1 animate-caret bg-primary sm:h-20" />
     </h1>
   )
 }
