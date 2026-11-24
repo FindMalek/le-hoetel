@@ -22,7 +22,7 @@ export default async function UsersPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead className="text-right">Joined</TableHead>
+                  <TableHead className="text-end">Joined</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -33,7 +33,7 @@ export default async function UsersPage() {
                     <TableCell>
                       <Badge variant={u.role === "admin" ? "default" : "outline"}>{u.role ?? "user"}</Badge>
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
+                    <TableCell className="text-end text-muted-foreground">
                       <LocalDate value={u.createdAt} />
                     </TableCell>
                   </TableRow>

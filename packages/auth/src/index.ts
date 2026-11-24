@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, magicLink } from "better-auth/plugins"
 import { organization } from "better-auth/plugins/organization"
+import { ac, hotelRoles } from "./access"
 import { auditHooks } from "./audit"
 
 export interface AuthConfig {
@@ -47,6 +48,18 @@ export function createAuth(config: AuthConfig) {
     plugins: [
       admin(),
       organization({
+        ac,
+        roles: hotelRoles,
+        // A hotel is onboarded by the app admin (admin.hotels.create), never self-served.
+        allowUserToCreateOrganization: (user) => user.role === "admin",
+        organizationHooks: {
+          afterCreateOrganization: async ({ organization: created }) => {
+            await config.db
+              .insert(schema.hotelSettings)
+              .values({ organizationId: created.id, displayName: created.name })
+              .onConflictDoNothing()
+          },
+        },
         sendInvitationEmail: sendInvitation
           ? async ({ id, email, role, inviter }) =>
               void quiet(

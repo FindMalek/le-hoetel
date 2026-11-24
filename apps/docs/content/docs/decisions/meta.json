@@ -1,1 +1,17 @@
-{ "title": "Decisions", "pages": ["languine-per-release"] }
+{
+  "title": "Decisions",
+  "pages": [
+    "index",
+    "capture-first",
+    "recognition-over-points",
+    "branding-is-config",
+    "one-bucket-prefix-per-hotel",
+    "email-and-whatsapp-first",
+    "small-local-hotels-first",
+    "free-pilot-then-paid",
+    "hotel-is-organization",
+    "guests-are-not-auth-users",
+    "consent-log-append-only",
+    "languine-per-release"
+  ]
+}

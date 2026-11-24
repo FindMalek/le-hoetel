@@ -90,7 +90,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
         {signUp ? "Already have an account?" : "New here?"}
         <Link
           href={signUp ? "/sign-in" : "/sign-up"}
-          className="ml-1 text-foreground underline-offset-4 hover:underline"
+          className="ms-1 text-foreground underline-offset-4 hover:underline"
         >
           {signUp ? "Sign in" : "Create an account"}
         </Link>

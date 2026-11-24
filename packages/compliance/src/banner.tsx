@@ -24,7 +24,7 @@ export function ConsentBanner() {
     router.refresh()
   }
   return (
-    <div className="fixed right-4 bottom-16 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-wrap items-center justify-between gap-3 border bg-card p-4 text-sm shadow-lg">
+    <div className="fixed inset-x-4 bottom-16 z-50 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm shadow-lg sm:start-auto sm:w-sm">
       <p className="text-muted-foreground">We use analytics cookies to see what works. Only if you agree.</p>
       <div className="flex gap-2">
         <Button size="sm" variant="outline" onClick={() => choose("denied")}>

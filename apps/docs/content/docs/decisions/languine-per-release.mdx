@@ -3,9 +3,7 @@ title: Languine per release
 description: Why French and Arabic are machine translated once per release and not on every merged pull request.
 ---
 
-## Status
-
-Accepted. A release runs Languine once and opens one pull request for `fr` and `ar`. The same workflow can be started by hand.
+**Status:** accepted, November 2026
 
 ## Context
 
@@ -33,6 +31,8 @@ The money is not the deciding factor. Our message files are small, so model cost
 
 ## Decision
 
+Translate once per release, with a manual run for urgent changes.
+
 - the `languine` workflow runs on `release: published` and on `workflow_dispatch`
 - it translates `en` into `fr` and `ar`, runs `pnpm i18n:check` and opens one pull request on a `i18n/<tag>` branch with the review checklist in `.github/translation-pr-body.md`
 - if a translation pull request is already open it does nothing, so there is never more than one
@@ -41,12 +41,26 @@ The money is not the deciding factor. Our message files are small, so model cost
 
 Use the manual run when a feature must reach French or Arabic hotels before the next release: Actions, `languine`, Run workflow.
 
+## Why
+
+- human review of Arabic is the scarce resource, one batch with a checklist gets read, many small pull requests do not
+- only the final English wording is paid for and translated
+- reviewers see tone across a whole release and fix repeated terms once
+
+## Why not
+
+- per merged pull request: faster, but many tiny review pull requests, repeated cost for strings that change again, and merge conflicts on `fr.json` and `ar.json` between parallel branches
+
 ## Consequences
 
 - cut releases often, and before a feature that matters to French or Arabic guests goes to hotels
 - a change that cannot wait for a release, such as consent or unsubscribe wording, gets a manual run and a reviewed pull request the same day
 - a pull request opened with the default `GITHUB_TOKEN` does not start CI. The workflow runs `pnpm i18n:check` itself. To get full CI on it, close and reopen the pull request, or set up a token for the workflow later
 - the files translated are listed in `languine.json`. Docs pages and email templates join it when they move to translatable files
+
+## Revisit when
+
+A release train slower than a week leaves hotels on English too long, or the English wording changes so little that per merge pull requests would be cheap to review.
 
 ## To enable
 

@@ -7,13 +7,17 @@
     ".": "./src/index.ts",
     "./constants": "./src/constants.ts",
     "./schemas": "./src/schemas/index.ts",
-    "./utils": "./src/utils/index.ts"
+    "./utils": "./src/utils/index.ts",
+    "./hotel": "./src/hotel.ts",
+    "./consent": "./src/consent.ts",
+    "./phone": "./src/phone.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
     "test": "bun test"
   },
   "dependencies": {
+    "libphonenumber-js": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -1,5 +1,7 @@
+import { hotelRoles } from "@le-hoetel/auth/access"
 import { ORPCError, os } from "@orpc/server"
 import type { Context } from "./context"
+import { type ActiveHotel, resolveHotel } from "./lib/hotel"
 import { activeMembership } from "./lib/org"
 import { enforceRateLimit, RATE_LIMITS } from "./lib/rate-limit"
 
@@ -49,3 +51,25 @@ const requireOrg = o.middleware(async ({ context, next }) => {
 
 /** Signed in, with an active organization the caller is a member of: `context.org` is `{ organizationId, role }`. */
 export const orgProcedure = protectedProcedure.use(requireOrg)
+
+const requireHotel = o.middleware(async ({ context, next }) => {
+  const hotel = await resolveHotel(context)
+  return next({ context: { hotel } })
+})
+
+/**
+ * Signed in, acting on one hotel: `context.hotel` is `{ hotelId, role, superAdmin }`. Every guest query must filter
+ * on `context.hotel.hotelId`, and never on an id taken from the input.
+ */
+export const hotelProcedure = protectedProcedure.use(requireHotel)
+
+type Permission = Parameters<(typeof hotelRoles)["owner"]["authorize"]>[0]
+
+/** Narrows a hotel procedure to roles that hold the permission, e.g. `hotelProcedure.use(can({ guest: ["export"] }))`. */
+export const can = (permission: Permission) =>
+  o.$context<Context & { hotel: ActiveHotel }>().middleware(async ({ context, next }) => {
+    if (!hotelRoles[context.hotel.role].authorize(permission).success) {
+      throw new ORPCError("FORBIDDEN", { message: "Your role can't do that." })
+    }
+    return next()
+  })

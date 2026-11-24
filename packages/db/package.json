@@ -19,6 +19,7 @@
     "db:studio": "bun --env-file=../../.env x drizzle-kit studio"
   },
   "dependencies": {
+    "@le-hoetel/common": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:"
   },

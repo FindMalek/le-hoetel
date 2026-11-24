@@ -1,0 +1,36 @@
+---
+title: Branding is config, never code per client
+description: Per hotel branding (logo, two colors, display name, reply-to, language) is stored as data. There is no custom code per hotel.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Every hotel will want its own look, and the easy way to win a hotel is to customize.
+
+## Decision
+
+Branding lives in configuration per hotel and templates read it. Anything beyond branding goes on the roadmap instead of into a custom build.
+
+## Why
+
+- Custom work turns a SaaS into an agency and kills the margin.
+- One code path is easier to test, secure and ship.
+
+## Why not
+
+- Custom code per client: fast for one hotel, a maintenance trap at ten.
+
+## Consequences
+
+- Some hotels may want more than we allow. We say no and add it to the roadmap if several ask.
+
+## Revisit when
+
+Several hotels ask for the same missing thing, which then becomes a product feature.
+
+## Related
+
+- [Vision](/docs/vision)
+- [Risks](/docs/risks)

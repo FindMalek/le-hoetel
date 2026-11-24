@@ -1,8 +1,7 @@
-// Written by the design preset (monochrome). Variables: --font-sans, --font-mono, --font-heading.
-import { IBM_Plex_Sans, JetBrains_Mono } from "next/font/google"
+import { Cairo, Inter, JetBrains_Mono } from "next/font/google"
 
-const sans = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-sans" })
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" })
-const heading = IBM_Plex_Sans({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-heading" })
+const latin = Inter({ subsets: ["latin"], display: "swap", variable: "--font-latin" })
+const arabic = Cairo({ subsets: ["arabic"], display: "swap", preload: false, variable: "--font-arabic" })
+const mono = JetBrains_Mono({ subsets: ["latin"], display: "swap", preload: false, variable: "--font-mono" })
 
-export const fontVariables = [sans.variable, mono.variable, heading.variable].join(" ")
+export const fontVariables = [latin.variable, arabic.variable, mono.variable].join(" ")

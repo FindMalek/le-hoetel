@@ -1,0 +1,73 @@
+---
+title: Roadmap and milestones
+description: Versions V1 to V4, the gate between them, and how they map to the eight GitHub milestones.
+---
+
+Each version starts when the gate before it is met, not on a date. The numbers on the GitHub milestones are the priority order.
+
+## Versions and gates
+
+| Version | Theme | Gate to the next |
+|---|---|---|
+| V1 | Capture, message and listen | Two paying hotels and capture proven |
+| V2 | Reach and trust | About 15 paying hotels and enough data |
+| V3 | Connect and learn | 50 plus hotels, several in one destination |
+| V4 | Destination network | |
+
+## Milestones
+
+| Milestone | Name | Scope | Version |
+|---|---|---|---|
+| 1 | Foundation | Scaffold and rename, design system, i18n pipeline, CI and CD, staging, production and PR preview environments, seed data, docs, observability, agent setup | V1 |
+| 2 | Hotel core | Hotels as organizations, branding config, admin panel, guest and consent tables, QR capture page, CSV import and staff add, unsubscribe, privacy pages, export and delete | V1 |
+| 3 | Messaging | react-email templates with per hotel branding, email preview, Resend, WhatsApp via Kapso, jobs for welcome, birthday, holidays, campaigns, and offers with redemption QR | V1 |
+| 4 | Feedback and dashboard | Survey, low score alerts, Google review invite, hotel dashboard, feedback widget, E2E hardening, SEO and Open Graph | V1 |
+| 5 | Pilot launch | Production deploy, onboarding checklist, QR kit, three pilot hotels, manual billing, legal review of consent wording, support playbook | V1 |
+| 6 | Reach and trust | SMS with sender ID, custom sender domains, segment builder, WhatsApp team inbox, review flow, Xlia CSV mapping, multi-property | V2 |
+| 7 | Connect and learn | PMS connectors (Xlia first), CRM sync and module takeover, stay-based journeys, AI summaries and campaign drafts, recognition wallet, guest web app | V3 |
+| 8 | Destination network | Shared destination loyalty, guest app, AI concierge, direct booking requests, open API, Maghreb expansion, the opt-in location idea | V4 |
+
+## V1 in detail
+
+V1 is what we build now. In order:
+
+1. Hotels as organizations with branding config and a super admin panel. One bucket with a prefix per hotel.
+2. Guest, consent and consent log tables, scoped by hotel.
+3. Public QR capture page, mobile first, branded, in French, Arabic and English, with separate consent checkboxes. Staff add and CSV import.
+4. Unsubscribe, privacy pages, guest export and delete.
+5. Email with Resend and react-email. Jobs: welcome, birthday, holiday calendar, one-off campaigns to simple segments.
+6. WhatsApp via Kapso template messages. Approval takes time, so templates are prepared in week 1.
+7. Offers with title, text, validity, promo code and a redemption QR.
+8. Post-stay survey 24 hours after checkout, six questions at most, low score alert, Google review invite for everyone.
+9. Hotel dashboard and the feedback widget.
+10. Production deploy and pilot onboarding.
+
+**Not in V1:** SMS, PMS integration, points or tiers, AI features, guest app, custom domains, WhatsApp inbox, multi-property, online payments, booking engine.
+
+**Success for V1:** three pilot hotels, 200 consented guests each in month one, at least one hotel still using it, two paying by the end of month three.
+
+## V2: reach and trust
+
+SMS with a registered sender ID, custom sender domains, segment builder with saved segments, WhatsApp team inbox for reception, guest profiles, Google and Tripadvisor review flow, Xlia CSV mapping, multi-property accounts, Arabic dashboard and printable QR kit, local billing.
+
+## V3: connect and learn
+
+PMS connectors (Xlia first), stay-based journeys, online pre check-in that captures real emails of booking site guests, AI summaries and campaign drafts in French and Arabic (a human approves), offer suggestions, recognition wallet, guest web app, anonymous benchmarks.
+
+## V4: destination network
+
+Shared loyalty across hotels, restaurants and spas in a destination, guest app, AI concierge, direct booking requests with local payments, group analytics, open API, Maghreb expansion after a data law check.
+
+## The long game
+
+1. Start with capture and messages. No integration needed.
+2. Connect their CRM or PMS and sync guests into ours.
+3. Take over one module at a time: guests, then campaigns, then surveys.
+4. Add what they cannot get elsewhere: AI, offers, recognition.
+5. Their old system is no longer needed.
+
+Replacing a PMS is huge, because hotels run rooms and billing on it. Each step must be useful alone. Do not build any of this early, but keep the data model open for it.
+
+## Exit plan (our reading)
+
+A buyer pays for recurring revenue, low churn, hotels clustered in one destination, integrations like Xlia, clean data agreements and anonymous benchmarks. A raw guest database is a liability, not an asset.
