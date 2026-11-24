@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { signOfferToken } from "@le-hoetel/common/offer-tokens"
+import { auditLog, offerRedemptions } from "@le-hoetel/db"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -9,6 +10,11 @@ beforeAll(async () => {
 afterAll(() => app.close())
 
 const secret = () => app.services.config.tokenSecret
+const auditActions = () =>
+  app.services.db
+    .select({ action: auditLog.action })
+    .from(auditLog)
+    .then((rows) => rows.map((row) => row.action))
 
 async function hotelAs(slug: string) {
   const owner = await app.signUp(`${slug}@le-hoetel.test`)
@@ -78,4 +84,72 @@ test("the capture page shows only the open welcome offer's title and text", asyn
   expect(await publicOffer()).toBeNull()
   await hotel.client.offers.update({ id: offer.id, validUntil: null, active: false })
   expect(await publicOffer()).toBeNull()
+})
+
+async function guestCodeFor(hotel: Awaited<ReturnType<typeof hotelAs>>, offerId: string, phone: string) {
+  const person = await hotel.client.guests.create(guest(phone))
+  const token = signOfferToken(secret(), { hotelId: hotel.hotelId, offerId, guestId: person.id })
+  return (await app.anonymous.public.offer({ token })).code
+}
+
+test("redeeming: another hotel's code is refused without a leak, the right hotel redeems once even when two scan at the same time", async () => {
+  const a = await hotelAs("redeem-a")
+  const b = await hotelAs("redeem-b")
+  const offer = await a.client.offers.create({ title: "Welcome drink", promoCode: "DRINK" })
+  const code = await guestCodeFor(a, offer.id, "+21620444444")
+
+  const foreign = await b.client.offers.redeem({ code })
+  expect(foreign).toMatchObject({ status: "wrongHotel", offer: null, guestFirstName: null })
+  expect(await b.client.offers.lookup({ code: "DRINK" })).toMatchObject({ status: "unknown", offer: null })
+
+  const looked = await a.client.offers.lookup({ code: code.toLowerCase().replace("-", " ") })
+  expect(looked).toMatchObject({ status: "ready", guestFirstName: "Amel", offer: { title: "Welcome drink" } })
+
+  const results = await Promise.all([a.client.offers.redeem({ code }), a.client.offers.redeem({ code })])
+  expect(results.map((r) => r.status)).toEqual(["redeemed", "redeemed"])
+  expect(results.filter((r) => r.justNow)).toHaveLength(1)
+  expect(results.every((r) => r.redeemed?.by)).toBe(true)
+
+  const stats = await a.client.offers.redemptionStats()
+  expect(stats).toMatchObject({ today: 1, week: 1, total: 1 })
+  expect(stats.recent[0]).toMatchObject({ offerTitle: "Welcome drink", guestFirstName: "Amel" })
+  expect((await b.client.offers.redemptionStats()).total).toBe(0)
+  expect(await a.client.offers.list().then((rows) => rows[0]?.redeemed)).toBe(1)
+  expect((await auditActions()).filter((action) => action === "offer.redeem")).toHaveLength(1)
+})
+
+test("the database itself refuses a second redemption of one offer by one guest", async () => {
+  const hotel = await hotelAs("redeem-unique")
+  const offer = await hotel.client.offers.create({ title: "Dessert", promoCode: "DESSERT" })
+  const person = await hotel.client.guests.create(guest("+21620555555"))
+  const row = { offerId: offer.id, hotelId: hotel.hotelId, guestId: person.id }
+  await app.services.db.insert(offerRedemptions).values(row)
+  await expect(Promise.resolve(app.services.db.insert(offerRedemptions).values(row))).rejects.toThrow()
+})
+
+test("redeeming: expired, paused and used up offers say why, and staff can redeem but not edit", async () => {
+  const hotel = await hotelAs("redeem-states")
+  const expired = await hotel.client.offers.create({
+    title: "Old",
+    promoCode: "OLD",
+    validFrom: new Date(Date.now() - 3 * 864e5),
+    validUntil: new Date(Date.now() - 864e5),
+  })
+  const expiredCode = await guestCodeFor(hotel, expired.id, "+21620666666")
+  expect(await hotel.client.offers.redeem({ code: expiredCode })).toMatchObject({ status: "expired" })
+  expect((await hotel.client.offers.redemptionStats()).total).toBe(0)
+
+  const limited = await hotel.client.offers.create({ title: "Two only", promoCode: "TWO", maxRedemptions: 2 })
+  const statuses = []
+  for (let i = 0; i < 3; i++) statuses.push((await hotel.client.offers.redeem({ code: "two" })).status)
+  expect(statuses).toEqual(["redeemed", "redeemed", "exhausted"])
+  expect(await hotel.client.offers.lookup({ code: "TWO" })).toMatchObject({ guestFirstName: null })
+
+  await hotel.client.offers.update({ id: limited.id, active: false })
+  expect(await hotel.client.offers.lookup({ code: "TWO" })).toMatchObject({ status: "inactive" })
+
+  const staff = await app.signUp("redeem-states-staff@le-hoetel.test")
+  const member = await app.joinHotel(staff, hotel.hotelId, "staff")
+  expect(await member.client.offers.lookup({ code: "OLD" })).toMatchObject({ status: "expired" })
+  await expect(member.client.offers.create({ title: "No", promoCode: "NOPE" })).rejects.toThrow()
 })

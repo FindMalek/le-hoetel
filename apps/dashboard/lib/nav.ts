@@ -4,6 +4,7 @@ import {
   GiftIcon,
   LayoutDashboardIcon,
   NotebookPenIcon,
+  QrCodeIcon,
   SettingsIcon,
   UsersIcon,
 } from "lucide-react"
@@ -21,6 +22,7 @@ export const NAV: NavItem[] = [
   { href: "/", label: "Overview", icon: LayoutDashboardIcon },
   { href: "/inbox", label: "Inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "Notes", icon: NotebookPenIcon },
+  { href: "/redeem", label: "Redeem", icon: QrCodeIcon },
   { href: "/offers", label: "Offers", icon: GiftIcon },
   { href: "/hotel", label: "Hotel", icon: BuildingIcon },
   { href: "/team", label: "Team", icon: UsersIcon },
