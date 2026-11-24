@@ -57,7 +57,7 @@ catalog:
   next-themes: 0.4.6
   oxlint: 1.88.0
   pg-boss: 12.38.0
-  postgres: 4.0.0
+  postgres: 4.1.1
   react: 19.3.0
   react-dom: 19.3.0
   react-email: 6.11.4
