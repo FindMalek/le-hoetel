@@ -10,7 +10,8 @@
     "./utils": "./src/utils/index.ts",
     "./hotel": "./src/hotel.ts",
     "./consent": "./src/consent.ts",
-    "./phone": "./src/phone.ts"
+    "./phone": "./src/phone.ts",
+    "./csv": "./src/csv.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

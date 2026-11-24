@@ -72,7 +72,11 @@ test("a hotel user lands in their hotel at sign in and lists only their hotels",
   const owner = await app.signUp("lands-owner@le-hoetel.test")
   const hotelId = await app.createHotel("lands-hotel", owner)
   await app.createHotel("lands-other", await app.signUp("lands-other@le-hoetel.test"))
-  expect(await owner.client.hotel.mine()).toEqual({ activeId: null, hotels: [{ id: hotelId, name: "lands-hotel" }] })
+  expect(await owner.client.hotel.mine()).toEqual({
+    activeId: null,
+    role: null,
+    hotels: [{ id: hotelId, name: "lands-hotel" }],
+  })
 
   const login = await app.services.auth.api.signInEmail({
     body: { email: "lands-owner@le-hoetel.test", password: app.password },
@@ -83,5 +87,5 @@ test("a hotel user lands in their hotel at sign in and lists only their hotels",
     .map((line) => line.split(";")[0])
     .join("; ")
   const again = app.clientFor(new Headers({ cookie, "x-csrf-token": "orpc" }))
-  expect((await again.hotel.mine()).activeId).toBe(hotelId)
+  expect(await again.hotel.mine()).toMatchObject({ activeId: hotelId, role: "owner" })
 })
