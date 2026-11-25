@@ -14,6 +14,8 @@ export const declaredKeys = () => {
 export const NOT_IN_ENV_PACKAGE = new Set([
   "DOCS_URL",
   "POSTGRES_PORT",
+  "POSTGRES_USER",
+  "POSTGRES_DB",
   "WHATSAPP_BUSINESS_ACCOUNT_ID",
   "TURBO_API",
   "TURBO_TEAM",
@@ -30,6 +32,8 @@ export const COMPUTED = new Set([
   "DOCS_URL",
   "DATABASE_URL",
   "POSTGRES_PORT",
+  "POSTGRES_USER",
+  "POSTGRES_DB",
   "SEED",
   "MESSAGING_LIVE",
   "ALLOW_PREVIEW_ORIGINS",
