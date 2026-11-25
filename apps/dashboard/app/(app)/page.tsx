@@ -59,6 +59,7 @@ async function NoHotelHome({ name }: { name: string }) {
 async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: string; slug: string } }) {
   const t = await getTranslations("home")
   const tLang = await getTranslations("home.languages")
+  const tMetrics = await getTranslations("metrics")
   const [{ role }, overview, { items }] = await Promise.all([
     call((api) => api.hotel.mine()),
     call((api) => api.overview.get()),
@@ -111,7 +112,16 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
       <div className="flex flex-col gap-10 p-4 md:p-6">
         {manager && <FirstRunChecklist state={overview.checklist} />}
 
-        <Section title={t("pulse.title")} description={t("pulse.description")}>
+        <Section
+          title={t("pulse.title")}
+          description={t("pulse.description")}
+          actions={
+            <Button variant="ghost" size="sm" render={<Link href="/metrics" />} nativeButton={false}>
+              {tMetrics("title")}
+              <ChevronRightIcon data-icon="inline-end" className="rtl:rotate-180" />
+            </Button>
+          }
+        >
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 md:gap-4">
             <StatCard
               label={t("pulse.newGuests")}

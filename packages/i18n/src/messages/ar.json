@@ -216,7 +216,8 @@
     "admin": "المنصة",
     "holidays": "الأعياد",
     "adminOverview": "نظرة عامة",
-    "campaigns": "الحملات"
+    "campaigns": "الحملات",
+    "metrics": "الإحصاءات"
   },
   "hotel": {
     "switch": "تبديل الفندق",
@@ -1689,5 +1690,38 @@
       "refund": "استرجاع (لم تصل)"
     },
     "forbidden": "المالكون والمديرون فقط يرون الرصيد."
+  },
+  "metrics": {
+    "title": "الإحصاءات",
+    "description": "ما تقدّمه قائمة نزلائكم ورسائلكم للفندق.",
+    "forbidden": "الإحصاءات غير متاحة لدوركم.",
+    "periodLabel": "الفترة",
+    "period": {
+      "days": "{count} يومًا"
+    },
+    "captured": {
+      "title": "النزلاء المسجَّلون",
+      "description": "{count, plural, one {نزيل جديد} two {نزيلان جديدان} few {# نزلاء جدد} other {# نزيلًا جديدًا}} في هذه الفترة، حسب طريقة الانضمام.",
+      "summary": "{count, plural, one {نزيل واحد} other {# نزيلًا}} مسجَّلون.",
+      "emptyTitle": "لا نزلاء جدد في هذه الفترة",
+      "emptyBody": "اطبعوا رمز QR لغرفة أو طاولة وسيظهر النزلاء هنا.",
+      "emptyAction": "احصلوا على رمز QR"
+    },
+    "outcomes": {
+      "title": "ماذا يحقّق لكم",
+      "description": "الموافقة والرسائل والعروض لنزلاء هذه الفترة.",
+      "consentWhatsapp": "موافقة واتساب",
+      "consentEmail": "موافقة البريد",
+      "consentHint": "{count} من {total} نزلاء جدد",
+      "messages": "الرسائل المرسلة",
+      "delivered": "{rate} تم تسليمها",
+      "offers": "العروض المستخدمة",
+      "redemption": "{rate} من {issued} مرسلة",
+      "reviews": "طلبات التقييم",
+      "reviewsHint": "تُحتسب عند إرسال طلبات التقييم.",
+      "survey": "متوسط التقييم",
+      "surveyHint": "{count, plural, one {إجابة واحدة} other {# إجابات}}",
+      "surveyEmpty": "لا إجابات على الاستبيان بعد."
+    }
   }
 }

@@ -216,7 +216,8 @@
     "admin": "Platform",
     "holidays": "Holidays",
     "adminOverview": "Platform overview",
-    "campaigns": "Campaigns"
+    "campaigns": "Campaigns",
+    "metrics": "Metrics"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -1689,5 +1690,38 @@
       "refund": "Refund (not delivered)"
     },
     "forbidden": "Only owners and managers can see the balance."
+  },
+  "metrics": {
+    "title": "Metrics",
+    "description": "What your guest list and messages are doing for the hotel.",
+    "forbidden": "Metrics are not available for your role.",
+    "periodLabel": "Period",
+    "period": {
+      "days": "{count} days"
+    },
+    "captured": {
+      "title": "Guests captured",
+      "description": "{count, plural, one {# new guest} other {# new guests}} in this period, by how they joined.",
+      "summary": "{count, plural, one {# guest} other {# guests}} captured.",
+      "emptyTitle": "No new guests in this period",
+      "emptyBody": "Print a QR code for a room or a table and guests start showing up here.",
+      "emptyAction": "Get a QR code"
+    },
+    "outcomes": {
+      "title": "What it brings",
+      "description": "Consent, messages and offers for guests of this period.",
+      "consentWhatsapp": "WhatsApp consent",
+      "consentEmail": "Email consent",
+      "consentHint": "{count} of {total} new guests",
+      "messages": "Messages sent",
+      "delivered": "{rate} delivered",
+      "offers": "Offers redeemed",
+      "redemption": "{rate} of {issued} sent",
+      "reviews": "Reviews requested",
+      "reviewsHint": "Counted once review requests are sent.",
+      "survey": "Average score",
+      "surveyHint": "{count, plural, one {# answer} other {# answers}}",
+      "surveyEmpty": "No survey answers yet."
+    }
   }
 }
