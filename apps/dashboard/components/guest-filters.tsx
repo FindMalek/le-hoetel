@@ -70,24 +70,29 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
 
   useEffect(() => setQuery(values.q ?? ""), [values.q])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only a new query should restart the timer
   useEffect(() => {
     if (query.trim() === (values.q ?? "")) return
-    const timer = setTimeout(() => startTransition(() => router.replace(href({ q: query.trim() || undefined }) as never, { scroll: false })), 350)
+    const timer = setTimeout(
+      () => startTransition(() => router.replace(href({ q: query.trim() || undefined }) as never, { scroll: false })),
+      350,
+    )
     return () => clearTimeout(timer)
-    // biome-ignore lint/correctness/useExhaustiveDependencies: only a new query should restart the timer
   }, [query])
 
   return (
     <div className="flex flex-col gap-3" aria-busy={pending}>
       <form
-        role="search"
         className="relative"
         onSubmit={(event) => {
           event.preventDefault()
           startTransition(() => router.replace(href({ q: query.trim() || undefined }) as never, { scroll: false }))
         }}
       >
-        <SearchIcon aria-hidden className="pointer-events-none absolute inset-y-0 start-3 my-auto size-4 text-muted-foreground" />
+        <SearchIcon
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 start-3 my-auto size-4 text-muted-foreground"
+        />
         <Input
           type="search"
           name="q"
@@ -120,7 +125,9 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
                 type="button"
                 className={cn(
                   chip,
-                  values.source ? "border-primary bg-primary text-primary-foreground" : "border-input bg-background hover:bg-muted",
+                  values.source
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-input bg-background hover:bg-muted",
                 )}
               />
             }
@@ -131,7 +138,9 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
           <DropdownMenuContent align="start">
             <DropdownMenuRadioGroup
               value={values.source ?? ""}
-              onValueChange={(value) => startTransition(() => router.replace(href({ source: value || undefined }) as never, { scroll: false }))}
+              onValueChange={(value) =>
+                startTransition(() => router.replace(href({ source: value || undefined }) as never, { scroll: false }))
+              }
             >
               <DropdownMenuRadioItem value="">{t("filter.any")}</DropdownMenuRadioItem>
               {GUEST_SOURCES.map((value) => (
@@ -143,7 +152,13 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
           </DropdownMenuContent>
         </DropdownMenu>
         {active && (
-          <Button variant="ghost" size="sm" className="shrink-0 coarse:h-11" render={<Link href={pathname as never} replace />} nativeButton={false}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="shrink-0 coarse:h-11"
+            render={<Link href={pathname as never} replace />}
+            nativeButton={false}
+          >
             <XIcon data-icon="inline-start" />
             {t("reset")}
           </Button>

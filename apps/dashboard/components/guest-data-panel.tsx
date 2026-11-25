@@ -62,11 +62,21 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
       <FormSection title={t("exportTitle")} description={t("exportDescription")}>
         <p className="text-sm tabular-nums">{t("count", { count })}</p>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" disabled={!count} loading={exportAll.isPending} onClick={() => exportAll.mutate("csv")}>
+          <Button
+            variant="outline"
+            disabled={!count}
+            loading={exportAll.isPending}
+            onClick={() => exportAll.mutate("csv")}
+          >
             <DownloadIcon data-icon="inline-start" />
             {t("exportCsv")}
           </Button>
-          <Button variant="outline" disabled={!count} loading={exportAll.isPending} onClick={() => exportAll.mutate("json")}>
+          <Button
+            variant="outline"
+            disabled={!count}
+            loading={exportAll.isPending}
+            onClick={() => exportAll.mutate("json")}
+          >
             <DownloadIcon data-icon="inline-start" />
             {t("exportJson")}
           </Button>
@@ -78,7 +88,10 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
           <Label htmlFor="data-search" className="sr-only">
             {t("search")}
           </Label>
-          <SearchIcon aria-hidden className="pointer-events-none absolute inset-y-0 start-3 my-auto size-4 text-muted-foreground" />
+          <SearchIcon
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 start-3 my-auto size-4 text-muted-foreground"
+          />
           <Input
             id="data-search"
             type="search"
@@ -90,7 +103,9 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
             className="ps-9"
           />
         </div>
-        {results.data && !results.data.items.length && <p className="text-muted-foreground text-sm">{t("noResults")}</p>}
+        {results.data && !results.data.items.length && (
+          <p className="text-muted-foreground text-sm">{t("noResults")}</p>
+        )}
         {results.data && results.data.items.length > 0 && (
           <ul className="flex flex-col divide-y rounded-lg border bg-card">
             {results.data.items.map((guest) => (
@@ -119,7 +134,12 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
       <FormSection title={t("dangerTitle")} description={t("dangerDescription")}>
         <div className="flex flex-col gap-3 rounded-lg border p-4">
           <p className="text-sm">{t("deleteAllText", { count })}</p>
-          <Button variant="outline" className="w-fit text-destructive" disabled={!count} onClick={() => setConfirming(true)}>
+          <Button
+            variant="outline"
+            className="w-fit text-destructive"
+            disabled={!count}
+            onClick={() => setConfirming(true)}
+          >
             {t("deleteAll")}
           </Button>
         </div>
@@ -142,7 +162,12 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
       >
         <div className="flex flex-col gap-2 text-sm">
           <Label htmlFor="confirm-word">{t("typeName", { hotel: hotelName })}</Label>
-          <Input id="confirm-word" value={typed} onChange={(event) => setTyped(event.target.value)} autoComplete="off" />
+          <Input
+            id="confirm-word"
+            value={typed}
+            onChange={(event) => setTyped(event.target.value)}
+            autoComplete="off"
+          />
         </div>
       </ConfirmDialog>
     </div>

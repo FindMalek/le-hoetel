@@ -1,6 +1,6 @@
 "use client"
 
-import { type HotelLanguage } from "@le-hoetel/common/hotel"
+import type { HotelLanguage } from "@le-hoetel/common/hotel"
 import { parsePhone } from "@le-hoetel/common/phone"
 import { orpc } from "@le-hoetel/orpc/react"
 import { Button } from "@le-hoetel/ui/components/button"

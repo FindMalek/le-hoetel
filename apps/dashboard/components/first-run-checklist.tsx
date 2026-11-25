@@ -3,6 +3,7 @@ import { CheckIcon, ChevronRightIcon } from "lucide-react"
 import type { Route } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
+import type { CSSProperties } from "react"
 
 const STEPS = [
   { key: "logo", href: "/hotel" },
@@ -29,7 +30,9 @@ export async function FirstRunChecklist({ state }: { state: Checklist }) {
           </h2>
           <p className="text-muted-foreground text-sm">{t("description")}</p>
         </div>
-        <span className="shrink-0 text-muted-foreground text-sm tabular-nums">{t("progress", { done, total: STEPS.length })}</span>
+        <span className="shrink-0 text-muted-foreground text-sm tabular-nums">
+          {t("progress", { done, total: STEPS.length })}
+        </span>
       </div>
       <div
         role="progressbar"
@@ -39,7 +42,10 @@ export async function FirstRunChecklist({ state }: { state: Checklist }) {
         aria-label={t("title")}
         className="h-1.5 overflow-hidden rounded-full bg-muted"
       >
-        <div className="h-full rounded-full bg-primary transition-[width] duration-200" style={{ width: `${(done / STEPS.length) * 100}%` }} />
+        <div
+          className="h-full w-(--progress) rounded-full bg-primary transition-[width] duration-200"
+          style={{ "--progress": `${(done / STEPS.length) * 100}%` } as CSSProperties}
+        />
       </div>
       <ul className="flex flex-col divide-y">
         {STEPS.map((step) => {
@@ -60,7 +66,9 @@ export async function FirstRunChecklist({ state }: { state: Checklist }) {
                   {complete && <CheckIcon className="size-3.5" />}
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className={cn("font-medium text-sm", complete && "text-muted-foreground line-through")}>{t(`${step.key}.title`)}</span>
+                  <span className={cn("font-medium text-sm", complete && "text-muted-foreground line-through")}>
+                    {t(`${step.key}.title`)}
+                  </span>
                   {!complete && <span className="text-muted-foreground text-xs">{t(`${step.key}.body`)}</span>}
                 </span>
                 <span className="sr-only">{t(complete ? "done" : "todo")}</span>

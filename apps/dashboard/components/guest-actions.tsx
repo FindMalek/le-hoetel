@@ -3,7 +3,12 @@
 import { browserClient } from "@le-hoetel/orpc/react"
 import { Button } from "@le-hoetel/ui/components/button"
 import { ConfirmDialog } from "@le-hoetel/ui/components/confirm-dialog"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@le-hoetel/ui/components/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@le-hoetel/ui/components/dropdown-menu"
 import { useMutation } from "@tanstack/react-query"
 import { DownloadIcon, Trash2Icon } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -68,7 +73,9 @@ export function GuestActions({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "csv" })}>{t("exportCsv")}</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "json" })}>{t("exportJson")}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "json" })}>
+              {t("exportJson")}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}

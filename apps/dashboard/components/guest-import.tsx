@@ -117,7 +117,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
     let valid = 0
     let consenting = 0
     for (const row of rows) {
-      const parsed = guestCreateSchema.safeParse(guestFromImportRow(row, { defaultLanguage: language, confirmConsent: true }))
+      const parsed = guestCreateSchema.safeParse(
+        guestFromImportRow(row, { defaultLanguage: language, confirmConsent: true }),
+      )
       if (parsed.success) {
         valid++
         if (parsed.data.consents.email || parsed.data.consents.whatsapp) consenting++
@@ -315,7 +317,12 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               )
             })}
           </div>
-          <LanguageChoice name="import-language" value={language} onChange={setLanguage} legend={t("defaultLanguage")} />
+          <LanguageChoice
+            name="import-language"
+            value={language}
+            onChange={setLanguage}
+            legend={t("defaultLanguage")}
+          />
           {!ready && <InlineAlert tone="warning">{t("needColumns")}</InlineAlert>}
           <StickyFormActions>
             <Button size="lg" disabled={!ready} onClick={() => setStep("review")}>
@@ -350,7 +357,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
                 {review.problems.slice(0, 6).map((problem) => (
                   <li key={problem.line} className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <span>{t(`problem.${problem.field}`)}</span>
-                    <span className="shrink-0 text-muted-foreground tabular-nums">{t("line", { line: problem.line })}</span>
+                    <span className="shrink-0 text-muted-foreground tabular-nums">
+                      {t("line", { line: problem.line })}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -360,7 +369,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               <Button
                 variant="ghost"
                 className="w-fit"
-                onClick={() => report(review.problems.map((problem) => ({ line: problem.line, message: problem.field })))}
+                onClick={() =>
+                  report(review.problems.map((problem) => ({ line: problem.line, message: problem.field })))
+                }
               >
                 <DownloadIcon data-icon="inline-start" />
                 {t("download")}

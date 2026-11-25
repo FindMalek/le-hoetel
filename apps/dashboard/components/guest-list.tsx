@@ -56,7 +56,10 @@ export function GuestList({ guests, total }: { guests: Guest[]; total: number })
       header: t("columns.guest"),
       className: row,
       cell: (guest) => (
-        <Link href={`/guests/${guest.id}`} className="font-medium underline-offset-4 hover:underline focus-visible:underline">
+        <Link
+          href={`/guests/${guest.id}`}
+          className="font-medium underline-offset-4 hover:underline focus-visible:underline"
+        >
           {guest.name}
         </Link>
       ),
@@ -101,7 +104,10 @@ export function GuestList({ guests, total }: { guests: Guest[]; total: number })
         <p className="text-muted-foreground text-sm" aria-live="polite">
           {t("total", { count: total })}
         </p>
-        <div className="flex items-center gap-1 max-md:hidden" role="group" aria-label={t("density.label")}>
+        <fieldset
+          className="m-0 flex min-w-0 items-center gap-1 border-0 p-0 max-md:hidden"
+          aria-label={t("density.label")}
+        >
           <Button
             variant={compact ? "ghost" : "secondary"}
             size="icon-sm"
@@ -120,7 +126,7 @@ export function GuestList({ guests, total }: { guests: Guest[]; total: number })
           >
             <Rows3Icon />
           </Button>
-        </div>
+        </fieldset>
       </div>
       <DataTable
         caption={t("title")}
