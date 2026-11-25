@@ -8,6 +8,7 @@ import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, UploadIcon, UsersIcon } fr
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { GuestFilters } from "@/components/guest-filters"
+import { GuestFinder } from "@/components/guest-finder"
 import { GuestList } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
 import { TopBarAction } from "@/components/top-bar"
@@ -80,6 +81,7 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
       {header}
       <TopBarAction href="/guests/new" label={t("addButton")} icon={<PlusIcon />} />
       <div className="flex flex-col gap-4 p-4 md:p-6">
+        {total > 0 || filtered ? <GuestFinder /> : null}
         <GuestFilters values={{ q, ...filters }} />
         {items.length ? (
           <>

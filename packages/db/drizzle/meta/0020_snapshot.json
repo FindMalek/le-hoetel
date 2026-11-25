@@ -1,5 +1,5 @@
 {
-  "id": "423f4c44-82c0-4736-910a-bb9bb80cb0ed",
+  "id": "e7a71d1a-4627-4739-bf9c-e4a5f72c7d27",
   "prevId": "5a071244-46aa-4ef4-90d9-3ca2712065d5",
   "version": "7",
   "dialect": "postgresql",
@@ -1379,6 +1379,111 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.guest_visits": {
+      "name": "guest_visits",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "guest_id": {
+          "name": "guest_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hotel_id": {
+          "name": "hotel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "guest_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "at": {
+          "name": "at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "guest_visits_guest_idx": {
+          "name": "guest_visits_guest_idx",
+          "columns": [
+            {
+              "expression": "guest_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "guest_visits_hotel_idx": {
+          "name": "guest_visits_hotel_idx",
+          "columns": [
+            {
+              "expression": "hotel_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "guest_visits_guest_id_hotel_id_guests_id_hotel_id_fk": {
+          "name": "guest_visits_guest_id_hotel_id_guests_id_hotel_id_fk",
+          "tableFrom": "guest_visits",
+          "tableTo": "guests",
+          "columnsFrom": [
+            "guest_id",
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id",
+            "hotel_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.guests": {
       "name": "guests",
       "schema": "",
@@ -2753,231 +2858,6 @@
       },
       "policies": {},
       "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.survey_invites": {
-      "name": "survey_invites",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "guest_id": {
-          "name": "guest_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "sent_at": {
-          "name": "sent_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "survey_invites_guest_id_hotel_id_guests_id_hotel_id_fk": {
-          "name": "survey_invites_guest_id_hotel_id_guests_id_hotel_id_fk",
-          "tableFrom": "survey_invites",
-          "tableTo": "guests",
-          "columnsFrom": [
-            "guest_id",
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "id",
-            "hotel_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "survey_invites_guest_unique": {
-          "name": "survey_invites_guest_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "guest_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.survey_responses": {
-      "name": "survey_responses",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "guest_id": {
-          "name": "guest_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "invite_id": {
-          "name": "invite_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "nps": {
-          "name": "nps",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "rating_rooms": {
-          "name": "rating_rooms",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "rating_cleanliness": {
-          "name": "rating_cleanliness",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "rating_service": {
-          "name": "rating_service",
-          "type": "smallint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "comment": {
-          "name": "comment",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "language": {
-          "name": "language",
-          "type": "hotel_language",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "submitted_at": {
-          "name": "submitted_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "review_link_clicked_at": {
-          "name": "review_link_clicked_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "survey_responses_hotel_idx": {
-          "name": "survey_responses_hotel_idx",
-          "columns": [
-            {
-              "expression": "hotel_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "submitted_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "survey_responses_hotel_id_organization_id_fk": {
-          "name": "survey_responses_hotel_id_organization_id_fk",
-          "tableFrom": "survey_responses",
-          "tableTo": "organization",
-          "columnsFrom": [
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "survey_responses_guest_id_guests_id_fk": {
-          "name": "survey_responses_guest_id_guests_id_fk",
-          "tableFrom": "survey_responses",
-          "tableTo": "guests",
-          "columnsFrom": [
-            "guest_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "survey_responses_invite_unique": {
-          "name": "survey_responses_invite_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "invite_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {
-        "survey_responses_nps_range": {
-          "name": "survey_responses_nps_range",
-          "value": "\"survey_responses\".\"nps\" between 0 and 10"
-        }
-      },
       "isRLSEnabled": false
     }
   },
