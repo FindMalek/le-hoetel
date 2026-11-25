@@ -6,8 +6,8 @@ import {
   type ConsentSource,
 } from "@le-hoetel/common/consent"
 import type { Guest, guestCreateSchema } from "@le-hoetel/common/schemas"
-import { consentEvents, type Db, guestConsents, guests } from "@le-hoetel/db"
-import { and, eq, inArray } from "drizzle-orm"
+import { consentEvents, type Db, guestConsents, guests, guestVisits, offerRedemptions, offers } from "@le-hoetel/db"
+import { and, count, desc, eq, inArray, max, min } from "drizzle-orm"
 import type { z } from "zod"
 
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0]
@@ -116,6 +116,9 @@ export async function upsertGuest(
     .onConflictDoNothing({ target: [guests.hotelId, guests.phoneE164] })
     .returning({ id: guests.id })
   let id = created?.id
+  if (created && fields.source !== "csv") {
+    await tx.insert(guestVisits).values({ guestId: created.id, hotelId, source: fields.source, at })
+  }
   if (!id) {
     const [existing] = await tx
       .select()
@@ -164,3 +167,44 @@ export const clearExtras = (db: Db | Tx, hotelId: string, guestId: string) =>
     .update(guests)
     .set({ country: null, city: null, stayCheckIn: null, stayCheckOut: null, nextDestination: null })
     .where(hotelGuest(hotelId, guestId))
+
+/** What the front desk needs to greet a guest: visits, consents and the last offer used. Always one hotel's guests. */
+export async function recognitionOf(db: Db | Tx, hotelId: string, rows: (typeof guests.$inferSelect)[]) {
+  const ids = rows.map((row) => row.id)
+  if (!ids.length) return []
+  const [visits, consents, redemptions] = await Promise.all([
+    db
+      .select({
+        guestId: guestVisits.guestId,
+        n: count(),
+        first: min(guestVisits.at),
+        last: max(guestVisits.at),
+      })
+      .from(guestVisits)
+      .where(and(eq(guestVisits.hotelId, hotelId), inArray(guestVisits.guestId, ids)))
+      .groupBy(guestVisits.guestId),
+    withConsents(db, hotelId, rows),
+    db
+      .select({ guestId: offerRedemptions.guestId, title: offers.title, at: offerRedemptions.redeemedAt })
+      .from(offerRedemptions)
+      .innerJoin(offers, and(eq(offers.id, offerRedemptions.offerId), eq(offers.hotelId, offerRedemptions.hotelId)))
+      .where(and(eq(offerRedemptions.hotelId, hotelId), inArray(offerRedemptions.guestId, ids)))
+      .orderBy(desc(offerRedemptions.redeemedAt)),
+  ])
+  return rows.map((row) => {
+    const seen = visits.find((visit) => visit.guestId === row.id)
+    const offer = redemptions.find((redemption) => redemption.guestId === row.id)
+    const guest = consents.find((item) => item.id === row.id)!
+    return {
+      id: row.id,
+      name: row.name,
+      phoneE164: row.phoneE164,
+      language: row.language,
+      consents: { email: guest.consents.email, whatsapp: guest.consents.whatsapp },
+      visits: seen?.n ?? 0,
+      firstVisitAt: seen?.first ?? null,
+      lastVisitAt: seen?.last ?? null,
+      lastOffer: offer ? { title: offer.title, at: offer.at } : null,
+    }
+  })
+}

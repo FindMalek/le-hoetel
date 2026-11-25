@@ -413,6 +413,23 @@
       "cancel": "Annuler",
       "deleted": "Client supprimé.",
       "error": "Une erreur est survenue. Réessayez."
+    },
+    "finder": {
+      "label": "Trouver un client",
+      "placeholder": "Saisissez un numéro ou un nom",
+      "none": "Aucun client trouvé.",
+      "add": "L'ajouter",
+      "markVisit": "Marquer la visite",
+      "marked": "Visite enregistrée",
+      "error": "Chargement impossible. Réessayez.",
+      "firstStay": "Premier séjour. Un accueil chaleureux suffit.",
+      "welcomeBack": "Bon retour, {count, plural, =1 {1er séjour} other {#e séjour}}",
+      "visits": "Visites",
+      "firstVisit": "Première visite",
+      "lastVisit": "Dernière visite",
+      "language": "Langue",
+      "lastOffer": "Dernière offre utilisée",
+      "consents": "Contact autorisé"
     }
   },
   "guestData": {
