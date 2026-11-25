@@ -1,0 +1,51 @@
+---
+title: Hotel emails
+description: The four guest emails, how a hotel's branding shapes them, and where the copy lives.
+---
+
+## Templates
+
+`welcome` (with an optional offer), `birthday`, `survey` and `reminder`. Each has one call to action, a plain text twin and a footer with the hotel address and an unsubscribe link.
+
+```ts
+import { renderEmail } from "@le-hoetel/notification"
+
+const { subject, html, text } = await renderEmail("birthday", {
+  hotel: { name, logoUrl, primaryColor, accentColor, address },
+  guest: { name, unsubscribeUrl },
+  locale: "fr",
+  props: { offer, ctaUrl },
+})
+```
+
+The sender name is the hotel name. The caller sets it, along with the `List-Unsubscribe` headers.
+
+## Branding
+
+Branding is data, never code per hotel. The primary color is the button and the accent color is the top bar and the offer border. The text on each is black or white, whichever reads better (`readableForeground`). When a brand color is too faint on the dark page, the button falls back to the neutral dark theme color. The logo sits on a white chip in dark mode so a dark logo never disappears. Without an address the footer shows a placeholder, so fill it in for every hotel.
+
+## What works in hospitality email
+
+- A short subject that carries the hotel name and, when it fits, the guest's name.
+- One clear call to action, a warm and human tone, no points or tiers.
+- Mobile first: one column, 600px at most, 16px text, a full width button on a phone.
+
+## Layout
+
+Tables only, inline styles, a `prefers-color-scheme` block for dark mode. This holds in Gmail, Outlook (Word engine) and Apple Mail. Alignment uses the `align` of the language because Outlook ignores logical values, the one place physical directions are allowed.
+
+## Copy and languages
+
+All strings are in `packages/notification/src/hotel-email/copy`, one file per language (`en.ts`, `fr.ts`, `ar.ts`), so a reviewer reads one file. Arabic renders with `dir="rtl"`, taken from `htmlAttributes` in `@le-hoetel/i18n`, and names are isolated so a Latin name doesn't reorder the sentence.
+
+## Tests
+
+`render.test.ts` snapshots every template in every language. After a copy change run `bun test --update-snapshots` in `packages/notification` and read the diff.
+
+## Preview in the dashboard
+
+`/emails` shows any template in any language as a sample guest sees it: light or dark, desktop or phone width. The mail is rendered by the api (`emails.preview`) with the hotel's own colors and logo, and shown in a sandboxed iframe (`srcdoc`, no scripts). The sample guest is made up, never a real one.
+
+`Send test to me` (`emails.sendTest`) sends the same email with a `[Test]` subject prefix to the signed in user's own address only, never to an address from the input. It is limited to 5 per 10 minutes per user. Outside production with live messaging it only logs, like every other message.
+
+The hotel address is not stored yet, so the footer shows its placeholder until the hotel settings get one.

@@ -29,6 +29,8 @@
     "component-patterns",
     "hotels",
     "offers",
+    "hotel-emails",
+    "messaging",
     "scripts",
     "deploy",
     "observability",

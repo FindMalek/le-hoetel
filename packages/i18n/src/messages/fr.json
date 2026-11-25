@@ -8,6 +8,131 @@
     "getStarted": "Commencer",
     "apiDocs": "Docs de l'API"
   },
+  "nav": {
+    "offers": "Offres",
+    "hotelNav": "Hôtel",
+    "emails": "E-mails",
+    "qrCodes": "Codes QR",
+    "messages": "Messages",
+    "data": "Données clients",
+    "hotels": "Hôtels",
+    "overview": "Vue d'ensemble",
+    "guests": "Clients",
+    "inbox": "Boîte de réception",
+    "notes": "Notes",
+    "team": "Équipe",
+    "users": "Utilisateurs",
+    "auditLog": "Journal d'audit",
+    "settings": "Paramètres"
+  },
+  "hotel": {
+    "switch": "Changer d'hôtel",
+    "yours": "Vos hôtels"
+  },
+  "guests": {
+    "title": "Clients",
+    "description": "Tous ceux qui ont laissé leurs coordonnées à votre hôtel.",
+    "search": "Rechercher par nom, téléphone ou e-mail",
+    "apply": "Rechercher",
+    "reset": "Effacer les filtres",
+    "filter": {
+      "consent": "Consentement",
+      "source": "Source",
+      "language": "Langue",
+      "any": "Tous"
+    },
+    "consent": {
+      "email": "E-mail",
+      "whatsapp": "WhatsApp",
+      "profile": "Profil",
+      "none": "Aucun consentement marketing"
+    },
+    "source": {
+      "qr_room": "QR chambre",
+      "qr_table": "QR table",
+      "qr_front_desk": "QR réception",
+      "staff": "Équipe",
+      "csv": "Import CSV"
+    },
+    "total": "{count, plural, one {# client} other {# clients}}",
+    "columns": {
+      "guest": "Client",
+      "phone": "Téléphone",
+      "language": "Langue",
+      "source": "Source",
+      "consent": "Consentement",
+      "added": "Ajouté"
+    },
+    "empty": {
+      "title": "Aucun client pour l'instant",
+      "description": "Les clients apparaissent ici dès qu'ils scannent votre QR code ou que vous les ajoutez."
+    },
+    "noMatch": {
+      "title": "Aucun client trouvé",
+      "description": "Essayez une autre recherche ou effacez les filtres."
+    },
+    "noHotel": {
+      "title": "Pas encore d'hôtel",
+      "description": "Demandez à l'équipe Le Hoetel de vous ajouter à votre hôtel."
+    },
+    "loading": "Chargement des clients",
+    "page": "Page {page} sur {pages}",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "addButton": "Ajouter un client",
+    "importButton": "Importer un CSV",
+    "back": "Retour aux clients",
+    "add": {
+      "title": "Ajouter un client",
+      "description": "Le nom et le téléphone suffisent. Cela prend quelques secondes.",
+      "name": "Nom",
+      "phone": "Numéro de téléphone",
+      "dialCode": "Indicatif du pays",
+      "language": "Langue",
+      "email": "E-mail (facultatif)",
+      "consentTitle": "Consentement",
+      "consentHint": "Cochez uniquement ce que le client vous a dit ou confirmé.",
+      "consentWhatsapp": "Le client accepte les messages WhatsApp",
+      "consentEmail": "Le client accepte les e-mails",
+      "noWhatsapp": "Ce numéro ne peut pas recevoir WhatsApp.",
+      "needEmail": "Ajoutez un e-mail pour demander le consentement e-mail.",
+      "submit": "Ajouter le client",
+      "saving": "Ajout…",
+      "added": "Client ajouté",
+      "merged": "Ce client existait déjà : informations mises à jour"
+    },
+    "import": {
+      "title": "Importer des clients",
+      "description": "Importez un fichier CSV de votre logiciel de réservation ou d'un tableur.",
+      "file": "Fichier CSV",
+      "fileHint": "Jusqu'à {rows} lignes et {mb} Mo. Les colonnes peuvent être séparées par des virgules ou des points-virgules.",
+      "tooBig": "Ce fichier est trop gros.",
+      "tooMany": "Ce fichier a plus de {rows} lignes. Découpez-le et importez-le en plusieurs fois.",
+      "empty": "Aucun client trouvé dans ce fichier. La première ligne doit contenir les noms des colonnes.",
+      "rows": "{count, plural, one {# ligne trouvée} other {# lignes trouvées}}",
+      "mapTitle": "Associez vos colonnes",
+      "none": "Pas dans mon fichier",
+      "field": {
+        "name": "Nom",
+        "phone": "Téléphone",
+        "email": "E-mail",
+        "birthday": "Date de naissance",
+        "language": "Langue",
+        "consent": "Consentement (true ou false)"
+      },
+      "defaultLanguage": "Langue quand la cellule est vide",
+      "confirm": "Je confirme que notre hôtel détient le consentement de chaque client marqué true",
+      "confirmHint": "Le consentement n'est enregistré que si la colonne dit true, yes, oui ou 1, et seulement si vous confirmez. Les autres sont ajoutés sans consentement marketing.",
+      "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
+      "submit": "Importer {count, plural, one {# client} other {# clients}}",
+      "importing": "Import en cours…",
+      "result": "{created} ajoutés, {merged} mis à jour, {failed} en échec",
+      "download": "Télécharger le rapport d'erreurs",
+      "errorColumn": "erreur",
+      "lineColumn": "ligne",
+      "another": "Importer un autre fichier"
+    }
+  },
   "guestData": {
     "title": "Données des clients",
     "description": "Exportez ou supprimez ce que vous conservez sur vos clients. Réservé aux propriétaires et aux managers.",
@@ -132,6 +257,85 @@
     "sample": "Aa texte",
     "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
     "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
+  },
+  "qrCodes": {
+    "title": "Codes QR",
+    "description": "Imprimez un code par chambre, table ou réception et voyez lequel inscrit des clients.",
+    "newTitle": "Nouveaux codes QR",
+    "newDescription": "Un code par emplacement, pour voir lequel inscrit le plus de clients.",
+    "where": "Où",
+    "rooms": "Chambres",
+    "tables": "Tables",
+    "desk": "Réception",
+    "room": "Chambre",
+    "table": "Table",
+    "roomHint": "101-120, 201-220",
+    "tableHint": "T1, T2, Terrasse",
+    "deskHint": "Laissez vide pour un seul code",
+    "spots": "Emplacements",
+    "spotsHint": "Noms ou numéros, séparés par des virgules ou des lignes. Les plages comme 101-120 fonctionnent.",
+    "generate": "Générer",
+    "guestsSoFar": "{count} clients pour l’instant",
+    "alt": "Code QR {spot}",
+    "tableTitle": "Clients par emplacement",
+    "tableDescription": "Les codes QR qui amènent des clients.",
+    "empty": "Aucun client ne s’est encore inscrit avec un code QR.",
+    "colWhere": "Où",
+    "colSpot": "Emplacement",
+    "colGuests": "Clients"
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Chaque message envoyé à vos clients et son issue. Jamais le texte ni le contact.",
+    "empty": "Aucun message pour le moment.",
+    "guest": "Client",
+    "channel": "Canal",
+    "template": "Message",
+    "language": "Langue",
+    "status": "Statut",
+    "date": "Date",
+    "channels": {
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "En attente",
+      "sent": "Envoyé",
+      "delivered": "Délivré",
+      "failed": "Échec",
+      "skipped_no_consent": "Sans consentement"
+    }
+  },
+  "emails": {
+    "title": "E-mails",
+    "description": "Voyez chaque e-mail comme un client le reçoit, puis envoyez-vous un test.",
+    "template": "E-mail",
+    "language": "Langue",
+    "appearance": "Apparence",
+    "width": "Largeur",
+    "light": "Clair",
+    "dark": "Sombre",
+    "desktop": "Ordinateur",
+    "mobile": "Mobile",
+    "sendTest": "M'envoyer un test",
+    "sending": "Envoi…",
+    "sentTo": "Test envoyé à {email}.",
+    "notSent": "Non envoyé : cet environnement ne fait qu'enregistrer les messages.",
+    "loading": "Chargement de l'aperçu…",
+    "subject": "Objet",
+    "frameTitle": "Aperçu de l'e-mail",
+    "noHotel": "Choisissez d'abord un hôtel.",
+    "templates": {
+      "welcome": "Bienvenue",
+      "birthday": "Offre d'anniversaire",
+      "survey": "Invitation au sondage",
+      "reminder": "Rappel d'offre"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
+    }
   },
   "offers": {
     "title": "Offres",

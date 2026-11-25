@@ -1,0 +1,60 @@
+/** English copy of the hotel emails. `{hotel}`, `{name}`, `{date}` are filled in. French and Arabic mirror these keys. */
+export const en = {
+  common: {
+    greeting: "Hi {name},",
+    signoff: "Warmly,",
+    team: "The {hotel} team",
+    footerReason: "You are receiving this email because you shared your address with {hotel}.",
+    unsubscribe: "Unsubscribe",
+    addressPlaceholder: "Hotel address",
+    offerValidUntil: "Valid until {date}",
+    offerCode: "Your code",
+    dateFormat: "{month} {day}, {year}",
+    months: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+  },
+  welcome: {
+    subject: "Welcome to {hotel}",
+    preview: "So happy to have you with us, {name}.",
+    title: "Welcome, {name}",
+    body: "Thank you for staying with us. We are so happy to have you at {hotel}, and we will take good care of you.",
+    offerIntro: "To say thank you, here is a little something for you:",
+    cta: "Discover {hotel}",
+    offerCta: "See my offer",
+  },
+  birthday: {
+    subject: "Happy birthday, {name}",
+    preview: "A small gift from all of us at {hotel}.",
+    title: "Happy birthday, {name}",
+    body: "Everyone at {hotel} is thinking of you today. To celebrate, here is a small gift for your next stay.",
+    cta: "Claim my gift",
+  },
+  survey: {
+    subject: "How was your stay at {hotel}?",
+    preview: "One minute to tell us how it went.",
+    title: "How was your stay?",
+    body: "Thank you for choosing {hotel}. Your opinion helps us welcome you even better next time. It takes less than a minute.",
+    cta: "Share my feedback",
+  },
+  reminder: {
+    subject: "Your offer at {hotel} ends soon",
+    preview: "Your offer is still waiting for you.",
+    title: "Your offer is waiting",
+    body: "A quick reminder from {hotel}: your offer is still yours, and we would love to welcome you back.",
+    cta: "Use my offer",
+  },
+}
+
+export type Copy = typeof en

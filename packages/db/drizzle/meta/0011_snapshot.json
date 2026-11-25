@@ -1,5 +1,5 @@
 {
-  "id": "a1dd49e2-57d1-4da6-bb91-a424efe394c7",
+  "id": "9f74c37d-4bf3-4fe8-a8a5-b112b2dada14",
   "prevId": "98786b3b-bde6-43f7-8302-e5ec04571873",
   "version": "7",
   "dialect": "postgresql",
@@ -1239,8 +1239,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.offer_codes": {
-      "name": "offer_codes",
+    "public.messages": {
+      "name": "messages",
       "schema": "",
       "columns": {
         "id": {
@@ -1249,12 +1249,6 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
-        },
-        "offer_id": {
-          "name": "offer_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
         },
         "hotel_id": {
           "name": "hotel_id",
@@ -1268,11 +1262,44 @@
           "primaryKey": false,
           "notNull": true
         },
-        "code": {
-          "name": "code",
+        "channel": {
+          "name": "channel",
+          "type": "message_channel",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "template_key": {
+          "name": "template_key",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "hotel_language",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "message_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_code": {
+          "name": "error_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -1280,28 +1307,89 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "sent_at": {
+          "name": "sent_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delivered_at": {
+          "name": "delivered_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "failed_at": {
+          "name": "failed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "offer_codes_offer_id_hotel_id_offers_id_hotel_id_fk": {
-          "name": "offer_codes_offer_id_hotel_id_offers_id_hotel_id_fk",
-          "tableFrom": "offer_codes",
-          "tableTo": "offers",
-          "columnsFrom": [
-            "offer_id",
-            "hotel_id"
+      "indexes": {
+        "messages_hotel_created_idx": {
+          "name": "messages_hotel_created_idx",
+          "columns": [
+            {
+              "expression": "hotel_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "columnsTo": [
-            "id",
-            "hotel_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         },
-        "offer_codes_guest_id_hotel_id_guests_id_hotel_id_fk": {
-          "name": "offer_codes_guest_id_hotel_id_guests_id_hotel_id_fk",
-          "tableFrom": "offer_codes",
+        "messages_guest_idx": {
+          "name": "messages_guest_idx",
+          "columns": [
+            {
+              "expression": "guest_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "messages_provider_idx": {
+          "name": "messages_provider_idx",
+          "columns": [
+            {
+              "expression": "provider_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "messages_guest_id_hotel_id_guests_id_hotel_id_fk": {
+          "name": "messages_guest_id_hotel_id_guests_id_hotel_id_fk",
+          "tableFrom": "messages",
           "tableTo": "guests",
           "columnsFrom": [
             "guest_id",
@@ -1316,292 +1404,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "offer_codes_code_unique": {
-          "name": "offer_codes_code_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
-        },
-        "offer_codes_offer_guest_unique": {
-          "name": "offer_codes_offer_guest_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "offer_id",
-            "guest_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.offer_redemptions": {
-      "name": "offer_redemptions",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "offer_id": {
-          "name": "offer_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "guest_id": {
-          "name": "guest_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "redeemed_at": {
-          "name": "redeemed_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "redeemed_by": {
-          "name": "redeemed_by",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "offer_redemptions_hotel_idx": {
-          "name": "offer_redemptions_hotel_idx",
-          "columns": [
-            {
-              "expression": "hotel_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "redeemed_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "offer_redemptions_guest_id_guests_id_fk": {
-          "name": "offer_redemptions_guest_id_guests_id_fk",
-          "tableFrom": "offer_redemptions",
-          "tableTo": "guests",
-          "columnsFrom": [
-            "guest_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "offer_redemptions_redeemed_by_user_id_fk": {
-          "name": "offer_redemptions_redeemed_by_user_id_fk",
-          "tableFrom": "offer_redemptions",
-          "tableTo": "user",
-          "columnsFrom": [
-            "redeemed_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "offer_redemptions_offer_id_hotel_id_offers_id_hotel_id_fk": {
-          "name": "offer_redemptions_offer_id_hotel_id_offers_id_hotel_id_fk",
-          "tableFrom": "offer_redemptions",
-          "tableTo": "offers",
-          "columnsFrom": [
-            "offer_id",
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "id",
-            "hotel_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "offer_redemptions_offer_guest_unique": {
-          "name": "offer_redemptions_offer_guest_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "offer_id",
-            "guest_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.offers": {
-      "name": "offers",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "text": {
-          "name": "text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "promo_code": {
-          "name": "promo_code",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "trigger": {
-          "name": "trigger",
-          "type": "offer_trigger",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "valid_from": {
-          "name": "valid_from",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "valid_until": {
-          "name": "valid_until",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "max_redemptions": {
-          "name": "max_redemptions",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "active": {
-          "name": "active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "offers_hotel_active_idx": {
-          "name": "offers_hotel_active_idx",
-          "columns": [
-            {
-              "expression": "hotel_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "active",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "offers_hotel_id_organization_id_fk": {
-          "name": "offers_hotel_id_organization_id_fk",
-          "tableFrom": "offers",
-          "tableTo": "organization",
-          "columnsFrom": [
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "offers_hotel_promo_unique": {
-          "name": "offers_hotel_promo_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "hotel_id",
-            "promo_code"
-          ]
-        },
-        "offers_id_hotel_unique": {
-          "name": "offers_id_hotel_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id",
-            "hotel_id"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1949,13 +1752,23 @@
         "suspended"
       ]
     },
-    "public.offer_trigger": {
-      "name": "offer_trigger",
+    "public.message_channel": {
+      "name": "message_channel",
       "schema": "public",
       "values": [
-        "welcome",
-        "birthday",
-        "manual"
+        "email",
+        "whatsapp"
+      ]
+    },
+    "public.message_status": {
+      "name": "message_status",
+      "schema": "public",
+      "values": [
+        "queued",
+        "sent",
+        "delivered",
+        "failed",
+        "skipped_no_consent"
       ]
     }
   },

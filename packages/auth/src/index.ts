@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, magicLink } from "better-auth/plugins"
 import { organization } from "better-auth/plugins/organization"
+import { asc, eq } from "drizzle-orm"
 import { ac, hotelRoles } from "./access"
 import { auditHooks } from "./audit"
 
@@ -28,9 +29,27 @@ const quiet = (task: Promise<unknown>) => task.catch((error) => console.error("[
 export function createAuth(config: AuthConfig) {
   const { sendVerification, sendResetPassword, sendMagicLink } = config
   const sendInvitation = config.sendInvitation
+  const audit = auditHooks(config.db)
   return betterAuth({
     baseURL: config.dashboardUrl,
-    ...auditHooks(config.db),
+    hooks: audit.hooks,
+    databaseHooks: {
+      session: {
+        create: {
+          ...audit.databaseHooks.session.create,
+          // Hotel users land in their hotel: the oldest membership is active from the first call.
+          before: async (session) => {
+            const [first] = await config.db
+              .select({ organizationId: schema.member.organizationId })
+              .from(schema.member)
+              .where(eq(schema.member.userId, session.userId))
+              .orderBy(asc(schema.member.createdAt))
+              .limit(1)
+            return { data: { ...session, activeOrganizationId: first?.organizationId ?? null } }
+          },
+        },
+      },
+    },
     secret: config.secret,
     trustedOrigins: config.trustedOrigins,
     database: drizzleAdapter(config.db, { provider: "pg", schema }),

@@ -21,6 +21,7 @@ export const RATE_LIMITS = {
   auth: { limit: 10, windowMs: 60_000 },
   waitlist: { limit: 5, windowMs: 10 * 60_000 },
   feedback: { limit: 3, windowMs: 10 * 60_000 },
+  emailTest: { limit: 5, windowMs: 10 * 60_000 },
   captureIp: { limit: 10, windowMs: 10 * 60_000 },
   captureHotel: { limit: 200, windowMs: 60 * 60_000 },
 } satisfies Record<string, RateLimitRule>
