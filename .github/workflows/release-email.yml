@@ -1,0 +1,40 @@
+name: release email
+
+# Manual only. Sends docs/releases/<version>.md to the Resend audience as a broadcast.
+# Needs secret RESEND_API_KEY and variables RESEND_AUDIENCE_ID, RELEASE_EMAIL_FROM. dry_run defaults to true.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: version without the v, e.g. 0.1.0
+        required: true
+      dry_run:
+        description: only print the email
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: maintainers only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          perm=$(gh api "repos/${{ github.repository }}/collaborators/${{ github.actor }}/permission" --jq .permission)
+          case "$perm" in admin|maintain) ;; *) echo "only maintainers can send release emails"; exit 1 ;; esac
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node .github/scripts/release-email.mjs
+        env:
+          VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_AUDIENCE_ID: ${{ vars.RESEND_AUDIENCE_ID }}
+          RELEASE_EMAIL_FROM: ${{ vars.RELEASE_EMAIL_FROM }}

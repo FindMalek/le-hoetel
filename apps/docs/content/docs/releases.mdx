@@ -1,0 +1,36 @@
+---
+title: Releases
+description: How a version is cut, deployed and announced.
+---
+
+One version for the whole monorepo, tagged `vX.Y.Z`, starting at `0.1.0`.
+
+## Flow
+
+1. every merge to `main` deploys **staging** (`staging.yml`, after `ci` is green)
+2. [release-please](https://github.com/googleapis/release-please) keeps one release PR open on `main`. It bumps the version, writes `CHANGELOG.md` and the `release` workflow drafts `docs/releases/<version>.md` into it (user facing list from merged PR titles, plus a `videos:` list to fill)
+3. edit the notes in the release PR, then merge it. That tags the release and deploys **production** from the tag
+4. optional: run the `release email` workflow by hand. `dry_run` is `true` by default and only prints the email. Setting it to `false` sends a Resend broadcast to `RESEND_AUDIENCE_ID`. It never runs by itself and only repo admins and maintainers can run it
+
+Commit types decide the bump while we are below 1.0: `feat` bumps minor, `fix` bumps patch.
+
+## Milestones and versions
+
+Cut a release when a milestone is done:
+
+| Version | Milestone |
+| --- | --- |
+| `v0.1.0` | foundation and hotel core |
+| `v0.2.0` | messaging |
+| `v0.3.0` | feedback and dashboard |
+| `v1.0.0` | pilot launch |
+
+Force a version by adding a `Release-As: 1.0.0` line to the body of a commit on `main`.
+
+## Rollback
+
+Run the `release` workflow by hand (Actions tab) with an older tag, for example `v0.1.0`. It points the production compose service at that tag and redeploys. Database migrations are forward only: restore from a backup if a migration has to be undone.
+
+## Known limit
+
+release-please only reads conventional squash subjects. Merge subjects here are plain PR titles plus `(#n)`, so a release PR opens only after a merge whose title starts with `feat:` or `fix:`. To force one, merge a PR titled `feat: <what shipped>` (or `chore: release 0.1.0` with a `Release-As: 0.1.0` footer).

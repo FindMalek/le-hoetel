@@ -34,6 +34,7 @@
     "whatsapp-templates",
     "scripts",
     "deploy",
+    "releases",
     "observability",
     "analytics"
   ]

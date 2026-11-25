@@ -1,0 +1,76 @@
+name: release
+
+# release-please keeps a release PR open on main (version, CHANGELOG.md, docs/releases/<version>.md).
+# Merging it tags a release, and a published release deploys production.
+# Manual run with `tag` redeploys any older tag (rollback).
+# Needs the same Dokploy variables as staging plus DOKPLOY_PRODUCTION_COMPOSE_ID and PRODUCTION_API_URL.
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: tag to deploy to production (rollback: an older tag)
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      tag_name: ${{ steps.rp.outputs.tag_name }}
+      pr_branch: ${{ fromJSON(steps.rp.outputs.pr || '{}').headBranchName }}
+    steps:
+      - id: rp
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  notes:
+    needs: release-please
+    if: needs.release-please.outputs.pr_branch != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release-please.outputs.pr_branch }}
+          fetch-depth: 0
+      - run: git fetch origin main --tags
+      - run: node .github/scripts/release-notes.mjs
+      - name: push notes
+        run: |
+          git add docs/releases
+          git diff --cached --quiet && exit 0
+          git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -m "docs(release): draft notes"
+          git push
+
+  deploy-production:
+    needs: release-please
+    if: always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node .github/scripts/deploy.mjs
+        env:
+          TARGET: production
+          REF: ${{ inputs.tag || needs.release-please.outputs.tag_name || github.event.release.tag_name }}
+          DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+          DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
+          DOKPLOY_PRODUCTION_COMPOSE_ID: ${{ vars.DOKPLOY_PRODUCTION_COMPOSE_ID }}
+          PRODUCTION_API_URL: ${{ vars.PRODUCTION_API_URL }}
