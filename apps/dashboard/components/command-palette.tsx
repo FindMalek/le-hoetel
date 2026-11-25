@@ -10,19 +10,22 @@ import {
   CommandItem,
   CommandList,
 } from "@le-hoetel/ui/components/command"
-import { Kbd } from "@le-hoetel/ui/components/kbd"
-import { SidebarMenuButton, SidebarMenuItem } from "@le-hoetel/ui/components/sidebar"
-import { LanguagesIcon, LogOutIcon, MonitorIcon, MoonIcon, SearchIcon, SunIcon } from "lucide-react"
+import { LanguagesIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { visibleNav } from "@/lib/nav"
 
+const OPEN_EVENT = "open-command-palette"
+
+export const openCommandPalette = () => window.dispatchEvent(new Event(OPEN_EVENT))
+
 export function CommandPalette({ role }: { role: string | null }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  const t = useTranslations("nav")
+  const t = useTranslations("shell")
+  const tNav = useTranslations("nav")
   const { setTheme } = useTheme()
 
   useEffect(() => {
@@ -31,8 +34,13 @@ export function CommandPalette({ role }: { role: string | null }) {
       event.preventDefault()
       setOpen((value) => !value)
     }
+    const onOpen = () => setOpen(true)
     document.addEventListener("keydown", onKey)
-    return () => document.removeEventListener("keydown", onKey)
+    window.addEventListener(OPEN_EVENT, onOpen)
+    return () => {
+      document.removeEventListener("keydown", onKey)
+      window.removeEventListener(OPEN_EVENT, onOpen)
+    }
   }, [])
 
   const run = (action: () => void | Promise<void>) => () => {
@@ -41,70 +49,61 @@ export function CommandPalette({ role }: { role: string | null }) {
   }
 
   return (
-    <>
-      <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Search" onClick={() => setOpen(true)}>
-          <SearchIcon />
-          <span>Search</span>
-          <Kbd className="ms-auto">⌘K</Kbd>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results.</CommandEmpty>
-          <CommandGroup heading="Go to">
-            {visibleNav(role).map((item) => (
-              <CommandItem key={item.href} value={`go ${t(item.label)}`} onSelect={run(() => router.push(item.href))}>
-                <item.icon />
-                {t(item.label)}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Theme">
-            <CommandItem value="theme light" onSelect={run(() => setTheme("light"))}>
-              <SunIcon />
-              Light
+    <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandInput placeholder={t("searchPlaceholder")} />
+      <CommandList>
+        <CommandEmpty>{t("noResults")}</CommandEmpty>
+        <CommandGroup heading={t("goTo")}>
+          {visibleNav(role).map((item) => (
+            <CommandItem key={item.href} value={`go ${tNav(item.label)}`} onSelect={run(() => router.push(item.href))}>
+              <item.icon />
+              {tNav(item.label)}
             </CommandItem>
-            <CommandItem value="theme dark" onSelect={run(() => setTheme("dark"))}>
-              <MoonIcon />
-              Dark
-            </CommandItem>
-            <CommandItem value="theme system" onSelect={run(() => setTheme("system"))}>
-              <MonitorIcon />
-              System
-            </CommandItem>
-          </CommandGroup>
-          <CommandGroup heading="Language">
-            {LOCALES.map((locale) => (
-              <CommandItem
-                key={locale}
-                value={`language ${LOCALE_NAMES[locale]}`}
-                onSelect={run(() => {
-                  // biome-ignore lint/suspicious/noDocumentCookie: cookieStore is missing in some browsers
-                  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`
-                  window.location.reload()
-                })}
-              >
-                <LanguagesIcon />
-                {LOCALE_NAMES[locale]}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Account">
+          ))}
+        </CommandGroup>
+        <CommandGroup heading={t("theme")}>
+          <CommandItem value={`theme ${t("light")}`} onSelect={run(() => setTheme("light"))}>
+            <SunIcon />
+            {t("light")}
+          </CommandItem>
+          <CommandItem value={`theme ${t("dark")}`} onSelect={run(() => setTheme("dark"))}>
+            <MoonIcon />
+            {t("dark")}
+          </CommandItem>
+          <CommandItem value={`theme ${t("system")}`} onSelect={run(() => setTheme("system"))}>
+            <MonitorIcon />
+            {t("system")}
+          </CommandItem>
+        </CommandGroup>
+        <CommandGroup heading={t("language")}>
+          {LOCALES.map((locale) => (
             <CommandItem
-              value="sign out"
-              onSelect={run(async () => {
-                await authClient.signOut()
-                window.location.assign("/sign-in")
+              key={locale}
+              value={`language ${LOCALE_NAMES[locale]}`}
+              onSelect={run(() => {
+                // biome-ignore lint/suspicious/noDocumentCookie: cookieStore is missing in some browsers
+                document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`
+                window.location.reload()
               })}
             >
-              <LogOutIcon />
-              Sign out
+              <LanguagesIcon />
+              {LOCALE_NAMES[locale]}
             </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </>
+          ))}
+        </CommandGroup>
+        <CommandGroup heading={t("account")}>
+          <CommandItem
+            value={`account ${t("signOut")}`}
+            onSelect={run(async () => {
+              await authClient.signOut()
+              window.location.assign("/sign-in")
+            })}
+          >
+            <LogOutIcon />
+            {t("signOut")}
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
   )
 }

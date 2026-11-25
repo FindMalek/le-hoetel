@@ -1,8 +1,13 @@
 import type { Metadata } from "next"
+import { getTranslations } from "next-intl/server"
 import { AuthForm } from "@/components/auth-form"
+import { safeNext } from "@/lib/safe-next"
 
-export const metadata: Metadata = { title: "Create an account" }
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations("auth"))("signUp.title") }
+}
 
-export default function SignUpPage() {
-  return <AuthForm mode="sign-up" />
+export default async function SignUpPage({ searchParams }: PageProps<"/sign-up">) {
+  const { next } = await searchParams
+  return <AuthForm mode="sign-up" next={safeNext(next)} />
 }

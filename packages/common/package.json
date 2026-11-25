@@ -17,7 +17,9 @@
     "./unsubscribe": "./src/unsubscribe.ts",
     "./qr": "./src/qr.ts",
     "./demo": "./src/demo.ts",
-    "./csv": "./src/csv.ts"
+    "./csv": "./src/csv.ts",
+    "./offers": "./src/offers.ts",
+    "./offer-tokens": "./src/offer-tokens.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

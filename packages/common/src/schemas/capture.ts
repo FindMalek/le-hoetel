@@ -2,6 +2,7 @@ import { z } from "zod"
 import type { GuestSource } from "../consent"
 import { HOTEL_LANGUAGES } from "../hotel"
 import { guestFields, phoneInputSchema } from "./guest"
+import { welcomeOfferSchema } from "./offers"
 
 /** The `src` of a QR code url, mapped to the guest source it is stored under. */
 export const CAPTURE_SOURCES = { room: "qr_room", table: "qr_table", desk: "qr_front_desk" } as const satisfies Record<
@@ -21,6 +22,8 @@ export const publicHotelSchema = z.object({
   primaryColor: z.string().nullable(),
   accentColor: z.string().nullable(),
   defaultLanguage: z.enum(HOTEL_LANGUAGES),
+  logoUrl: z.string().nullable(),
+  welcomeOffer: welcomeOfferSchema.nullable(),
 })
 export type PublicHotel = z.infer<typeof publicHotelSchema>
 

@@ -110,7 +110,7 @@ test("an inbound STOP unsubscribes the hotel that wrote last, confirms once in t
     channel: "whatsapp",
     templateKey: "welcome",
     language: "fr",
-    status: "sent",
+    status: "delivered",
     providerId: "wamid.inbound",
   })
   const replies: string[] = []

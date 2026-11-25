@@ -3,13 +3,153 @@
     "label": "Language",
     "description": "The language of this app."
   },
+  "shell": {
+    "skip": "Skip to content",
+    "search": "Search",
+    "searchPlaceholder": "Search or jump to…",
+    "noResults": "Nothing found.",
+    "goTo": "Go to",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "account": "Account",
+    "signOut": "Sign out",
+    "more": "More",
+    "notifications": "Notifications",
+    "unread": "{count} unread notifications",
+    "mainNav": "Main navigation",
+    "tabs": "Quick navigation",
+    "appearance": "Appearance and language",
+    "loading": "Loading…"
+  },
+  "home": {
+    "greeting": "Hello {name}",
+    "hotelDescription": "Here is how {hotel} is doing.",
+    "adminDescription": "Every hotel on the platform at a glance.",
+    "guests": "Guests",
+    "guestsHint": "shared their details",
+    "hotels": "Hotels",
+    "needAttention": "Need attention",
+    "attentionHint": "quiet or without an owner",
+    "latest": "Latest guests",
+    "name": "Name",
+    "phone": "Phone",
+    "language": "Language",
+    "added": "Added",
+    "emptyTitle": "No guests yet",
+    "emptyBody": "Put your QR code at the front desk or on the tables, and guests will show up here.",
+    "captureTitle": "Your guest sign-up page",
+    "captureBody": "Guests open it from your QR code. You can also send it to them.",
+    "copy": "Copy link",
+    "copied": "Link copied.",
+    "open": "Open page",
+    "hotelColumn": "Hotel",
+    "healthColumn": "Health",
+    "tableCaption": "Latest guests",
+    "hotelsCaption": "Hotels",
+    "hotelsAction": "Manage hotels",
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "ar": "Arabic"
+    },
+    "noHotelsTitle": "No hotel yet",
+    "noHotelsBody": "Create the first hotel and invite its owner. They will see their guests here.",
+    "noAccessTitle": "You are not part of a hotel yet",
+    "noAccessBody": "Ask your hotel manager to invite you. The invitation arrives by email, open it to join."
+  },
+  "auth": {
+    "brandTitle": "Know your guests. Welcome them back.",
+    "brandBody": "Collect guest details with their consent, remember what they like and bring them back to your hotel.",
+    "email": "Email",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "or": "or",
+    "github": "Continue with GitHub",
+    "back": "Back to sign in",
+    "signIn": {
+      "title": "Welcome back",
+      "description": "Sign in to see how your guests are doing.",
+      "submit": "Sign in",
+      "forgot": "Forgot password?",
+      "noAccount": "New here?",
+      "create": "Create an account"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "description": "It takes less than a minute.",
+      "name": "Your name",
+      "submit": "Create account",
+      "have": "Already have an account?",
+      "signIn": "Sign in",
+      "hint": "At least 10 characters."
+    },
+    "forgot": {
+      "title": "Forgot your password?",
+      "description": "Enter your email and we will send you a link to choose a new one.",
+      "submit": "Send reset link",
+      "sentTitle": "Check your email",
+      "sent": "If an account exists for {email}, a reset link is on its way. It works for one hour."
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "description": "Pick something you do not use anywhere else.",
+      "password": "New password",
+      "confirm": "Confirm password",
+      "submit": "Update password",
+      "mismatch": "The two passwords do not match.",
+      "invalidTitle": "This link has expired",
+      "invalid": "A reset link works once and for one hour. Ask for a new one.",
+      "again": "Get a new link",
+      "done": "Password updated. You can sign in now."
+    },
+    "errors": {
+      "required": "Fill in this field.",
+      "email": "Enter a valid email address.",
+      "passwordShort": "Use at least 10 characters.",
+      "invalidCredentials": "Wrong email or password.",
+      "exists": "An account with this email already exists. Try signing in.",
+      "tooMany": "Too many tries. Wait a minute and try again.",
+      "generic": "Something went wrong. Try again."
+    },
+    "invitation": {
+      "title": "Join {hotel}",
+      "description": "{inviter} invited you as {role}.",
+      "accept": "Accept invitation",
+      "signedInAs": "Signed in as {email}",
+      "wrongAccount": "This invitation was sent to another email address. Sign in with that one to accept it.",
+      "switchAccount": "Use another account",
+      "invalidTitle": "This invitation is not valid",
+      "invalid": "It may have expired or already been used. Ask the hotel for a new one.",
+      "role": {
+        "owner": "owner",
+        "manager": "manager",
+        "staff": "team member"
+      }
+    }
+  },
+  "errorPages": {
+    "notFoundTitle": "This page does not exist",
+    "notFoundBody": "The link may be old or mistyped. Let us get you back.",
+    "home": "Back to home",
+    "errorTitle": "Something went wrong",
+    "errorBody": "It is on our side. Try again, and if it keeps happening let us know.",
+    "retry": "Try again",
+    "reference": "Reference {digest}"
+  },
   "hero": {
     "badge": "early access",
     "getStarted": "Get started",
     "apiDocs": "API docs"
   },
   "nav": {
+    "redeem": "Redeem",
+    "offers": "Offers",
     "hotelNav": "Hotel",
+    "emails": "Emails",
     "qrCodes": "QR codes",
     "messages": "Messages",
     "data": "Guest data",
@@ -17,15 +157,16 @@
     "overview": "Overview",
     "guests": "Guests",
     "inbox": "Inbox",
-    "notes": "Notes",
     "team": "Team",
     "users": "Users",
     "auditLog": "Audit log",
-    "settings": "Settings"
+    "settings": "Settings",
+    "admin": "Platform"
   },
   "hotel": {
     "switch": "Switch hotel",
-    "yours": "Your hotels"
+    "yours": "Your hotels",
+    "switchError": "Could not switch hotel. Try again."
   },
   "guests": {
     "title": "Guests",
@@ -176,36 +317,87 @@
     "consentVersion": "Wording version",
     "privacy": {
       "title": "Privacy policy",
-      "intro": "This is a placeholder for the privacy policy of le-hoetel. Hotels collect a guest's name, phone and language with their consent. Optional details are kept only if the guest agrees. We never collect continuous location, ID numbers or payment cards. A guest can ask a hotel to export or delete their data at any time."
+      "intro": "What a hotel and le-hoetel keep about you, why, and how to take it back.",
+      "sections": {
+        "collect": {
+          "title": "What is collected",
+          "body": "Your name, phone number and language, because the hotel needs them to welcome you. Your birthday and email only if you add them. Nothing else without a clear yes: never your location, ID or passport number, or payment card."
+        },
+        "use": {
+          "title": "Why",
+          "body": "So the hotel can welcome you, send a birthday wish, ask how your stay went, and answer you if something was wrong."
+        },
+        "consent": {
+          "title": "Messages and your yes",
+          "body": "Offers and news come by WhatsApp or email only if you switched that channel on. We record when, where and with which wording you said yes. Every message has a link to stop, and replying STOP on WhatsApp works too."
+        },
+        "rights": {
+          "title": "Your rights",
+          "body": "Ask the hotel for a copy of your data or for its deletion at any time. Deletion is complete. You can also take your yes back with the link in any message. Tunisian law on personal data protection applies (Organic Law 2004-63)."
+        },
+        "keep": {
+          "title": "Who sees it and for how long",
+          "body": "Only the staff of the hotel you signed up at. Hotels never see each other's guests. Data is kept while the hotel uses le-hoetel and is deleted when you ask or when the hotel leaves."
+        }
+      }
     },
     "terms": {
       "title": "Terms of service",
-      "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
+      "intro": "The simple rules for hotels using le-hoetel.",
+      "sections": {
+        "service": {
+          "title": "The service",
+          "body": "le-hoetel helps a hotel collect guests with their consent, send messages they agreed to, and hear from unhappy guests early. It is in pilot: features and prices can change."
+        },
+        "duties": {
+          "title": "What a hotel promises",
+          "body": "To collect only guests who said yes, to honour every stop request, never to send spam, and to answer export and delete requests."
+        },
+        "pilot": {
+          "title": "Pilot and price",
+          "body": "The pilot is free for 60 to 90 days. Nothing is charged without a written agreement. Prices shown during the pilot are not final."
+        },
+        "data": {
+          "title": "Your data",
+          "body": "The hotel owns its guest list and can export or delete it at any time. We do not sell or share it."
+        },
+        "end": {
+          "title": "Ending",
+          "body": "Either side can stop at any time. When it ends the hotel can take its data and we delete the rest."
+        }
+      }
     },
     "hotel": "the hotel"
   },
   "capture": {
-    "welcome": "Welcome to {hotel}",
-    "intro": "Leave your details and we will take care of you during your stay.",
-    "perkTitle": "Your welcome perk",
-    "perkBody": "A small gift from {hotel} is waiting for you. Ask at the front desk after you sign up.",
+    "welcome": "Welcome. Join in ten seconds and we will take care of you.",
+    "perkTitle": "Welcome gift",
+    "perkBody": "A small gift from {hotel} is waiting for you at the front desk.",
     "name": "Your name",
     "phone": "Phone number",
     "dialCode": "Country code",
-    "language": "Your language",
-    "birthday": "Birthday (optional)",
-    "email": "Email (optional)",
+    "language": "Language for our messages",
+    "birthday": "Birthday",
+    "email": "Email",
     "consentTitle": "Stay in touch",
-    "consentHint": "Both are optional and unticked. You can change your mind at any time.",
-    "emailNeeded": "Add your email to get offers by email.",
-    "submit": "Sign up",
-    "sending": "Sending...",
-    "thanksTitle": "Thank you",
-    "thanksBody": "You are all set. Enjoy your stay at {hotel}.",
+    "consentHint": "Optional and off by default. Every message has a link to stop.",
+    "emailNeeded": "Add your email above to get offers by email.",
+    "submit": "Join",
+    "thanksTitle": "You are in, {name}",
+    "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
     "errorInvalid": "Please check your name and phone number.",
     "errorTooMany": "Too many tries. Please wait a moment and try again.",
-    "privacy": "Privacy policy",
-    "languageLabel": "Language"
+    "privacy": "Privacy",
+    "languageLabel": "Language",
+    "nameError": "Add your name.",
+    "phoneError": "Check your phone number.",
+    "optionalTitle": "More about you",
+    "optionalHint": "Optional: birthday and email.",
+    "whatsappTitle": "WhatsApp",
+    "emailTitle": "Email",
+    "submitHint": "No message is sent unless you switch one on.",
+    "thanksPerk": "Show this screen at the front desk to get it.",
+    "terms": "Terms"
   },
   "adminHotels": {
     "title": "Hotels",
@@ -303,5 +495,145 @@
       "failed": "Failed",
       "skipped_no_consent": "No consent"
     }
+  },
+  "emails": {
+    "title": "Emails",
+    "description": "See each email as a guest sees it, then send a test to yourself.",
+    "template": "Email",
+    "language": "Language",
+    "appearance": "Appearance",
+    "width": "Width",
+    "light": "Light",
+    "dark": "Dark",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "sendTest": "Send test to me",
+    "sending": "Sending…",
+    "sentTo": "Test sent to {email}.",
+    "notSent": "Not sent: this environment only logs messages.",
+    "loading": "Loading preview…",
+    "subject": "Subject",
+    "frameTitle": "Email preview",
+    "noHotel": "Pick a hotel first.",
+    "templates": {
+      "welcome": "Welcome",
+      "birthday": "Birthday offer",
+      "survey": "Survey invite",
+      "reminder": "Offer reminder"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
+    }
+  },
+  "offers": {
+    "title": "Offers",
+    "description": "Perks you give guests. Each one has a code, and a QR guests show at the desk.",
+    "add": "New offer",
+    "empty": "No offers yet",
+    "emptyHint": "Create a welcome drink or a birthday dessert. Guests show the QR, staff scan it.",
+    "edit": "Edit",
+    "remove": "Delete",
+    "removeTitle": "Delete this offer?",
+    "removeBody": "“{title}” and its redemptions will be deleted. Guests lose their QR for it.",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Offer saved.",
+    "removed": "Offer deleted.",
+    "formNew": "New offer",
+    "formEdit": "Edit offer",
+    "formHint": "The preview shows what the guest sees.",
+    "fieldTitle": "Title",
+    "fieldText": "Details",
+    "fieldCode": "Promo code",
+    "fieldCodeHint": "Letters, numbers and dashes. Unique in your hotel.",
+    "fieldTrigger": "Given automatically to",
+    "triggerNone": "Nobody (staff hand it out)",
+    "triggerWelcome": "New guests (welcome)",
+    "triggerBirthday": "Guests on their birthday",
+    "triggerManual": "Chosen guests (manual)",
+    "fieldFrom": "Valid from",
+    "fieldUntil": "Valid until",
+    "fieldUntilHint": "Empty means no end date.",
+    "fieldMax": "Maximum redemptions",
+    "fieldMaxHint": "Empty means no limit.",
+    "fieldActive": "Active",
+    "redeemed": "{count} redeemed",
+    "redeemedOf": "{count} of {max} redeemed",
+    "forever": "No end date",
+    "until": "Until {date}",
+    "state": {
+      "ready": "Active",
+      "inactive": "Paused",
+      "notStarted": "Not started",
+      "expired": "Expired",
+      "exhausted": "All redeemed"
+    },
+    "preview": {
+      "title": "What the guest sees",
+      "code": "Your code",
+      "show": "Show this QR at the desk.",
+      "validFrom": "Valid from {from}",
+      "validBetween": "Valid {from} to {until}"
+    }
+  },
+  "offer": {
+    "invalidTitle": "Link not valid",
+    "invalid": "This offer link is not valid. Ask the hotel for a new one.",
+    "state": {
+      "ready": "Your offer is ready.",
+      "inactive": "This offer is not available right now.",
+      "notStarted": "This offer has not started yet.",
+      "expired": "This offer has expired.",
+      "exhausted": "All of these offers have been taken.",
+      "redeemed": "You already used this offer. Enjoy!"
+    },
+    "qrAlt": "QR code {code}",
+    "code": "Your code",
+    "show": "Show this QR at the desk.",
+    "validFrom": "Valid from {from}",
+    "validBetween": "Valid {from} to {until}"
+  },
+  "redeem": {
+    "title": "Redeem",
+    "description": "Scan a guest's QR or type the code. One tap marks it used.",
+    "scan": "Scan QR code",
+    "stopScan": "Stop camera",
+    "scanLabel": "Camera view for scanning a QR code",
+    "noCamera": "This browser can't scan QR codes. Type the code below.",
+    "cameraFailed": "The camera didn't start. Allow camera access or type the code.",
+    "typeCode": "Or type the code",
+    "codePlaceholder": "AB3D-EF7H",
+    "check": "Check",
+    "redeem": "Mark as redeemed",
+    "redeeming": "Saving...",
+    "next": "Next code",
+    "guest": "Guest",
+    "validUntil": "Valid until",
+    "noEnd": "No end date",
+    "redeemedAt": "Redeemed",
+    "redeemedBy": "by",
+    "justNow": "Redeemed. Thank you!",
+    "today": "Today",
+    "week": "7 days",
+    "total": "Total",
+    "recent": "Latest redemptions",
+    "noRecent": "Nothing redeemed yet.",
+    "status": {
+      "ready": "Valid. Ready to redeem.",
+      "redeemed": "Already redeemed",
+      "expired": "Expired",
+      "notStarted": "Not valid yet",
+      "inactive": "This offer is paused",
+      "exhausted": "No redemptions left",
+      "wrongHotel": "This code belongs to another hotel",
+      "unknown": "Code not found"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link may be wrong, or the page has moved.",
+    "home": "Back to home"
   }
 }

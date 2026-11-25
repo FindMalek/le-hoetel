@@ -24,7 +24,30 @@ These are the rules for any UI change. They are also summarized in the agent rul
 
 - one column on mobile with `px-4` and `gap-4` or `gap-6`; from `md`, a page header plus content in a max width container
 - primary action reachable by thumb: a full width `Button` at the bottom on guest pages, in the page header on desktop
-- dashboard navigation is the `Sidebar` on desktop and a `Sheet` on mobile (the sidebar component handles it)
+- dashboard navigation is the collapsible `Sidebar` on desktop (hotel switcher on top, user menu at the bottom) and a bottom tab bar on phones (the tabbed pages from `apps/dashboard/lib/nav.ts`, then a "More" sheet with the rest, theme, language and sign out). Add a page to `NAV` once and the sidebar, the tab bar, the top bar title and the command palette (cmd+k) all pick it up
+
+### Page building blocks
+
+Exported from `@le-hoetel/ui/components/*`. They take already translated text, so they work in any app.
+
+| Component | Use it for |
+| --- | --- |
+| `page-header` `PageHeader` | The one title of a page, a quiet description and the page actions (full width buttons on a phone) |
+| `section` `Section` | A titled block of a page. Sections are separated by space, not by boxes inside boxes |
+| `stat-card` `StatCard` | One number with a label and a hint. Numbers are tabular |
+| `data-table` `DataTable` | A list of rows. Table from `md` up with a sticky header, a list of cards on a phone (pass `card` for a custom card, else the first column is the title). Pass `empty` for the empty state |
+| `form-section` `FormSection` | A group of fields with its title and help on the side from `md`, stacked on a phone |
+| `sticky-form-actions` `StickyFormActions` | Save and cancel. Sticks above the tab bar on a phone, sits at the end of the form from `md` |
+| `inline-alert` `InlineAlert` | A message that stays on the page: `info`, `success`, `warning`, `error` (the error is announced). Never color only, each tone has an icon |
+| `confirm-dialog` `ConfirmDialog` | Confirm a destructive or irreversible action, with the consequence in the text |
+| `empty-state` `EmptyState` | Nothing here yet: icon, one sentence, one next action. `decorated` adds the quiet zellige pattern, for first run screens only |
+| `zellige-pattern` `ZelligePattern` | The one Tunisian detail: a khatim tile in the text color at 7% opacity. Auth pages, 404 and first run empty states, nowhere else |
+
+In the dashboard, `PageHeader` from `@/components/page-header` adds the page padding, and the single primary action of a page can go in the top bar with `<TopBarAction href label icon />` (icon and label on desktop, icon only on a phone). Put page content in a `p-4 md:p-6` wrapper.
+
+### Auth pages
+
+Sign in, sign up, forgot password, reset password and accept invitation share one layout (`apps/dashboard/app/(auth)/layout.tsx`): a brand panel with the zellige pattern from `lg`, the form on a phone. Fields validate on blur, errors have an icon and are linked with `aria-describedby`, inputs have the right `autocomplete`, `inputmode` and `enterkeyhint`. `?next=` keeps the page a signed out visitor wanted (an invitation link) through sign in and sign up, only same site paths are followed. Password reset uses better-auth with the notification module: outside live messaging the email is only logged, so locally read the token from the `verification` table (`reset-password:<token>`) and open `/reset-password?token=<token>`.
 
 ### Forms
 
@@ -33,12 +56,13 @@ These are the rules for any UI change. They are also summarized in the agent rul
 - the submit button is `<Button loading={pending}>`, disabled while pending so a double tap cannot send twice
 - phone: `PhoneInput` with the dial code select. Default `+216`. Normalize and validate in the api
 - consent: separate unchecked `Checkbox` per channel (email, whatsapp), each with its own wording, never pre checked
-- success and failure use a toast (`toast.success`, `toast.error`) unless the user must act, then an `Alert`
+- success and failure use a toast (`toast.success`, `toast.error`) unless the user must act, then an `InlineAlert`
+- on a phone the save button is a `StickyFormActions` at the bottom; long forms are split into `FormSection`s
 
 ### Lists and tables
 
 - mobile: a list of cards or `Item` rows, one tap target per row. Do not shrink a table to fit
-- desktop: `Table` with start aligned text, numbers end aligned
+- desktop: a table with start aligned text, numbers end aligned. `DataTable` does both layouts
 - search and filters above the list. Pagination or "load more", not infinite scroll without a way to the footer
 
 ### Overlays

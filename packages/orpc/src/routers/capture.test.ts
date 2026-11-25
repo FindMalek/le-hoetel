@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@le-hoetel/common/consent"
-import { guests } from "@le-hoetel/db"
+import { guests, hotelSettings } from "@le-hoetel/db"
 import { eq } from "drizzle-orm"
 import { RATE_LIMITS } from "../lib/rate-limit"
 import { createTestApp, type TestApp } from "../testing"
@@ -53,9 +53,16 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
     "accentColor",
     "defaultLanguage",
     "displayName",
+    "logoUrl",
     "primaryColor",
     "slug",
+    "welcomeOffer",
   ])
+  await expect(app.anonymous.public.hotel({ slug: "capture-brand" })).resolves.toMatchObject({ logoUrl: null })
+  await app.services.db.update(hotelSettings).set({ logoKey: "pr-1/hotels/h/public/logo.png" })
+  await expect(app.anonymous.public.hotel({ slug: "capture-brand" })).resolves.toMatchObject({
+    logoUrl: "http://localhost:3001/files/pr-1/hotels/h/public/logo.png",
+  })
   await expect(app.anonymous.public.hotel({ slug: "nope" })).rejects.toThrow("Hotel not found.")
   await expect(
     app.anonymous.public.capture({ slug: "capture-brand", ...scan, consents: { email: true, whatsapp: false } }),
