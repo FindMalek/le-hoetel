@@ -92,6 +92,13 @@
       "when": 1795600370024,
       "tag": "0016_easy_spirit",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795604204076,
+      "tag": "0017_sparkling_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }

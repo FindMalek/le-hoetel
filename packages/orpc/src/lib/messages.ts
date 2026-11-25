@@ -40,6 +40,7 @@ async function hotelBranding(context: Ctx, hotelId: string) {
       primaryColor: hotelSettings.primaryColor,
       accentColor: hotelSettings.accentColor,
       replyTo: hotelSettings.replyToEmail,
+      address: hotelSettings.address,
     })
     .from(organization)
     .leftJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
@@ -54,6 +55,7 @@ async function hotelBranding(context: Ctx, hotelId: string) {
       logoUrl: hotel.logoKey ? `${context.config.apiUrl}/files/${hotel.logoKey}` : null,
       primaryColor: hotel.primaryColor,
       accentColor: hotel.accentColor,
+      address: hotel.address,
     },
   }
 }

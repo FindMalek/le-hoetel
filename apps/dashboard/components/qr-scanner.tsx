@@ -63,13 +63,5 @@ export function QrScanner({
     }
   }, [])
 
-  return (
-    <video
-      ref={video}
-      aria-label={label}
-      playsInline
-      muted
-      className="aspect-square w-full rounded-lg bg-muted object-cover"
-    />
-  )
+  return <video ref={video} aria-label={label} playsInline muted className="size-full object-cover" />
 }

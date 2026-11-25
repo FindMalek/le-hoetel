@@ -32,6 +32,7 @@ async function renderSample(
     logoUrl: hotel.logoKey ? `${context.config.apiUrl}/files/${hotel.logoKey}` : null,
     primaryColor: hotel.primaryColor,
     accentColor: hotel.accentColor,
+    address: hotel.address,
   }
   const guest = sampleGuest(locale, unsubscribePageUrl(context.config.webUrl, "preview", locale))
   return renderEmail(template, {

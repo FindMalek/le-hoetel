@@ -1,60 +1,89 @@
 "use client"
 
 import { brandContrastIssues, readableForeground } from "@le-hoetel/common/color"
-import { Field, FieldDescription, FieldLabel } from "@le-hoetel/ui/components/field"
 import { Input } from "@le-hoetel/ui/components/input"
-import { useState } from "react"
-
-export interface ColorLabels {
-  sample: string
-  contrastLight: string
-  contrastDark: string
-}
+import { TriangleAlertIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { FormField } from "./form-field"
 
 const HEX = /^#[0-9a-fA-F]{6}$/
 
-/** A hex color input with a live sample (readable text color included) and a warning when the color is too faint on the light or dark page. */
+export const isHexColor = (value: string): boolean => HEX.test(value)
+
+/** A hex color with the system picker, a live sample with its readable text color, and a warning when it is too faint on the light or dark page. */
 export function ColorField({
-  name,
+  id,
   label,
-  placeholder,
-  defaultValue,
-  labels,
+  hint,
+  value,
+  onChange,
+  onBlur,
+  error,
+  fallback,
 }: {
-  name: string
+  id: string
   label: string
-  placeholder: string
-  defaultValue?: string | null
-  labels: ColorLabels
+  hint: string
+  value: string
+  onChange: (value: string) => void
+  onBlur: () => void
+  error?: string
+  fallback: string
 }) {
-  const [value, setValue] = useState(defaultValue ?? "")
+  const t = useTranslations("hotelSettings")
   const color = HEX.test(value) ? value : null
   const issues = brandContrastIssues(color)
   return (
-    <Field>
-      <FieldLabel htmlFor={name}>{label}</FieldLabel>
-      <div className="flex items-center gap-2">
-        <Input
-          id={name}
-          name={name}
-          value={value}
-          onChange={(event) => setValue(event.target.value.trim())}
-          placeholder={placeholder}
-          pattern="#[0-9a-fA-F]{6}"
-          dir="ltr"
-          aria-invalid={issues.length > 0 || undefined}
-        />
-        {color && (
-          <span
-            className="grid h-9 shrink-0 place-items-center border bg-(--sample) px-3 text-(--sample-fg) text-xs"
-            style={{ "--sample": color, "--sample-fg": readableForeground(color) } as React.CSSProperties}
-          >
-            {labels.sample}
-          </span>
+    <div className="flex flex-col gap-2">
+      <FormField id={id} label={label} hint={hint} error={error}>
+        {(aria) => (
+          <div className="flex items-center gap-2">
+            <label
+              className="relative grid size-11 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-lg border bg-(--swatch) focus-within:ring-1 focus-within:ring-ring"
+              // the swatch shows the color being typed
+              // oxlint-disable-next-line shadcn/no-inline-styles
+              style={{ "--swatch": color ?? "transparent" } as React.CSSProperties}
+            >
+              <span className="sr-only">{t("pickColor", { label })}</span>
+              <input
+                type="color"
+                value={color ?? fallback}
+                onChange={(event) => onChange(event.target.value)}
+                onBlur={onBlur}
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
+              />
+            </label>
+            <Input
+              {...aria}
+              name={id}
+              value={value}
+              onChange={(event) => onChange(event.target.value.trim())}
+              onBlur={onBlur}
+              placeholder={fallback}
+              dir="ltr"
+              autoComplete="off"
+              spellCheck={false}
+              maxLength={7}
+              className="font-mono"
+            />
+            {color ? (
+              <span
+                className="grid h-11 shrink-0 place-items-center rounded-lg bg-(--swatch) px-3 font-medium text-(--swatch-fg) text-sm"
+                // oxlint-disable-next-line shadcn/no-inline-styles
+                style={{ "--swatch": color, "--swatch-fg": readableForeground(color) } as React.CSSProperties}
+              >
+                {t("sample")}
+              </span>
+            ) : null}
+          </div>
         )}
-      </div>
-      {issues.includes("light") && <FieldDescription role="alert">{labels.contrastLight}</FieldDescription>}
-      {issues.includes("dark") && <FieldDescription role="alert">{labels.contrastDark}</FieldDescription>}
-    </Field>
+      </FormField>
+      {issues.map((mode) => (
+        <p key={mode} role="status" className="flex items-start gap-1.5 text-sm">
+          <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+          {mode === "light" ? t("contrastLight") : t("contrastDark")}
+        </p>
+      ))}
+    </div>
   )
 }

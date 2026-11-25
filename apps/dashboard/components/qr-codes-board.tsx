@@ -5,55 +5,30 @@ import type { CaptureSource } from "@le-hoetel/common/schemas"
 import { errorMessage } from "@le-hoetel/orpc/errors"
 import { orpc } from "@le-hoetel/orpc/react"
 import { Button } from "@le-hoetel/ui/components/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@le-hoetel/ui/components/card"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@le-hoetel/ui/components/field"
+import { type DataColumn, DataTable } from "@le-hoetel/ui/components/data-table"
+import { EmptyState } from "@le-hoetel/ui/components/empty-state"
+import { InlineAlert } from "@le-hoetel/ui/components/inline-alert"
+import { Section } from "@le-hoetel/ui/components/section"
+import { Skeleton } from "@le-hoetel/ui/components/skeleton"
+import { StickyFormActions } from "@le-hoetel/ui/components/sticky-form-actions"
+import { Tabs, TabsList, TabsTrigger } from "@le-hoetel/ui/components/tabs"
 import { Textarea } from "@le-hoetel/ui/components/textarea"
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query"
-import { DownloadIcon } from "lucide-react"
-import { type FormEvent, useState } from "react"
+import { CheckIcon, CopyIcon, DownloadIcon, QrCodeIcon, RotateCwIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
+import { FormField } from "./form-field"
 
-const LABEL_KEYS = [
-  "newTitle",
-  "newDescription",
-  "where",
-  "rooms",
-  "tables",
-  "desk",
-  "room",
-  "table",
-  "roomHint",
-  "tableHint",
-  "deskHint",
-  "spots",
-  "spotsHint",
-  "generate",
-  "guestsSoFar",
-  "alt",
-  "tableTitle",
-  "tableDescription",
-  "empty",
-  "colWhere",
-  "colSpot",
-  "colGuests",
+// i18n-used: qrCodes.room
+// i18n-used: qrCodes.table
+// i18n-used: qrCodes.desk
+const SOURCES = [
+  { value: "room", label: "rooms", stored: "qr_room", hint: "roomHint", one: "room" },
+  { value: "table", label: "tables", stored: "qr_table", hint: "tableHint", one: "table" },
+  { value: "desk", label: "desk", stored: "qr_front_desk", hint: "deskHint", one: "desk" },
 ] as const
-export type QrCodesLabels = Record<(typeof LABEL_KEYS)[number], string>
-
-const SOURCES: {
-  value: CaptureSource
-  label: "rooms" | "tables" | "desk"
-  stored: string
-  hint: "roomHint" | "tableHint" | "deskHint"
-}[] = [
-  { value: "room", label: "rooms", stored: "qr_room", hint: "roomHint" },
-  { value: "table", label: "tables", stored: "qr_table", hint: "tableHint" },
-  { value: "desk", label: "desk", stored: "qr_front_desk", hint: "deskHint" },
-]
-const SOURCE_LABEL: Record<string, "room" | "table" | "desk"> = {
-  qr_room: "room",
-  qr_table: "table",
-  qr_front_desk: "desk",
-}
+type Source = (typeof SOURCES)[number]
 
 const svgUrl = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
 const fileName = (source: string, location: string | null, ext: string) =>
@@ -72,137 +47,172 @@ async function savePng(name: string, svg: string) {
   await image.decode()
   const canvas = document.createElement("canvas")
   canvas.width = canvas.height = 1024
-  const context = canvas.getContext("2d")
-  context?.drawImage(image, 0, 0, 1024, 1024)
+  canvas.getContext("2d")?.drawImage(image, 0, 0, 1024, 1024)
   save(name, canvas.toDataURL("image/png"))
 }
 
-export function QrCodesBoard({ labels }: { labels: QrCodesLabels }) {
+type Stat = { source: string; location: string | null; guests: number }
+
+export function QrCodesBoard() {
+  const t = useTranslations("qrCodes")
   const { data: stats } = useSuspenseQuery(orpc.hotel.captureStats.queryOptions())
-  const [source, setSource] = useState<CaptureSource>("room")
+  const [source, setSource] = useState<CaptureSource>("desk")
+  const [spots, setSpots] = useState("")
+  const [copied, setCopied] = useState<string | null>(null)
   const generate = useMutation(
     orpc.hotel.qrCodes.mutationOptions({ onError: (error: Error) => toast.error(errorMessage(error)) }),
   )
-  const current = SOURCES.find((item) => item.value === source) ?? SOURCES[0]!
-  const currentLabel = labels[current.label]
+  const current: Source = SOURCES.find((item) => item.value === source) ?? SOURCES[2]
   const guestsAt = (location: string | null) =>
     stats.find((row) => row.source === current.stored && row.location === location)?.guests ?? 0
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const spots = parseSpots(String(new FormData(event.currentTarget).get("spots") ?? ""))
-    generate.mutate({ source, spots })
+  const first = useRef(true)
+  useEffect(() => {
+    if (!first.current) return
+    first.current = false
+    generate.mutate({ source: "desk", spots: [] })
+  }, [generate])
+
+  const run = (event?: React.FormEvent) => {
+    event?.preventDefault()
+    generate.mutate({ source, spots: parseSpots(spots) })
   }
 
-  return (
-    <div className="grid gap-4 p-4 md:p-6 lg:grid-cols-3">
-      <Card className="self-start">
-        <CardHeader>
-          <CardTitle>{labels.newTitle}</CardTitle>
-          <CardDescription>{labels.newDescription}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={submit}>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="source">{labels.where}</FieldLabel>
-                <select
-                  id="source"
-                  value={source}
-                  onChange={(event) => setSource(event.target.value as CaptureSource)}
-                  className="h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base md:text-sm"
-                >
-                  {SOURCES.map((item) => (
-                    <option key={item.value} value={item.value}>
-                      {labels[item.label]}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="spots">{labels.spots}</FieldLabel>
-                <Textarea id="spots" name="spots" rows={4} placeholder={labels[current.hint]} />
-                <FieldDescription>{labels.spotsHint}</FieldDescription>
-              </Field>
-              <Button type="submit" disabled={generate.isPending}>
-                {labels.generate}
-              </Button>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
+  async function copy(url: string) {
+    await navigator.clipboard.writeText(url)
+    setCopied(url)
+    toast.success(t("copied"))
+    setTimeout(() => setCopied(null), 2000)
+  }
 
-      <div className="grid content-start gap-4 lg:col-span-2">
-        {generate.data && (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {generate.data.map((code) => (
-              <Card key={code.url}>
-                <CardHeader>
-                  <CardTitle>{code.location ?? currentLabel}</CardTitle>
-                  <CardDescription>
-                    {labels.guestsSoFar.replace("{count}", String(guestsAt(code.location)))}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  {/* biome-ignore lint/performance/noImgElement: a generated data url, nothing to optimize */}
-                  <img
-                    src={svgUrl(code.svg)}
-                    alt={labels.alt.replace("{spot}", code.location ?? currentLabel)}
-                    className="w-full"
-                  />
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => save(fileName(source, code.location, "svg"), svgUrl(code.svg))}
-                    >
-                      <DownloadIcon /> SVG
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => savePng(fileName(source, code.location, "png"), code.svg)}
-                    >
-                      <DownloadIcon /> PNG
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-        <Card>
-          <CardHeader>
-            <CardTitle>{labels.tableTitle}</CardTitle>
-            <CardDescription>{labels.tableDescription}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {stats.length === 0 ? (
-              <p className="text-muted-foreground text-sm">{labels.empty}</p>
-            ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-start text-muted-foreground">
-                    <th className="py-1 text-start font-medium">{labels.colWhere}</th>
-                    <th className="py-1 text-start font-medium">{labels.colSpot}</th>
-                    <th className="py-1 text-end font-medium">{labels.colGuests}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.map((row) => (
-                    <tr key={`${row.source}-${row.location}`} className="border-t">
-                      <td className="py-1.5">
-                        {SOURCE_LABEL[row.source] ? labels[SOURCE_LABEL[row.source]!] : row.source}
-                      </td>
-                      <td className="py-1.5">{row.location ?? "-"}</td>
-                      <td className="py-1.5 text-end">{row.guests}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </CardContent>
-        </Card>
+  const labelOf = (stored: string) => {
+    const found = SOURCES.find((item) => item.stored === stored)
+    return found ? t(found.one) : stored
+  }
+  const columns: DataColumn<Stat>[] = [
+    { id: "spot", header: t("colSpot"), cell: (row) => row.location ?? t("noSpot") },
+    { id: "where", header: t("colWhere"), cell: (row) => labelOf(row.source) },
+    { id: "guests", header: t("colGuests"), align: "end", cell: (row) => row.guests },
+  ]
+
+  return (
+    <div className="grid items-start gap-10 lg:grid-cols-[22rem_minmax(0,1fr)]">
+      <form onSubmit={run} className="flex flex-col gap-5 lg:sticky lg:top-20">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-heading font-semibold text-lg tracking-tight">{t("newTitle")}</h2>
+          <p className="text-muted-foreground text-sm">{t("newDescription")}</p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="font-medium text-sm">{t("where")}</span>
+          <Tabs value={source} onValueChange={(next) => setSource(next as CaptureSource)}>
+            <TabsList className="grid w-full grid-cols-3">
+              {SOURCES.map((item) => (
+                <TabsTrigger key={item.value} value={item.value}>
+                  {t(item.label)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+        <FormField
+          id="spots"
+          label={t("spots")}
+          hint={t("spotsHint")}
+          optional={source === "desk" ? ` (${t("optional")})` : undefined}
+        >
+          {(aria) => (
+            <Textarea
+              {...aria}
+              rows={4}
+              value={spots}
+              onChange={(event) => setSpots(event.target.value)}
+              placeholder={t(current.hint)}
+              dir="auto"
+              enterKeyHint="done"
+            />
+          )}
+        </FormField>
+        <StickyFormActions className="md:justify-start">
+          <Button type="submit" loading={generate.isPending}>
+            <QrCodeIcon data-icon="inline-start" />
+            {t("generate")}
+          </Button>
+        </StickyFormActions>
+      </form>
+
+      <div className="flex min-w-0 flex-col gap-10">
+        <Section title={t("resultsTitle")} description={t("resultsHint")}>
+          {generate.isPending && !generate.data ? (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="status" aria-busy="true">
+              <span className="sr-only">{t("generating")}</span>
+              <Skeleton className="aspect-[3/4] w-full" />
+            </div>
+          ) : generate.error ? (
+            <InlineAlert
+              tone="error"
+              title={t("failed")}
+              action={
+                <Button size="sm" variant="outline" onClick={() => run()}>
+                  <RotateCwIcon data-icon="inline-start" />
+                  {t("retry")}
+                </Button>
+              }
+            >
+              {t("failedHint")}
+            </InlineAlert>
+          ) : (
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {generate.data?.map((code) => {
+                const name = code.location ?? t(current.one)
+                return (
+                  <li key={code.url} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+                    {/* biome-ignore lint/performance/noImgElement: a generated data url, nothing to optimize */}
+                    <img
+                      src={svgUrl(code.svg)}
+                      alt={t("alt", { spot: name })}
+                      className="aspect-square w-full rounded-md bg-white p-2"
+                    />
+                    <div className="flex flex-col gap-0.5">
+                      <p className="truncate font-medium">{name}</p>
+                      <p className="text-muted-foreground text-sm tabular-nums">
+                        {t("guestsSoFar", { count: guestsAt(code.location) })}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => save(fileName(source, code.location, "svg"), svgUrl(code.svg))}
+                      >
+                        <DownloadIcon data-icon="inline-start" /> SVG
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => savePng(fileName(source, code.location, "png"), code.svg)}
+                      >
+                        <DownloadIcon data-icon="inline-start" /> PNG
+                      </Button>
+                      <Button variant="outline" size="sm" aria-label={t("copyLink")} onClick={() => copy(code.url)}>
+                        {copied === code.url ? <CheckIcon /> : <CopyIcon />}
+                      </Button>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </Section>
+
+        <Section title={t("tableTitle")} description={t("tableDescription")}>
+          <DataTable
+            caption={t("tableTitle")}
+            columns={columns}
+            rows={stats}
+            getRowKey={(row) => `${row.source}-${row.location}`}
+            empty={<EmptyState icon={<QrCodeIcon />} title={t("emptyTitle")} description={t("empty")} />}
+          />
+        </Section>
       </div>
     </div>
   )

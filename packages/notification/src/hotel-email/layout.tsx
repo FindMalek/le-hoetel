@@ -159,7 +159,7 @@ export function Layout({ ctx, preview, children }: { ctx: Ctx; preview: string; 
               className="e-mut"
               style={{ ...text(theme), margin: "8px 0 0", color: light.muted, fontSize: 13, lineHeight: "20px" }}
             >
-              {hotel.name} · {hotel.address || copy.common.addressPlaceholder}
+              {hotel.address ? `${hotel.name} · ${hotel.address}` : hotel.name}
             </Text>
             <Text style={{ ...text(theme), margin: "8px 0 0", fontSize: 13, lineHeight: "20px" }}>
               <Link

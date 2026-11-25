@@ -604,17 +604,81 @@
     "upload": "Upload logo",
     "remove": "Remove logo",
     "saved": "Logo saved.",
-    "removed": "Logo removed.",
     "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
     "noHotel": "Pick a hotel first.",
-    "branding": "Colors",
     "primaryColor": "Primary color",
     "accentColor": "Accent color",
     "save": "Save",
-    "brandingSaved": "Colors saved.",
     "sample": "Aa text",
     "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
-    "contrastDark": "This color is hard to see in dark mode. Pick a lighter one."
+    "contrastDark": "This color is hard to see in dark mode. Pick a lighter one.",
+    "noHotelHint": "Create or pick a hotel to edit its settings.",
+    "logoSaved": "Logo saved.",
+    "logoRemoved": "Logo removed.",
+    "replace": "Replace logo",
+    "pickColor": "Pick {label}",
+    "errors": {
+      "required": "Required.",
+      "color": "Use a hex color like #0a7c66.",
+      "email": "Enter a valid email.",
+      "https": "Use a full link starting with https://.",
+      "phone": "Use an international number like +216 20 123 456."
+    },
+    "readOnly": "Only owners and managers can change these settings.",
+    "sections": {
+      "identity": {
+        "title": "Identity",
+        "description": "The name guests see on messages and pages."
+      },
+      "brand": {
+        "title": "Brand colors",
+        "description": "Two colors for guest pages and emails."
+      },
+      "language": {
+        "title": "Language and time",
+        "description": "What guests read and when dates are shown."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Where guests can reach you and review you."
+      },
+      "alerts": {
+        "title": "Manager alerts",
+        "description": "Where we warn you about unhappy guests."
+      }
+    },
+    "displayName": "Hotel name",
+    "displayNameHint": "Shown to guests.",
+    "primaryColorHint": "Buttons and headers.",
+    "accentColorHint": "Small highlights.",
+    "defaultLanguage": "Guest language",
+    "defaultLanguageHint": "Used when we do not know the guest's language.",
+    "timezone": "Time zone",
+    "timezoneHint": "For birthdays and opening hours.",
+    "replyTo": "Reply-to email",
+    "replyToHint": "Guests who answer an email write here.",
+    "address": "Address",
+    "addressHint": "Shown at the bottom of emails.",
+    "reviewUrl": "Google review link",
+    "reviewUrlHint": "Happy guests are sent here.",
+    "whatsapp": "Manager WhatsApp",
+    "whatsappHint": "International format, like +216 20 123 456.",
+    "telegram": "Telegram",
+    "telegramHint": "Optional. Chat id for alerts.",
+    "optional": "Optional",
+    "discard": "Discard changes",
+    "preview": {
+      "title": "Preview",
+      "capture": "Sign-up page",
+      "email": "Email",
+      "hint": "Shown in the guest language you picked. It updates as you type.",
+      "sample": "Aa text",
+      "emailTitle": "Welcome to {hotel}",
+      "emailBody": "Hello {name}, thank you for your stay. Here is a little something for next time.",
+      "emailCta": "See my offer",
+      "emailFooter": "You get this email because you shared it with {hotel}.",
+      "unsubscribe": "Unsubscribe"
+    }
   },
   "qrCodes": {
     "title": "QR codes",
@@ -640,7 +704,18 @@
     "empty": "No guest signed up from a QR code yet.",
     "colWhere": "Where",
     "colSpot": "Spot",
-    "colGuests": "Guests"
+    "colGuests": "Guests",
+    "copied": "Link copied.",
+    "noSpot": "Whole hotel",
+    "optional": "Optional",
+    "resultsTitle": "Your QR codes",
+    "resultsHint": "Download each one, or copy its link.",
+    "generating": "Generating...",
+    "failed": "Could not make the QR codes",
+    "retry": "Try again",
+    "failedHint": "Check your connection and try again.",
+    "copyLink": "Copy link",
+    "emptyTitle": "No QR codes yet"
   },
   "messages": {
     "title": "Messages",
@@ -718,9 +793,6 @@
     "fieldCodeHint": "Letters, numbers and dashes. Unique in your hotel.",
     "fieldTrigger": "Given automatically to",
     "triggerNone": "Nobody (staff hand it out)",
-    "triggerWelcome": "New guests (welcome)",
-    "triggerBirthday": "Guests on their birthday",
-    "triggerManual": "Chosen guests (manual)",
     "fieldFrom": "Valid from",
     "fieldUntil": "Valid until",
     "fieldUntilHint": "Empty means no end date.",
@@ -740,11 +812,56 @@
     },
     "preview": {
       "title": "What the guest sees",
-      "code": "Your code",
-      "show": "Show this QR at the desk.",
-      "validFrom": "Valid from {from}",
-      "validBetween": "Valid {from} to {until}"
-    }
+      "titlePlaceholder": "Your offer title",
+      "hint": "Shown in the guest language of your hotel, with a sample code."
+    },
+    "columns": {
+      "offer": "Offer",
+      "status": "Status",
+      "trigger": "Given to",
+      "redeemed": "Redeemed",
+      "valid": "Valid",
+      "actions": "Actions"
+    },
+    "trigger": {
+      "welcome": "New guests",
+      "birthday": "Birthday",
+      "manual": "Chosen guests"
+    },
+    "triggerNoneShort": "Staff",
+    "stats": {
+      "active": "Active offers",
+      "activeHint": "{count} in total",
+      "week": "Redeemed this week",
+      "weekHint": "{today} today",
+      "total": "Redeemed in total",
+      "totalHint": "Since the first offer"
+    },
+    "errors": {
+      "title": "Enter a title.",
+      "code": "Use letters, numbers and dashes.",
+      "from": "Pick a start date.",
+      "until": "The end must be after the start.",
+      "max": "Use a whole number above 0."
+    },
+    "sections": {
+      "offer": {
+        "title": "The offer",
+        "description": "What the guest gets."
+      },
+      "who": {
+        "title": "Who gets it",
+        "description": "Hand it out yourself or let it go out on its own."
+      },
+      "when": {
+        "title": "When it is valid",
+        "description": "Dates and how many times it can be used."
+      }
+    },
+    "fieldTextHint": "Up to {max} characters.",
+    "optional": "Optional",
+    "fieldActiveHint": "Pause it to stop guests from using it.",
+    "create": "Create offer"
   },
   "offer": {
     "invalidTitle": "Link not valid",
@@ -775,7 +892,6 @@
     "codePlaceholder": "AB3D-EF7H",
     "check": "Check",
     "redeem": "Mark as redeemed",
-    "redeeming": "Saving...",
     "next": "Next code",
     "guest": "Guest",
     "validUntil": "Valid until",
@@ -797,7 +913,9 @@
       "exhausted": "No redemptions left",
       "wrongHotel": "This code belongs to another hotel",
       "unknown": "Code not found"
-    }
+    },
+    "scanning": "Looking for a QR code...",
+    "scanHint": "Tap to start the camera."
   },
   "notFound": {
     "title": "Page not found",
@@ -1405,5 +1523,125 @@
       "saving": "Saving…",
       "cancel": "Cancel"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Your profile, password and data.",
+    "sections": {
+      "profile": {
+        "title": "Profile",
+        "description": "Your name and picture, as your team sees them."
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "Language and theme for your own screen."
+      },
+      "password": {
+        "title": "Password",
+        "description": "Pick something you do not use anywhere else."
+      },
+      "sessions": {
+        "title": "Devices",
+        "description": "Where you are signed in right now."
+      },
+      "data": {
+        "title": "Your data",
+        "description": "Download your data or delete your account."
+      }
+    },
+    "errors": {
+      "currentRequired": "Enter your current password.",
+      "currentWrong": "The current password is wrong.",
+      "nameRequired": "Enter your name.",
+      "generic": "Something went wrong. Try again."
+    },
+    "passwordChanged": "Password changed.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "newPasswordHint": "At least 10 characters.",
+    "signOutOthers": "Sign out of my other devices",
+    "changePassword": "Change password",
+    "exportHint": "Get a file with everything we keep about you.",
+    "export": "Download my data",
+    "deleteTitle": "Delete my account",
+    "deleteHint": "This removes your account and your access to every hotel. It cannot be undone.",
+    "deleteConfirmLabel": "Type {email} to confirm",
+    "delete": "Delete account",
+    "deleteConfirmBody": "Your account is deleted for good. You are signed out right away.",
+    "cancel": "Cancel",
+    "profileSaved": "Profile saved.",
+    "pictureSaved": "Picture saved.",
+    "changePicture": "Change picture",
+    "pictureHint": "PNG, JPEG or WebP, 1 MB at most.",
+    "name": "Name",
+    "email": "Email",
+    "emailHint": "To change your email, contact support.",
+    "save": "Save",
+    "loading": "Loading devices...",
+    "sessionsFailed": "Could not load your devices",
+    "retry": "Try again",
+    "sessionsFailedHint": "Check your connection and try again.",
+    "unknownDevice": "Unknown device",
+    "thisDevice": "This device",
+    "lastActive": "Last active",
+    "sessionEnded": "Device signed out.",
+    "endSession": "Sign out",
+    "othersEnded": "Other devices signed out.",
+    "endOthers": "Sign out of other devices"
+  },
+  "team": {
+    "title": "Team",
+    "description": "Invite your colleagues and choose what each one can do.",
+    "errors": {
+      "email": "Enter a valid email.",
+      "generic": "Something went wrong. Try again."
+    },
+    "invited": "Invitation sent to {email}.",
+    "email": "Email",
+    "emailHint": "They get a link to join your hotel.",
+    "role": "Role",
+    "roles": {
+      "owner": "Owner",
+      "manager": "Manager",
+      "staff": "Staff"
+    },
+    "roleHelp": {
+      "owner": "Everything, including the team and the hotel settings.",
+      "manager": "Guests, offers and QR codes. Can invite staff.",
+      "staff": "Redeem offers at the desk and see guests."
+    },
+    "sendInvite": "Send invitation",
+    "loading": "Loading the team...",
+    "loadFailed": "Could not load the team",
+    "retry": "Try again",
+    "loadFailedHint": "Check your connection and try again.",
+    "roleOf": "Role of {name}",
+    "roleChanged": "Role updated.",
+    "remove": "Remove",
+    "columns": {
+      "member": "Member",
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "you": "You",
+    "members": "{count, plural, one {# member} other {# members}}",
+    "membersHint": "People who can sign in to this hotel.",
+    "pending": "{count, plural, one {# pending invitation} other {# pending invitations}}",
+    "pendingHint": "They can join until the link expires.",
+    "expires": "Expires",
+    "resent": "Invitation sent again to {email}.",
+    "resend": "Send again",
+    "cancelled": "Invitation cancelled.",
+    "cancel": "Cancel invitation",
+    "emptyTitle": "No one else yet",
+    "emptyHint": "Invite a colleague to share the desk.",
+    "inviteTitle": "Invite a colleague",
+    "inviteHint": "Choose an email and a role.",
+    "viewOnly": "Only owners and managers can change the team.",
+    "rolesTitle": "What each role can do",
+    "removeTitle": "Remove {name}?",
+    "removeBody": "They lose access to this hotel right away.",
+    "cancelAction": "Keep",
+    "removed": "Member removed."
   }
 }

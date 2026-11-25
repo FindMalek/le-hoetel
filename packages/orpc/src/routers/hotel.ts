@@ -38,6 +38,7 @@ const hotelColumns = {
   replyToEmail: hotelSettings.replyToEmail,
   defaultLanguage: hotelSettings.defaultLanguage,
   timezone: hotelSettings.timezone,
+  address: hotelSettings.address,
   googleReviewUrl: hotelSettings.googleReviewUrl,
   managerWhatsapp: hotelSettings.managerWhatsapp,
   managerTelegram: hotelSettings.managerTelegram,

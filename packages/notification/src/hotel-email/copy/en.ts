@@ -6,7 +6,6 @@ export const en = {
     team: "The {hotel} team",
     footerReason: "You are receiving this email because you shared your address with {hotel}.",
     unsubscribe: "Unsubscribe",
-    addressPlaceholder: "Hotel address",
     offerValidUntil: "Valid until {date}",
     offerCode: "Your code",
     dateFormat: "{month} {day}, {year}",
