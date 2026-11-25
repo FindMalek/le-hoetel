@@ -14,7 +14,7 @@ export interface ActiveHotel {
 
 export const HOTEL_HEADER = "x-hotel-id"
 
-const bestRole = (stored: string): HotelRole | null =>
+export const bestRole = (stored: string): HotelRole | null =>
   HOTEL_ROLES.find((role) => stored.split(",").includes(role)) ?? null
 
 /**

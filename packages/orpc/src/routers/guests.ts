@@ -1,3 +1,4 @@
+import { type ConsentChannel, MESSAGE_CHANNELS } from "@le-hoetel/common/consent"
 import { guestsToCsv } from "@le-hoetel/common/guest-export"
 import {
   consentEventSchema,
@@ -5,6 +6,9 @@ import {
   GUEST_EXTRA_FIELDS,
   guestCreateSchema,
   guestExportSchema,
+  guestFromImportRow,
+  guestImportInputSchema,
+  guestImportResultSchema,
   guestListInputSchema,
   guestListSchema,
   guestSchema,
@@ -12,9 +16,9 @@ import {
   guestUpsertResultSchema,
   hotelGuestsExportSchema,
 } from "@le-hoetel/common/schemas"
-import { consentEvents, guests } from "@le-hoetel/db"
+import { consentEvents, guestConsents, guests } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
-import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm"
+import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -57,8 +61,26 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       const q = input.q ? `%${escapeLike(input.q)}%` : null
+      const granted = (channels: ConsentChannel[]) =>
+        exists(
+          context.db
+            .select({ one: sql`1` })
+            .from(guestConsents)
+            .where(
+              and(
+                eq(guestConsents.guestId, guests.id),
+                eq(guestConsents.hotelId, hotelId),
+                eq(guestConsents.granted, true),
+                inArray(guestConsents.channel, channels),
+              ),
+            ),
+        )
+      const consent = input.consent
       const where = and(
         eq(guests.hotelId, hotelId),
+        input.source ? eq(guests.source, input.source) : undefined,
+        input.language ? eq(guests.language, input.language) : undefined,
+        consent === "none" ? not(granted(MESSAGE_CHANNELS.slice())) : consent ? granted([consent]) : undefined,
         q ? or(ilike(guests.name, q), ilike(guests.phoneE164, q), ilike(guests.email, q)) : undefined,
       )
       const [totals] = await context.db.select({ n: count() }).from(guests).where(where)
@@ -93,6 +115,44 @@ export const guestsRouter = {
       const { hotelId } = context.hotel
       const { id, merged } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, input, context.now()))
       return { ...(await loadGuest(context.db, hotelId, id)), merged }
+    }),
+
+  import: hotelProcedure
+    .use(can({ guest: ["import"] }))
+    .route({
+      method: "POST",
+      path: "/guests/import",
+      summary: "Import guests from csv rows, one result per row, merged by phone",
+      tags: ["guests"],
+    })
+    .input(guestImportInputSchema)
+    .output(guestImportResultSchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const { rows, ...options } = input
+      const result: z.infer<typeof guestImportResultSchema> = { created: 0, merged: 0, errors: [] }
+      for (const row of rows) {
+        const parsed = guestCreateSchema.safeParse(guestFromImportRow(row, options))
+        if (!parsed.success) {
+          const issue = parsed.error.issues[0]
+          result.errors.push({ line: row.line, message: `${issue?.path.join(".") || "row"}: ${issue?.message}` })
+          continue
+        }
+        try {
+          const { merged } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, parsed.data, context.now()))
+          if (merged) result.merged++
+          else result.created++
+        } catch {
+          // The driver's error text can carry the phone number, so it is not logged.
+          console.error("[guests.import] a row could not be saved")
+          result.errors.push({ line: row.line, message: "Could not save this row." })
+        }
+      }
+      await audit(context, {
+        action: "guest.import",
+        metadata: { hotelId, ...result, errors: result.errors.length, consentConfirmed: options.confirmConsent },
+      })
+      return result
     }),
 
   update: hotelProcedure

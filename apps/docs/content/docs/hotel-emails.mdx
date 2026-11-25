@@ -41,3 +41,11 @@ All strings are in `packages/notification/src/hotel-email/copy`, one file per la
 ## Tests
 
 `render.test.ts` snapshots every template in every language. After a copy change run `bun test --update-snapshots` in `packages/notification` and read the diff.
+
+## Preview in the dashboard
+
+`/emails` shows any template in any language as a sample guest sees it: light or dark, desktop or phone width. The mail is rendered by the api (`emails.preview`) with the hotel's own colors and logo, and shown in a sandboxed iframe (`srcdoc`, no scripts). The sample guest is made up, never a real one.
+
+`Send test to me` (`emails.sendTest`) sends the same email with a `[Test]` subject prefix to the signed in user's own address only, never to an address from the input. It is limited to 5 per 10 minutes per user. Outside production with live messaging it only logs, like every other message.
+
+The hotel address is not stored yet, so the footer shows its placeholder until the hotel settings get one.

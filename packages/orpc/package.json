@@ -12,7 +12,8 @@
     "./server": "./src/server-client.ts",
     "./proxy": "./src/proxy.ts",
     "./testing": "./src/testing.ts",
-    "./unsubscribe": "./src/lib/unsubscribe.ts"
+    "./unsubscribe": "./src/lib/unsubscribe.ts",
+    "./messages": "./src/lib/messages.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
@@ -22,17 +23,17 @@
     "@le-hoetel/auth": "workspace:*",
     "@le-hoetel/common": "workspace:*",
     "@le-hoetel/db": "workspace:*",
+    "@le-hoetel/jobs": "workspace:*",
+    "@le-hoetel/notification": "workspace:*",
+    "@le-hoetel/storage": "workspace:*",
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
     "@orpc/tanstack-query": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "ai": "catalog:",
     "drizzle-orm": "catalog:",
     "qrcode": "^1.5.4",
-    "zod": "catalog:",
-    "@le-hoetel/jobs": "workspace:*",
-    "@le-hoetel/notification": "workspace:*",
-    "@le-hoetel/storage": "workspace:*",
-    "ai": "catalog:"
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:"

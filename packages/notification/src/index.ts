@@ -2,7 +2,7 @@ import { type Logger, logger } from "@le-hoetel/logger"
 import { createEmailChannel } from "./channels/email"
 import { createTelegramChannel } from "./channels/telegram"
 import { createWhatsAppChannel } from "./channels/whatsapp"
-import { renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
+import { type RenderedEmail, renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
 
 export { type AuthEmails, authEmails } from "./auth"
@@ -42,6 +42,8 @@ export interface SendInput<Name extends TemplateName = TemplateName> {
   to?: string
   template: Name
   data: TemplateData<Name>
+  /** The unsubscribe or STOP line, appended last. Guest messages always carry one. */
+  footer?: string
 }
 
 export interface SendResult {
@@ -53,10 +55,14 @@ export interface SendResult {
 }
 
 export interface Notifier {
+  /** False outside production or without `MESSAGING_LIVE=true`: every send is only logged. */
+  live: boolean
   /** The channels that have their keys set. */
   channels: Channel[]
   /** Renders a template for the channel and sends it. An unconfigured channel is skipped, a provider failure throws. */
   send: <Name extends TemplateName>(input: SendInput<Name>) => Promise<SendResult>
+  /** Sends an email that is already rendered (hotel emails). Outside live messaging it only logs, like `send`. */
+  sendEmail: (input: { to: string; email: RenderedEmail }) => Promise<SendResult>
   /** Plain text to every configured channel (or the ones asked for). One channel failing doesn't stop the rest. */
   notify: (text: string, options?: { channels?: Channel[] }) => Promise<SendResult[]>
   /** The api route for Telegram's webhook; answers 404 when Telegram isn't configured. */
@@ -111,8 +117,9 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
   }
 
   return {
+    live,
     channels,
-    async send({ channel, to, template, data }) {
+    async send({ channel, to, template, data, footer }) {
       if (!live) {
         log.info("message not sent, log-only provider", { channel, template })
         return { channel, sent: false }
@@ -120,13 +127,22 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       if (!on(channel)) return { channel, sent: false }
       if (channel === "email") {
         if (!to) throw new Error("Email needs a `to` address.")
-        const result = await email?.send(to, await renderEmail(template, data, options.appUrl))
+        const result = await email?.send(to, await renderEmail(template, data, options.appUrl, footer))
         return { channel, sent: true, id: result?.id }
       }
       const summary = summarize(template, data)
-      const text = channel === "telegram" ? toTelegram(summary) : toWhatsApp(summary)
+      const text = channel === "telegram" ? toTelegram(summary) : toWhatsApp(summary, footer)
       const result = await sendChat(channel, to, text, channel === "telegram")
       return { channel, sent: true, id: result.id }
+    },
+    async sendEmail({ to, email: rendered }) {
+      if (!live) {
+        log.info("message not sent, log-only provider", { channel: "email" })
+        return { channel: "email", sent: false }
+      }
+      if (!email) return { channel: "email", sent: false }
+      const result = await email.send(to, rendered)
+      return { channel: "email", sent: true, id: result.id }
     },
     async notify(text, notifyOptions = {}) {
       const targets = notifyOptions.channels ?? channels

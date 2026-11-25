@@ -27,6 +27,20 @@ Health is the first problem found, by `hotelHealth` in `packages/common/src/hote
 
 Use `hotelProcedure` for anything about a hotel. It puts `context.hotel` (`hotelId`, `role`, `superAdmin`) on the call, and every query filters on `context.hotel.hotelId`, never on an id from the input. Narrow it with `can({ guest: ["export"] })`.
 
+## Dashboard: landing in a hotel
+
+A hotel user's session starts with their oldest membership as the active hotel, so they land on `/guests` without picking anything. Someone in several hotels gets a switcher at the top of the sidebar (`hotel.mine` lists their hotels, switching calls better-auth `setActive`). A user without a hotel sees an empty state, never another hotel's data.
+
+The guest list (`/guests`) reads `guests.list`, which only returns the active hotel's guests. Filters live in the url (`q`, `consent`, `source`, `language`, `page`), so a search can be shared. `consent=none` means no email and no WhatsApp consent. On phones each guest is a card, from `md` up it is a table.
+
+## Adding guests: quick add and CSV import
+
+`/guests/new` is the front desk form: name and phone, optional email, and two consent checkboxes the staff tick only for what the guest said (source `staff`). It is built for a phone: one column, 44px targets, and it stays ready for the next guest after each save.
+
+`/guests/import` (owners and managers, the `guest.import` permission) takes a CSV of up to 1000 rows or 1 MB. Commas and semicolons both work. The hotel matches its columns to name, phone, email, birthday, language and consent, then `guests.import` checks every row on its own: a bad row never blocks the others and comes back in a downloadable error report. A phone that already exists merges into that guest with the same `upsertGuest` rules as every other source, and a CSV "no" never withdraws an existing "yes". Source is always `csv`.
+
+Consent from a CSV is deliberately strict: it is only granted when the consent cell is an explicit yes (`true`, `yes`, `oui`, `1`) **and** the hotel ticked the confirmation that it holds that consent. It covers WhatsApp (for numbers that can take it) and email (when there is an address), is logged like any other consent event with source `csv`, and the import itself is written to the audit log with counts only.
+
 ## Isolation is tested
 
 One hotel can never read, change, export or delete another hotel's guests. `packages/orpc/src/routers/isolation.test.ts` calls every guest procedure of hotel A with an id of hotel B (always a plain "not found"), checks lists, search and the hotel export, the `x-hotel-id` header, removed members, and fails when a new guest procedure is added without being covered. `apps/e2e/tests/isolation.spec.ts` repeats the core of it over http against the running api.
