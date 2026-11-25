@@ -1,9 +1,10 @@
+import { hotelRoles } from "@le-hoetel/auth/access"
 import { GUEST_SOURCES } from "@le-hoetel/common/consent"
 import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
 import { GUEST_CONSENT_FILTERS } from "@le-hoetel/common/schemas"
 import { Button } from "@le-hoetel/ui/components/button"
 import { EmptyState } from "@le-hoetel/ui/components/empty-state"
-import { ChevronLeftIcon, ChevronRightIcon, UsersIcon } from "lucide-react"
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, UploadIcon, UsersIcon } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { GuestFilters } from "@/components/guest-filters"
@@ -33,8 +34,23 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
   const raw = await searchParams
   const { page, q, ...filters } = parseSearch(raw)
   const t = await getTranslations("guests")
-  const { activeId } = await call((api) => api.hotel.mine())
-  const header = <PageHeader title={t("title")} description={t("description")} />
+  const { activeId, role } = await call((api) => api.hotel.mine())
+  const canImport = role ? hotelRoles[role].authorize({ guest: ["import"] }).success : false
+  const actions = activeId && (
+    <>
+      {canImport && (
+        <Button variant="outline" className="h-11" render={<Link href="/guests/import" />} nativeButton={false}>
+          <UploadIcon />
+          {t("importButton")}
+        </Button>
+      )}
+      <Button className="h-11" render={<Link href="/guests/new" />} nativeButton={false}>
+        <PlusIcon />
+        {t("addButton")}
+      </Button>
+    </>
+  )
+  const header = <PageHeader title={t("title")} description={t("description")} actions={actions} />
   if (!activeId) {
     return (
       <>
