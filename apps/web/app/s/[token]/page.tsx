@@ -18,7 +18,6 @@ export const metadata: Metadata = {
 
 const NPS = Array.from({ length: 11 }, (_, score) => score)
 const STARS = [1, 2, 3, 4, 5]
-const RATINGS = ["rooms", "cleanliness", "service"] as const
 
 const PILL =
   "flex min-h-12 items-center justify-center rounded-lg border bg-background font-medium tabular-nums transition-colors hover:bg-accent peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
@@ -51,6 +50,12 @@ export default async function Page({ params, searchParams }: PageProps<"/s/[toke
   const t = await getTranslations({ locale: page.language, namespace: "survey" })
   const hotel = page.hotel.displayName
   const closed = page.state !== "open"
+  const ratings = [
+    { key: "rooms", label: t("rooms") },
+    { key: "cleanliness", label: t("cleanliness") },
+    { key: "service", label: t("service") },
+  ]
+  const answered = page.state === "answered"
   return (
     <div
       lang={page.language}
@@ -64,10 +69,10 @@ export default async function Page({ params, searchParams }: PageProps<"/s/[toke
         {closed ? (
           <div role="status" className="grid gap-2">
             <h2 className="text-balance font-semibold text-h3 tracking-tight">
-              {t(page.state === "answered" ? "thanksTitle" : "expiredTitle")}
+              {answered ? t("thanksTitle") : t("expiredTitle")}
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              {t(page.state === "answered" ? "thanks" : "expired", { hotel })}
+              {answered ? t("thanks", { hotel }) : t("expired", { hotel })}
             </p>
           </div>
         ) : (
@@ -94,10 +99,10 @@ export default async function Page({ params, searchParams }: PageProps<"/s/[toke
                 <span>{t("npsHigh")}</span>
               </div>
             </fieldset>
-            {RATINGS.map((key) => (
+            {ratings.map(({ key, label }) => (
               <fieldset key={key} className="grid gap-3">
                 <legend className="mb-3 font-medium leading-snug">
-                  {t(key)} <span className="font-normal text-muted-foreground text-sm">{t("optional")}</span>
+                  {label} <span className="font-normal text-muted-foreground text-sm">{t("optional")}</span>
                 </legend>
                 <div className="grid grid-cols-5 gap-2">
                   {STARS.map((value) => (
