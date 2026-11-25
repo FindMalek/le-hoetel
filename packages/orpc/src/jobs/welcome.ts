@@ -1,0 +1,53 @@
+import { guests } from "@le-hoetel/db"
+import { defineJob } from "@le-hoetel/jobs"
+import { z } from "zod"
+import type { Context } from "../context"
+import { claimSend, consentedChannels, triggerOffer } from "../lib/automations"
+import { hotelGuest } from "../lib/guests"
+import { sendToGuest } from "../lib/messages"
+
+export type JobServices = Pick<Context, "db" | "config" | "now" | "notification">
+
+export const WELCOME_JOB = "welcome-guest"
+
+const payload = z.object({ hotelId: z.string(), guestId: z.uuid() })
+
+/** Welcome message on every channel the guest agreed to, once per guest, hotel and channel. */
+export const welcomeJob = (services: JobServices) =>
+  defineJob({
+    name: WELCOME_JOB,
+    description: "Send the welcome message to a new guest",
+    payload,
+    handler: async ({ hotelId, guestId }) => {
+      const channels = await consentedChannels(services.db, hotelId, guestId)
+      if (!channels.length) return
+      const [guest] = await services.db
+        .select({ language: guests.language })
+        .from(guests)
+        .where(hotelGuest(hotelId, guestId))
+      if (!guest) return
+      const perk = await triggerOffer(services, { hotelId, guestId, language: guest.language, trigger: "welcome" })
+      for (const channel of channels) {
+        if (!(await claimSend(services.db, { hotelId, guestId, kind: "welcome", channel }))) continue
+        await sendToGuest(services, {
+          hotelId,
+          guestId,
+          channel,
+          template: "welcome",
+          props: { offer: perk?.offer, ctaUrl: perk?.ctaUrl },
+        })
+      }
+    },
+  })
+
+/** Called right after a guest is saved. A queue that is down must not fail the sign-up, so errors are only logged. */
+export async function enqueueWelcome(
+  context: Pick<Context, "jobs">,
+  hotelId: string,
+  guestId: string,
+  consents: { email: boolean; whatsapp: boolean },
+): Promise<void> {
+  if (!consents.email && !consents.whatsapp) return
+  const result = await context.jobs.enqueue(WELCOME_JOB, { hotelId, guestId }).catch(() => null)
+  if (!result?.ok) console.error("[welcome] could not queue the welcome message")
+}
