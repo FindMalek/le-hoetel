@@ -112,7 +112,7 @@ export function OfferForm({
   }
 
   const bind = (key: keyof Values) => ({
-    name: key,
+    name: String(key),
     value: values[key] as string,
     onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       form.set(key, event.target.value as never),

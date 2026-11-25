@@ -114,6 +114,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     "removeAll",
     "consentHistory",
     "import",
+    "messages",
   ]
   expect(Object.keys(guestsRouter).sort()).toEqual([...covered].sort())
   const calls = {
@@ -133,6 +134,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     exportCsv: () => app.anonymous.guests.exportCsv({}),
     remove: () => app.anonymous.guests.remove({ id: crypto.randomUUID() }),
     removeAll: () => app.anonymous.guests.removeAll({ confirmCount: 0 }),
+    messages: () => app.anonymous.guests.messages({ id: crypto.randomUUID() }),
     consentHistory: () => app.anonymous.guests.consentHistory({ id: crypto.randomUUID() }),
     import: () =>
       app.anonymous.guests.import({

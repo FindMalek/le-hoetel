@@ -17,6 +17,7 @@ export const adminUserSchema = z.object({
   email: z.string(),
   role: z.string().nullable(),
   createdAt: z.date(),
+  hotels: z.array(z.object({ id: z.string(), name: z.string(), role: z.string() })),
 })
 
 export const okSchema = z.object({ ok: z.literal(true) })

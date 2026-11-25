@@ -1,7 +1,9 @@
 import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
 import { captureUrl } from "@le-hoetel/common/qr"
 import {
+  adminHotelDetailSchema,
   adminHotelSchema,
+  adminOverviewSchema,
   CAPTURE_SOURCES,
   captureStatSchema,
   hotelAdminUpdateSchema,
@@ -13,10 +15,10 @@ import {
   qrCodeSchema,
   qrCodesInputSchema,
 } from "@le-hoetel/common/schemas"
-import { guests, hotelSettings, member, organization } from "@le-hoetel/db"
+import { guestConsents, guests, hotelSettings, invitation, member, messages, organization, user } from "@le-hoetel/db"
 import { hotelPublicPrefix } from "@le-hoetel/storage"
 import { ORPCError } from "@orpc/server"
-import { and, asc, count, eq, inArray, like, max, sql } from "drizzle-orm"
+import { and, asc, count, countDistinct, eq, gte, inArray, like, max, sql } from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -203,6 +205,43 @@ export const hotelLogoRouter = {
     }),
 }
 
+type AdminHotelRow = Awaited<ReturnType<typeof loadHotel>>
+
+async function withHealth(context: Context, hotels: AdminHotelRow[]) {
+  const { db } = context
+  const [guestStats, consents, owners] = await Promise.all([
+    db
+      .select({ hotelId: guests.hotelId, guestCount: count(), lastGuestAt: max(guests.createdAt) })
+      .from(guests)
+      .groupBy(guests.hotelId),
+    db
+      .select({ hotelId: guestConsents.hotelId, consentedCount: countDistinct(guestConsents.guestId) })
+      .from(guestConsents)
+      .where(eq(guestConsents.granted, true))
+      .groupBy(guestConsents.hotelId),
+    db
+      .select({ hotelId: member.organizationId, ownerCount: count() })
+      .from(member)
+      .where(like(member.role, "%owner%"))
+      .groupBy(member.organizationId),
+  ])
+  const guestsOf = new Map(guestStats.map((row) => [row.hotelId, row]))
+  const consentsOf = new Map(consents.map((row) => [row.hotelId, row.consentedCount]))
+  const ownersOf = new Map(owners.map((row) => [row.hotelId, row.ownerCount]))
+  const now = context.now()
+  return hotels.map((hotel) => {
+    const guestCount = guestsOf.get(hotel.id)?.guestCount ?? 0
+    const lastGuestAt = guestsOf.get(hotel.id)?.lastGuestAt ?? null
+    const ownerCount = ownersOf.get(hotel.id) ?? 0
+    const consentedCount = consentsOf.get(hotel.id) ?? 0
+    const health = hotelHealth({ status: hotel.status, ownerCount, guestCount, lastGuestAt, now })
+    return { ...hotel, guestCount, consentedCount, ownerCount, lastGuestAt, health }
+  })
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000
+const PILOT_ENDING_DAYS = 14
+
 export const adminHotelsRouter = {
   list: adminProcedure
     .route({
@@ -212,30 +251,118 @@ export const adminHotelsRouter = {
       tags: ["admin"],
     })
     .output(z.array(adminHotelSchema))
-    .handler(async ({ context }) => {
+    .handler(async ({ context }) =>
+      withHealth(context, await selectHotels(context.db).orderBy(asc(organization.name))),
+    ),
+
+  get: adminProcedure
+    .route({
+      method: "GET",
+      path: "/admin/hotels/{id}",
+      summary: "One hotel with its numbers, people and pending invitations",
+      tags: ["admin"],
+    })
+    .input(z.object({ id: z.string() }))
+    .output(adminHotelDetailSchema)
+    .handler(async ({ context, input }) => {
       const { db } = context
-      const [hotels, guestStats, owners] = await Promise.all([
-        selectHotels(db).orderBy(asc(organization.name)),
+      const [hotel] = await withHealth(context, [await loadHotel(db, input.id)])
+      const [people, invites, [sent]] = await Promise.all([
         db
-          .select({ hotelId: guests.hotelId, guestCount: count(), lastGuestAt: max(guests.createdAt) })
-          .from(guests)
-          .groupBy(guests.hotelId),
-        db
-          .select({ hotelId: member.organizationId, ownerCount: count() })
+          .select({
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+            role: member.role,
+            joinedAt: member.createdAt,
+          })
           .from(member)
-          .where(like(member.role, "%owner%"))
-          .groupBy(member.organizationId),
+          .innerJoin(user, eq(user.id, member.userId))
+          .where(eq(member.organizationId, input.id))
+          .orderBy(asc(member.createdAt)),
+        db
+          .select({
+            id: invitation.id,
+            email: invitation.email,
+            role: invitation.role,
+            expiresAt: invitation.expiresAt,
+          })
+          .from(invitation)
+          .where(and(eq(invitation.organizationId, input.id), eq(invitation.status, "pending")))
+          .orderBy(asc(invitation.createdAt)),
+        db.select({ n: count() }).from(messages).where(eq(messages.hotelId, input.id)),
       ])
-      const guestsOf = new Map(guestStats.map((row) => [row.hotelId, row]))
-      const ownersOf = new Map(owners.map((row) => [row.hotelId, row.ownerCount]))
+      return {
+        ...hotel!,
+        capturePageUrl: captureUrl(context.config.webUrl, hotel!.slug, "desk"),
+        messageCount: sent?.n ?? 0,
+        members: people,
+        invitations: invites,
+      }
+    }),
+
+  slugAvailable: adminProcedure
+    .route({
+      method: "GET",
+      path: "/admin/hotels/slug-available",
+      summary: "Is this slug free for a new hotel",
+      tags: ["admin"],
+    })
+    .input(z.object({ slug: z.string().trim().min(1).max(60) }))
+    .output(z.object({ available: z.boolean() }))
+    .handler(async ({ context, input }) => {
+      const [taken] = await context.db
+        .select({ id: organization.id })
+        .from(organization)
+        .where(eq(organization.slug, input.slug))
+      return { available: !taken }
+    }),
+
+  overview: adminProcedure
+    .route({
+      method: "GET",
+      path: "/admin/overview",
+      summary: "Pilot funnel numbers across every hotel",
+      tags: ["admin"],
+    })
+    .output(adminOverviewSchema)
+    .handler(async ({ context }) => {
       const now = context.now()
-      return hotels.map((hotel) => {
-        const guestCount = guestsOf.get(hotel.id)?.guestCount ?? 0
-        const lastGuestAt = guestsOf.get(hotel.id)?.lastGuestAt ?? null
-        const ownerCount = ownersOf.get(hotel.id) ?? 0
-        const health = hotelHealth({ status: hotel.status, ownerCount, guestCount, lastGuestAt, now })
-        return { ...hotel, guestCount, ownerCount, lastGuestAt, health }
-      })
+      const hotels = await withHealth(context, await selectHotels(context.db))
+      const soon = new Date(now.getTime() + PILOT_ENDING_DAYS * DAY_MS)
+      const [[recent], [sent], [delivered], [failed]] = await Promise.all([
+        context.db
+          .select({ n: count() })
+          .from(guests)
+          .where(gte(guests.createdAt, new Date(now.getTime() - 7 * DAY_MS))),
+        context.db.select({ n: count() }).from(messages),
+        context.db
+          .select({ n: count() })
+          .from(messages)
+          .where(inArray(messages.status, ["sent", "delivered"])),
+        context.db.select({ n: count() }).from(messages).where(eq(messages.status, "failed")),
+      ])
+      const sum = (pick: (hotel: (typeof hotels)[number]) => number) =>
+        hotels.reduce((total, hotel) => total + pick(hotel), 0)
+      return {
+        hotels: {
+          total: hotels.length,
+          pilot: hotels.filter((hotel) => hotel.status === "pilot").length,
+          active: hotels.filter((hotel) => hotel.status === "active").length,
+          suspended: hotels.filter((hotel) => hotel.status === "suspended").length,
+          withOwner: hotels.filter((hotel) => hotel.ownerCount > 0).length,
+          withGuests: hotels.filter((hotel) => hotel.guestCount > 0).length,
+          pilotsEndingSoon: hotels.filter(
+            (hotel) => hotel.status === "pilot" && hotel.pilotEndsAt && hotel.pilotEndsAt <= soon,
+          ).length,
+        },
+        guests: {
+          total: sum((hotel) => hotel.guestCount),
+          last7Days: recent?.n ?? 0,
+          consented: sum((hotel) => hotel.consentedCount),
+        },
+        messages: { total: sent?.n ?? 0, delivered: delivered?.n ?? 0, failed: failed?.n ?? 0 },
+      }
     }),
 
   create: adminProcedure
@@ -288,5 +415,25 @@ export const adminHotelsRouter = {
         await audit(context, { action: "hotel.admin-update", targetId: id, metadata: { fields: Object.keys(patch) } })
       }
       return loadHotel(context.db, id)
+    }),
+
+  remove: adminProcedure
+    .route({
+      method: "DELETE",
+      path: "/admin/hotels/{id}",
+      summary: "Delete a hotel with its guests, offers and team. Needs the slug typed again.",
+      tags: ["admin"],
+    })
+    .input(z.object({ id: z.string(), confirmSlug: z.string() }))
+    .output(z.object({ ok: z.literal(true) }))
+    .handler(async ({ context, input }) => {
+      const hotel = await loadHotel(context.db, input.id)
+      if (hotel.slug !== input.confirmSlug) {
+        throw new ORPCError("UNPROCESSABLE_CONTENT", { message: "Type the hotel's slug to confirm." })
+      }
+      await context.db.delete(organization).where(eq(organization.id, input.id))
+      if (hotel.logoKey && context.storage) await context.storage.remove(hotel.logoKey).catch(() => undefined)
+      await audit(context, { action: "hotel.delete", targetId: input.id, metadata: { slug: hotel.slug } })
+      return { ok: true as const }
     }),
 }

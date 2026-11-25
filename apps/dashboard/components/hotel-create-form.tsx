@@ -11,7 +11,7 @@ import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { type FormEvent, useRef } from "react"
 import { toast } from "sonner"
-import { ColorField, type ColorLabels } from "./color-field"
+import { ColorInput, type ColorLabels } from "./color-input"
 
 interface Labels extends ColorLabels {
   title: string
@@ -100,8 +100,8 @@ export function HotelCreateForm({ labels }: { labels: Labels }) {
               <Input id="ownerEmail" name="ownerEmail" type="email" required dir="ltr" />
               <FieldDescription>{labels.ownerHint}</FieldDescription>
             </Field>
-            <ColorField name="primaryColor" label={labels.primaryColor} placeholder="#0a7c66" labels={labels} />
-            <ColorField name="accentColor" label={labels.accentColor} placeholder="#f2b134" labels={labels} />
+            <ColorInput name="primaryColor" label={labels.primaryColor} placeholder="#0a7c66" labels={labels} />
+            <ColorInput name="accentColor" label={labels.accentColor} placeholder="#f2b134" labels={labels} />
             <Field>
               <FieldLabel htmlFor="defaultLanguage">{labels.language}</FieldLabel>
               <select

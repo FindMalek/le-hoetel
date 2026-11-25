@@ -20,6 +20,9 @@ import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { FormField } from "./form-field"
 
+// i18n-used: qrCodes.room
+// i18n-used: qrCodes.table
+// i18n-used: qrCodes.desk
 const SOURCES = [
   { value: "room", label: "rooms", stored: "qr_room", hint: "roomHint", one: "room" },
   { value: "table", label: "tables", stored: "qr_table", hint: "tableHint", one: "table" },

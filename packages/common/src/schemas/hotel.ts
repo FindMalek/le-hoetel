@@ -86,13 +86,40 @@ export const hotelCreateSchema = z.object({
   primaryColor: hexColor.optional(),
   accentColor: hexColor.optional(),
   defaultLanguage: z.enum(HOTEL_LANGUAGES).optional(),
+  timezone: timezone.optional(),
 })
 
 export const adminHotelSchema = hotelSchema.extend({
   guestCount: z.number().int(),
+  consentedCount: z.number().int(),
   ownerCount: z.number().int(),
   lastGuestAt: z.date().nullable(),
   health: z.enum(HOTEL_HEALTHS),
+})
+
+export const adminHotelDetailSchema = adminHotelSchema.extend({
+  capturePageUrl: z.string(),
+  messageCount: z.number().int(),
+  members: z.array(
+    z.object({ userId: z.string(), name: z.string(), email: z.string(), role: z.string(), joinedAt: z.date() }),
+  ),
+  invitations: z.array(
+    z.object({ id: z.string(), email: z.string(), role: z.string().nullable(), expiresAt: z.date() }),
+  ),
+})
+
+export const adminOverviewSchema = z.object({
+  hotels: z.object({
+    total: z.number().int(),
+    pilot: z.number().int(),
+    active: z.number().int(),
+    suspended: z.number().int(),
+    withOwner: z.number().int(),
+    withGuests: z.number().int(),
+    pilotsEndingSoon: z.number().int(),
+  }),
+  guests: z.object({ total: z.number().int(), last7Days: z.number().int(), consented: z.number().int() }),
+  messages: z.object({ total: z.number().int(), delivered: z.number().int(), failed: z.number().int() }),
 })
 
 export type Hotel = z.infer<typeof hotelSchema>

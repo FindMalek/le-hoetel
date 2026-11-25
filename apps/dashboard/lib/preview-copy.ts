@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server"
 import type { PreviewCopies } from "@/components/brand-preview"
 import type { OfferPreviewCopies } from "@/components/offer-card-preview"
 
+// i18n-used: hotelSettings.preview.
 /** The guest facing words of the branding preview, one set per language the hotel can pick. Raw, so the preview fills in the live hotel name. */
 export async function getPreviewCopies(): Promise<PreviewCopies> {
   const entries = await Promise.all(
@@ -11,7 +12,7 @@ export async function getPreviewCopies(): Promise<PreviewCopies> {
         getTranslations({ locale, namespace: "capture" }),
         getTranslations({ locale, namespace: "hotelSettings.preview" }),
       ])
-      const raw = (t: typeof capture, key: string) => String(t.raw(key))
+      const raw = (t: { raw: (key: never) => unknown }, key: string) => String((t.raw as (key: string) => unknown)(key))
       return [
         locale,
         {
@@ -38,7 +39,7 @@ export async function getOfferPreviewCopies(): Promise<OfferPreviewCopies> {
   const entries = await Promise.all(
     HOTEL_LANGUAGES.map(async (locale) => {
       const t = await getTranslations({ locale, namespace: "offer" })
-      const raw = (key: string) => String(t.raw(key))
+      const raw = (key: string) => String((t.raw as (key: string) => unknown)(key))
       return [
         locale,
         {

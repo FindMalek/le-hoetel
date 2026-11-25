@@ -120,7 +120,7 @@ export function HotelSettingsForm({
   }
 
   const text = (key: keyof Values) => ({
-    name: key,
+    name: String(key),
     value: values[key] as string,
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => form.set(key, event.target.value as never),
     onBlur: () => form.blur(key),

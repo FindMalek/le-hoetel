@@ -38,7 +38,12 @@ function Redeemed({ offer }: { offer: Offer }) {
       </span>
       {ratio === null ? null : (
         <span aria-hidden className="h-1.5 overflow-hidden rounded-full bg-muted">
-          <span className="block h-full rounded-full bg-primary" style={{ width: `${ratio}%` }} />
+          <span
+            className="block h-full w-(--ratio) rounded-full bg-primary"
+            // the bar fills to the redeemed share
+            // oxlint-disable-next-line shadcn/no-inline-styles
+            style={{ "--ratio": `${ratio}%` } as React.CSSProperties}
+          />
         </span>
       )}
     </div>

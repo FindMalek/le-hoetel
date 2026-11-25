@@ -11,9 +11,11 @@ import {
 import { ORPCError } from "@orpc/server"
 import { z } from "zod"
 import type { Context } from "../context"
+import { audit } from "../lib/audit"
 import { enforceKey, RATE_LIMITS } from "../lib/rate-limit"
 import { hotelProcedure } from "../procedures"
 import { loadHotel } from "./hotel"
+import { TEST_EMAIL_ACTION } from "./overview"
 
 const input = z.object({ template: z.enum(HOTEL_EMAIL_KEYS), locale: z.enum(HOTEL_LANGUAGES) })
 const rendered = z.object({ subject: z.string(), html: z.string(), text: z.string() })
@@ -65,6 +67,7 @@ export const emailsRouter = {
           to: context.user.email,
           email: { ...email, subject: `[Test] ${email.subject}` },
         })
+        await audit(context, { action: TEST_EMAIL_ACTION, metadata: { hotelId: context.hotel.hotelId } })
         return { sent: result.sent, to: context.user.email }
       } catch (error) {
         console.error("[emails.sendTest]", error instanceof Error ? error.message : error)

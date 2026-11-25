@@ -29,7 +29,6 @@
     "hotelDescription": "Voici où en est {hotel}.",
     "adminDescription": "Tous les hôtels de la plateforme en un coup d'œil.",
     "guests": "Clients",
-    "guestsHint": "ont laissé leurs coordonnées",
     "hotels": "Hôtels",
     "needAttention": "À surveiller",
     "attentionHint": "calmes ou sans propriétaire",
@@ -58,7 +57,64 @@
     "noHotelsTitle": "Pas encore d'hôtel",
     "noHotelsBody": "Créez le premier hôtel et invitez son propriétaire. Il verra ses clients ici.",
     "noAccessTitle": "Vous ne faites pas encore partie d'un hôtel",
-    "noAccessBody": "Demandez à votre responsable de vous inviter. L'invitation arrive par e-mail, ouvrez-la pour rejoindre l'hôtel."
+    "noAccessBody": "Demandez à votre responsable de vous inviter. L'invitation arrive par e-mail, ouvrez-la pour rejoindre l'hôtel.",
+    "seeAll": "Tout voir",
+    "pulse": {
+      "title": "Aujourd'hui et cette semaine",
+      "description": "Les 7 derniers jours, avec aujourd'hui sur chaque carte.",
+      "newGuests": "Nouveaux clients",
+      "consent": "Joignables",
+      "consentHint": "{consented} clients sur {total} ont dit oui",
+      "messages": "Messages envoyés",
+      "offers": "Offres utilisées",
+      "today": "{count} aujourd'hui"
+    },
+    "unhappy": {
+      "title": "Clients mécontents",
+      "description": "Les clients à qui parler avant qu'ils ne laissent un avis.",
+      "emptyTitle": "Rien à signaler",
+      "emptyBody": "Les enquêtes de satisfaction ne sont pas encore en ligne. Dès que vos clients y répondent, les mécontents apparaissent ici en premier."
+    },
+    "actions": {
+      "title": "Actions rapides",
+      "add": "Ajouter un client",
+      "addBody": "À la réception, en quelques secondes",
+      "qr": "Imprimer un QR code",
+      "qrBody": "Pour les chambres, les tables et la réception",
+      "import": "Importer un CSV",
+      "importBody": "Reprenez vos clients depuis un tableur"
+    },
+    "checklist": {
+      "title": "Préparez l'arrivée de vos premiers clients",
+      "description": "Six petites étapes. Chacune se coche toute seule.",
+      "progress": "{done} sur {total}",
+      "done": "Fait",
+      "todo": "À faire",
+      "logo": {
+        "title": "Ajoutez votre logo",
+        "body": "Vos clients le voient en premier sur la page d'inscription."
+      },
+      "colors": {
+        "title": "Choisissez vos couleurs",
+        "body": "Vos pages et vos e-mails prennent vos couleurs."
+      },
+      "googleLink": {
+        "title": "Liez vos avis Google",
+        "body": "Les clients satisfaits sont invités à laisser un avis."
+      },
+      "qr": {
+        "title": "Placez un QR code là où sont vos clients",
+        "body": "Imprimez-le pour les chambres, les tables ou la réception. C'est fait dès que le premier client le scanne."
+      },
+      "guests": {
+        "title": "Ajoutez vos premiers clients",
+        "body": "Ajoutez-en un vous-même ou importez un fichier."
+      },
+      "testEmail": {
+        "title": "Envoyez-vous un e-mail de test",
+        "body": "Voyez exactement ce que reçoivent vos clients."
+      }
+    }
   },
   "auth": {
     "brandTitle": "Connaissez vos clients. Donnez-leur envie de revenir.",
@@ -158,7 +214,9 @@
     "auditLog": "Journal d'audit",
     "settings": "Paramètres",
     "admin": "Plateforme",
-    "holidays": "Fêtes"
+    "holidays": "Fêtes",
+    "adminOverview": "Vue d'ensemble",
+    "campaigns": "Campagnes"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -167,21 +225,18 @@
   },
   "guests": {
     "title": "Clients",
-    "description": "Tous ceux qui ont laissé leurs coordonnées à votre hôtel.",
+    "description": "Toutes les personnes qui ont partagé leurs coordonnées avec votre hôtel.",
     "search": "Rechercher par nom, téléphone ou e-mail",
-    "apply": "Rechercher",
     "reset": "Effacer les filtres",
     "filter": {
-      "consent": "Consentement",
       "source": "Source",
-      "language": "Langue",
-      "any": "Tous"
+      "any": "Toutes les sources"
     },
     "consent": {
       "email": "E-mail",
       "whatsapp": "WhatsApp",
       "profile": "Profil",
-      "none": "Aucun consentement marketing"
+      "none": "Sans consentement"
     },
     "source": {
       "qr_room": "QR chambre",
@@ -201,7 +256,7 @@
     },
     "empty": {
       "title": "Aucun client pour l'instant",
-      "description": "Les clients apparaissent ici dès qu'ils scannent votre QR code ou que vous les ajoutez."
+      "description": "Les clients apparaissent ici dès qu'ils scannent votre QR code, ou dès que vous les ajoutez."
     },
     "noMatch": {
       "title": "Aucun client trouvé",
@@ -217,14 +272,13 @@
     "next": "Suivant",
     "addButton": "Ajouter un client",
     "importButton": "Importer un CSV",
-    "back": "Retour aux clients",
     "add": {
       "title": "Ajouter un client",
-      "description": "Le nom et le téléphone suffisent. Cela prend quelques secondes.",
+      "description": "Un téléphone et un nom suffisent. Cela prend quelques secondes.",
       "name": "Nom",
       "phone": "Numéro de téléphone",
       "dialCode": "Indicatif du pays",
-      "language": "Langue",
+      "language": "Langue du client",
       "email": "E-mail (facultatif)",
       "consentTitle": "Consentement",
       "consentHint": "Cochez uniquement ce que le client vous a dit ou confirmé.",
@@ -233,14 +287,18 @@
       "noWhatsapp": "Ce numéro ne peut pas recevoir WhatsApp.",
       "needEmail": "Ajoutez un e-mail pour demander le consentement e-mail.",
       "submit": "Ajouter le client",
-      "saving": "Ajout…",
       "added": "Client ajouté",
-      "merged": "Ce client existait déjà : informations mises à jour"
+      "merged": "Ce client existait déjà : informations mises à jour",
+      "nameRequired": "Saisissez le nom du client.",
+      "phoneInvalid": "Saisissez un numéro valide, par exemple 20 123 456.",
+      "emailInvalid": "Saisissez un e-mail valide, par exemple nom@exemple.com.",
+      "done": "Terminé",
+      "view": "Voir le client",
+      "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez."
     },
     "import": {
       "title": "Importer des clients",
       "description": "Importez un fichier CSV de votre logiciel de réservation ou d'un tableur.",
-      "file": "Fichier CSV",
       "fileHint": "Jusqu'à {rows} lignes et {mb} Mo. Les colonnes peuvent être séparées par des virgules ou des points-virgules.",
       "tooBig": "Ce fichier est trop gros.",
       "tooMany": "Ce fichier a plus de {rows} lignes. Découpez-le et importez-le en plusieurs fois.",
@@ -256,43 +314,133 @@
         "language": "Langue",
         "consent": "Consentement (true ou false)"
       },
-      "defaultLanguage": "Langue quand la cellule est vide",
+      "defaultLanguage": "Langue quand le fichier ne l'indique pas",
       "confirm": "Je confirme que notre hôtel détient le consentement de chaque client marqué true",
       "confirmHint": "Le consentement n'est enregistré que si la colonne dit true, yes, oui ou 1, et seulement si vous confirmez. Les autres sont ajoutés sans consentement marketing.",
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
-      "importing": "Import en cours…",
       "result": "{created} ajoutés, {merged} mis à jour, {failed} en échec",
       "download": "Télécharger le rapport d'erreurs",
       "errorColumn": "erreur",
       "lineColumn": "ligne",
-      "another": "Importer un autre fichier"
+      "another": "Importer un autre fichier",
+      "steps": {
+        "label": "Étapes",
+        "upload": "Fichier",
+        "map": "Colonnes",
+        "review": "Vérification"
+      },
+      "choose": "Choisissez un fichier CSV ou déposez-le ici",
+      "sample": "Télécharger un fichier exemple",
+      "failed": "L'import n'a pas abouti.",
+      "tryAnother": "Essayez un autre fichier.",
+      "tryAgain": "Rien n'a été perdu. Réessayez.",
+      "mapHint": "Nous avons associé ce que nous avons pu. Vérifiez chaque colonne, le nom et le téléphone sont obligatoires.",
+      "detected": "Détectée",
+      "required": "Obligatoire",
+      "optional": "Facultatif",
+      "continue": "Continuer",
+      "back": "Retour",
+      "ready": "prêts à importer",
+      "skipped": "seront ignorés",
+      "problemsTitle": "Lignes avec un problème",
+      "line": "Ligne {line}",
+      "more": "Et {count} de plus. Téléchargez le rapport pour tout voir.",
+      "problem": {
+        "name": "Le nom est manquant",
+        "phone": "Le numéro de téléphone n'est pas valide",
+        "email": "L'e-mail n'est pas valide",
+        "birthday": "La date de naissance n'est pas une vraie date, utilisez AAAA-MM-JJ",
+        "language": "La langue doit être en, fr ou ar",
+        "row": "Cette ligne n'a pas pu être enregistrée"
+      },
+      "consentTitle": "Consentement",
+      "consentFound": "{count, plural, one {# client est marqué comme consentant dans votre fichier.} other {# clients sont marqués comme consentants dans votre fichier.}}",
+      "noConsentColumn": "Votre fichier n'a pas de colonne de consentement : tout le monde est ajouté sans consentement marketing. Vous pourrez le demander plus tard.",
+      "unconfirmed": "Sans votre confirmation, tout le monde est ajouté sans consentement marketing.",
+      "doneTitle": "Import terminé",
+      "viewGuests": "Voir les clients"
+    },
+    "pagination": "Pages",
+    "density": {
+      "label": "Hauteur des lignes",
+      "comfortable": "Lignes aérées",
+      "compact": "Lignes compactes"
+    },
+    "detail": {
+      "subtitle": "Client, parle {language}",
+      "contact": "Contact",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "language": "Langue",
+      "source": "Source",
+      "added": "Ajouté le",
+      "birthday": "Anniversaire",
+      "from": "Origine",
+      "stay": "Séjour",
+      "next": "Prochaine destination",
+      "none": "Non renseigné",
+      "consents": "Consentement",
+      "consentsHint": "Ce que ce client a accepté. Chaque changement est conservé dans le journal ci-dessous.",
+      "granted": "Accepté",
+      "notGranted": "Non accepté",
+      "since": "Depuis le",
+      "withdrawnOn": "Retiré le",
+      "withdraw": "Retirer",
+      "withdrawTitle": "Retirer le consentement {channel} ?",
+      "withdrawBody": "Le client ne recevra plus ces messages. Le changement est ajouté au journal des consentements.",
+      "withdrawConfirm": "Retirer le consentement",
+      "withdrawn": "Consentement retiré.",
+      "eventGranted": "Consentement {channel} donné",
+      "eventWithdrawn": "Consentement {channel} retiré",
+      "wording": "formulation {version}",
+      "sources": {
+        "unsubscribe_link": "Lien de désabonnement",
+        "stop_reply": "Réponse STOP",
+        "guest_request": "Demande du client"
+      },
+      "messages": "Messages envoyés",
+      "noMessagesTitle": "Aucun message pour l'instant",
+      "noMessagesBody": "Les messages envoyés à ce client et leur résultat sont listés ici. Jamais le texte.",
+      "export": "Exporter",
+      "exportCsv": "En CSV",
+      "exportJson": "En JSON",
+      "exported": "Export prêt.",
+      "delete": "Supprimer",
+      "deleteTitle": "Supprimer ce client ?",
+      "deleteBody": "Cela supprime définitivement {name} et son historique de consentement. C'est irréversible.",
+      "deleteConfirm": "Supprimer définitivement",
+      "cancel": "Annuler",
+      "deleted": "Client supprimé.",
+      "error": "Une erreur est survenue. Réessayez."
     }
   },
   "guestData": {
     "title": "Données des clients",
     "description": "Exportez ou supprimez ce que vous conservez sur vos clients. Réservé aux propriétaires et aux managers.",
     "forbidden": "Seuls les propriétaires et les managers peuvent exporter ou supprimer les données des clients.",
-    "hotelTitle": "Tous les clients",
-    "hotelDescription": "Une copie de tous les clients de l'hôtel avec leur historique de consentement, ou une suppression complète.",
     "exportJson": "Exporter en JSON",
     "exportCsv": "Exporter en CSV",
-    "deleteAll": "Supprimer tous les clients",
+    "deleteAll": "Supprimer tous les clients…",
     "deleteAllTitle": "Supprimer tous les clients ?",
-    "deleteAllBody": "Cela supprime définitivement {count} clients de {hotel} avec leur historique de consentement. Impossible d'annuler. Exportez d'abord si vous voulez une copie.",
+    "deleteAllBody": "Cela supprime définitivement {count, plural, one {# client} other {# clients}} de {hotel} avec leur historique de consentement. C'est irréversible.",
     "typeName": "Saisissez {hotel} pour confirmer",
     "cancel": "Annuler",
     "confirm": "Supprimer définitivement",
     "deleted": "Supprimé.",
     "exported": "Export prêt.",
     "guestTitle": "Un client",
-    "guestDescription": "Trouvez un client par nom, téléphone ou e-mail.",
+    "guestDescription": "Retrouvez un client pour exporter ou supprimer ce que vous détenez sur lui, par exemple après une demande.",
     "search": "Rechercher un client",
     "noResults": "Aucun client trouvé.",
-    "deleteGuest": "Supprimer",
-    "deleteGuestTitle": "Supprimer ce client ?",
-    "deleteGuestBody": "Cela supprime définitivement {name} et son historique de consentement. Impossible d'annuler.",
-    "error": "Une erreur est survenue. Réessayez."
+    "error": "Une erreur est survenue. Réessayez.",
+    "forbiddenTitle": "Non disponible pour votre rôle",
+    "exportTitle": "Export",
+    "exportDescription": "Une copie de chaque client avec son journal de consentement. Gardez-la en lieu sûr, elle contient des données personnelles.",
+    "count": "{count, plural, one {# client} other {# clients}}",
+    "dangerTitle": "Tout supprimer",
+    "dangerDescription": "Quand l'hôtel arrête d'utiliser Le Hoetel ou qu'une liste doit être effacée. C'est irréversible.",
+    "deleteAllText": "{count, plural, one {Cela supprime # client} other {Cela supprime # clients}} et leur historique de consentement. Exportez d'abord si vous voulez une copie."
   },
   "unsubscribe": {
     "title": "Vos messages de {hotel}",
@@ -398,31 +546,54 @@
   },
   "adminHotels": {
     "title": "Hôtels",
-    "description": "Tous les hôtels de la plateforme, avec leurs clients et leur santé.",
-    "createTitle": "Nouvel hôtel",
-    "name": "Nom de l’hôtel",
-    "slug": "Identifiant",
-    "ownerEmail": "E-mail du propriétaire",
-    "ownerHint": "Le propriétaire reçoit une invitation par e-mail.",
-    "primaryColor": "Couleur principale",
-    "accentColor": "Couleur d’accent",
-    "language": "Langue par défaut",
-    "submit": "Créer l’hôtel et inviter le propriétaire",
-    "created": "Hôtel créé, invitation envoyée.",
-    "empty": "Aucun hôtel pour l’instant.",
+    "description": "Tous les hôtels de la plateforme, leurs chiffres et ce qui demande votre attention.",
+    "empty": {
+      "title": "Aucun hôtel pour l'instant",
+      "description": "Créez le premier hôtel, invitez son propriétaire et imprimez ses QR codes. Comptez deux minutes."
+    },
     "columns": {
       "hotel": "Hôtel",
       "guests": "Clients",
-      "owners": "Propriétaires",
       "health": "Santé",
-      "created": "Créé le"
+      "consent": "Taux de consentement",
+      "lastCapture": "Dernière inscription",
+      "pilotEnd": "Fin du pilote",
+      "plan": "Offre"
     },
     "health": {
       "healthy": "En forme",
       "quiet": "Aucun nouveau client depuis 2 semaines",
-      "no-guests": "Pas encore de clients",
+      "no-guests": "Aucun client pour l'instant",
       "no-owner": "Propriétaire pas encore inscrit",
       "suspended": "Suspendu"
+    },
+    "new": "Nouvel hôtel",
+    "loading": "Chargement des hôtels",
+    "search": "Rechercher par nom ou identifiant",
+    "reset": "Effacer les filtres",
+    "count": "{count, plural, one {# hôtel} other {# hôtels}}",
+    "filters": {
+      "status": "Statut",
+      "health": "Santé",
+      "any": "Tous"
+    },
+    "status": {
+      "pilot": "Pilote",
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "plan": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "noCapture": "Aucune inscription",
+    "noPilotEnd": "Non définie",
+    "pilotEnded": "Terminé",
+    "pilotLeft": "{days, plural, one {# jour restant} other {# jours restants}}",
+    "noMatch": {
+      "title": "Aucun hôtel ne correspond",
+      "description": "Essayez un autre nom ou effacez les filtres."
     }
   },
   "hotelSettings": {
@@ -433,17 +604,81 @@
     "upload": "Téléverser le logo",
     "remove": "Supprimer le logo",
     "saved": "Logo enregistré.",
-    "removed": "Logo supprimé.",
     "invalidFile": "Utilisez une image PNG, JPEG ou WebP de 1 Mo maximum.",
     "noHotel": "Choisissez d’abord un hôtel.",
-    "branding": "Couleurs",
     "primaryColor": "Couleur principale",
     "accentColor": "Couleur d’accent",
     "save": "Enregistrer",
-    "brandingSaved": "Couleurs enregistrées.",
     "sample": "Aa texte",
     "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
-    "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire."
+    "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire.",
+    "noHotelHint": "Créez ou choisissez un hôtel pour modifier ses réglages.",
+    "logoSaved": "Logo enregistré.",
+    "logoRemoved": "Logo supprimé.",
+    "replace": "Remplacer le logo",
+    "pickColor": "Choisir {label}",
+    "errors": {
+      "required": "Obligatoire.",
+      "color": "Utilisez une couleur hexadécimale comme #0a7c66.",
+      "email": "Saisissez un e-mail valide.",
+      "https": "Utilisez un lien complet commençant par https://.",
+      "phone": "Utilisez un numéro international comme +216 20 123 456."
+    },
+    "readOnly": "Seuls les propriétaires et responsables peuvent modifier ces réglages.",
+    "sections": {
+      "identity": {
+        "title": "Identité",
+        "description": "Le nom que les clients voient dans les messages et les pages."
+      },
+      "brand": {
+        "title": "Couleurs de la marque",
+        "description": "Deux couleurs pour les pages et e-mails des clients."
+      },
+      "language": {
+        "title": "Langue et heure",
+        "description": "Ce que lisent les clients et le fuseau des dates."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Où les clients peuvent vous joindre et vous noter."
+      },
+      "alerts": {
+        "title": "Alertes pour le responsable",
+        "description": "Où nous vous prévenons des clients mécontents."
+      }
+    },
+    "displayName": "Nom de l'hôtel",
+    "displayNameHint": "Affiché aux clients.",
+    "primaryColorHint": "Boutons et en-têtes.",
+    "accentColorHint": "Petits accents.",
+    "defaultLanguage": "Langue des clients",
+    "defaultLanguageHint": "Utilisée quand la langue du client est inconnue.",
+    "timezone": "Fuseau horaire",
+    "timezoneHint": "Pour les anniversaires et les horaires.",
+    "replyTo": "E-mail de réponse",
+    "replyToHint": "Les clients qui répondent à un e-mail écrivent ici.",
+    "address": "Adresse",
+    "addressHint": "Affichée en bas des e-mails.",
+    "reviewUrl": "Lien d'avis Google",
+    "reviewUrlHint": "Les clients satisfaits sont envoyés ici.",
+    "whatsapp": "WhatsApp du responsable",
+    "whatsappHint": "Format international, comme +216 20 123 456.",
+    "telegram": "Telegram",
+    "telegramHint": "Facultatif. Identifiant de discussion pour les alertes.",
+    "optional": "Facultatif",
+    "discard": "Annuler les modifications",
+    "preview": {
+      "title": "Aperçu",
+      "capture": "Page d'inscription",
+      "email": "E-mail",
+      "hint": "Affiché dans la langue choisie pour les clients. Il se met à jour pendant la saisie.",
+      "sample": "Aa texte",
+      "emailTitle": "Bienvenue à {hotel}",
+      "emailBody": "Bonjour {name}, merci pour votre séjour. Voici une petite attention pour la prochaine fois.",
+      "emailCta": "Voir mon offre",
+      "emailFooter": "Vous recevez cet e-mail car vous l'avez donné à {hotel}.",
+      "unsubscribe": "Se désabonner"
+    }
   },
   "qrCodes": {
     "title": "Codes QR",
@@ -469,7 +704,18 @@
     "empty": "Aucun client ne s’est encore inscrit avec un code QR.",
     "colWhere": "Où",
     "colSpot": "Emplacement",
-    "colGuests": "Clients"
+    "colGuests": "Clients",
+    "copied": "Lien copié.",
+    "noSpot": "Tout l'hôtel",
+    "optional": "Facultatif",
+    "resultsTitle": "Vos QR codes",
+    "resultsHint": "Téléchargez chacun, ou copiez son lien.",
+    "generating": "Génération...",
+    "failed": "Impossible de créer les QR codes",
+    "retry": "Réessayer",
+    "failedHint": "Vérifiez votre connexion et réessayez.",
+    "copyLink": "Copier le lien",
+    "emptyTitle": "Pas encore de QR codes"
   },
   "messages": {
     "title": "Messages",
@@ -547,9 +793,6 @@
     "fieldCodeHint": "Lettres, chiffres et tirets. Unique dans votre hôtel.",
     "fieldTrigger": "Offerte automatiquement à",
     "triggerNone": "Personne (remise par le personnel)",
-    "triggerWelcome": "Nouveaux clients (bienvenue)",
-    "triggerBirthday": "Clients le jour de leur anniversaire",
-    "triggerManual": "Clients choisis (manuel)",
     "fieldFrom": "Valable à partir du",
     "fieldUntil": "Valable jusqu’au",
     "fieldUntilHint": "Vide : pas de date de fin.",
@@ -569,11 +812,56 @@
     },
     "preview": {
       "title": "Ce que voit le client",
-      "code": "Votre code",
-      "show": "Présentez ce QR à la réception.",
-      "validFrom": "Valable dès le {from}",
-      "validBetween": "Valable du {from} au {until}"
-    }
+      "titlePlaceholder": "Le titre de votre offre",
+      "hint": "Affiché dans la langue des clients de l'hôtel, avec un code d'exemple."
+    },
+    "columns": {
+      "offer": "Offre",
+      "status": "Statut",
+      "trigger": "Attribuée à",
+      "redeemed": "Utilisations",
+      "valid": "Validité",
+      "actions": "Actions"
+    },
+    "trigger": {
+      "welcome": "Nouveaux clients",
+      "birthday": "Anniversaire",
+      "manual": "Clients choisis"
+    },
+    "triggerNoneShort": "Équipe",
+    "stats": {
+      "active": "Offres actives",
+      "activeHint": "{count} au total",
+      "week": "Utilisées cette semaine",
+      "weekHint": "{today} aujourd'hui",
+      "total": "Utilisées au total",
+      "totalHint": "Depuis la première offre"
+    },
+    "errors": {
+      "title": "Saisissez un titre.",
+      "code": "Utilisez des lettres, chiffres et tirets.",
+      "from": "Choisissez une date de début.",
+      "until": "La fin doit être après le début.",
+      "max": "Utilisez un nombre entier supérieur à 0."
+    },
+    "sections": {
+      "offer": {
+        "title": "L'offre",
+        "description": "Ce que le client reçoit."
+      },
+      "who": {
+        "title": "Qui la reçoit",
+        "description": "Distribuez-la vous-même ou laissez-la partir toute seule."
+      },
+      "when": {
+        "title": "Quand elle est valable",
+        "description": "Dates et nombre d'utilisations possibles."
+      }
+    },
+    "fieldTextHint": "Jusqu'à {max} caractères.",
+    "optional": "Facultatif",
+    "fieldActiveHint": "Mettez-la en pause pour empêcher son utilisation.",
+    "create": "Créer l'offre"
   },
   "offer": {
     "invalidTitle": "Lien non valide",
@@ -604,7 +892,6 @@
     "codePlaceholder": "AB3D-EF7H",
     "check": "Vérifier",
     "redeem": "Marquer comme utilisée",
-    "redeeming": "Enregistrement...",
     "next": "Code suivant",
     "guest": "Client",
     "validUntil": "Valable jusqu’au",
@@ -626,7 +913,9 @@
       "exhausted": "Plus aucune utilisation possible",
       "wrongHotel": "Ce code appartient à un autre hôtel",
       "unknown": "Code introuvable"
-    }
+    },
+    "scanning": "Recherche d'un QR code...",
+    "scanHint": "Touchez pour lancer la caméra."
   },
   "notFound": {
     "title": "Page introuvable",
@@ -833,5 +1122,526 @@
       "status": "État du service",
       "rights": "Fait en Tunisie"
     }
+  },
+  "adminHotel": {
+    "breadcrumb": "Hôtels",
+    "statuses": {
+      "pilot": "Pilote",
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "plans": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "languages": {
+      "en": "Anglais",
+      "fr": "Français",
+      "ar": "Arabe"
+    },
+    "capturePage": "Page d'inscription",
+    "openAs": "Ouvrir comme cet hôtel",
+    "viewingAs": "Vous agissez en tant que {hotel}. Tout ce que vous modifiez est réel.",
+    "leave": "Retour à l'admin",
+    "overview": "Vue d'ensemble",
+    "stats": {
+      "guests": "Clients",
+      "consent": "Taux de consentement",
+      "consentHint": "{count} ont accepté au moins un canal",
+      "messages": "Messages",
+      "lastCapture": "Dernière inscription"
+    },
+    "createdOn": "Créé le",
+    "branding": "Identité",
+    "brandingHint": "Ce que voient les clients après avoir scanné un QR code : le nom, les couleurs et la langue de l'hôtel.",
+    "displayName": "Nom affiché",
+    "displayNameHint": "Affiché aux clients et dans les e-mails.",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d'accent",
+    "replyTo": "E-mail de réponse",
+    "replyToHint": "Les clients qui répondent à un e-mail écrivent ici.",
+    "language": "Langue par défaut",
+    "timezone": "Fuseau horaire",
+    "save": "Enregistrer",
+    "brandingSaved": "Identité enregistrée.",
+    "previewTitle": "Aperçu de la page d'inscription",
+    "previewName": "Votre hôtel",
+    "contrastLight": "Cette couleur est difficile à lire sur fond clair. Choisissez-en une plus foncée.",
+    "contrastDark": "Cette couleur est difficile à lire sur fond sombre. Choisissez-en une plus claire.",
+    "errors": {
+      "displayName": "Saisissez le nom que verront les clients.",
+      "color": "Utilisez une couleur hexadécimale comme #0a7c66.",
+      "email": "Saisissez une adresse e-mail valide."
+    },
+    "logoHint": "Le logo se téléverse depuis les réglages de l'hôtel.",
+    "logoOpen": "Ouvrir l'identité comme cet hôtel",
+    "people": "Propriétaires et membres",
+    "peopleHint": "Qui peut se connecter à cet hôtel, et les invitations en attente.",
+    "noPeople": "Personne pour l'instant. Invitez le propriétaire depuis la page équipe de l'hôtel une fois ouvert.",
+    "invited": "Invité",
+    "inviteExpires": "Expire le",
+    "pilotPlan": "Pilote et offre",
+    "pilotPlanHint": "Où en est l'hôtel dans le pilote et ce qu'il paiera ensuite.",
+    "plan": "Offre",
+    "status": "Statut",
+    "pilotEnd": "Fin du pilote",
+    "pilotEndHint": "Laissez vide s'il n'y a pas de date de fin.",
+    "planSaved": "Offre enregistrée.",
+    "capture": "Page d'inscription et QR codes",
+    "captureHint": "La page publique où arrivent les clients, et les codes imprimables pour les chambres et les tables.",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié.",
+    "qrCodes": "QR codes",
+    "danger": "Zone dangereuse",
+    "dangerHint": "Suspendre coupe l'accès de l'hôtel. Supprimer est définitif.",
+    "suspend": "Suspendre l'hôtel",
+    "suspendHint": "L'équipe ne peut plus utiliser le tableau de bord et aucun message n'est envoyé. Les données sont conservées.",
+    "suspendedDone": "Hôtel suspendu.",
+    "reactivate": "Réactiver l'hôtel",
+    "reactivateHint": "Rend son accès à l'équipe.",
+    "reactivated": "Hôtel réactivé.",
+    "delete": "Supprimer l'hôtel",
+    "deleteHint": "Supprime définitivement l'hôtel, ses clients, ses offres et son équipe.",
+    "deleted": "Hôtel supprimé.",
+    "deleteTitle": "Supprimer {hotel} ?",
+    "deleteConsequence": "Tous les clients, consentements, offres et messages de cet hôtel sont effacés. Cette action est irréversible.",
+    "deleteType": "Saisissez {slug} pour confirmer",
+    "cancel": "Annuler",
+    "deleteConfirm": "Supprimer définitivement",
+    "mailTo": "À",
+    "mailToEmpty": "proprietaire@hotel.com",
+    "mailSubject": "Objet",
+    "preview": {
+      "en": {
+        "welcome": "Welcome to {hotel}",
+        "intro": "Leave your details and we will take care of you during your stay.",
+        "name": "Your name",
+        "phone": "Phone number",
+        "consent": "Send me offers by email or WhatsApp",
+        "submit": "Sign up"
+      },
+      "fr": {
+        "welcome": "Bienvenue à {hotel}",
+        "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
+        "name": "Votre nom",
+        "phone": "Numéro de téléphone",
+        "consent": "Je souhaite recevoir des offres par e-mail ou WhatsApp",
+        "submit": "S'inscrire"
+      },
+      "ar": {
+        "welcome": "أهلًا بكم في {hotel}",
+        "intro": "اتركوا بياناتكم وسنعتني بكم طوال إقامتكم.",
+        "name": "اسمكم",
+        "phone": "رقم الهاتف",
+        "consent": "أرغب في تلقي العروض عبر البريد الإلكتروني أو واتساب",
+        "submit": "تسجيل"
+      }
+    },
+    "invite": {
+      "en": {
+        "subject": "You are invited to run {hotel} on le-hoetel",
+        "title": "Welcome to {hotel}",
+        "body": "Your hotel is ready. Accept the invitation to set a password and see your guests, offers and QR codes.",
+        "button": "Accept the invitation",
+        "footer": "If you did not expect this email, you can ignore it."
+      },
+      "fr": {
+        "subject": "Vous êtes invité à gérer {hotel} sur le-hoetel",
+        "title": "Bienvenue à {hotel}",
+        "body": "Votre hôtel est prêt. Acceptez l'invitation pour choisir un mot de passe et retrouver vos clients, vos offres et vos QR codes.",
+        "button": "Accepter l'invitation",
+        "footer": "Si vous n'attendiez pas cet e-mail, vous pouvez l'ignorer."
+      },
+      "ar": {
+        "subject": "دعوة لإدارة {hotel} على le-hoetel",
+        "title": "أهلًا بكم في {hotel}",
+        "body": "فندقكم جاهز. اقبلوا الدعوة لاختيار كلمة مرور والاطّلاع على نزلائكم وعروضكم ورموز QR.",
+        "button": "قبول الدعوة",
+        "footer": "إذا لم تكونوا تنتظرون هذه الرسالة فيمكنكم تجاهلها."
+      }
+    }
+  },
+  "adminWizard": {
+    "title": "Nouvel hôtel",
+    "description": "Quatre petites étapes. Le propriétaire reçoit une invitation par e-mail à la fin.",
+    "steps": "Étapes",
+    "stepOf": "Étape {current} sur {total}",
+    "step": {
+      "basics": {
+        "title": "L'essentiel",
+        "description": "Le nom et l'adresse de la page client de l'hôtel."
+      },
+      "branding": {
+        "title": "Identité",
+        "description": "Les couleurs et le nom que voient les clients. L'aperçu se met à jour."
+      },
+      "languages": {
+        "title": "Langue et heure",
+        "description": "Utilisés pour la page d'inscription, les messages et les dates."
+      },
+      "owner": {
+        "title": "Propriétaire",
+        "description": "Qui dirige cet hôtel. Il reçoit une invitation pour choisir un mot de passe."
+      }
+    },
+    "name": "Nom de l'hôtel",
+    "nameHint": "Le nom officiel, comme sur la porte.",
+    "slug": "Adresse de la page",
+    "slugHint": "Lettres minuscules, chiffres et tirets. Elle fait partie des liens des QR codes.",
+    "slugChecking": "Vérification de la disponibilité...",
+    "slugFree": "{slug} est disponible.",
+    "displayName": "Nom affiché aux clients",
+    "displayNameHint": "Laissez vide pour utiliser le nom de l'hôtel.",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d'accent",
+    "logoLater": "Le logo s'ajoute une fois l'hôtel créé, depuis sa section identité.",
+    "language": "Langue par défaut",
+    "languageHint": "La page d'inscription s'ouvre dans cette langue. Les clients peuvent en changer.",
+    "timezone": "Fuseau horaire",
+    "timezoneHint": "Les messages d'anniversaire et les rapports le suivent.",
+    "ownerEmail": "E-mail du propriétaire",
+    "ownerHint": "L'invitation est envoyée à cette adresse.",
+    "afterCreate": "Une fois l'hôtel créé, le propriétaire reçoit l'e-mail ci-contre. Vous pourrez inviter d'autres personnes plus tard.",
+    "create": "Créer l'hôtel et inviter le propriétaire",
+    "next": "Continuer",
+    "back": "Retour",
+    "preview": "Aperçu",
+    "previewCapture": "Ce que voient les clients",
+    "previewInvite": "Ce que reçoit le propriétaire",
+    "created": "Hôtel créé, invitation envoyée.",
+    "errors": {
+      "name": "Saisissez le nom de l'hôtel.",
+      "slug": "Saisissez une adresse pour la page.",
+      "slugFormat": "Utilisez des minuscules, des chiffres et des tirets simples.",
+      "slugTaken": "Cette adresse est déjà utilisée. Essayez-en une autre.",
+      "color": "Utilisez une couleur hexadécimale comme #0a7c66.",
+      "email": "Saisissez une adresse e-mail valide."
+    }
+  },
+  "adminOverview": {
+    "title": "Vue d'ensemble",
+    "description": "Le pilote en un coup d'œil : hôtels, clients inscrits, consentement et messages.",
+    "empty": {
+      "title": "Aucun hôtel sur la plateforme",
+      "description": "Les chiffres apparaissent dès que le premier hôtel est créé et que ses clients commencent à s'inscrire.",
+      "action": "Créer le premier hôtel"
+    },
+    "stats": {
+      "hotels": "Hôtels",
+      "hotelsHint": "{pilot} en pilote, {active} actifs",
+      "guests": "Clients inscrits",
+      "guestsHint": "{count} ces 7 derniers jours",
+      "consent": "Taux de consentement",
+      "consentHint": "{count} clients ont accepté au moins un canal",
+      "messages": "Messages",
+      "messagesHint": "{delivered} délivrés, {failed} échoués"
+    },
+    "funnel": {
+      "title": "Entonnoir du pilote",
+      "description": "Jusqu'où vont les hôtels, de la création au premier client.",
+      "created": "Hôtels créés",
+      "owner": "Propriétaire inscrit",
+      "guests": "Premier client inscrit"
+    },
+    "attention": {
+      "title": "À surveiller",
+      "all": "Tous les hôtels",
+      "pilots": "Pilotes qui se terminent sous 14 jours",
+      "suspended": "Hôtels suspendus"
+    }
+  },
+  "adminUsers": {
+    "title": "Utilisateurs",
+    "description": "{count, plural, one {# compte} other {# comptes}} sur la plateforme.",
+    "search": "Rechercher par nom ou e-mail",
+    "reset": "Effacer la recherche",
+    "roleAdmin": "Admin",
+    "roleUser": "Membre",
+    "noHotel": "Aucun hôtel",
+    "columns": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "hotels": "Hôtels",
+      "joined": "Inscrit le"
+    },
+    "noMatch": {
+      "title": "Aucun utilisateur ne correspond",
+      "description": "Essayez un autre nom ou e-mail."
+    }
+  },
+  "adminAudit": {
+    "title": "Journal d'audit",
+    "description": "Qui a fait quoi, du plus récent au plus ancien. Réservé aux admins.",
+    "system": "Système",
+    "newer": "Plus récents",
+    "older": "Plus anciens",
+    "columns": {
+      "action": "Action",
+      "who": "Qui",
+      "hotel": "Hôtel",
+      "ip": "IP",
+      "when": "Quand"
+    },
+    "filters": {
+      "action": "Action",
+      "actor": "Personne",
+      "hotel": "Hôtel",
+      "from": "Du",
+      "to": "Au",
+      "any": "Tous",
+      "apply": "Appliquer",
+      "reset": "Effacer"
+    },
+    "empty": {
+      "title": "Rien d'enregistré pour l'instant",
+      "description": "Les actions sensibles comme les exports, les suppressions et les changements d'offre apparaissent ici."
+    },
+    "noMatch": {
+      "title": "Aucune entrée ne correspond",
+      "description": "Élargissez les dates ou effacez un filtre."
+    },
+    "actions": {
+      "admin": {
+        "impersonate": "Connexion en tant qu'un utilisateur"
+      },
+      "guest": {
+        "consent": "Consentement d'un client modifié",
+        "delete-all": "Tous les clients d'un hôtel supprimés",
+        "delete": "Client supprimé",
+        "export-all": "Export de tous les clients",
+        "export": "Export d'un client",
+        "import": "Import de clients"
+      },
+      "hotel": {
+        "admin-update": "Offre, statut ou pilote modifié",
+        "create": "Hôtel créé",
+        "delete": "Hôtel supprimé",
+        "logo-remove": "Logo supprimé",
+        "logo-set": "Logo modifié",
+        "update": "Identité de l'hôtel modifiée"
+      },
+      "offer": {
+        "create": "Offre créée",
+        "delete": "Offre supprimée",
+        "redeem": "Offre utilisée",
+        "update": "Offre modifiée"
+      },
+      "privacy": {
+        "delete-account": "Compte supprimé",
+        "export": "Données du compte exportées"
+      },
+      "profile": {
+        "update": "Profil modifié"
+      }
+    }
+  },
+  "campaigns": {
+    "title": "Campagnes",
+    "description": "Envoyez un message aux clients qui ont accepté de vous lire.",
+    "new": "Nouvelle campagne",
+    "empty": "Aucune campagne pour l'instant",
+    "emptyHint": "Écrivez un message, choisissez les destinataires, puis envoyez-le ou programmez-le.",
+    "resultsLine": "{sent} sur {total} envoyés",
+    "columns": {
+      "name": "Nom",
+      "channel": "Canal",
+      "status": "Statut",
+      "results": "Résultats",
+      "when": "Quand"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "scheduled": "Programmée",
+      "sending": "En cours",
+      "sent": "Envoyée",
+      "cancelled": "Annulée"
+    },
+    "channel": {
+      "both": "E-mail et WhatsApp",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "results": {
+      "targeted": "Contactés",
+      "sent": "Envoyés",
+      "delivered": "Reçus",
+      "failed": "Échecs",
+      "skipped": "Ignorés"
+    },
+    "detail": {
+      "title": "Campagne",
+      "description": "Vérifiez le message, envoyez-vous un test, puis envoyez ou programmez.",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler la campagne",
+      "cancelTitle": "Annuler cette campagne ?",
+      "cancelBody": "Les messages pas encore envoyés ne partiront pas.",
+      "cancelled": "Campagne annulée",
+      "keep": "La garder",
+      "messageTitle": "Message",
+      "quietNote": "Les messages partent seulement entre 9h et 20h, heure de l'hôtel.",
+      "schedule": "Programmer",
+      "scheduleAt": "Envoyer le",
+      "scheduled": "Campagne programmée",
+      "sendNow": "Envoyer maintenant",
+      "startsAt": "Début : {date}",
+      "testSend": "M'envoyer un test",
+      "testSent": "Test envoyé à {to}"
+    },
+    "form": {
+      "newTitle": "Nouvelle campagne",
+      "editTitle": "Modifier la campagne",
+      "hint": "Seuls les clients ayant donné leur accord pour le canal le reçoivent.",
+      "basics": "Général",
+      "basicsHint": "Le nom n'est visible que par vous.",
+      "name": "Nom de la campagne",
+      "channel": "Canal",
+      "audience": "Destinataires",
+      "audienceHint": "Laissez tout vide pour joindre tous les clients.",
+      "languages": "Langues",
+      "countries": "Pays",
+      "countriesHint": "Séparés par des virgules",
+      "sources": "Comment ils ont rejoint",
+      "lastVisit": "Dernier séjour",
+      "anyTime": "À tout moment",
+      "lastDays": "Derniers {days} jours",
+      "reachLoading": "Comptage des clients…",
+      "reach": "{guests} clients, {email} par e-mail, {whatsapp} sur WhatsApp",
+      "consentNote": "Les clients désinscrits ou sans accord sont toujours exclus.",
+      "message": "Message",
+      "messageHint": "Écrivez-le dans une ou plusieurs langues. Chaque client reçoit sa langue.",
+      "subject": "Objet",
+      "body": "Texte du message",
+      "bodyHint": "Restez court et chaleureux.",
+      "offer": "Offre",
+      "offerHint": "Joignez une offre que le client peut utiliser.",
+      "noOffer": "Aucune offre",
+      "needText": "Écrivez le message dans au moins une langue",
+      "saveDraft": "Enregistrer le brouillon",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "description": "Votre profil, mot de passe et données.",
+    "sections": {
+      "profile": {
+        "title": "Profil",
+        "description": "Votre nom et votre photo, tels que votre équipe les voit."
+      },
+      "preferences": {
+        "title": "Préférences",
+        "description": "Langue et thème pour votre propre écran."
+      },
+      "password": {
+        "title": "Mot de passe",
+        "description": "Choisissez un mot de passe que vous n'utilisez nulle part ailleurs."
+      },
+      "sessions": {
+        "title": "Appareils",
+        "description": "Où vous êtes connecté en ce moment."
+      },
+      "data": {
+        "title": "Vos données",
+        "description": "Téléchargez vos données ou supprimez votre compte."
+      }
+    },
+    "errors": {
+      "currentRequired": "Saisissez votre mot de passe actuel.",
+      "currentWrong": "Le mot de passe actuel est incorrect.",
+      "nameRequired": "Saisissez votre nom.",
+      "generic": "Une erreur est survenue. Réessayez."
+    },
+    "passwordChanged": "Mot de passe modifié.",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "newPasswordHint": "Au moins 10 caractères.",
+    "signOutOthers": "Me déconnecter de mes autres appareils",
+    "changePassword": "Changer le mot de passe",
+    "exportHint": "Recevez un fichier avec tout ce que nous gardons sur vous.",
+    "export": "Télécharger mes données",
+    "deleteTitle": "Supprimer mon compte",
+    "deleteHint": "Cela supprime votre compte et votre accès à tous les hôtels. C'est irréversible.",
+    "deleteConfirmLabel": "Saisissez {email} pour confirmer",
+    "delete": "Supprimer le compte",
+    "deleteConfirmBody": "Votre compte est supprimé définitivement. Vous êtes déconnecté immédiatement.",
+    "cancel": "Annuler",
+    "profileSaved": "Profil enregistré.",
+    "pictureSaved": "Photo enregistrée.",
+    "changePicture": "Changer la photo",
+    "pictureHint": "PNG, JPEG ou WebP, 1 Mo maximum.",
+    "name": "Nom",
+    "email": "E-mail",
+    "emailHint": "Pour changer d'e-mail, contactez le support.",
+    "save": "Enregistrer",
+    "loading": "Chargement des appareils...",
+    "sessionsFailed": "Impossible de charger vos appareils",
+    "retry": "Réessayer",
+    "sessionsFailedHint": "Vérifiez votre connexion et réessayez.",
+    "unknownDevice": "Appareil inconnu",
+    "thisDevice": "Cet appareil",
+    "lastActive": "Dernière activité",
+    "sessionEnded": "Appareil déconnecté.",
+    "endSession": "Déconnecter",
+    "othersEnded": "Autres appareils déconnectés.",
+    "endOthers": "Déconnecter les autres appareils"
+  },
+  "team": {
+    "title": "Équipe",
+    "description": "Invitez vos collègues et choisissez ce que chacun peut faire.",
+    "errors": {
+      "email": "Saisissez un e-mail valide.",
+      "generic": "Une erreur est survenue. Réessayez."
+    },
+    "invited": "Invitation envoyée à {email}.",
+    "email": "E-mail",
+    "emailHint": "Un lien leur est envoyé pour rejoindre votre hôtel.",
+    "role": "Rôle",
+    "roles": {
+      "owner": "Propriétaire",
+      "manager": "Responsable",
+      "staff": "Équipe"
+    },
+    "roleHelp": {
+      "owner": "Tout, y compris l'équipe et les réglages de l'hôtel.",
+      "manager": "Clients, offres et QR codes. Peut inviter du personnel.",
+      "staff": "Valide les offres à la réception et voit les clients."
+    },
+    "sendInvite": "Envoyer l'invitation",
+    "loading": "Chargement de l'équipe...",
+    "loadFailed": "Impossible de charger l'équipe",
+    "retry": "Réessayer",
+    "loadFailedHint": "Vérifiez votre connexion et réessayez.",
+    "roleOf": "Rôle de {name}",
+    "roleChanged": "Rôle mis à jour.",
+    "remove": "Retirer",
+    "columns": {
+      "member": "Membre",
+      "role": "Rôle",
+      "actions": "Actions"
+    },
+    "you": "Vous",
+    "members": "{count, plural, one {# membre} other {# membres}}",
+    "membersHint": "Les personnes qui peuvent se connecter à cet hôtel.",
+    "pending": "{count, plural, one {# invitation en attente} other {# invitations en attente}}",
+    "pendingHint": "Elles peuvent rejoindre jusqu'à l'expiration du lien.",
+    "expires": "Expire le",
+    "resent": "Invitation renvoyée à {email}.",
+    "resend": "Renvoyer",
+    "cancelled": "Invitation annulée.",
+    "cancel": "Annuler l'invitation",
+    "emptyTitle": "Personne d'autre pour l'instant",
+    "emptyHint": "Invitez un collègue pour partager la réception.",
+    "inviteTitle": "Inviter un collègue",
+    "inviteHint": "Choisissez un e-mail et un rôle.",
+    "viewOnly": "Seuls les propriétaires et responsables peuvent modifier l'équipe.",
+    "rolesTitle": "Ce que chaque rôle peut faire",
+    "removeTitle": "Retirer {name} ?",
+    "removeBody": "Cette personne perd l'accès à cet hôtel immédiatement.",
+    "cancelAction": "Garder",
+    "removed": "Membre retiré."
   }
 }
