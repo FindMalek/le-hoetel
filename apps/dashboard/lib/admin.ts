@@ -25,4 +25,12 @@ export const slugOf = (name: string): string =>
 
 export const logoSrc = (logoKey: string | null): string | null => (logoKey ? `/api/files/${logoKey}` : null)
 
-export const TIMEZONES = ["Africa/Tunis", "Europe/Paris", "Europe/London", "Africa/Algiers", "Africa/Casablanca", "Africa/Cairo", "Asia/Dubai"] as const
+export const TIMEZONES = [
+  "Africa/Tunis",
+  "Europe/Paris",
+  "Europe/London",
+  "Africa/Algiers",
+  "Africa/Casablanca",
+  "Africa/Cairo",
+  "Asia/Dubai",
+] as const

@@ -26,7 +26,11 @@ function AdminField({
   className,
   children,
 }: Shared & {
-  children: (props: { id: string; "aria-invalid": true | undefined; "aria-describedby": string | undefined }) => React.ReactNode
+  children: (props: {
+    id: string
+    "aria-invalid": true | undefined
+    "aria-describedby": string | undefined
+  }) => React.ReactNode
 }) {
   const id = useId()
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined
@@ -92,7 +96,11 @@ export function ColorInput({
 }: Shared & { value: string; onChange: (value: string) => void; placeholder: string }) {
   const t = useTranslations("adminHotel")
   const issues = brandContrastIssues(isHex(value) ? value : null)
-  const warning = issues.includes("light") ? t("contrastLight") : issues.includes("dark") ? t("contrastDark") : undefined
+  const warning = issues.includes("light")
+    ? t("contrastLight")
+    : issues.includes("dark")
+      ? t("contrastDark")
+      : undefined
   return (
     <AdminField label={label} error={error} hint={warning} className={className}>
       {(aria) => (

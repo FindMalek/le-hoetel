@@ -9,7 +9,10 @@ import { viewedHotelId } from "@/lib/view-hotel"
 export async function ViewingBanner() {
   const hotelId = await viewedHotelId()
   if (!hotelId) return null
-  const [t, hotel] = await Promise.all([getTranslations("adminHotel"), call((api) => api.hotel.get()).catch(() => null)])
+  const [t, hotel] = await Promise.all([
+    getTranslations("adminHotel"),
+    call((api) => api.hotel.get()).catch(() => null),
+  ])
   if (!hotel) return null
   return (
     <div className="sticky top-14 z-20 flex items-center gap-3 border-b bg-secondary px-4 py-2 text-secondary-foreground text-sm md:px-6">

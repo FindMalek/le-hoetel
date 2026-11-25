@@ -1,11 +1,18 @@
 import { isNotFound } from "@le-hoetel/orpc/errors"
 import { Badge } from "@le-hoetel/ui/components/badge"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@le-hoetel/ui/components/breadcrumb"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@le-hoetel/ui/components/breadcrumb"
 import { Button } from "@le-hoetel/ui/components/button"
 import { FormSection } from "@le-hoetel/ui/components/form-section"
 import { Section } from "@le-hoetel/ui/components/section"
 import { StatCard } from "@le-hoetel/ui/components/stat-card"
-import { EyeIcon, ExternalLinkIcon, QrCodeIcon } from "lucide-react"
+import { ExternalLinkIcon, EyeIcon, QrCodeIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -16,8 +23,8 @@ import { HotelAvatar } from "@/components/hotel-avatar"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
 import { relativeTime } from "@/components/relative-day"
-import { call } from "@/lib/api"
 import { consentRate, HEALTH_TONE } from "@/lib/admin"
+import { call } from "@/lib/api"
 import { openAsHotel } from "../actions"
 
 export const metadata: Metadata = { title: "Hotel" }
@@ -57,7 +64,11 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
         description={`${hotel.slug} · ${t(`statuses.${hotel.status}`)}`}
         actions={
           <>
-            <Button variant="outline" render={<a href={publicUrl} target="_blank" rel="noreferrer" />} nativeButton={false}>
+            <Button
+              variant="outline"
+              render={<a href={publicUrl} target="_blank" rel="noreferrer" />}
+              nativeButton={false}
+            >
               <ExternalLinkIcon data-icon="inline-start" />
               {t("capturePage")}
             </Button>
@@ -71,7 +82,10 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
         }
       />
       <div className="flex flex-col gap-10 p-4 md:p-6">
-        <Section title={t("overview")} actions={<Badge variant={HEALTH_TONE[hotel.health]}>{tList(`health.${hotel.health}`)}</Badge>}>
+        <Section
+          title={t("overview")}
+          actions={<Badge variant={HEALTH_TONE[hotel.health]}>{tList(`health.${hotel.health}`)}</Badge>}
+        >
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label={t("stats.guests")} value={hotel.guestCount} />
             <StatCard
@@ -82,7 +96,11 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
             <StatCard label={t("stats.messages")} value={hotel.messageCount} />
             <StatCard
               label={t("stats.lastCapture")}
-              value={<span className="text-xl md:text-2xl">{hotel.lastGuestAt ? relativeTime(hotel.lastGuestAt, now, locale) : "–"}</span>}
+              value={
+                <span className="text-xl md:text-2xl">
+                  {hotel.lastGuestAt ? relativeTime(hotel.lastGuestAt, now, locale) : "–"}
+                </span>
+              }
               hint={hotel.lastGuestAt ? undefined : tList("noCapture")}
             />
           </div>

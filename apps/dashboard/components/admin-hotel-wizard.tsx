@@ -58,7 +58,8 @@ export function AdminHotelWizard() {
   const [touched, setTouched] = useState<Partial<Record<keyof Errors, boolean>>>({})
   const [slugToCheck, setSlugToCheck] = useState("")
   const index = STEPS.indexOf(step)
-  const set = <K extends keyof Values>(key: K, value: Values[K]) => setValues((current) => ({ ...current, [key]: value }))
+  const set = <K extends keyof Values>(key: K, value: Values[K]) =>
+    setValues((current) => ({ ...current, [key]: value }))
 
   useEffect(() => {
     const slug = values.slug
@@ -91,7 +92,8 @@ export function AdminHotelWizard() {
   }
   const shown = (field: keyof Errors) => (touched[field] ? errors[field] : undefined)
   const blur = (field: keyof Errors) => () => setTouched((current) => ({ ...current, [field]: true }))
-  const stepValid = (current: Step) => stepFields[current].every((field) => !errors[field]) && !(current === "basics" && checking)
+  const stepValid = (current: Step) =>
+    stepFields[current].every((field) => !errors[field]) && !(current === "basics" && checking)
 
   const create = useMutation(
     orpc.admin.hotels.create.mutationOptions({
@@ -103,7 +105,8 @@ export function AdminHotelWizard() {
     }),
   )
 
-  const touchStep = () => setTouched((current) => ({ ...current, ...Object.fromEntries(stepFields[step].map((field) => [field, true])) }))
+  const touchStep = () =>
+    setTouched((current) => ({ ...current, ...Object.fromEntries(stepFields[step].map((field) => [field, true])) }))
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
@@ -146,7 +149,10 @@ export function AdminHotelWizard() {
               <li
                 key={item}
                 aria-current={item === step ? "step" : undefined}
-                className={cn("flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-3", position > index && "text-muted-foreground")}
+                className={cn(
+                  "flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-3",
+                  position > index && "text-muted-foreground",
+                )}
               >
                 <span
                   className={cn("h-1 rounded-full md:hidden", position <= index ? "bg-primary" : "bg-border")}
@@ -189,7 +195,11 @@ export function AdminHotelWizard() {
                 onBlur={blur("name")}
                 onChange={(event) => {
                   const name = event.target.value
-                  setValues((current) => ({ ...current, name, slug: current.slugTouched ? current.slug : slugOf(name) }))
+                  setValues((current) => ({
+                    ...current,
+                    name,
+                    slug: current.slugTouched ? current.slug : slugOf(name),
+                  }))
                 }}
               />
               <div className="flex flex-col gap-1.5">
@@ -205,7 +215,9 @@ export function AdminHotelWizard() {
                   spellCheck={false}
                   enterKeyHint="next"
                   onBlur={blur("slug")}
-                  onChange={(event) => setValues((current) => ({ ...current, slug: event.target.value.toLowerCase(), slugTouched: true }))}
+                  onChange={(event) =>
+                    setValues((current) => ({ ...current, slug: event.target.value.toLowerCase(), slugTouched: true }))
+                  }
                 />
                 <p className="flex items-center gap-1.5 text-muted-foreground text-xs" aria-live="polite">
                   {checking ? (
@@ -322,15 +334,14 @@ export function AdminHotelWizard() {
         </StickyFormActions>
       </div>
 
-      <aside className={cn("lg:sticky lg:top-20 lg:self-start", step === "basics" && "max-lg:hidden")} aria-label={t("preview")}>
+      <aside
+        className={cn("lg:sticky lg:top-20 lg:self-start", step === "basics" && "max-lg:hidden")}
+        aria-label={t("preview")}
+      >
         <p className="mb-3 text-center text-muted-foreground text-xs lg:text-start">
           {step === "owner" ? t("previewInvite") : t("previewCapture")}
         </p>
-        {step === "owner" ? (
-          <InvitePreview look={look} email={values.ownerEmail} />
-        ) : (
-          <CapturePreview look={look} />
-        )}
+        {step === "owner" ? <InvitePreview look={look} email={values.ownerEmail} /> : <CapturePreview look={look} />}
       </aside>
     </form>
   )

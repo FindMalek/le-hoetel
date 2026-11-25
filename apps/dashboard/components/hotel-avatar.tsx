@@ -14,7 +14,11 @@ export function HotelAvatar({
   const src = logoSrc(logoKey)
   return src ? (
     // biome-ignore lint/performance/noImgElement: the logo is a small file served by the api
-    <img src={src} alt="" className={cn("size-10 shrink-0 rounded-lg border bg-background object-contain p-0.5", className)} />
+    <img
+      src={src}
+      alt=""
+      className={cn("size-10 shrink-0 rounded-lg border bg-background object-contain p-0.5", className)}
+    />
   ) : (
     <span
       aria-hidden

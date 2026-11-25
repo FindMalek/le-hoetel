@@ -32,13 +32,19 @@ export function AdminUsersBoard({ users }: { users: User[] }) {
     </span>
   )
   const role = (user: User) => (
-    <Badge variant={user.role === "admin" ? "default" : "outline"}>{user.role === "admin" ? t("roleAdmin") : t("roleUser")}</Badge>
+    <Badge variant={user.role === "admin" ? "default" : "outline"}>
+      {user.role === "admin" ? t("roleAdmin") : t("roleUser")}
+    </Badge>
   )
   const hotels = (user: User) =>
     user.hotels.length ? (
       <span className="flex flex-wrap gap-x-3 gap-y-1">
         {user.hotels.map((hotel) => (
-          <Link key={hotel.id} href={`/admin/hotels/${hotel.id}`} className="text-sm underline-offset-4 hover:underline">
+          <Link
+            key={hotel.id}
+            href={`/admin/hotels/${hotel.id}`}
+            className="text-sm underline-offset-4 hover:underline"
+          >
             {hotel.name} <span className="text-muted-foreground">· {hotel.role.split(",")[0]}</span>
           </Link>
         ))}
@@ -58,7 +64,14 @@ export function AdminUsersBoard({ users }: { users: User[] }) {
     <div className="flex flex-col gap-4">
       <div className="grid max-w-sm gap-1.5">
         <Label htmlFor="user-search">{t("search")}</Label>
-        <Input id="user-search" type="search" value={query} enterKeyHint="search" autoComplete="off" onChange={(event) => setQuery(event.target.value)} />
+        <Input
+          id="user-search"
+          type="search"
+          value={query}
+          enterKeyHint="search"
+          autoComplete="off"
+          onChange={(event) => setQuery(event.target.value)}
+        />
       </div>
       <DataTable
         caption={t("title")}

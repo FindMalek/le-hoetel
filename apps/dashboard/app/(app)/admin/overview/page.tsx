@@ -6,6 +6,7 @@ import { BuildingIcon, PlusIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
+import type { CSSProperties } from "react"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
 
@@ -49,10 +50,26 @@ export default async function AdminOverviewPage() {
       <PageHeader title={t("title")} description={t("description")} />
       <div className="flex flex-col gap-10 p-4 md:p-6">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <StatCard label={t("stats.hotels")} value={hotels.total} hint={t("stats.hotelsHint", { pilot: hotels.pilot, active: hotels.active })} />
-          <StatCard label={t("stats.guests")} value={guests.total} hint={t("stats.guestsHint", { count: guests.last7Days })} />
-          <StatCard label={t("stats.consent")} value={rate === null ? "–" : `${rate}%`} hint={t("stats.consentHint", { count: guests.consented })} />
-          <StatCard label={t("stats.messages")} value={messages.total} hint={t("stats.messagesHint", { delivered: messages.delivered, failed: messages.failed })} />
+          <StatCard
+            label={t("stats.hotels")}
+            value={hotels.total}
+            hint={t("stats.hotelsHint", { pilot: hotels.pilot, active: hotels.active })}
+          />
+          <StatCard
+            label={t("stats.guests")}
+            value={guests.total}
+            hint={t("stats.guestsHint", { count: guests.last7Days })}
+          />
+          <StatCard
+            label={t("stats.consent")}
+            value={rate === null ? "–" : `${rate}%`}
+            hint={t("stats.consentHint", { count: guests.consented })}
+          />
+          <StatCard
+            label={t("stats.messages")}
+            value={messages.total}
+            hint={t("stats.messagesHint", { delivered: messages.delivered, failed: messages.failed })}
+          />
         </div>
 
         <Section title={t("funnel.title")} description={t("funnel.description")}>
@@ -66,9 +83,10 @@ export default async function AdminOverviewPage() {
                   </span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-muted" aria-hidden>
-                  {/* the bar width is data */}
-                  {/* oxlint-disable-next-line shadcn/no-inline-styles */}
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${(step.value / hotels.total) * 100}%` }} />
+                  <div
+                    className="h-full w-(--bar) rounded-full bg-primary"
+                    style={{ "--bar": `${(step.value / hotels.total) * 100}%` } as CSSProperties}
+                  />
                 </div>
               </li>
             ))}

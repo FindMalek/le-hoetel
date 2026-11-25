@@ -49,9 +49,12 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   ])
   const filtered = Boolean(params.action || params.actor || params.hotel || params.from || params.to)
 
-  const actionLabel = (action: string) => (t.has(`actions.${action}`) ? t(`actions.${action}`) : action)
+  const actionLabel = (action: string) =>
+    t.has(`actions.${action}` as never) ? t(`actions.${action}` as never) : action
   const href = (next: number) => {
-    const query = new URLSearchParams(Object.entries({ ...params, offset: String(next) }).filter(([, value]) => value) as [string, string][])
+    const query = new URLSearchParams(
+      Object.entries({ ...params, offset: String(next) }).filter(([, value]) => value) as [string, string][],
+    )
     return `/audit-log?${query}`
   }
 
@@ -66,11 +69,29 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
     )
   const who = (entry: Entry) => entry.actorEmail ?? t("system")
   const columns: DataColumn<Entry>[] = [
-    { id: "action", header: t("columns.action"), cell: (entry) => <span className="font-medium">{actionLabel(entry.action)}</span> },
+    {
+      id: "action",
+      header: t("columns.action"),
+      cell: (entry) => <span className="font-medium">{actionLabel(entry.action)}</span>,
+    },
     { id: "who", header: t("columns.who"), cell: (entry) => <span dir="ltr">{who(entry)}</span> },
     { id: "hotel", header: t("columns.hotel"), cell: hotelCell, showFrom: "lg" },
-    { id: "ip", header: t("columns.ip"), cell: (entry) => <span className="text-muted-foreground" dir="ltr">{entry.ip ?? "–"}</span>, showFrom: "xl" },
-    { id: "when", header: t("columns.when"), cell: (entry) => <LocalDate value={entry.createdAt} time />, align: "end" },
+    {
+      id: "ip",
+      header: t("columns.ip"),
+      cell: (entry) => (
+        <span className="text-muted-foreground" dir="ltr">
+          {entry.ip ?? "–"}
+        </span>
+      ),
+      showFrom: "xl",
+    },
+    {
+      id: "when",
+      header: t("columns.when"),
+      cell: (entry) => <LocalDate value={entry.createdAt} time />,
+      align: "end",
+    },
   ]
 
   return (
@@ -161,14 +182,22 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
             offset > 0 || hasMore ? (
               <div className="flex items-center justify-between gap-3">
                 {offset > 0 ? (
-                  <Button variant="outline" render={<Link href={href(Math.max(0, offset - ADMIN_LIST_LIMIT)) as never} />} nativeButton={false}>
+                  <Button
+                    variant="outline"
+                    render={<Link href={href(Math.max(0, offset - ADMIN_LIST_LIMIT)) as never} />}
+                    nativeButton={false}
+                  >
                     {t("newer")}
                   </Button>
                 ) : (
                   <span />
                 )}
                 {hasMore && (
-                  <Button variant="outline" render={<Link href={href(offset + ADMIN_LIST_LIMIT) as never} />} nativeButton={false}>
+                  <Button
+                    variant="outline"
+                    render={<Link href={href(offset + ADMIN_LIST_LIMIT) as never} />}
+                    nativeButton={false}
+                  >
                     {t("older")}
                   </Button>
                 )}

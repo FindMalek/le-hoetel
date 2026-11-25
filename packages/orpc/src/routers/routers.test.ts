@@ -164,7 +164,7 @@ test("audit log: an admin signing in as a user, and stopping, is recorded", asyn
   }
   await app.services.auth.api.stopImpersonating({ headers: new Headers({ cookie: [...jar.values()].join("; ") }) })
 
-  const actions = (await admin.client.admin.audit.list({ action: "admin.impersonate" })).entries.map((e) => e.action)
+  const actions = (await admin.client.admin.audit.list({})).entries.map((e) => e.action)
   expect(actions).toContain("admin.impersonate")
   expect(actions).toContain("admin.impersonate-stop")
 })

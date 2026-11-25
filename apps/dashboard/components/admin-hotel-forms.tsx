@@ -1,6 +1,13 @@
 "use client"
 
-import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES, type HotelLanguage, type HotelPlan, type HotelStatus } from "@le-hoetel/common/hotel"
+import {
+  HOTEL_LANGUAGES,
+  HOTEL_PLANS,
+  HOTEL_STATUSES,
+  type HotelLanguage,
+  type HotelPlan,
+  type HotelStatus,
+} from "@le-hoetel/common/hotel"
 import { errorMessage } from "@le-hoetel/orpc/errors"
 import { orpc } from "@le-hoetel/orpc/react"
 import {
@@ -72,7 +79,8 @@ export function AdminBrandingForm({ hotel }: { hotel: BrandingHotel }) {
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (Object.values(errors).some(Boolean)) return setTouched({ displayName: true, primaryColor: true, accentColor: true, replyToEmail: true })
+    if (Object.values(errors).some(Boolean))
+      return setTouched({ displayName: true, primaryColor: true, accentColor: true, replyToEmail: true })
     update.mutate({
       id: hotel.id,
       displayName: values.displayName.trim(),
@@ -142,7 +150,10 @@ export function AdminBrandingForm({ hotel }: { hotel: BrandingHotel }) {
             label={t("timezone")}
             value={values.timezone}
             onChange={(event) => set("timezone", event.target.value)}
-            options={[...new Set([hotel.timezone, ...TIMEZONES])].map((value) => ({ value, label: value.replace("_", " ") }))}
+            options={[...new Set([hotel.timezone, ...TIMEZONES])].map((value) => ({
+              value,
+              label: value.replace("_", " "),
+            }))}
           />
         </div>
         <StickyFormActions className="md:justify-start">
@@ -267,7 +278,10 @@ export function AdminDangerZone({
           variant="outline"
           loading={setStatus.isPending}
           onClick={() =>
-            setStatus.mutate({ id: hotel.id, status: suspended ? (hotel.hasPilotEnd ? "pilot" : "active") : "suspended" })
+            setStatus.mutate({
+              id: hotel.id,
+              status: suspended ? (hotel.hasPilotEnd ? "pilot" : "active") : "suspended",
+            })
           }
         >
           {suspended ? t("reactivate") : t("suspend")}

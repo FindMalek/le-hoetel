@@ -51,7 +51,9 @@ export function CapturePreview({ look, className }: { look: Look; className?: st
             <ZelligePattern />
           </div>
           <Mark name={name} logo={look.logo} />
-          <p className="font-heading font-semibold text-xl leading-tight">{t(`preview.${look.language}.welcome`, { hotel: name })}</p>
+          <p className="font-heading font-semibold text-xl leading-tight">
+            {t(`preview.${look.language}.welcome`, { hotel: name })}
+          </p>
           <p className="text-primary-foreground/85 text-sm leading-relaxed">{t(`preview.${look.language}.intro`)}</p>
         </div>
         <div className="flex flex-col gap-3 p-5" aria-hidden>
