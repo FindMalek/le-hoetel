@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { signUnsubscribeToken } from "@le-hoetel/common/unsubscribe"
-import { consentEvents } from "@le-hoetel/db"
+import { consentEvents, messages } from "@le-hoetel/db"
 import { eq } from "drizzle-orm"
-import { applyStopReply } from "../lib/unsubscribe"
+import { applyStopReply, handleInboundWhatsApp } from "../lib/unsubscribe"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -98,4 +98,43 @@ test("a STOP reply withdraws whatsapp for that number only, and logs source stop
     .limit(10)
     .then((rows) => rows.filter((row) => row.source === "stop_reply"))
   expect(event?.channel).toBe("whatsapp")
+})
+
+test("an inbound STOP unsubscribes the hotel that wrote last, confirms once in the guest's language, ignores other texts", async () => {
+  const phone = "+21620666666"
+  const a = await hotelWithGuest("inbound-a", phone)
+  const b = await hotelWithGuest("inbound-b", phone)
+  await app.services.db.insert(messages).values({
+    hotelId: a.hotelId,
+    guestId: a.guest.id,
+    channel: "whatsapp",
+    templateKey: "welcome",
+    language: "fr",
+    status: "sent",
+    providerId: "wamid.inbound",
+  })
+  const replies: string[] = []
+  const context = {
+    ...app.services,
+    notification: {
+      replyWhatsApp: async (to: string, text: string) => {
+        replies.push(`${to}|${text}`)
+        return { channel: "whatsapp", sent: true }
+      },
+    } as unknown as typeof app.services.notification,
+  }
+  const inbound = (body: string) => ({ message: { from: "21620666666", type: "text", text: { body } } })
+
+  expect(await handleInboundWhatsApp(context, inbound("merci beaucoup"))).toBe(false)
+  expect(replies).toHaveLength(0)
+
+  expect(await handleInboundWhatsApp(context, inbound(" Arrêt "))).toBe(true)
+  expect(await handleInboundWhatsApp(context, inbound("STOP"))).toBe(false)
+  expect((await a.client.guests.get({ id: a.guest.id })).consents.whatsapp).toBe(false)
+  expect((await b.client.guests.get({ id: b.guest.id })).consents.whatsapp).toBe(true)
+  expect(replies).toEqual([`${phone}|Vous êtes désabonné des messages WhatsApp. Nous ne vous écrirons plus ici.`])
+
+  expect(
+    await handleInboundWhatsApp(context, { message: { from: "21699000000", type: "text", text: { body: "STOP" } } }),
+  ).toBe(false)
 })

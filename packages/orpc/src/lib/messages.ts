@@ -214,6 +214,9 @@ export async function applyResendEvent(db: Context["db"], event: ResendEvent): P
 export interface KapsoPayload {
   message?: {
     id?: string
+    from?: string
+    type?: string
+    text?: { body?: string }
     kapso?: { direction?: string; statuses?: Array<{ status?: string; errors?: Array<{ code?: number | string }> }> }
   }
 }
