@@ -159,6 +159,7 @@
     "settings": "الإعدادات",
     "admin": "المنصة",
     "holidays": "الأعياد",
+    "adminOverview": "نظرة عامة",
     "campaigns": "الحملات"
   },
   "hotel": {
@@ -399,31 +400,54 @@
   },
   "adminHotels": {
     "title": "الفنادق",
-    "description": "كل فنادق المنصة مع نزلائها وحالتها.",
-    "createTitle": "فندق جديد",
-    "name": "اسم الفندق",
-    "slug": "المعرّف",
-    "ownerEmail": "البريد الإلكتروني للمالك",
-    "ownerHint": "يتلقى المالك دعوة عبر البريد الإلكتروني.",
-    "primaryColor": "اللون الأساسي",
-    "accentColor": "لون التمييز",
-    "language": "اللغة الافتراضية",
-    "submit": "إنشاء الفندق ودعوة المالك",
-    "created": "تم إنشاء الفندق وإرسال الدعوة.",
-    "empty": "لا يوجد فندق بعد.",
+    "description": "كل فنادق المنصّة وأرقامها وما يحتاج إلى متابعتك.",
+    "empty": {
+      "title": "لا فنادق بعد",
+      "description": "أنشئ أول فندق وادعُ مالكه واطبع رموز QR الخاصة به. يستغرق ذلك دقيقتين تقريبًا."
+    },
     "columns": {
       "hotel": "الفندق",
       "guests": "النزلاء",
-      "owners": "المالكون",
-      "health": "الحالة",
-      "created": "تاريخ الإنشاء"
+      "health": "الصحة",
+      "consent": "نسبة الموافقة",
+      "lastCapture": "آخر تسجيل",
+      "pilotEnd": "نهاية التجربة",
+      "plan": "الباقة"
     },
     "health": {
       "healthy": "بحالة جيدة",
       "quiet": "لا نزيل جديد منذ أسبوعين",
       "no-guests": "لا نزلاء بعد",
-      "no-owner": "لم ينضم المالك بعد",
-      "suspended": "معلّق"
+      "no-owner": "المالك لم ينضمّ بعد",
+      "suspended": "موقوف"
+    },
+    "new": "فندق جديد",
+    "loading": "جارٍ تحميل الفنادق",
+    "search": "ابحث بالاسم أو المعرّف",
+    "reset": "مسح التصفية",
+    "count": "{count, plural, one {فندق واحد} two {فندقان} few {# فنادق} other {# فندقًا}}",
+    "filters": {
+      "status": "الحالة",
+      "health": "الصحة",
+      "any": "الكل"
+    },
+    "status": {
+      "pilot": "تجريبي",
+      "active": "نشط",
+      "suspended": "موقوف"
+    },
+    "plan": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "noCapture": "لا تسجيل بعد",
+    "noPilotEnd": "غير محدّد",
+    "pilotEnded": "انتهت",
+    "pilotLeft": "{days, plural, one {يوم واحد متبقٍّ} two {يومان متبقيان} few {# أيام متبقية} other {# يومًا متبقيًا}}",
+    "noMatch": {
+      "title": "لا يوجد فندق مطابق",
+      "description": "جرّب اسمًا آخر أو امسح التصفية."
     }
   },
   "hotelSettings": {
@@ -833,6 +857,319 @@
       "terms": "الشروط",
       "status": "حالة الخدمة",
       "rights": "صُنع في تونس"
+    }
+  },
+  "adminHotel": {
+    "breadcrumb": "الفنادق",
+    "statuses": {
+      "pilot": "تجريبي",
+      "active": "نشط",
+      "suspended": "موقوف"
+    },
+    "plans": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "languages": {
+      "en": "الإنجليزية",
+      "fr": "الفرنسية",
+      "ar": "العربية"
+    },
+    "capturePage": "صفحة التسجيل",
+    "openAs": "فتح كهذا الفندق",
+    "viewingAs": "أنت تتصرّف بصفة {hotel}. كل تعديل تجريه حقيقي.",
+    "leave": "العودة إلى الإدارة",
+    "overview": "نظرة عامة",
+    "stats": {
+      "guests": "النزلاء",
+      "consent": "نسبة الموافقة",
+      "consentHint": "{count} وافقوا على قناة واحدة على الأقل",
+      "messages": "الرسائل",
+      "lastCapture": "آخر تسجيل"
+    },
+    "createdOn": "تاريخ الإنشاء",
+    "branding": "الهوية",
+    "brandingHint": "ما يراه النزلاء بعد مسح رمز QR: اسم الفندق وألوانه ولغته.",
+    "displayName": "الاسم المعروض",
+    "displayNameHint": "يظهر للنزلاء وفي الرسائل الإلكترونية.",
+    "primaryColor": "اللون الأساسي",
+    "accentColor": "لون التمييز",
+    "replyTo": "بريد الرد",
+    "replyToHint": "النزلاء الذين يردّون على رسالة يكتبون إلى هذا العنوان.",
+    "language": "اللغة الافتراضية",
+    "timezone": "المنطقة الزمنية",
+    "save": "حفظ التغييرات",
+    "brandingSaved": "تم حفظ الهوية.",
+    "previewTitle": "معاينة صفحة التسجيل",
+    "previewName": "فندقكم",
+    "contrastLight": "هذا اللون يصعب تمييزه على خلفية فاتحة. اختر لونًا أغمق.",
+    "contrastDark": "هذا اللون يصعب تمييزه على خلفية داكنة. اختر لونًا أفتح.",
+    "errors": {
+      "displayName": "أدخل الاسم الذي سيراه النزلاء.",
+      "color": "استخدم لونًا سداسيًا مثل #0a7c66.",
+      "email": "أدخل بريدًا إلكترونيًا صالحًا."
+    },
+    "logoHint": "يُرفع الشعار من إعدادات الفندق نفسه.",
+    "logoOpen": "فتح الهوية كهذا الفندق",
+    "people": "المالكون والأعضاء",
+    "peopleHint": "من يستطيع الدخول إلى هذا الفندق، والدعوات التي ما زالت معلّقة.",
+    "noPeople": "لا أحد بعد. ادعُ المالك من صفحة فريق الفندق بعد فتحه.",
+    "invited": "مدعوّ",
+    "inviteExpires": "تنتهي في",
+    "pilotPlan": "التجربة والباقة",
+    "pilotPlanHint": "أين وصل الفندق في التجربة وما سيدفعه بعدها.",
+    "plan": "الباقة",
+    "status": "الحالة",
+    "pilotEnd": "تاريخ نهاية التجربة",
+    "pilotEndHint": "اتركه فارغًا إن لم يكن هناك تاريخ نهاية.",
+    "planSaved": "تم حفظ الباقة.",
+    "capture": "صفحة التسجيل ورموز QR",
+    "captureHint": "الصفحة العامة التي يصل إليها النزلاء، والرموز القابلة للطباعة للغرف والطاولات.",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط.",
+    "qrCodes": "رموز QR",
+    "danger": "منطقة الخطر",
+    "dangerHint": "الإيقاف يقطع وصول الفندق. الحذف لا رجعة فيه.",
+    "suspend": "إيقاف الفندق",
+    "suspendHint": "لا يستطيع الفريق استخدام لوحة التحكم ولا تُرسل أي رسالة. تبقى البيانات محفوظة.",
+    "suspendedDone": "تم إيقاف الفندق.",
+    "reactivate": "إعادة تفعيل الفندق",
+    "reactivateHint": "يستعيد الفريق وصوله.",
+    "reactivated": "تمت إعادة تفعيل الفندق.",
+    "delete": "حذف الفندق",
+    "deleteHint": "يزيل الفندق ونزلاءه وعروضه وفريقه نهائيًا.",
+    "deleted": "تم حذف الفندق.",
+    "deleteTitle": "حذف {hotel}؟",
+    "deleteConsequence": "سيُمحى كل نزيل وكل سجل موافقة وكل عرض ورسالة لهذا الفندق. لا يمكن التراجع.",
+    "deleteType": "اكتب {slug} للتأكيد",
+    "cancel": "إلغاء",
+    "deleteConfirm": "حذف نهائي",
+    "mailTo": "إلى",
+    "mailToEmpty": "owner@hotel.com",
+    "mailSubject": "الموضوع",
+    "preview": {
+      "en": {
+        "welcome": "Welcome to {hotel}",
+        "intro": "Leave your details and we will take care of you during your stay.",
+        "name": "Your name",
+        "phone": "Phone number",
+        "consent": "Send me offers by email or WhatsApp",
+        "submit": "Sign up"
+      },
+      "fr": {
+        "welcome": "Bienvenue à {hotel}",
+        "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
+        "name": "Votre nom",
+        "phone": "Numéro de téléphone",
+        "consent": "Je souhaite recevoir des offres par e-mail ou WhatsApp",
+        "submit": "S'inscrire"
+      },
+      "ar": {
+        "welcome": "أهلًا بكم في {hotel}",
+        "intro": "اتركوا بياناتكم وسنعتني بكم طوال إقامتكم.",
+        "name": "اسمكم",
+        "phone": "رقم الهاتف",
+        "consent": "أرغب في تلقي العروض عبر البريد الإلكتروني أو واتساب",
+        "submit": "تسجيل"
+      }
+    },
+    "invite": {
+      "en": {
+        "subject": "You are invited to run {hotel} on le-hoetel",
+        "title": "Welcome to {hotel}",
+        "body": "Your hotel is ready. Accept the invitation to set a password and see your guests, offers and QR codes.",
+        "button": "Accept the invitation",
+        "footer": "If you did not expect this email, you can ignore it."
+      },
+      "fr": {
+        "subject": "Vous êtes invité à gérer {hotel} sur le-hoetel",
+        "title": "Bienvenue à {hotel}",
+        "body": "Votre hôtel est prêt. Acceptez l'invitation pour choisir un mot de passe et retrouver vos clients, vos offres et vos QR codes.",
+        "button": "Accepter l'invitation",
+        "footer": "Si vous n'attendiez pas cet e-mail, vous pouvez l'ignorer."
+      },
+      "ar": {
+        "subject": "دعوة لإدارة {hotel} على le-hoetel",
+        "title": "أهلًا بكم في {hotel}",
+        "body": "فندقكم جاهز. اقبلوا الدعوة لاختيار كلمة مرور والاطّلاع على نزلائكم وعروضكم ورموز QR.",
+        "button": "قبول الدعوة",
+        "footer": "إذا لم تكونوا تنتظرون هذه الرسالة فيمكنكم تجاهلها."
+      }
+    }
+  },
+  "adminWizard": {
+    "title": "فندق جديد",
+    "description": "أربع خطوات قصيرة. يصل المالك دعوة بالبريد الإلكتروني في النهاية.",
+    "steps": "الخطوات",
+    "stepOf": "الخطوة {current} من {total}",
+    "step": {
+      "basics": {
+        "title": "الأساسيات",
+        "description": "اسم الفندق وعنوان صفحة النزلاء."
+      },
+      "branding": {
+        "title": "الهوية",
+        "description": "الألوان والاسم اللذان يراهما النزلاء. تابع تغيّر المعاينة."
+      },
+      "languages": {
+        "title": "اللغة والتوقيت",
+        "description": "تُستخدم في صفحة التسجيل والرسائل والتواريخ."
+      },
+      "owner": {
+        "title": "المالك",
+        "description": "من يدير هذا الفندق. تصله دعوة لاختيار كلمة مرور."
+      }
+    },
+    "name": "اسم الفندق",
+    "nameHint": "الاسم الرسمي كما على الباب.",
+    "slug": "عنوان الصفحة",
+    "slugHint": "أحرف لاتينية صغيرة وأرقام وشرطات. يصبح جزءًا من روابط رموز QR.",
+    "slugChecking": "جارٍ التحقق من التوفّر...",
+    "slugFree": "{slug} متاح.",
+    "displayName": "الاسم الظاهر للنزلاء",
+    "displayNameHint": "اتركه فارغًا لاستخدام اسم الفندق.",
+    "primaryColor": "اللون الأساسي",
+    "accentColor": "لون التمييز",
+    "logoLater": "يُضاف الشعار بعد إنشاء الفندق من قسم الهوية.",
+    "language": "اللغة الافتراضية",
+    "languageHint": "تُفتح صفحة التسجيل بهذه اللغة ويمكن للنزلاء تغييرها.",
+    "timezone": "المنطقة الزمنية",
+    "timezoneHint": "تتبعها رسائل أعياد الميلاد والتقارير.",
+    "ownerEmail": "بريد المالك",
+    "ownerHint": "نرسل الدعوة إلى هذا العنوان.",
+    "afterCreate": "بعد إنشاء الفندق يتلقى المالك الرسالة المعروضة بجانبه. يمكنك دعوة آخرين لاحقًا.",
+    "create": "إنشاء الفندق ودعوة المالك",
+    "next": "متابعة",
+    "back": "رجوع",
+    "preview": "معاينة",
+    "previewCapture": "ما يراه النزلاء",
+    "previewInvite": "ما يتلقاه المالك",
+    "created": "تم إنشاء الفندق وإرسال الدعوة.",
+    "errors": {
+      "name": "أدخل اسم الفندق.",
+      "slug": "أدخل عنوانًا للصفحة.",
+      "slugFormat": "استخدم أحرفًا صغيرة وأرقامًا وشرطات مفردة.",
+      "slugTaken": "هذا العنوان مستخدم. جرّب عنوانًا آخر.",
+      "color": "استخدم لونًا سداسيًا مثل #0a7c66.",
+      "email": "أدخل بريدًا إلكترونيًا صالحًا."
+    }
+  },
+  "adminOverview": {
+    "title": "نظرة عامة على المنصّة",
+    "description": "التجربة في لمحة: الفنادق والنزلاء المسجَّلون والموافقات والرسائل.",
+    "empty": {
+      "title": "لا فنادق على المنصّة بعد",
+      "description": "تظهر الأرقام بمجرد إنشاء أول فندق وبدء نزلائه بالتسجيل.",
+      "action": "إنشاء أول فندق"
+    },
+    "stats": {
+      "hotels": "الفنادق",
+      "hotelsHint": "{pilot} تجريبي، {active} نشط",
+      "guests": "النزلاء المسجَّلون",
+      "guestsHint": "{count} خلال آخر 7 أيام",
+      "consent": "نسبة الموافقة",
+      "consentHint": "{count} نزيلًا وافقوا على قناة واحدة على الأقل",
+      "messages": "الرسائل",
+      "messagesHint": "{delivered} سُلّمت، {failed} فشلت"
+    },
+    "funnel": {
+      "title": "مسار التجربة",
+      "description": "إلى أي مرحلة تصل الفنادق، من الإنشاء إلى أول نزيل.",
+      "created": "الفنادق المُنشأة",
+      "owner": "انضمّ المالك",
+      "guests": "تسجيل أول نزيل"
+    },
+    "attention": {
+      "title": "يحتاج إلى متابعة",
+      "all": "كل الفنادق",
+      "pilots": "تجارب تنتهي خلال 14 يومًا",
+      "suspended": "فنادق موقوفة"
+    }
+  },
+  "adminUsers": {
+    "title": "المستخدمون",
+    "description": "{count, plural, one {حساب واحد} two {حسابان} few {# حسابات} other {# حسابًا}} على المنصّة.",
+    "search": "ابحث بالاسم أو البريد",
+    "reset": "مسح البحث",
+    "roleAdmin": "مدير المنصّة",
+    "roleUser": "عضو",
+    "noHotel": "بلا فندق",
+    "columns": {
+      "user": "المستخدم",
+      "role": "الدور",
+      "hotels": "الفنادق",
+      "joined": "تاريخ الانضمام"
+    },
+    "noMatch": {
+      "title": "لا مستخدم مطابق",
+      "description": "جرّب اسمًا أو بريدًا آخر."
+    }
+  },
+  "adminAudit": {
+    "title": "سجل التدقيق",
+    "description": "من فعل ماذا، الأحدث أولًا. للمديرين فقط.",
+    "system": "النظام",
+    "newer": "الأحدث",
+    "older": "الأقدم",
+    "columns": {
+      "action": "الإجراء",
+      "who": "من",
+      "hotel": "الفندق",
+      "ip": "IP",
+      "when": "متى"
+    },
+    "filters": {
+      "action": "الإجراء",
+      "actor": "الشخص",
+      "hotel": "الفندق",
+      "from": "من",
+      "to": "إلى",
+      "any": "الكل",
+      "apply": "تطبيق",
+      "reset": "مسح"
+    },
+    "empty": {
+      "title": "لا شيء مسجَّل بعد",
+      "description": "تظهر هنا الإجراءات الحساسة مثل التصدير والحذف وتغيير الباقة."
+    },
+    "noMatch": {
+      "title": "لا إدخال مطابق",
+      "description": "وسّع التواريخ أو امسح أحد المرشّحات."
+    },
+    "actions": {
+      "admin": {
+        "impersonate": "تسجيل الدخول بصفة مستخدم"
+      },
+      "guest": {
+        "consent": "تعديل موافقة نزيل",
+        "delete-all": "حذف كل نزلاء فندق",
+        "delete": "حذف نزيل",
+        "export-all": "تصدير كل النزلاء",
+        "export": "تصدير بيانات نزيل",
+        "import": "استيراد نزلاء"
+      },
+      "hotel": {
+        "admin-update": "تعديل الباقة أو الحالة أو التجربة",
+        "create": "إنشاء فندق",
+        "delete": "حذف فندق",
+        "logo-remove": "إزالة شعار",
+        "logo-set": "تغيير شعار",
+        "update": "تعديل هوية الفندق"
+      },
+      "offer": {
+        "create": "إنشاء عرض",
+        "delete": "حذف عرض",
+        "redeem": "استخدام عرض",
+        "update": "تعديل عرض"
+      },
+      "privacy": {
+        "delete-account": "حذف حساب",
+        "export": "تصدير بيانات الحساب"
+      },
+      "profile": {
+        "update": "تعديل ملف شخصي"
+      }
     }
   },
   "campaigns": {

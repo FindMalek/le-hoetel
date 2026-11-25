@@ -8,6 +8,7 @@ import { CommandPalette } from "@/components/command-palette"
 import { FeedbackButton } from "@/components/feedback-button"
 import { InboxBell } from "@/components/inbox-bell"
 import { TopBar } from "@/components/top-bar"
+import { ViewingBanner } from "@/components/viewing-banner"
 import { call } from "@/lib/api"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AppSidebar me={me} hotels={hotels} activeHotelId={activeId} />
       <SidebarInset id="main" className="min-w-0">
         <TopBar bell={<InboxBell unread={unread} />} />
+        <ViewingBanner />
         <div className="mx-auto w-full max-w-6xl flex-1 pb-nav">{children}</div>
       </SidebarInset>
       <BottomTabs me={me} />

@@ -7,9 +7,13 @@ import { QueryClient } from "@tanstack/react-query"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { cache } from "react"
+import { viewedHotelId } from "@/lib/view-hotel"
 
-/** Server calls carry the visitor's cookie (and the csrf header the link adds), straight to the api service. */
-const api = createServerClient(async () => ({ cookie: (await cookies()).toString() }))
+/** Server calls carry the visitor's cookie (and the csrf header the link adds), straight to the api service. An admin who opened a hotel also sends `x-hotel-id`. */
+const api = createServerClient(async () => {
+  const hotelId = await viewedHotelId()
+  return { cookie: (await cookies()).toString(), ...(hotelId ? { "x-hotel-id": hotelId } : {}) }
+})
 
 /** Same keys as the browser's `orpc` utils, so what the server prefetches hydrates the client cache. */
 export const serverOrpc = createTanstackQueryUtils(api)
