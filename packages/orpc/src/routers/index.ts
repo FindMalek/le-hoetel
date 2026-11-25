@@ -14,6 +14,7 @@ import { messagesRouter } from "./messages"
 import { notesRouter } from "./notes"
 import { notificationRouter } from "./notification"
 import { offersRouter } from "./offers"
+import { overviewRouter } from "./overview"
 import { privacyRouter } from "./privacy"
 import { publicRouter } from "./public"
 import { statusRouter } from "./status"
@@ -42,6 +43,7 @@ export const appRouter = {
   guests: guestsRouter,
   messages: messagesRouter,
   offers: offersRouter,
+  overview: overviewRouter,
   me: meRouter,
   notes,
   privacy: privacyRouter,

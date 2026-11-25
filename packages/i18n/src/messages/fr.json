@@ -29,7 +29,6 @@
     "hotelDescription": "Voici où en est {hotel}.",
     "adminDescription": "Tous les hôtels de la plateforme en un coup d'œil.",
     "guests": "Clients",
-    "guestsHint": "ont laissé leurs coordonnées",
     "hotels": "Hôtels",
     "needAttention": "À surveiller",
     "attentionHint": "calmes ou sans propriétaire",
@@ -58,7 +57,64 @@
     "noHotelsTitle": "Pas encore d'hôtel",
     "noHotelsBody": "Créez le premier hôtel et invitez son propriétaire. Il verra ses clients ici.",
     "noAccessTitle": "Vous ne faites pas encore partie d'un hôtel",
-    "noAccessBody": "Demandez à votre responsable de vous inviter. L'invitation arrive par e-mail, ouvrez-la pour rejoindre l'hôtel."
+    "noAccessBody": "Demandez à votre responsable de vous inviter. L'invitation arrive par e-mail, ouvrez-la pour rejoindre l'hôtel.",
+    "seeAll": "Tout voir",
+    "pulse": {
+      "title": "Aujourd'hui et cette semaine",
+      "description": "Les 7 derniers jours, avec aujourd'hui sur chaque carte.",
+      "newGuests": "Nouveaux clients",
+      "consent": "Joignables",
+      "consentHint": "{consented} clients sur {total} ont dit oui",
+      "messages": "Messages envoyés",
+      "offers": "Offres utilisées",
+      "today": "{count} aujourd'hui"
+    },
+    "unhappy": {
+      "title": "Clients mécontents",
+      "description": "Les clients à qui parler avant qu'ils ne laissent un avis.",
+      "emptyTitle": "Rien à signaler",
+      "emptyBody": "Les enquêtes de satisfaction ne sont pas encore en ligne. Dès que vos clients y répondent, les mécontents apparaissent ici en premier."
+    },
+    "actions": {
+      "title": "Actions rapides",
+      "add": "Ajouter un client",
+      "addBody": "À la réception, en quelques secondes",
+      "qr": "Imprimer un QR code",
+      "qrBody": "Pour les chambres, les tables et la réception",
+      "import": "Importer un CSV",
+      "importBody": "Reprenez vos clients depuis un tableur"
+    },
+    "checklist": {
+      "title": "Préparez l'arrivée de vos premiers clients",
+      "description": "Six petites étapes. Chacune se coche toute seule.",
+      "progress": "{done} sur {total}",
+      "done": "Fait",
+      "todo": "À faire",
+      "logo": {
+        "title": "Ajoutez votre logo",
+        "body": "Vos clients le voient en premier sur la page d'inscription."
+      },
+      "colors": {
+        "title": "Choisissez vos couleurs",
+        "body": "Vos pages et vos e-mails prennent vos couleurs."
+      },
+      "googleLink": {
+        "title": "Liez vos avis Google",
+        "body": "Les clients satisfaits sont invités à laisser un avis."
+      },
+      "qr": {
+        "title": "Placez un QR code là où sont vos clients",
+        "body": "Imprimez-le pour les chambres, les tables ou la réception. C'est fait dès que le premier client le scanne."
+      },
+      "guests": {
+        "title": "Ajoutez vos premiers clients",
+        "body": "Ajoutez-en un vous-même ou importez un fichier."
+      },
+      "testEmail": {
+        "title": "Envoyez-vous un e-mail de test",
+        "body": "Voyez exactement ce que reçoivent vos clients."
+      }
+    }
   },
   "auth": {
     "brandTitle": "Connaissez vos clients. Donnez-leur envie de revenir.",
@@ -169,21 +225,18 @@
   },
   "guests": {
     "title": "Clients",
-    "description": "Tous ceux qui ont laissé leurs coordonnées à votre hôtel.",
+    "description": "Toutes les personnes qui ont partagé leurs coordonnées avec votre hôtel.",
     "search": "Rechercher par nom, téléphone ou e-mail",
-    "apply": "Rechercher",
     "reset": "Effacer les filtres",
     "filter": {
-      "consent": "Consentement",
       "source": "Source",
-      "language": "Langue",
-      "any": "Tous"
+      "any": "Toutes les sources"
     },
     "consent": {
       "email": "E-mail",
       "whatsapp": "WhatsApp",
       "profile": "Profil",
-      "none": "Aucun consentement marketing"
+      "none": "Sans consentement"
     },
     "source": {
       "qr_room": "QR chambre",
@@ -203,7 +256,7 @@
     },
     "empty": {
       "title": "Aucun client pour l'instant",
-      "description": "Les clients apparaissent ici dès qu'ils scannent votre QR code ou que vous les ajoutez."
+      "description": "Les clients apparaissent ici dès qu'ils scannent votre QR code, ou dès que vous les ajoutez."
     },
     "noMatch": {
       "title": "Aucun client trouvé",
@@ -219,14 +272,13 @@
     "next": "Suivant",
     "addButton": "Ajouter un client",
     "importButton": "Importer un CSV",
-    "back": "Retour aux clients",
     "add": {
       "title": "Ajouter un client",
-      "description": "Le nom et le téléphone suffisent. Cela prend quelques secondes.",
+      "description": "Un téléphone et un nom suffisent. Cela prend quelques secondes.",
       "name": "Nom",
       "phone": "Numéro de téléphone",
       "dialCode": "Indicatif du pays",
-      "language": "Langue",
+      "language": "Langue du client",
       "email": "E-mail (facultatif)",
       "consentTitle": "Consentement",
       "consentHint": "Cochez uniquement ce que le client vous a dit ou confirmé.",
@@ -235,14 +287,18 @@
       "noWhatsapp": "Ce numéro ne peut pas recevoir WhatsApp.",
       "needEmail": "Ajoutez un e-mail pour demander le consentement e-mail.",
       "submit": "Ajouter le client",
-      "saving": "Ajout…",
       "added": "Client ajouté",
-      "merged": "Ce client existait déjà : informations mises à jour"
+      "merged": "Ce client existait déjà : informations mises à jour",
+      "nameRequired": "Saisissez le nom du client.",
+      "phoneInvalid": "Saisissez un numéro valide, par exemple 20 123 456.",
+      "emailInvalid": "Saisissez un e-mail valide, par exemple nom@exemple.com.",
+      "done": "Terminé",
+      "view": "Voir le client",
+      "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez."
     },
     "import": {
       "title": "Importer des clients",
       "description": "Importez un fichier CSV de votre logiciel de réservation ou d'un tableur.",
-      "file": "Fichier CSV",
       "fileHint": "Jusqu'à {rows} lignes et {mb} Mo. Les colonnes peuvent être séparées par des virgules ou des points-virgules.",
       "tooBig": "Ce fichier est trop gros.",
       "tooMany": "Ce fichier a plus de {rows} lignes. Découpez-le et importez-le en plusieurs fois.",
@@ -258,43 +314,133 @@
         "language": "Langue",
         "consent": "Consentement (true ou false)"
       },
-      "defaultLanguage": "Langue quand la cellule est vide",
+      "defaultLanguage": "Langue quand le fichier ne l'indique pas",
       "confirm": "Je confirme que notre hôtel détient le consentement de chaque client marqué true",
       "confirmHint": "Le consentement n'est enregistré que si la colonne dit true, yes, oui ou 1, et seulement si vous confirmez. Les autres sont ajoutés sans consentement marketing.",
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
-      "importing": "Import en cours…",
       "result": "{created} ajoutés, {merged} mis à jour, {failed} en échec",
       "download": "Télécharger le rapport d'erreurs",
       "errorColumn": "erreur",
       "lineColumn": "ligne",
-      "another": "Importer un autre fichier"
+      "another": "Importer un autre fichier",
+      "steps": {
+        "label": "Étapes",
+        "upload": "Fichier",
+        "map": "Colonnes",
+        "review": "Vérification"
+      },
+      "choose": "Choisissez un fichier CSV ou déposez-le ici",
+      "sample": "Télécharger un fichier exemple",
+      "failed": "L'import n'a pas abouti.",
+      "tryAnother": "Essayez un autre fichier.",
+      "tryAgain": "Rien n'a été perdu. Réessayez.",
+      "mapHint": "Nous avons associé ce que nous avons pu. Vérifiez chaque colonne, le nom et le téléphone sont obligatoires.",
+      "detected": "Détectée",
+      "required": "Obligatoire",
+      "optional": "Facultatif",
+      "continue": "Continuer",
+      "back": "Retour",
+      "ready": "prêts à importer",
+      "skipped": "seront ignorés",
+      "problemsTitle": "Lignes avec un problème",
+      "line": "Ligne {line}",
+      "more": "Et {count} de plus. Téléchargez le rapport pour tout voir.",
+      "problem": {
+        "name": "Le nom est manquant",
+        "phone": "Le numéro de téléphone n'est pas valide",
+        "email": "L'e-mail n'est pas valide",
+        "birthday": "La date de naissance n'est pas une vraie date, utilisez AAAA-MM-JJ",
+        "language": "La langue doit être en, fr ou ar",
+        "row": "Cette ligne n'a pas pu être enregistrée"
+      },
+      "consentTitle": "Consentement",
+      "consentFound": "{count, plural, one {# client est marqué comme consentant dans votre fichier.} other {# clients sont marqués comme consentants dans votre fichier.}}",
+      "noConsentColumn": "Votre fichier n'a pas de colonne de consentement : tout le monde est ajouté sans consentement marketing. Vous pourrez le demander plus tard.",
+      "unconfirmed": "Sans votre confirmation, tout le monde est ajouté sans consentement marketing.",
+      "doneTitle": "Import terminé",
+      "viewGuests": "Voir les clients"
+    },
+    "pagination": "Pages",
+    "density": {
+      "label": "Hauteur des lignes",
+      "comfortable": "Lignes aérées",
+      "compact": "Lignes compactes"
+    },
+    "detail": {
+      "subtitle": "Client, parle {language}",
+      "contact": "Contact",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "language": "Langue",
+      "source": "Source",
+      "added": "Ajouté le",
+      "birthday": "Anniversaire",
+      "from": "Origine",
+      "stay": "Séjour",
+      "next": "Prochaine destination",
+      "none": "Non renseigné",
+      "consents": "Consentement",
+      "consentsHint": "Ce que ce client a accepté. Chaque changement est conservé dans le journal ci-dessous.",
+      "granted": "Accepté",
+      "notGranted": "Non accepté",
+      "since": "Depuis le",
+      "withdrawnOn": "Retiré le",
+      "withdraw": "Retirer",
+      "withdrawTitle": "Retirer le consentement {channel} ?",
+      "withdrawBody": "Le client ne recevra plus ces messages. Le changement est ajouté au journal des consentements.",
+      "withdrawConfirm": "Retirer le consentement",
+      "withdrawn": "Consentement retiré.",
+      "eventGranted": "Consentement {channel} donné",
+      "eventWithdrawn": "Consentement {channel} retiré",
+      "wording": "formulation {version}",
+      "sources": {
+        "unsubscribe_link": "Lien de désabonnement",
+        "stop_reply": "Réponse STOP",
+        "guest_request": "Demande du client"
+      },
+      "messages": "Messages envoyés",
+      "noMessagesTitle": "Aucun message pour l'instant",
+      "noMessagesBody": "Les messages envoyés à ce client et leur résultat sont listés ici. Jamais le texte.",
+      "export": "Exporter",
+      "exportCsv": "En CSV",
+      "exportJson": "En JSON",
+      "exported": "Export prêt.",
+      "delete": "Supprimer",
+      "deleteTitle": "Supprimer ce client ?",
+      "deleteBody": "Cela supprime définitivement {name} et son historique de consentement. C'est irréversible.",
+      "deleteConfirm": "Supprimer définitivement",
+      "cancel": "Annuler",
+      "deleted": "Client supprimé.",
+      "error": "Une erreur est survenue. Réessayez."
     }
   },
   "guestData": {
     "title": "Données des clients",
     "description": "Exportez ou supprimez ce que vous conservez sur vos clients. Réservé aux propriétaires et aux managers.",
     "forbidden": "Seuls les propriétaires et les managers peuvent exporter ou supprimer les données des clients.",
-    "hotelTitle": "Tous les clients",
-    "hotelDescription": "Une copie de tous les clients de l'hôtel avec leur historique de consentement, ou une suppression complète.",
     "exportJson": "Exporter en JSON",
     "exportCsv": "Exporter en CSV",
-    "deleteAll": "Supprimer tous les clients",
+    "deleteAll": "Supprimer tous les clients…",
     "deleteAllTitle": "Supprimer tous les clients ?",
-    "deleteAllBody": "Cela supprime définitivement {count} clients de {hotel} avec leur historique de consentement. Impossible d'annuler. Exportez d'abord si vous voulez une copie.",
+    "deleteAllBody": "Cela supprime définitivement {count, plural, one {# client} other {# clients}} de {hotel} avec leur historique de consentement. C'est irréversible.",
     "typeName": "Saisissez {hotel} pour confirmer",
     "cancel": "Annuler",
     "confirm": "Supprimer définitivement",
     "deleted": "Supprimé.",
     "exported": "Export prêt.",
     "guestTitle": "Un client",
-    "guestDescription": "Trouvez un client par nom, téléphone ou e-mail.",
+    "guestDescription": "Retrouvez un client pour exporter ou supprimer ce que vous détenez sur lui, par exemple après une demande.",
     "search": "Rechercher un client",
     "noResults": "Aucun client trouvé.",
-    "deleteGuest": "Supprimer",
-    "deleteGuestTitle": "Supprimer ce client ?",
-    "deleteGuestBody": "Cela supprime définitivement {name} et son historique de consentement. Impossible d'annuler.",
-    "error": "Une erreur est survenue. Réessayez."
+    "error": "Une erreur est survenue. Réessayez.",
+    "forbiddenTitle": "Non disponible pour votre rôle",
+    "exportTitle": "Export",
+    "exportDescription": "Une copie de chaque client avec son journal de consentement. Gardez-la en lieu sûr, elle contient des données personnelles.",
+    "count": "{count, plural, one {# client} other {# clients}}",
+    "dangerTitle": "Tout supprimer",
+    "dangerDescription": "Quand l'hôtel arrête d'utiliser Le Hoetel ou qu'une liste doit être effacée. C'est irréversible.",
+    "deleteAllText": "{count, plural, one {Cela supprime # client} other {Cela supprime # clients}} et leur historique de consentement. Exportez d'abord si vous voulez une copie."
   },
   "unsubscribe": {
     "title": "Vos messages de {hotel}",

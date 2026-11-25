@@ -21,6 +21,9 @@ type ConfirmDialogProps = {
   onConfirm: () => void
   destructive?: boolean
   pending?: boolean
+  confirmDisabled?: boolean
+  /** Extra content between the text and the buttons, e.g. a field to type the name of what is deleted. */
+  children?: React.ReactNode
 }
 
 function ConfirmDialog({
@@ -33,6 +36,8 @@ function ConfirmDialog({
   onConfirm,
   destructive = false,
   pending = false,
+  confirmDisabled = false,
+  children,
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -41,9 +46,15 @@ function ConfirmDialog({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+        {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{cancelLabel}</AlertDialogCancel>
-          <Button variant={destructive ? "destructive" : "default"} loading={pending} onClick={onConfirm}>
+          <Button
+            variant={destructive ? "destructive" : "default"}
+            loading={pending}
+            disabled={confirmDisabled}
+            onClick={onConfirm}
+          >
             {confirmLabel}
           </Button>
         </AlertDialogFooter>

@@ -29,7 +29,6 @@
     "hotelDescription": "Here is how {hotel} is doing.",
     "adminDescription": "Every hotel on the platform at a glance.",
     "guests": "Guests",
-    "guestsHint": "shared their details",
     "hotels": "Hotels",
     "needAttention": "Need attention",
     "attentionHint": "quiet or without an owner",
@@ -58,7 +57,64 @@
     "noHotelsTitle": "No hotel yet",
     "noHotelsBody": "Create the first hotel and invite its owner. They will see their guests here.",
     "noAccessTitle": "You are not part of a hotel yet",
-    "noAccessBody": "Ask your hotel manager to invite you. The invitation arrives by email, open it to join."
+    "noAccessBody": "Ask your hotel manager to invite you. The invitation arrives by email, open it to join.",
+    "seeAll": "See all",
+    "pulse": {
+      "title": "Today and this week",
+      "description": "The last 7 days, with today on each card.",
+      "newGuests": "New guests",
+      "consent": "Can be messaged",
+      "consentHint": "{consented} of {total} guests said yes",
+      "messages": "Messages sent",
+      "offers": "Offers redeemed",
+      "today": "{count} today"
+    },
+    "unhappy": {
+      "title": "Unhappy guests",
+      "description": "Guests who need a word from you before they leave a review.",
+      "emptyTitle": "Nothing to flag",
+      "emptyBody": "Satisfaction surveys are not live yet. Once guests answer them, anyone unhappy shows up here first."
+    },
+    "actions": {
+      "title": "Quick actions",
+      "add": "Add a guest",
+      "addBody": "At the front desk, in a few seconds",
+      "qr": "Print a QR code",
+      "qrBody": "For rooms, tables and the front desk",
+      "import": "Import a CSV",
+      "importBody": "Bring guests from a spreadsheet"
+    },
+    "checklist": {
+      "title": "Get ready for your first guests",
+      "description": "Six small steps. Each one checks itself when it is done.",
+      "progress": "{done} of {total}",
+      "done": "Done",
+      "todo": "To do",
+      "logo": {
+        "title": "Add your logo",
+        "body": "Guests see it first on the sign-up page."
+      },
+      "colors": {
+        "title": "Pick your colors",
+        "body": "Your pages and emails take your own colors."
+      },
+      "googleLink": {
+        "title": "Link your Google reviews",
+        "body": "Happy guests are sent to leave a review."
+      },
+      "qr": {
+        "title": "Put a QR code where guests are",
+        "body": "Print it for rooms, tables or the front desk. This is done when the first guest scans it."
+      },
+      "guests": {
+        "title": "Add your first guests",
+        "body": "Add one yourself or import a file."
+      },
+      "testEmail": {
+        "title": "Send yourself a test email",
+        "body": "See exactly what guests receive."
+      }
+    }
   },
   "auth": {
     "brandTitle": "Know your guests. Welcome them back.",
@@ -171,19 +227,16 @@
     "title": "Guests",
     "description": "Everyone who shared their details with your hotel.",
     "search": "Search by name, phone or email",
-    "apply": "Search",
     "reset": "Clear filters",
     "filter": {
-      "consent": "Consent",
       "source": "Source",
-      "language": "Language",
-      "any": "Any"
+      "any": "Any source"
     },
     "consent": {
       "email": "Email",
       "whatsapp": "WhatsApp",
       "profile": "Profile",
-      "none": "No marketing consent"
+      "none": "No consent"
     },
     "source": {
       "qr_room": "Room QR",
@@ -203,7 +256,7 @@
     },
     "empty": {
       "title": "No guests yet",
-      "description": "Guests show up here once they scan your QR code or you add them."
+      "description": "Guests show up here once they scan your QR code, or as soon as you add them."
     },
     "noMatch": {
       "title": "No guest matches",
@@ -219,14 +272,13 @@
     "next": "Next",
     "addButton": "Add guest",
     "importButton": "Import CSV",
-    "back": "Back to guests",
     "add": {
       "title": "Add a guest",
-      "description": "Name and phone are enough. It takes a few seconds.",
+      "description": "Phone and name are enough. It takes a few seconds.",
       "name": "Name",
       "phone": "Phone number",
       "dialCode": "Country code",
-      "language": "Language",
+      "language": "Language of the guest",
       "email": "Email (optional)",
       "consentTitle": "Consent",
       "consentHint": "Only tick what the guest told you or confirmed.",
@@ -235,14 +287,18 @@
       "noWhatsapp": "This number can't receive WhatsApp.",
       "needEmail": "Add an email to ask for email consent.",
       "submit": "Add guest",
-      "saving": "Adding…",
       "added": "Guest added",
-      "merged": "This guest was already here: details updated"
+      "merged": "This guest was already here: details updated",
+      "nameRequired": "Enter the guest's name.",
+      "phoneInvalid": "Enter a valid phone number, like 20 123 456.",
+      "emailInvalid": "Enter a valid email, like name@example.com.",
+      "done": "Done",
+      "view": "View guest",
+      "error": "The guest could not be saved. Check the details and try again."
     },
     "import": {
       "title": "Import guests",
       "description": "Upload a CSV file from your reservation system or a spreadsheet.",
-      "file": "CSV file",
       "fileHint": "Up to {rows} rows and {mb} MB. Columns can be separated by commas or semicolons.",
       "tooBig": "This file is too big.",
       "tooMany": "This file has more than {rows} rows. Split it and import it in parts.",
@@ -258,43 +314,133 @@
         "language": "Language",
         "consent": "Consent (true or false)"
       },
-      "defaultLanguage": "Language when the cell is empty",
+      "defaultLanguage": "Language when the file does not say",
       "confirm": "I confirm our hotel holds the consent of every guest marked true",
       "confirmHint": "Consent is only recorded when the consent column says true, yes, oui or 1, and only if you confirm. Everyone else is added without marketing consent.",
       "needColumns": "Choose the name and phone columns to continue.",
       "submit": "Import {count, plural, one {# guest} other {# guests}}",
-      "importing": "Importing…",
       "result": "{created} added, {merged} updated, {failed} failed",
       "download": "Download error report",
       "errorColumn": "error",
       "lineColumn": "line",
-      "another": "Import another file"
+      "another": "Import another file",
+      "steps": {
+        "label": "Steps",
+        "upload": "Upload",
+        "map": "Match columns",
+        "review": "Review"
+      },
+      "choose": "Choose a CSV file or drop it here",
+      "sample": "Download a sample file",
+      "failed": "The import did not go through.",
+      "tryAnother": "Try another file.",
+      "tryAgain": "Nothing was lost. Try again.",
+      "mapHint": "We matched what we could. Check each one, name and phone are needed.",
+      "detected": "Detected",
+      "required": "Required",
+      "optional": "Optional",
+      "continue": "Continue",
+      "back": "Back",
+      "ready": "ready to import",
+      "skipped": "will be skipped",
+      "problemsTitle": "Rows with a problem",
+      "line": "Line {line}",
+      "more": "And {count} more. Download the report to see them all.",
+      "problem": {
+        "name": "The name is missing",
+        "phone": "The phone number is not valid",
+        "email": "The email is not valid",
+        "birthday": "The birthday is not a real date, use YYYY-MM-DD",
+        "language": "The language must be en, fr or ar",
+        "row": "This row could not be saved"
+      },
+      "consentTitle": "Consent",
+      "consentFound": "{count, plural, one {# guest is marked as consenting in your file.} other {# guests are marked as consenting in your file.}}",
+      "noConsentColumn": "Your file has no consent column, so everyone is added without marketing consent. You can ask them later.",
+      "unconfirmed": "Without your confirmation, everyone is added without marketing consent.",
+      "doneTitle": "Import finished",
+      "viewGuests": "View guests"
+    },
+    "pagination": "Pages",
+    "density": {
+      "label": "Row height",
+      "comfortable": "Comfortable rows",
+      "compact": "Compact rows"
+    },
+    "detail": {
+      "subtitle": "Guest, speaks {language}",
+      "contact": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "language": "Language",
+      "source": "Source",
+      "added": "Added",
+      "birthday": "Birthday",
+      "from": "From",
+      "stay": "Stay",
+      "next": "Next destination",
+      "none": "Not given",
+      "consents": "Consent",
+      "consentsHint": "What this guest agreed to. Every change is kept in the log below.",
+      "granted": "Agreed",
+      "notGranted": "Not agreed",
+      "since": "Since",
+      "withdrawnOn": "Withdrawn",
+      "withdraw": "Withdraw",
+      "withdrawTitle": "Withdraw {channel} consent?",
+      "withdrawBody": "The guest will stop receiving these messages. The change is added to the consent log.",
+      "withdrawConfirm": "Withdraw consent",
+      "withdrawn": "Consent withdrawn.",
+      "eventGranted": "{channel} consent given",
+      "eventWithdrawn": "{channel} consent withdrawn",
+      "wording": "wording {version}",
+      "sources": {
+        "unsubscribe_link": "Unsubscribe link",
+        "stop_reply": "STOP reply",
+        "guest_request": "Guest request"
+      },
+      "messages": "Messages sent",
+      "noMessagesTitle": "No message yet",
+      "noMessagesBody": "Messages to this guest, and how they ended, are listed here. Never the text.",
+      "export": "Export",
+      "exportCsv": "As CSV",
+      "exportJson": "As JSON",
+      "exported": "Export ready.",
+      "delete": "Delete",
+      "deleteTitle": "Delete this guest?",
+      "deleteBody": "This permanently deletes {name} and their consent history. It cannot be undone.",
+      "deleteConfirm": "Delete permanently",
+      "cancel": "Cancel",
+      "deleted": "Guest deleted.",
+      "error": "Something went wrong. Try again."
     }
   },
   "guestData": {
     "title": "Guest data",
     "description": "Export or delete what you store about your guests. Owners and managers only.",
     "forbidden": "Only owners and managers can export or delete guest data.",
-    "hotelTitle": "All guests",
-    "hotelDescription": "A copy of every guest of the hotel with their consent log, or a full deletion.",
     "exportJson": "Export JSON",
     "exportCsv": "Export CSV",
-    "deleteAll": "Delete all guests",
+    "deleteAll": "Delete all guests…",
     "deleteAllTitle": "Delete every guest?",
-    "deleteAllBody": "This permanently deletes {count} guests of {hotel} with their consent history. It cannot be undone. Export first if you need a copy.",
+    "deleteAllBody": "This permanently deletes {count, plural, one {# guest} other {# guests}} of {hotel} with their consent history. It cannot be undone.",
     "typeName": "Type {hotel} to confirm",
     "cancel": "Cancel",
     "confirm": "Delete permanently",
     "deleted": "Deleted.",
     "exported": "Export ready.",
     "guestTitle": "One guest",
-    "guestDescription": "Find a guest by name, phone or email.",
+    "guestDescription": "Find one guest to export or delete what you hold about them, for example after a request.",
     "search": "Search guests",
     "noResults": "No guest found.",
-    "deleteGuest": "Delete",
-    "deleteGuestTitle": "Delete this guest?",
-    "deleteGuestBody": "This permanently deletes {name} and their consent history. It cannot be undone.",
-    "error": "Something went wrong. Try again."
+    "error": "Something went wrong. Try again.",
+    "forbiddenTitle": "Not available for your role",
+    "exportTitle": "Export",
+    "exportDescription": "A copy of every guest with their consent log. Keep it safe, it holds personal data.",
+    "count": "{count, plural, one {# guest} other {# guests}}",
+    "dangerTitle": "Delete everything",
+    "dangerDescription": "For when the hotel stops using Le Hoetel or a guest list must be cleared. This cannot be undone.",
+    "deleteAllText": "{count, plural, one {This deletes # guest} other {This deletes # guests}} and their consent history. Export first if you need a copy."
   },
   "unsubscribe": {
     "title": "Your messages from {hotel}",
