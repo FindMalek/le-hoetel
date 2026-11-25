@@ -39,6 +39,7 @@
     "secrets",
     "previews",
     "observability",
+    "turbo-cache",
     "analytics"
   ]
 }

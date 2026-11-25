@@ -1,0 +1,38 @@
+---
+title: Self hosted Turborepo remote cache
+description: CI shares build artifacts through a cache server on The Keep, with the GitHub Actions cache as fallback.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Every CI run and Dokploy build starts cold. Turborepo can share task outputs through a remote cache. The hosted option is Vercel, a self hosted server keeps artifacts on our own disk.
+
+## Decision
+
+Run `ducktors/turborepo-remote-cache` as a Dokploy application on The Keep at `turbo-lehoetel.findmalek.engineer`, storing artifacts on a local volume. CI uses it when `TURBO_TOKEN` is set and falls back to the GitHub Actions cache when it is not.
+
+## Why
+
+- Free, 155 GB of free disk, no vendor account.
+- One shared cache for CI, previews and developers.
+- Fork pull requests have no secrets, the fallback keeps them working.
+
+## Why not
+
+- Vercel remote cache: another account and a paid tier for a team.
+- Only the GitHub Actions cache: per branch scoping, 10 GB cap, and it is not shared with Dokploy or laptops.
+
+## Consequences
+
+- One more service to keep up. If it is down, turbo warns and builds locally, CI does not fail.
+- The CI build `.env` uses fixed build only values, because `.env` is a turbo global dependency and a random secret would change every hash.
+
+## Revisit when
+
+The disk fills up, or the cache server causes more flakiness than it saves.
+
+## Related
+
+- [Turbo cache](/docs/turbo-cache)

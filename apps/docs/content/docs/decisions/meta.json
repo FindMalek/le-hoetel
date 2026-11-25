@@ -15,6 +15,7 @@
     "guest-delete-is-a-hard-delete",
     "unsubscribe-links-are-signed-tokens",
     "offer-codes-are-per-guest",
-    "languine-per-release"
+    "languine-per-release",
+    "turbo-remote-cache"
   ]
 }
