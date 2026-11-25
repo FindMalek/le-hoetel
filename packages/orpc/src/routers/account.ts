@@ -1,8 +1,8 @@
 import { ADMIN_LIST_LIMIT } from "@le-hoetel/common/constants"
 import { adminUserSchema, meSchema, okSchema, profileInputSchema } from "@le-hoetel/common/schemas"
-import { user } from "@le-hoetel/db"
+import { hotelSettings, member, user } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
-import { count, desc, eq } from "drizzle-orm"
+import { count, desc, eq, inArray } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"
 import { adminProcedure, protectedProcedure } from "../procedures"
@@ -69,6 +69,29 @@ export const adminRouter = {
         .from(user)
         .orderBy(desc(user.createdAt))
         .limit(ADMIN_LIST_LIMIT)
-      return { total: total?.n ?? 0, users }
+      const memberships = users.length
+        ? await context.db
+            .select({
+              userId: member.userId,
+              id: member.organizationId,
+              name: hotelSettings.displayName,
+              role: member.role,
+            })
+            .from(member)
+            .innerJoin(hotelSettings, eq(hotelSettings.organizationId, member.organizationId))
+            .where(
+              inArray(
+                member.userId,
+                users.map((row) => row.id),
+              ),
+            )
+        : []
+      return {
+        total: total?.n ?? 0,
+        users: users.map((row) => ({
+          ...row,
+          hotels: memberships.filter((m) => m.userId === row.id).map(({ id, name, role }) => ({ id, name, role })),
+        })),
+      }
     }),
 }

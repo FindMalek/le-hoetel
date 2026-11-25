@@ -214,7 +214,9 @@
     "auditLog": "Journal d'audit",
     "settings": "Paramètres",
     "admin": "Plateforme",
-    "holidays": "Fêtes"
+    "holidays": "Fêtes",
+    "adminOverview": "Vue d'ensemble",
+    "campaigns": "Campagnes"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -544,31 +546,54 @@
   },
   "adminHotels": {
     "title": "Hôtels",
-    "description": "Tous les hôtels de la plateforme, avec leurs clients et leur santé.",
-    "createTitle": "Nouvel hôtel",
-    "name": "Nom de l’hôtel",
-    "slug": "Identifiant",
-    "ownerEmail": "E-mail du propriétaire",
-    "ownerHint": "Le propriétaire reçoit une invitation par e-mail.",
-    "primaryColor": "Couleur principale",
-    "accentColor": "Couleur d’accent",
-    "language": "Langue par défaut",
-    "submit": "Créer l’hôtel et inviter le propriétaire",
-    "created": "Hôtel créé, invitation envoyée.",
-    "empty": "Aucun hôtel pour l’instant.",
+    "description": "Tous les hôtels de la plateforme, leurs chiffres et ce qui demande votre attention.",
+    "empty": {
+      "title": "Aucun hôtel pour l'instant",
+      "description": "Créez le premier hôtel, invitez son propriétaire et imprimez ses QR codes. Comptez deux minutes."
+    },
     "columns": {
       "hotel": "Hôtel",
       "guests": "Clients",
-      "owners": "Propriétaires",
       "health": "Santé",
-      "created": "Créé le"
+      "consent": "Taux de consentement",
+      "lastCapture": "Dernière inscription",
+      "pilotEnd": "Fin du pilote",
+      "plan": "Offre"
     },
     "health": {
       "healthy": "En forme",
       "quiet": "Aucun nouveau client depuis 2 semaines",
-      "no-guests": "Pas encore de clients",
+      "no-guests": "Aucun client pour l'instant",
       "no-owner": "Propriétaire pas encore inscrit",
       "suspended": "Suspendu"
+    },
+    "new": "Nouvel hôtel",
+    "loading": "Chargement des hôtels",
+    "search": "Rechercher par nom ou identifiant",
+    "reset": "Effacer les filtres",
+    "count": "{count, plural, one {# hôtel} other {# hôtels}}",
+    "filters": {
+      "status": "Statut",
+      "health": "Santé",
+      "any": "Tous"
+    },
+    "status": {
+      "pilot": "Pilote",
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "plan": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "noCapture": "Aucune inscription",
+    "noPilotEnd": "Non définie",
+    "pilotEnded": "Terminé",
+    "pilotLeft": "{days, plural, one {# jour restant} other {# jours restants}}",
+    "noMatch": {
+      "title": "Aucun hôtel ne correspond",
+      "description": "Essayez un autre nom ou effacez les filtres."
     }
   },
   "hotelSettings": {
@@ -978,6 +1003,407 @@
       "terms": "Conditions",
       "status": "État du service",
       "rights": "Fait en Tunisie"
+    }
+  },
+  "adminHotel": {
+    "breadcrumb": "Hôtels",
+    "statuses": {
+      "pilot": "Pilote",
+      "active": "Actif",
+      "suspended": "Suspendu"
+    },
+    "plans": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "languages": {
+      "en": "Anglais",
+      "fr": "Français",
+      "ar": "Arabe"
+    },
+    "capturePage": "Page d'inscription",
+    "openAs": "Ouvrir comme cet hôtel",
+    "viewingAs": "Vous agissez en tant que {hotel}. Tout ce que vous modifiez est réel.",
+    "leave": "Retour à l'admin",
+    "overview": "Vue d'ensemble",
+    "stats": {
+      "guests": "Clients",
+      "consent": "Taux de consentement",
+      "consentHint": "{count} ont accepté au moins un canal",
+      "messages": "Messages",
+      "lastCapture": "Dernière inscription"
+    },
+    "createdOn": "Créé le",
+    "branding": "Identité",
+    "brandingHint": "Ce que voient les clients après avoir scanné un QR code : le nom, les couleurs et la langue de l'hôtel.",
+    "displayName": "Nom affiché",
+    "displayNameHint": "Affiché aux clients et dans les e-mails.",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d'accent",
+    "replyTo": "E-mail de réponse",
+    "replyToHint": "Les clients qui répondent à un e-mail écrivent ici.",
+    "language": "Langue par défaut",
+    "timezone": "Fuseau horaire",
+    "save": "Enregistrer",
+    "brandingSaved": "Identité enregistrée.",
+    "previewTitle": "Aperçu de la page d'inscription",
+    "previewName": "Votre hôtel",
+    "contrastLight": "Cette couleur est difficile à lire sur fond clair. Choisissez-en une plus foncée.",
+    "contrastDark": "Cette couleur est difficile à lire sur fond sombre. Choisissez-en une plus claire.",
+    "errors": {
+      "displayName": "Saisissez le nom que verront les clients.",
+      "color": "Utilisez une couleur hexadécimale comme #0a7c66.",
+      "email": "Saisissez une adresse e-mail valide."
+    },
+    "logoHint": "Le logo se téléverse depuis les réglages de l'hôtel.",
+    "logoOpen": "Ouvrir l'identité comme cet hôtel",
+    "people": "Propriétaires et membres",
+    "peopleHint": "Qui peut se connecter à cet hôtel, et les invitations en attente.",
+    "noPeople": "Personne pour l'instant. Invitez le propriétaire depuis la page équipe de l'hôtel une fois ouvert.",
+    "invited": "Invité",
+    "inviteExpires": "Expire le",
+    "pilotPlan": "Pilote et offre",
+    "pilotPlanHint": "Où en est l'hôtel dans le pilote et ce qu'il paiera ensuite.",
+    "plan": "Offre",
+    "status": "Statut",
+    "pilotEnd": "Fin du pilote",
+    "pilotEndHint": "Laissez vide s'il n'y a pas de date de fin.",
+    "planSaved": "Offre enregistrée.",
+    "capture": "Page d'inscription et QR codes",
+    "captureHint": "La page publique où arrivent les clients, et les codes imprimables pour les chambres et les tables.",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié.",
+    "qrCodes": "QR codes",
+    "danger": "Zone dangereuse",
+    "dangerHint": "Suspendre coupe l'accès de l'hôtel. Supprimer est définitif.",
+    "suspend": "Suspendre l'hôtel",
+    "suspendHint": "L'équipe ne peut plus utiliser le tableau de bord et aucun message n'est envoyé. Les données sont conservées.",
+    "suspendedDone": "Hôtel suspendu.",
+    "reactivate": "Réactiver l'hôtel",
+    "reactivateHint": "Rend son accès à l'équipe.",
+    "reactivated": "Hôtel réactivé.",
+    "delete": "Supprimer l'hôtel",
+    "deleteHint": "Supprime définitivement l'hôtel, ses clients, ses offres et son équipe.",
+    "deleted": "Hôtel supprimé.",
+    "deleteTitle": "Supprimer {hotel} ?",
+    "deleteConsequence": "Tous les clients, consentements, offres et messages de cet hôtel sont effacés. Cette action est irréversible.",
+    "deleteType": "Saisissez {slug} pour confirmer",
+    "cancel": "Annuler",
+    "deleteConfirm": "Supprimer définitivement",
+    "mailTo": "À",
+    "mailToEmpty": "proprietaire@hotel.com",
+    "mailSubject": "Objet",
+    "preview": {
+      "en": {
+        "welcome": "Welcome to {hotel}",
+        "intro": "Leave your details and we will take care of you during your stay.",
+        "name": "Your name",
+        "phone": "Phone number",
+        "consent": "Send me offers by email or WhatsApp",
+        "submit": "Sign up"
+      },
+      "fr": {
+        "welcome": "Bienvenue à {hotel}",
+        "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
+        "name": "Votre nom",
+        "phone": "Numéro de téléphone",
+        "consent": "Je souhaite recevoir des offres par e-mail ou WhatsApp",
+        "submit": "S'inscrire"
+      },
+      "ar": {
+        "welcome": "أهلًا بكم في {hotel}",
+        "intro": "اتركوا بياناتكم وسنعتني بكم طوال إقامتكم.",
+        "name": "اسمكم",
+        "phone": "رقم الهاتف",
+        "consent": "أرغب في تلقي العروض عبر البريد الإلكتروني أو واتساب",
+        "submit": "تسجيل"
+      }
+    },
+    "invite": {
+      "en": {
+        "subject": "You are invited to run {hotel} on le-hoetel",
+        "title": "Welcome to {hotel}",
+        "body": "Your hotel is ready. Accept the invitation to set a password and see your guests, offers and QR codes.",
+        "button": "Accept the invitation",
+        "footer": "If you did not expect this email, you can ignore it."
+      },
+      "fr": {
+        "subject": "Vous êtes invité à gérer {hotel} sur le-hoetel",
+        "title": "Bienvenue à {hotel}",
+        "body": "Votre hôtel est prêt. Acceptez l'invitation pour choisir un mot de passe et retrouver vos clients, vos offres et vos QR codes.",
+        "button": "Accepter l'invitation",
+        "footer": "Si vous n'attendiez pas cet e-mail, vous pouvez l'ignorer."
+      },
+      "ar": {
+        "subject": "دعوة لإدارة {hotel} على le-hoetel",
+        "title": "أهلًا بكم في {hotel}",
+        "body": "فندقكم جاهز. اقبلوا الدعوة لاختيار كلمة مرور والاطّلاع على نزلائكم وعروضكم ورموز QR.",
+        "button": "قبول الدعوة",
+        "footer": "إذا لم تكونوا تنتظرون هذه الرسالة فيمكنكم تجاهلها."
+      }
+    }
+  },
+  "adminWizard": {
+    "title": "Nouvel hôtel",
+    "description": "Quatre petites étapes. Le propriétaire reçoit une invitation par e-mail à la fin.",
+    "steps": "Étapes",
+    "stepOf": "Étape {current} sur {total}",
+    "step": {
+      "basics": {
+        "title": "L'essentiel",
+        "description": "Le nom et l'adresse de la page client de l'hôtel."
+      },
+      "branding": {
+        "title": "Identité",
+        "description": "Les couleurs et le nom que voient les clients. L'aperçu se met à jour."
+      },
+      "languages": {
+        "title": "Langue et heure",
+        "description": "Utilisés pour la page d'inscription, les messages et les dates."
+      },
+      "owner": {
+        "title": "Propriétaire",
+        "description": "Qui dirige cet hôtel. Il reçoit une invitation pour choisir un mot de passe."
+      }
+    },
+    "name": "Nom de l'hôtel",
+    "nameHint": "Le nom officiel, comme sur la porte.",
+    "slug": "Adresse de la page",
+    "slugHint": "Lettres minuscules, chiffres et tirets. Elle fait partie des liens des QR codes.",
+    "slugChecking": "Vérification de la disponibilité...",
+    "slugFree": "{slug} est disponible.",
+    "displayName": "Nom affiché aux clients",
+    "displayNameHint": "Laissez vide pour utiliser le nom de l'hôtel.",
+    "primaryColor": "Couleur principale",
+    "accentColor": "Couleur d'accent",
+    "logoLater": "Le logo s'ajoute une fois l'hôtel créé, depuis sa section identité.",
+    "language": "Langue par défaut",
+    "languageHint": "La page d'inscription s'ouvre dans cette langue. Les clients peuvent en changer.",
+    "timezone": "Fuseau horaire",
+    "timezoneHint": "Les messages d'anniversaire et les rapports le suivent.",
+    "ownerEmail": "E-mail du propriétaire",
+    "ownerHint": "L'invitation est envoyée à cette adresse.",
+    "afterCreate": "Une fois l'hôtel créé, le propriétaire reçoit l'e-mail ci-contre. Vous pourrez inviter d'autres personnes plus tard.",
+    "create": "Créer l'hôtel et inviter le propriétaire",
+    "next": "Continuer",
+    "back": "Retour",
+    "preview": "Aperçu",
+    "previewCapture": "Ce que voient les clients",
+    "previewInvite": "Ce que reçoit le propriétaire",
+    "created": "Hôtel créé, invitation envoyée.",
+    "errors": {
+      "name": "Saisissez le nom de l'hôtel.",
+      "slug": "Saisissez une adresse pour la page.",
+      "slugFormat": "Utilisez des minuscules, des chiffres et des tirets simples.",
+      "slugTaken": "Cette adresse est déjà utilisée. Essayez-en une autre.",
+      "color": "Utilisez une couleur hexadécimale comme #0a7c66.",
+      "email": "Saisissez une adresse e-mail valide."
+    }
+  },
+  "adminOverview": {
+    "title": "Vue d'ensemble",
+    "description": "Le pilote en un coup d'œil : hôtels, clients inscrits, consentement et messages.",
+    "empty": {
+      "title": "Aucun hôtel sur la plateforme",
+      "description": "Les chiffres apparaissent dès que le premier hôtel est créé et que ses clients commencent à s'inscrire.",
+      "action": "Créer le premier hôtel"
+    },
+    "stats": {
+      "hotels": "Hôtels",
+      "hotelsHint": "{pilot} en pilote, {active} actifs",
+      "guests": "Clients inscrits",
+      "guestsHint": "{count} ces 7 derniers jours",
+      "consent": "Taux de consentement",
+      "consentHint": "{count} clients ont accepté au moins un canal",
+      "messages": "Messages",
+      "messagesHint": "{delivered} délivrés, {failed} échoués"
+    },
+    "funnel": {
+      "title": "Entonnoir du pilote",
+      "description": "Jusqu'où vont les hôtels, de la création au premier client.",
+      "created": "Hôtels créés",
+      "owner": "Propriétaire inscrit",
+      "guests": "Premier client inscrit"
+    },
+    "attention": {
+      "title": "À surveiller",
+      "all": "Tous les hôtels",
+      "pilots": "Pilotes qui se terminent sous 14 jours",
+      "suspended": "Hôtels suspendus"
+    }
+  },
+  "adminUsers": {
+    "title": "Utilisateurs",
+    "description": "{count, plural, one {# compte} other {# comptes}} sur la plateforme.",
+    "search": "Rechercher par nom ou e-mail",
+    "reset": "Effacer la recherche",
+    "roleAdmin": "Admin",
+    "roleUser": "Membre",
+    "noHotel": "Aucun hôtel",
+    "columns": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "hotels": "Hôtels",
+      "joined": "Inscrit le"
+    },
+    "noMatch": {
+      "title": "Aucun utilisateur ne correspond",
+      "description": "Essayez un autre nom ou e-mail."
+    }
+  },
+  "adminAudit": {
+    "title": "Journal d'audit",
+    "description": "Qui a fait quoi, du plus récent au plus ancien. Réservé aux admins.",
+    "system": "Système",
+    "newer": "Plus récents",
+    "older": "Plus anciens",
+    "columns": {
+      "action": "Action",
+      "who": "Qui",
+      "hotel": "Hôtel",
+      "ip": "IP",
+      "when": "Quand"
+    },
+    "filters": {
+      "action": "Action",
+      "actor": "Personne",
+      "hotel": "Hôtel",
+      "from": "Du",
+      "to": "Au",
+      "any": "Tous",
+      "apply": "Appliquer",
+      "reset": "Effacer"
+    },
+    "empty": {
+      "title": "Rien d'enregistré pour l'instant",
+      "description": "Les actions sensibles comme les exports, les suppressions et les changements d'offre apparaissent ici."
+    },
+    "noMatch": {
+      "title": "Aucune entrée ne correspond",
+      "description": "Élargissez les dates ou effacez un filtre."
+    },
+    "actions": {
+      "admin": {
+        "impersonate": "Connexion en tant qu'un utilisateur"
+      },
+      "guest": {
+        "consent": "Consentement d'un client modifié",
+        "delete-all": "Tous les clients d'un hôtel supprimés",
+        "delete": "Client supprimé",
+        "export-all": "Export de tous les clients",
+        "export": "Export d'un client",
+        "import": "Import de clients"
+      },
+      "hotel": {
+        "admin-update": "Offre, statut ou pilote modifié",
+        "create": "Hôtel créé",
+        "delete": "Hôtel supprimé",
+        "logo-remove": "Logo supprimé",
+        "logo-set": "Logo modifié",
+        "update": "Identité de l'hôtel modifiée"
+      },
+      "offer": {
+        "create": "Offre créée",
+        "delete": "Offre supprimée",
+        "redeem": "Offre utilisée",
+        "update": "Offre modifiée"
+      },
+      "privacy": {
+        "delete-account": "Compte supprimé",
+        "export": "Données du compte exportées"
+      },
+      "profile": {
+        "update": "Profil modifié"
+      }
+    }
+  },
+  "campaigns": {
+    "title": "Campagnes",
+    "description": "Envoyez un message aux clients qui ont accepté de vous lire.",
+    "new": "Nouvelle campagne",
+    "empty": "Aucune campagne pour l'instant",
+    "emptyHint": "Écrivez un message, choisissez les destinataires, puis envoyez-le ou programmez-le.",
+    "resultsLine": "{sent} sur {total} envoyés",
+    "columns": {
+      "name": "Nom",
+      "channel": "Canal",
+      "status": "Statut",
+      "results": "Résultats",
+      "when": "Quand"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "scheduled": "Programmée",
+      "sending": "En cours",
+      "sent": "Envoyée",
+      "cancelled": "Annulée"
+    },
+    "channel": {
+      "both": "E-mail et WhatsApp",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "results": {
+      "targeted": "Contactés",
+      "sent": "Envoyés",
+      "delivered": "Reçus",
+      "failed": "Échecs",
+      "skipped": "Ignorés"
+    },
+    "detail": {
+      "title": "Campagne",
+      "description": "Vérifiez le message, envoyez-vous un test, puis envoyez ou programmez.",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler la campagne",
+      "cancelTitle": "Annuler cette campagne ?",
+      "cancelBody": "Les messages pas encore envoyés ne partiront pas.",
+      "cancelled": "Campagne annulée",
+      "keep": "La garder",
+      "messageTitle": "Message",
+      "quietNote": "Les messages partent seulement entre 9h et 20h, heure de l'hôtel.",
+      "schedule": "Programmer",
+      "scheduleAt": "Envoyer le",
+      "scheduled": "Campagne programmée",
+      "sendNow": "Envoyer maintenant",
+      "startsAt": "Début : {date}",
+      "testSend": "M'envoyer un test",
+      "testSent": "Test envoyé à {to}"
+    },
+    "form": {
+      "newTitle": "Nouvelle campagne",
+      "editTitle": "Modifier la campagne",
+      "hint": "Seuls les clients ayant donné leur accord pour le canal le reçoivent.",
+      "basics": "Général",
+      "basicsHint": "Le nom n'est visible que par vous.",
+      "name": "Nom de la campagne",
+      "channel": "Canal",
+      "audience": "Destinataires",
+      "audienceHint": "Laissez tout vide pour joindre tous les clients.",
+      "languages": "Langues",
+      "countries": "Pays",
+      "countriesHint": "Séparés par des virgules",
+      "sources": "Comment ils ont rejoint",
+      "lastVisit": "Dernier séjour",
+      "anyTime": "À tout moment",
+      "lastDays": "Derniers {days} jours",
+      "reachLoading": "Comptage des clients…",
+      "reach": "{guests} clients, {email} par e-mail, {whatsapp} sur WhatsApp",
+      "consentNote": "Les clients désinscrits ou sans accord sont toujours exclus.",
+      "message": "Message",
+      "messageHint": "Écrivez-le dans une ou plusieurs langues. Chaque client reçoit sa langue.",
+      "subject": "Objet",
+      "body": "Texte du message",
+      "bodyHint": "Restez court et chaleureux.",
+      "offer": "Offre",
+      "offerHint": "Joignez une offre que le client peut utiliser.",
+      "noOffer": "Aucune offre",
+      "needText": "Écrivez le message dans au moins une langue",
+      "saveDraft": "Enregistrer le brouillon",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler"
     }
   }
 }
