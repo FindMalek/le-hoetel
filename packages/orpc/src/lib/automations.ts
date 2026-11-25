@@ -29,14 +29,41 @@ export async function consentedChannels(db: Db, hotelId: string, guestId: string
   return rows.map((row) => row.channel).filter((channel): channel is MessageChannel => channel !== "profile")
 }
 
+type OfferRow = typeof offers.$inferSelect
+type PerkContext = Pick<Context, "db" | "config" | "now">
+export interface Perk {
+  offer: EmailOffer
+  ctaUrl: string
+}
+
+/** The offer as one guest sees it: their own code and the page link. Null when it cannot be redeemed right now. */
+export async function perkFor(
+  context: PerkContext,
+  offer: OfferRow,
+  guestId: string,
+  language: HotelLanguage,
+): Promise<Perk | null> {
+  if (offerState(offer, await redeemedCount(context.db, offer.id), context.now()) !== "ready") return null
+  const token = signOfferToken(context.config.tokenSecret, { hotelId: offer.hotelId, offerId: offer.id, guestId })
+  return {
+    offer: {
+      title: offer.title,
+      description: offer.text || null,
+      validUntil: offer.validUntil?.toISOString().slice(0, 10) ?? null,
+      code: await guestCode(context.db, offer.hotelId, offer.id, guestId),
+    },
+    ctaUrl: offerPageUrl(context.config.webUrl, token, language),
+  }
+}
+
 /**
  * The newest offer of a hotel for an automatic trigger that can be redeemed right now, with this guest's own code
  * and the page link that shows it. Null when the hotel has none, so the message goes out without one.
  */
 export async function triggerOffer(
-  context: Pick<Context, "db" | "config" | "now">,
+  context: PerkContext,
   input: { hotelId: string; guestId: string; language: HotelLanguage; trigger: OfferTrigger },
-): Promise<{ offer: EmailOffer; ctaUrl: string } | null> {
+): Promise<Perk | null> {
   const { hotelId, guestId, language, trigger } = input
   const candidates = await context.db
     .select()
@@ -44,17 +71,8 @@ export async function triggerOffer(
     .where(and(eq(offers.hotelId, hotelId), eq(offers.trigger, trigger), eq(offers.active, true)))
     .orderBy(desc(offers.createdAt))
   for (const offer of candidates) {
-    if (offerState(offer, await redeemedCount(context.db, offer.id), context.now()) !== "ready") continue
-    const token = signOfferToken(context.config.tokenSecret, { hotelId, offerId: offer.id, guestId })
-    return {
-      offer: {
-        title: offer.title,
-        description: offer.text || null,
-        validUntil: offer.validUntil?.toISOString().slice(0, 10) ?? null,
-        code: await guestCode(context.db, hotelId, offer.id, guestId),
-      },
-      ctaUrl: offerPageUrl(context.config.webUrl, token, language),
-    }
+    const perk = await perkFor(context, offer, guestId, language)
+    if (perk) return perk
   }
   return null
 }
