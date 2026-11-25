@@ -4,6 +4,7 @@ import type { Db } from "../index"
 import {
   account,
   consentEvents,
+  feedbackCases,
   guestConsents,
   guests,
   hotelSettings,
@@ -66,6 +67,7 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
 
     await tx.insert(surveyInvites).values(surveyRows.surveyInvites)
     await tx.insert(surveyResponses).values(surveyRows.surveyResponses)
+    if (surveyRows.feedbackCases.length) await tx.insert(feedbackCases).values(surveyRows.feedbackCases)
   })
   return true
 }

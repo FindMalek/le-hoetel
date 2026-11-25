@@ -40,6 +40,7 @@ const hotelColumns = {
   timezone: hotelSettings.timezone,
   address: hotelSettings.address,
   googleReviewUrl: hotelSettings.googleReviewUrl,
+  lowScoreThreshold: hotelSettings.lowScoreThreshold,
   managerWhatsapp: hotelSettings.managerWhatsapp,
   managerTelegram: hotelSettings.managerTelegram,
   plan: hotelSettings.plan,

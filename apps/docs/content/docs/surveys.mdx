@@ -31,3 +31,12 @@ Every query is scoped by hotel id.
 `/s/<token>` in `apps/web`, branded with the hotel's logo and colors like the capture page, in the guest's language (en, fr, ar RTL). The token is signed (HMAC), so it cannot be guessed. It is a server component with a plain form and no client JavaScript. The NPS row wraps in two rows on a 390px phone. After sending, and on a second visit, the page shows the thank you state. After 14 days it says the survey has closed. The page is `noindex` and sends no referrer.
 
 Seed data: about one guest in five of the four demo hotels has an invite, 70% of them answered, with scores from 3 to 10 and comments in fr, ar and en.
+
+## Low score alert
+
+A response with `nps` at or below the hotel's `hotel_settings.low_score_threshold` (default 6, `hotel.update` takes `lowScoreThreshold` 0 to 10) does two things:
+
+- opens a `feedback_cases` row for the response with status `new` (then `contacted`, `resolved`), `notes` and `handled_by`, so it shows in the feedback inbox
+- calls `notifyManager(hotelId, text)`: Telegram first, email when there is no chat. The text has the guest's first name, the score, a comment excerpt (140 characters) and a link to `/feedback/<case id>` in the dashboard. Never a phone number or email.
+
+A failed alert never fails the guest's answer. One case per response.

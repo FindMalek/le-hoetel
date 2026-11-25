@@ -1,11 +1,19 @@
-import { SURVEY_INVITE_DAYS, type SurveyAnswer, verifySurveyToken } from "@le-hoetel/common/survey"
-import { guests, surveyInvites, surveyResponses } from "@le-hoetel/db"
+import type { HotelLanguage } from "@le-hoetel/common/hotel"
+import {
+  DEFAULT_LOW_SCORE_THRESHOLD,
+  SURVEY_INVITE_DAYS,
+  type SurveyAnswer,
+  verifySurveyToken,
+} from "@le-hoetel/common/survey"
+import { feedbackCases, guests, hotelSettings, surveyInvites, surveyResponses } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { eq } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelBranding } from "./hotel"
+import { notifyManager } from "./manager-alerts"
 
 type Ctx = Pick<Context, "db" | "config" | "now">
+type AlertCtx = Ctx & Pick<Context, "notification">
 
 export const surveyExpiry = (from: Date): Date => new Date(from.getTime() + SURVEY_INVITE_DAYS * 864e5)
 
@@ -42,7 +50,7 @@ export async function surveyPage(context: Ctx, token: string) {
 }
 
 /** One response per invite: a second submit (double tap, retry) changes nothing and still says `answered`. */
-export async function submitSurvey(context: Ctx, token: string, answer: SurveyAnswer) {
+export async function submitSurvey(context: AlertCtx, token: string, answer: SurveyAnswer) {
   const invite = await openInvite(context, token)
   if (invite.responseId) return { state: "answered" as const }
   if (invite.expiresAt <= context.now()) throw new ORPCError("BAD_REQUEST", { message: "This survey has closed." })
@@ -62,5 +70,51 @@ export async function submitSurvey(context: Ctx, token: string, answer: SurveyAn
     })
     .onConflictDoNothing()
     .returning({ id: surveyResponses.id })
+  if (saved && answer.nps <= (await lowScoreThreshold(context, invite.hotelId))) {
+    await openFeedbackCase(context, { ...invite, responseId: saved.id }, answer).catch(() =>
+      console.error("[survey] could not alert the manager"),
+    )
+  }
   return { state: "answered" as const, responseId: saved?.id }
+}
+
+async function lowScoreThreshold(context: Ctx, hotelId: string): Promise<number> {
+  const [row] = await context.db
+    .select({ value: hotelSettings.lowScoreThreshold })
+    .from(hotelSettings)
+    .where(eq(hotelSettings.organizationId, hotelId))
+  return row?.value ?? DEFAULT_LOW_SCORE_THRESHOLD
+}
+
+const ALERT: Record<HotelLanguage, (a: { name: string; nps: number; comment: string; url: string }) => string> = {
+  en: (a) => `${a.name} left ${a.nps}/10.${a.comment} Follow up: ${a.url}`,
+  fr: (a) => `${a.name} a mis ${a.nps}/10.${a.comment} À traiter : ${a.url}`,
+  ar: (a) => `${a.name} قيّم ${a.nps}/10.${a.comment} للمتابعة: ${a.url}`,
+}
+
+/** The unhappy guest lands in the feedback inbox as `new`, then the manager hears about it. Never a phone number or email in the text. */
+async function openFeedbackCase(
+  context: AlertCtx,
+  invite: { hotelId: string; guestId: string; responseId: string },
+  answer: SurveyAnswer,
+) {
+  const [made] = await context.db
+    .insert(feedbackCases)
+    .values({ hotelId: invite.hotelId, responseId: invite.responseId })
+    .onConflictDoNothing()
+    .returning({ id: feedbackCases.id })
+  if (!made) return
+  const [row] = await context.db
+    .select({ name: guests.name, language: hotelSettings.defaultLanguage })
+    .from(guests)
+    .innerJoin(hotelSettings, eq(hotelSettings.organizationId, guests.hotelId))
+    .where(eq(guests.id, invite.guestId))
+  const comment = answer.comment ? ` "${answer.comment.slice(0, 140)}${answer.comment.length > 140 ? "…" : ""}"` : ""
+  const text = ALERT[row?.language ?? "en"]({
+    name: row?.name.split(/\s+/)[0] ?? "A guest",
+    nps: answer.nps,
+    comment,
+    url: `${context.config.dashboardUrl.replace(/\/$/, "")}/feedback/${made.id}`,
+  })
+  await notifyManager(context, invite.hotelId, text)
 }
