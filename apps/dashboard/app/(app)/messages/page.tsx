@@ -1,9 +1,13 @@
+import { formatTnd } from "@le-hoetel/common/pricing"
 import { isForbidden } from "@le-hoetel/orpc/errors"
 import { Badge } from "@le-hoetel/ui/components/badge"
+import { Button } from "@le-hoetel/ui/components/button"
+import { InlineAlert } from "@le-hoetel/ui/components/inline-alert"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@le-hoetel/ui/components/table"
 import type { Metadata } from "next"
+import Link from "next/link"
 import { connection } from "next/server"
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
@@ -16,19 +20,36 @@ const STATUS_VARIANT = {
   delivered: "default",
   failed: "destructive",
   skipped_no_consent: "outline",
+  skipped_no_balance: "outline",
 } as const
 
 export default async function MessagesPage() {
   await connection()
-  const t = await getTranslations("messages")
-  const result = await call((api) => api.messages.list({})).catch((error) => {
-    if (isForbidden(error)) return null
-    throw error
-  })
+  const [t, locale] = await Promise.all([getTranslations("messages"), getLocale()])
+  const [result, balance] = await Promise.all([
+    call((api) => api.messages.list({})).catch((error) => {
+      if (isForbidden(error)) return null
+      throw error
+    }),
+    call((api) => api.hotel.balance.get()).catch(() => null),
+  ])
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
-      <div className="p-4 md:p-6">
+      <div className="flex flex-col gap-4 p-4 md:p-6">
+        {balance?.low ? (
+          <InlineAlert
+            tone="warning"
+            title={t("lowBalance")}
+            action={
+              <Button variant="outline" size="sm" render={<Link href="/usage" />} nativeButton={false}>
+                {t("seeUsage")}
+              </Button>
+            }
+          >
+            {t("lowBalanceHint", { balance: formatTnd(balance.balanceMillimes, locale) })}
+          </InlineAlert>
+        ) : null}
         {!result || result.items.length === 0 ? (
           <p className="text-muted-foreground">{t("empty")}</p>
         ) : (

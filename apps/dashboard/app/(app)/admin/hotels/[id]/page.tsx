@@ -19,6 +19,7 @@ import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { AdminCaptureLink } from "@/components/admin-capture-link"
 import { AdminBrandingForm, AdminDangerZone, AdminPlanForm } from "@/components/admin-hotel-forms"
+import { AdminTopUp } from "@/components/admin-top-up"
 import { HotelAvatar } from "@/components/hotel-avatar"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
@@ -31,7 +32,7 @@ export const metadata: Metadata = { title: "Hotel" }
 
 export default async function AdminHotelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const [t, tList, locale, hotel] = await Promise.all([
+  const [t, tList, locale, hotel, balance] = await Promise.all([
     getTranslations("adminHotel"),
     getTranslations("adminHotels"),
     getLocale(),
@@ -39,6 +40,7 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
       if (isNotFound(error)) notFound()
       throw error
     }),
+    call((api) => api.admin.hotels.balance.get({ id })),
   ])
   const now = new Date()
   const rate = consentRate(hotel)
@@ -168,6 +170,10 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
                 {t("qrCodes")}
               </Button>
             </form>
+          </FormSection>
+
+          <FormSection title={t("balance")} description={t("balanceHint")}>
+            <AdminTopUp hotelId={hotel.id} balanceMillimes={balance.balanceMillimes} />
           </FormSection>
 
           <FormSection title={t("danger")} description={t("dangerHint")}>

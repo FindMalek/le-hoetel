@@ -21,6 +21,7 @@ const MESSAGE_STATUS_VARIANT = {
   delivered: "default",
   failed: "destructive",
   skipped_no_consent: "outline",
+  skipped_no_balance: "outline",
 } as const
 
 const Ltr = ({ children }: { children: React.ReactNode }) => (

@@ -736,8 +736,12 @@
       "sent": "Sent",
       "delivered": "Delivered",
       "failed": "Failed",
-      "skipped_no_consent": "No consent"
-    }
+      "skipped_no_consent": "No consent",
+      "skipped_no_balance": "Not enough balance"
+    },
+    "lowBalance": "WhatsApp balance is running low",
+    "lowBalanceHint": "{balance} left. When it reaches zero, WhatsApp messages wait (email keeps going). Ask us to top up.",
+    "seeUsage": "See usage"
   },
   "emails": {
     "title": "Emails",
@@ -1260,7 +1264,14 @@
         "button": "قبول الدعوة",
         "footer": "إذا لم تكونوا تنتظرون هذه الرسالة فيمكنكم تجاهلها."
       }
-    }
+    },
+    "balance": "WhatsApp balance",
+    "balanceHint": "Prepaid credit in TND. Each WhatsApp message takes its price off it; email is free.",
+    "topUpAmount": "Amount to add (TND)",
+    "topUpAmountHint": "For example 50 or 12.500. Between 1 and 10 000.",
+    "topUpNote": "Note (optional)",
+    "topUp": "Add credit",
+    "topUpDone": "Credit added."
   },
   "adminWizard": {
     "title": "New hotel",
@@ -1643,5 +1654,21 @@
     "removeBody": "They lose access to this hotel right away.",
     "cancelAction": "Keep",
     "removed": "Member removed."
+  },
+  "usage": {
+    "title": "WhatsApp usage",
+    "description": "Your prepaid balance and what each message cost. Email is free.",
+    "balance": "Balance",
+    "month": "Spent this month",
+    "monthMessages": "{count, plural, one {# WhatsApp message} other {# WhatsApp messages}}",
+    "low": "Balance is low. WhatsApp messages stop at zero, email is not affected. Ask us to top up.",
+    "history": "Latest movements",
+    "empty": "No movement yet. Your first top-up will show here.",
+    "kinds": {
+      "top_up": "Top-up",
+      "usage": "WhatsApp message",
+      "refund": "Refund (not delivered)"
+    },
+    "forbidden": "Only owners and managers can see the balance."
   }
 }
