@@ -1,6 +1,6 @@
 import type { Locale } from "@le-hoetel/i18n/config"
 
-export const HOTEL_EMAIL_KEYS = ["welcome", "birthday", "survey", "reminder"] as const
+export const HOTEL_EMAIL_KEYS = ["welcome", "birthday", "survey", "reminder", "message"] as const
 export type HotelEmailKey = (typeof HOTEL_EMAIL_KEYS)[number]
 
 export interface EmailHotel {
@@ -30,6 +30,8 @@ export interface EmailProps {
   birthday: { offer: EmailOffer; ctaUrl?: string }
   survey: { ctaUrl: string }
   reminder: { offer: EmailOffer; ctaUrl?: string }
+  /** A text the hotel wrote itself (a holiday greeting, a campaign), already in the guest's language. `{name}` and `{hotel}` are filled in; a blank line starts a new paragraph. */
+  message: { subject: string; title: string; body: string; offer?: EmailOffer; ctaUrl?: string; ctaLabel?: string }
 }
 
 export interface RenderEmailInput<Key extends HotelEmailKey> {

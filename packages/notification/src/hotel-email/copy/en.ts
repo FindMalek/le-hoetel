@@ -55,6 +55,7 @@ export const en = {
     body: "A quick reminder from {hotel}: your offer is still yours, and we would love to welcome you back.",
     cta: "Use my offer",
   },
+  message: { cta: "Learn more" },
 }
 
 export type Copy = typeof en

@@ -76,6 +76,15 @@ export function unsubscribeFooter(channel: MessageChannel, language: HotelLangua
   return FOOTERS[channel][language].replace("{url}", pageUrl)
 }
 
+const STOP_CONFIRMATIONS: Record<HotelLanguage, string> = {
+  en: "You are unsubscribed from WhatsApp messages. We won't write to you here again.",
+  fr: "Vous êtes désabonné des messages WhatsApp. Nous ne vous écrirons plus ici.",
+  ar: "تم إلغاء اشتراكك في رسائل واتساب. لن نراسلك هنا مرة أخرى.",
+}
+
+/** The reply to a STOP, in the guest's language. */
+export const stopConfirmation = (language: HotelLanguage): string => STOP_CONFIRMATIONS[language]
+
 const normalize = (text: string): string =>
   text
     .normalize("NFD")

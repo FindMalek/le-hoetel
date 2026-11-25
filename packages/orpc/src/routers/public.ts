@@ -14,6 +14,7 @@ import { ORPCError } from "@orpc/server"
 import { and, eq, ne, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
+import { enqueueWelcome } from "../jobs"
 import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
 import { offerPage, welcomeOffer } from "../lib/offers"
@@ -32,6 +33,7 @@ async function findPublicHotel(db: Context["db"], slug: string) {
       primaryColor: hotelSettings.primaryColor,
       accentColor: hotelSettings.accentColor,
       defaultLanguage: hotelSettings.defaultLanguage,
+      logoKey: hotelSettings.logoKey,
     })
     .from(organization)
     .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
@@ -153,8 +155,12 @@ export const publicRouter = {
     .input(z.object({ slug: z.string().min(1).max(100) }))
     .output(publicHotelSchema)
     .handler(async ({ context, input }) => {
-      const { id, ...hotel } = await findPublicHotel(context.db, input.slug)
-      return { ...hotel, welcomeOffer: await welcomeOffer(context.db, id, context.now()) }
+      const { id, logoKey, ...hotel } = await findPublicHotel(context.db, input.slug)
+      return {
+        ...hotel,
+        logoUrl: logoKey ? `${context.config.apiUrl}/files/${logoKey}` : null,
+        welcomeOffer: await welcomeOffer(context.db, id, context.now()),
+      }
     }),
 
   capture: publicProcedure
@@ -184,7 +190,8 @@ export const publicRouter = {
       if (!guest.success) {
         throw new ORPCError("BAD_REQUEST", { message: guest.error.issues[0]?.message ?? "Check your details." })
       }
-      await context.db.transaction((tx) => upsertGuest(tx, hotel.id, guest.data, context.now()))
+      const { id } = await context.db.transaction((tx) => upsertGuest(tx, hotel.id, guest.data, context.now()))
+      await enqueueWelcome(context, hotel.id, id, guest.data.consents)
       return { ok: true as const }
     }),
 }

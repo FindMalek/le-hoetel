@@ -1,9 +1,9 @@
 import type { Auth } from "@le-hoetel/auth"
 import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@le-hoetel/orpc"
-import { applyResendEvent, type ResendEvent } from "@le-hoetel/orpc/messages"
-import { unsubscribeAll } from "@le-hoetel/orpc/unsubscribe"
+import { applyKapsoEvent, applyResendEvent, type KapsoPayload, type ResendEvent } from "@le-hoetel/orpc/messages"
+import { handleInboundWhatsApp, unsubscribeAll } from "@le-hoetel/orpc/unsubscribe"
 import { isPublicKey } from "@le-hoetel/storage"
-import { verifySvix } from "@le-hoetel/webhooks"
+import { verifyHmac, verifySvix } from "@le-hoetel/webhooks"
 import { OpenAPIHandler } from "@orpc/openapi/fetch"
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins"
 import { onError } from "@orpc/server"
@@ -30,6 +30,7 @@ type Interceptors = NonNullable<NonNullable<ConstructorParameters<typeof RPCHand
  *   /billing/webhook  Stripe or Polar events (signature checked)
  *   /unsubscribe/<token>  POST: one tap unsubscribe from a mail client's List-Unsubscribe header (RFC 8058)
  *   /resend/webhook  Resend delivery, bounce and complaint events (svix signature checked)
+ *   /whatsapp/webhook  Kapso status events and inbound messages, STOP replies included (signature header checked)
  *   /telegram/webhook  Telegram bot updates (secret header checked)
  *   /health       for Dokploy and uptime checks
  */
@@ -95,6 +96,20 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
       }
       const event = JSON.parse(body) as ResendEvent
       await applyResendEvent(services.db, event)
+      return Response.json({ ok: true })
+    }
+    if (pathname === "/whatsapp/webhook" && request.method === "POST") {
+      const secret = services.config.webhookSecrets?.kapso
+      if (!secret) return Response.json({ message: "WhatsApp webhooks are not configured." }, { status: 404 })
+      const body = await request.text()
+      const signature = request.headers.get("x-webhook-signature")
+      if (!verifyHmac({ secret, body, signature })) return Response.json({ ok: false }, { status: 401 })
+      const event = request.headers.get("x-webhook-event") ?? ""
+      const parsed = JSON.parse(body) as KapsoPayload | { batch: true; data: KapsoPayload[] }
+      for (const payload of "batch" in parsed ? parsed.data : [parsed]) {
+        if (event === "whatsapp.message.received") await handleInboundWhatsApp(services, payload)
+        else await applyKapsoEvent(services.db, event, payload)
+      }
       return Response.json({ ok: true })
     }
     if (pathname === "/telegram/webhook" && request.method === "POST") {

@@ -3,9 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@le-h
 import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"
-import type { CSSProperties } from "react"
 import { getOfferPage } from "@/lib/api"
-import { brandColor } from "@/lib/branding"
+import { guestBrand } from "@/lib/branding"
 
 export const metadata: Metadata = {
   title: "Offer",
@@ -35,23 +34,14 @@ export default async function Page({ params }: PageProps<"/o/[token]">) {
   }
 
   const t = await getTranslations({ locale: page.language, namespace: "offer" })
-  const primary = brandColor(page.hotel.primaryColor)
-  const accent = brandColor(page.hotel.accentColor)
   const day = new Intl.DateTimeFormat(page.language, DAY_FORMAT)
   const usable = page.state === "ready"
   return (
     <main
       lang={page.language}
       dir={getDirection(page.language)}
-      style={
-        {
-          "--primary": primary?.color,
-          "--primary-foreground": primary?.on,
-          "--ring": primary?.color,
-          "--accent": accent?.color,
-          "--accent-foreground": accent?.on,
-        } as CSSProperties
-      }
+      // oxlint-disable-next-line shadcn/no-inline-styles
+      style={guestBrand(page.hotel)}
       className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-10"
     >
       <Card>

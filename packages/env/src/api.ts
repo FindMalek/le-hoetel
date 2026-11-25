@@ -24,6 +24,8 @@ const schema = z.object({
   /** First admin, created (or its password reset) on every start. */
   ADMIN_EMAIL: optional,
   ADMIN_PASSWORD: optional,
+  /** Who hears about a new demo request. Defaults to `ADMIN_EMAIL`. */
+  LEADS_NOTIFY_EMAIL: optional,
 
   /** Public repo shown on the landing page (owner/name). */
   GITHUB_REPO: optional,
@@ -41,6 +43,8 @@ const schema = z.object({
   S3_ENDPOINT: optional,
   S3_REGION: z.string().default("auto"),
   S3_BUCKET: optional,
+  /** Key prefix inside the bucket, e.g. "staging/". Empty for production, "pr-<n>/" is used for previews. */
+  S3_PREFIX: optional,
   S3_ACCESS_KEY_ID: optional,
   S3_SECRET_ACCESS_KEY: optional,
 
@@ -52,6 +56,8 @@ const schema = z.object({
   GLITCHTIP_DSN: optional,
 
   MESSAGING_LIVE: z.enum(["true", "false"]).default("false"),
+  /** Staging only: also trust the browser origins of PR previews and *.findmalek.engineer (see docs: previews). */
+  ALLOW_PREVIEW_ORIGINS: z.enum(["true", "false"]).default("false"),
   RESEND_API_KEY: optional,
   RESEND_WEBHOOK_SECRET: optional,
   EMAIL_FROM: z.string().default("Le Hoetel <onboarding@resend.dev>"),
@@ -59,6 +65,7 @@ const schema = z.object({
   TELEGRAM_CHAT_ID: optional,
   TELEGRAM_WEBHOOK_SECRET: optional,
   KAPSO_API_KEY: optional,
+  KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,
   WHATSAPP_NOTIFY_TO: optional,
   WHATSAPP_TEMPLATE_NAME: z.string().default("app_notification"),

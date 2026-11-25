@@ -65,3 +65,24 @@ test("the Resend webhook needs a valid svix signature", async () => {
   ).toBe(200)
   expect((await call("/resend/webhook", { method: "POST", body })).status).toBe(404)
 })
+
+test("the WhatsApp webhook needs a valid signature header", async () => {
+  const secret = "kapso-test-secret"
+  const withSecret = createServer(
+    { ...app.services, config: { ...app.services.config, webhookSecrets: { kapso: secret } } },
+    { publicUrl: "http://localhost:3001" },
+  )
+  const body = JSON.stringify({ message: { id: "wamid.unknown", kapso: { direction: "outbound" } } })
+  const post = (signature: string) =>
+    withSecret(
+      new Request("http://localhost:3001/whatsapp/webhook", {
+        method: "POST",
+        headers: { "x-webhook-event": "whatsapp.message.delivered", "x-webhook-signature": signature },
+        body,
+      }),
+    )
+
+  expect((await post("nope")).status).toBe(401)
+  expect((await post(hmacSha256(secret, body))).status).toBe(200)
+  expect((await call("/whatsapp/webhook", { method: "POST", body })).status).toBe(404)
+})

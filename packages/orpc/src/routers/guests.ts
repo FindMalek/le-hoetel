@@ -22,6 +22,7 @@ import { ORPCError } from "@orpc/server"
 import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
+import { enqueueWelcome } from "../jobs"
 import { audit } from "../lib/audit"
 import { clearExtras, hashGuestId, hotelGuest, recordConsent, upsertGuest, withConsents } from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
@@ -123,6 +124,7 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       const { id, merged } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, input, context.now()))
+      await enqueueWelcome(context, hotelId, id, input.consents)
       return { ...(await loadGuest(context.db, hotelId, id)), merged }
     }),
 
@@ -148,7 +150,10 @@ export const guestsRouter = {
           continue
         }
         try {
-          const { merged } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, parsed.data, context.now()))
+          const { id, merged } = await context.db.transaction((tx) =>
+            upsertGuest(tx, hotelId, parsed.data, context.now()),
+          )
+          await enqueueWelcome(context, hotelId, id, parsed.data.consents)
           if (merged) result.merged++
           else result.created++
         } catch {

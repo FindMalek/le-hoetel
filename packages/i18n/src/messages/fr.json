@@ -197,11 +197,7 @@
     "retry": "Réessayer",
     "reference": "Référence {digest}"
   },
-  "hero": {
-    "badge": "accès anticipé",
-    "getStarted": "Commencer",
-    "apiDocs": "Docs de l'API"
-  },
+  "hero": {},
   "nav": {
     "redeem": "Utiliser",
     "offers": "Offres",
@@ -218,7 +214,8 @@
     "users": "Utilisateurs",
     "auditLog": "Journal d'audit",
     "settings": "Paramètres",
-    "admin": "Plateforme"
+    "admin": "Plateforme",
+    "holidays": "Fêtes"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -471,36 +468,87 @@
     "consentVersion": "Version du texte",
     "privacy": {
       "title": "Politique de confidentialité",
-      "intro": "Ceci est un texte provisoire pour la politique de confidentialité de le-hoetel. Les hôtels collectent le nom, le téléphone et la langue du client avec son accord. Les détails facultatifs ne sont conservés que si le client l'accepte. Nous ne collectons jamais de localisation continue, de numéro de pièce d'identité ni de carte bancaire. Un client peut demander à tout moment à l'hôtel d'exporter ou de supprimer ses données."
+      "intro": "Ce que l'hôtel et le-hoetel gardent sur vous, pourquoi, et comment le reprendre.",
+      "sections": {
+        "collect": {
+          "title": "Ce qui est collecté",
+          "body": "Votre nom, numéro de téléphone et langue, car l'hôtel en a besoin pour vous accueillir. Votre date de naissance et votre e-mail seulement si vous les ajoutez. Rien d'autre sans un oui clair : jamais votre position, votre pièce d'identité ou passeport, ni votre carte bancaire."
+        },
+        "use": {
+          "title": "Pourquoi",
+          "body": "Pour que l'hôtel vous accueille, vous souhaite votre anniversaire, vous demande comment s'est passé votre séjour et vous réponde en cas de problème."
+        },
+        "consent": {
+          "title": "Messages et votre accord",
+          "body": "Les offres et nouvelles arrivent par WhatsApp ou e-mail seulement si vous avez activé ce canal. Nous enregistrons quand, où et avec quel texte vous avez dit oui. Chaque message contient un lien pour arrêter, et répondre STOP sur WhatsApp fonctionne aussi."
+        },
+        "rights": {
+          "title": "Vos droits",
+          "body": "Demandez à l'hôtel une copie de vos données ou leur suppression à tout moment. La suppression est complète. Vous pouvez aussi retirer votre accord avec le lien de n'importe quel message. La loi tunisienne sur la protection des données personnelles s'applique (loi organique 2004-63)."
+        },
+        "keep": {
+          "title": "Qui les voit et combien de temps",
+          "body": "Seulement l'équipe de l'hôtel où vous vous êtes inscrit. Les hôtels ne voient jamais les clients des autres. Les données sont gardées tant que l'hôtel utilise le-hoetel et supprimées sur votre demande ou quand l'hôtel part."
+        }
+      }
     },
     "terms": {
       "title": "Conditions d'utilisation",
-      "intro": "Ceci est un texte provisoire pour les conditions d'utilisation de le-hoetel. Le texte sera rédigé pour le produit, les hôtels et la loi tunisienne avant le premier pilote."
+      "intro": "Les règles simples pour les hôtels qui utilisent le-hoetel.",
+      "sections": {
+        "service": {
+          "title": "Le service",
+          "body": "le-hoetel aide un hôtel à recueillir ses clients avec leur accord, à envoyer les messages acceptés et à entendre tôt les clients mécontents. Il est en pilote : les fonctions et les prix peuvent changer."
+        },
+        "duties": {
+          "title": "Ce que l'hôtel promet",
+          "body": "Ne recueillir que des clients ayant dit oui, respecter chaque demande d'arrêt, ne jamais envoyer de spam et répondre aux demandes d'export et de suppression."
+        },
+        "pilot": {
+          "title": "Pilote et prix",
+          "body": "Le pilote est gratuit pendant 60 à 90 jours. Rien n'est facturé sans accord écrit. Les prix montrés pendant le pilote ne sont pas définitifs."
+        },
+        "data": {
+          "title": "Vos données",
+          "body": "L'hôtel est propriétaire de sa liste de clients et peut l'exporter ou la supprimer à tout moment. Nous ne la vendons ni ne la partageons."
+        },
+        "end": {
+          "title": "Fin du service",
+          "body": "Chaque partie peut arrêter à tout moment. À la fin, l'hôtel peut récupérer ses données et nous supprimons le reste."
+        }
+      }
     },
     "hotel": "l'hôtel"
   },
   "capture": {
-    "welcome": "Bienvenue à {hotel}",
-    "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
-    "perkTitle": "Votre avantage de bienvenue",
-    "perkBody": "Un petit cadeau de {hotel} vous attend. Demandez-le à la réception après votre inscription.",
+    "welcome": "Bienvenue. Dix secondes pour vous inscrire, et nous prenons soin de vous.",
+    "perkTitle": "Cadeau de bienvenue",
+    "perkBody": "Un petit cadeau de {hotel} vous attend à la réception.",
     "name": "Votre nom",
     "phone": "Numéro de téléphone",
     "dialCode": "Indicatif du pays",
-    "language": "Votre langue",
-    "birthday": "Date de naissance (facultatif)",
-    "email": "E-mail (facultatif)",
+    "language": "Langue de nos messages",
+    "birthday": "Date de naissance",
+    "email": "E-mail",
     "consentTitle": "Restons en contact",
-    "consentHint": "Les deux sont facultatifs et décochés. Vous pouvez changer d'avis à tout moment.",
-    "emailNeeded": "Ajoutez votre e-mail pour recevoir les offres par e-mail.",
-    "submit": "S'inscrire",
-    "sending": "Envoi...",
-    "thanksTitle": "Merci",
-    "thanksBody": "C'est fait. Bon séjour à {hotel}.",
+    "consentHint": "Facultatif et désactivé par défaut. Chaque message contient un lien pour arrêter.",
+    "emailNeeded": "Ajoutez votre e-mail ci-dessus pour recevoir les offres par e-mail.",
+    "submit": "Rejoindre",
+    "thanksTitle": "C'est fait, {name}",
+    "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
     "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
     "errorTooMany": "Trop d'essais. Patientez un instant puis réessayez.",
-    "privacy": "Politique de confidentialité",
-    "languageLabel": "Langue"
+    "privacy": "Confidentialité",
+    "languageLabel": "Langue",
+    "nameError": "Ajoutez votre nom.",
+    "phoneError": "Vérifiez votre numéro.",
+    "optionalTitle": "Un peu plus sur vous",
+    "optionalHint": "Facultatif : date de naissance et e-mail.",
+    "whatsappTitle": "WhatsApp",
+    "emailTitle": "E-mail",
+    "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
+    "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
+    "terms": "Conditions"
   },
   "adminHotels": {
     "title": "Hôtels",
@@ -732,6 +780,212 @@
       "exhausted": "Plus aucune utilisation possible",
       "wrongHotel": "Ce code appartient à un autre hôtel",
       "unknown": "Code introuvable"
+    }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Le lien est peut-être incorrect, ou la page a changé d'adresse.",
+    "home": "Retour à l'accueil"
+  },
+  "holidays": {
+    "title": "Messages de fête",
+    "description": "Un petit mot les jours qui comptent pour vos clients. Désactivé tant que vous n'activez pas une fête.",
+    "saved": "Enregistré",
+    "next": "Prochaine : {date}",
+    "noDate": "Date pas encore connue",
+    "channelFor": "Canal pour {name}",
+    "switchFor": "Envoyer le message {name}",
+    "channel": {
+      "both": "E-mail et WhatsApp",
+      "email": "E-mail seulement",
+      "whatsapp": "WhatsApp seulement"
+    },
+    "footnote": "Envoyé à 9 h, heure de l'hôtel, uniquement aux clients qui ont accepté le canal. Les dates islamiques suivent le calendrier astronomique et peuvent varier d'un jour."
+  },
+  "landing": {
+    "meta": {
+      "title": "le-hoetel : sachez qui est mécontent, gardez votre fichier clients",
+      "description": "Vos clients s'inscrivent par QR code, vous gardez les contacts et une mauvaise note vous arrive le jour même. Plus d'avis Google, plus de clients qui reviennent en direct. Pilote gratuit pour les hôtels en Tunisie."
+    },
+    "nav": {
+      "how": "Comment ça marche",
+      "pricing": "Tarifs",
+      "faq": "FAQ",
+      "demo": "Demander une démo",
+      "menu": "Sections"
+    },
+    "hero": {
+      "eyebrow": "Pour les hôtels en Tunisie",
+      "title": "Sachez qu'un client est mécontent avant qu'il n'écrive son avis.",
+      "subtitle": "Vos clients s'inscrivent avec un QR code, vous gardez la liste de contacts et une mauvaise note vous arrive le jour même. Plus d'avis Google, plus de clients qui reviennent en direct.",
+      "demo": "Demander une démo",
+      "whatsapp": "Écrire sur WhatsApp",
+      "note": "Pilote gratuit de 60 à 90 jours. Aucune application pour vos clients."
+    },
+    "outcomes": {
+      "alerts": {
+        "title": "Les clients mécontents vous parlent d'abord",
+        "body": "Une mauvaise note alerte le responsable dans la journée : le problème est réglé avant de devenir un avis."
+      },
+      "reviews": {
+        "title": "Plus d'avis Google",
+        "body": "Les clients satisfaits reçoivent un lien pour vous noter sur Google. Les mécontents vous parlent à vous."
+      },
+      "list": {
+        "title": "Un fichier clients qui vous appartient",
+        "body": "Nom, téléphone et consentement chez vous, pas chez un site de réservation."
+      }
+    },
+    "how": {
+      "title": "Comment ça marche",
+      "subtitle": "Trois étapes, et la première prend dix secondes au client.",
+      "step": "Étape {number}",
+      "qr": {
+        "title": "Un QR code dans chaque chambre",
+        "body": "Le client le scanne en chambre, à table ou à la réception. Nom, téléphone, langue et un oui clair, en français, en arabe ou en anglais."
+      },
+      "messages": {
+        "title": "Des messages chaleureux, avec accord",
+        "body": "Un mot de bienvenue, un merci après le séjour, un message d'anniversaire. Sur WhatsApp ou par e-mail, seulement le canal choisi, avec toujours un moyen d'arrêter."
+      },
+      "feedback": {
+        "title": "Un retour qui vous trouve",
+        "body": "Une question après le séjour. Les clients satisfaits sont invités sur Google. Une mauvaise note arrive sur le téléphone du responsable avec le contact du client."
+      }
+    },
+    "preview": {
+      "title": "Ce qui s'est passé cette semaine, sur un écran",
+      "subtitle": "Qui s'est inscrit, qui est mécontent, quoi faire ensuite.",
+      "sample": "Données d'exemple",
+      "label": "Un exemple du tableau de bord de l'hôtel avec des chiffres inventés",
+      "week": "Cette semaine",
+      "newGuests": "Nouveaux clients",
+      "score": "Note moyenne",
+      "invited": "Avis demandés",
+      "delta": "{value} vs semaine dernière",
+      "alertTitle": "Client mécontent",
+      "alertBody": "La chambre 204 a donné 2 sur 5 : « La climatisation ne marchait pas. »",
+      "alertAction": "Appeler le client",
+      "chart": "Nouveaux clients par jour",
+      "latest": "Derniers clients",
+      "whatsapp": "WhatsApp",
+      "email": "E-mail",
+      "room": "Chambre {place}",
+      "table": "Table {place}",
+      "desk": "Réception"
+    },
+    "pricing": {
+      "badge": "Tarif pilote",
+      "title": "Gratuit pour commencer, simple ensuite",
+      "subtitle": "Tarif pilote : ces prix sont notre meilleure estimation, les prix définitifs seront fixés avec les premiers hôtels.",
+      "free": "Gratuit pendant 60 à 90 jours",
+      "freeBody": "Vous ne payez que si vous voyez des résultats. La mise en place est gratuite pour les premiers hôtels.",
+      "month": "TND par mois",
+      "popular": "La plupart des hôtels",
+      "starter": {
+        "name": "Starter",
+        "for": "Jusqu'à 15 chambres",
+        "f1": "1 000 clients",
+        "f2": "E-mail et WhatsApp",
+        "f3": "Messages de bienvenue, d'anniversaire et enquête"
+      },
+      "growth": {
+        "name": "Growth",
+        "for": "16 à 60 chambres",
+        "f1": "5 000 clients",
+        "f2": "Campagnes et offres avec QR de validation",
+        "f3": "Alertes de mauvaise note"
+      },
+      "pro": {
+        "name": "Pro",
+        "for": "60 chambres et plus, spa ou restaurant",
+        "f1": "Clients illimités",
+        "f2": "Votre propre domaine d'envoi",
+        "f3": "Support prioritaire"
+      },
+      "note": "Les messages WhatsApp sont facturés au coût plus une petite marge, sur un solde prépayé : pas de mauvaise surprise."
+    },
+    "trust": {
+      "title": "Les données de vos clients, traitées sérieusement",
+      "subtitle": "Conçu dès la première ligne pour la loi tunisienne sur les données personnelles.",
+      "privacy": "Lire la politique de confidentialité",
+      "consent": {
+        "title": "Un accord par canal",
+        "body": "WhatsApp et e-mail sont deux choix séparés, désactivés par défaut. Chaque oui est enregistré avec la date et le texte exact."
+      },
+      "stop": {
+        "title": "Un lien d'arrêt dans chaque message",
+        "body": "Le client se désabonne en un geste, et répondre STOP sur WhatsApp fonctionne aussi."
+      },
+      "control": {
+        "title": "Export ou suppression, à tout moment",
+        "body": "Un client ou tout l'hôtel, en un clic."
+      },
+      "apart": {
+        "title": "Les hôtels ne voient jamais les clients des autres",
+        "body": "Les données de chaque hôtel sont séparées."
+      },
+      "minimum": {
+        "title": "Seulement le nécessaire",
+        "body": "Nom, téléphone et langue. Date de naissance et e-mail seulement si le client les ajoute. Jamais de position, de pièce d'identité ni de carte bancaire."
+      }
+    },
+    "faq": {
+      "title": "Les questions des hôtels",
+      "guest": {
+        "q": "Que fait concrètement mon client ?",
+        "a": "Il scanne le QR code, saisit un nom et un numéro de téléphone, et choisit ce qu'il accepte de recevoir. Sans application ni compte."
+      },
+      "setup": {
+        "q": "Combien de temps pour démarrer ?",
+        "a": "Une journée. Vous envoyez votre logo et deux couleurs, nous vous donnons les QR codes à imprimer pour les chambres, les tables et la réception."
+      },
+      "whatsapp": {
+        "q": "Puis-je écrire à mes clients sur WhatsApp ?",
+        "a": "Oui, seulement ceux qui ont dit oui à WhatsApp, et chaque message leur donne un moyen d'arrêter."
+      },
+      "price": {
+        "q": "Combien ça coûte après le pilote ?",
+        "a": "Les formules commencent à 99 TND par mois. Le pilote est gratuit pendant 60 à 90 jours et rien n'est facturé sans accord écrit."
+      },
+      "leave": {
+        "q": "Et si un client demande la suppression de ses données ?",
+        "a": "Un clic exporte ou supprime ce client et tout ce qui le concerne."
+      },
+      "own": {
+        "q": "À qui appartient le fichier clients ?",
+        "a": "À vous. Vous pouvez l'exporter à tout moment, et nous ne le vendons ni ne le partageons jamais."
+      }
+    },
+    "demo": {
+      "title": "Voyez-le sur votre propre hôtel",
+      "subtitle": "Laissez votre numéro. Nous vous appelons ou vous écrivons sur WhatsApp sous un jour ouvré pour vous montrer une démo.",
+      "name": "Votre nom",
+      "nameError": "Ajoutez votre nom.",
+      "hotel": "Nom de l'hôtel",
+      "hotelError": "Ajoutez le nom de votre hôtel.",
+      "phone": "Numéro de téléphone",
+      "phoneError": "Vérifiez votre numéro.",
+      "dialCode": "Indicatif du pays",
+      "city": "Ville",
+      "cityError": "Ajoutez votre ville.",
+      "language": "Langue de notre appel",
+      "submit": "Demander une démo",
+      "hint": "Nous utilisons votre numéro uniquement pour organiser la démo.",
+      "thanksTitle": "Merci, {name}",
+      "thanksBody": "Nous vous contactons sous un jour ouvré.",
+      "errorInvalid": "Vérifiez vos informations et réessayez.",
+      "errorTooMany": "Trop d'essais. Patientez quelques minutes.",
+      "whatsappLead": "Vous préférez WhatsApp ?",
+      "whatsapp": "Écrire sur WhatsApp",
+      "whatsappText": "Bonjour, je souhaite une démo de le-hoetel pour mon hôtel."
+    },
+    "footer": {
+      "tagline": "La relation client des hôtels en Tunisie.",
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "status": "État du service",
+      "rights": "Fait en Tunisie"
     }
   }
 }

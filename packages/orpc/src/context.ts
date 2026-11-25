@@ -22,7 +22,9 @@ export interface Services {
     /** Signs unsubscribe links. Derived from the auth secret, never sent anywhere. */
     tokenSecret: string
     /** Signing secrets of provider webhooks. A route answers 404 without its secret. */
-    webhookSecrets?: { resend?: string }
+    webhookSecrets?: { resend?: string; kapso?: string }
+    /** Where a new demo request is emailed. */
+    leadsEmail?: string
   }
   rateLimiter: RateLimiter
   jobs: Jobs

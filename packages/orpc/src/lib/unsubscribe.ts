@@ -1,13 +1,15 @@
 import { MESSAGE_CHANNELS, type MessageChannel } from "@le-hoetel/common/consent"
-import { verifyUnsubscribeToken } from "@le-hoetel/common/unsubscribe"
-import { type Db, guestConsents, guests } from "@le-hoetel/db"
+import { isStopKeyword, stopConfirmation, verifyUnsubscribeToken } from "@le-hoetel/common/unsubscribe"
+import { type Db, guestConsents, guests, hotelSettings, messages, organization } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
-import { and, eq } from "drizzle-orm"
+import { and, desc, eq, inArray } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
 import { hotelBranding } from "./hotel"
+import type { KapsoPayload } from "./messages"
 
 type Ctx = Pick<Context, "db" | "config" | "now">
+type InboundCtx = Pick<Context, "db" | "now" | "notification">
 
 export type ChannelChoices = Partial<Record<MessageChannel, boolean>>
 
@@ -102,4 +104,44 @@ export async function applyStopReply(
     }
     return changed
   })
+}
+
+/**
+ * An inbound WhatsApp message from Kapso. Anything but a whole-message STOP keyword is ignored. The hotel is the
+ * one whose message this number got last (one business number serves every hotel, so the number alone says
+ * nothing); a number we never wrote to is unsubscribed everywhere, the safe side. When a consent really changed
+ * the guest gets one confirmation in their language; a repeated delivery changes nothing and says nothing.
+ */
+export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoPayload): Promise<boolean> {
+  const { from, type, text } = payload.message ?? {}
+  const digits = from?.replace(/\D/g, "")
+  if (!digits || type !== "text" || !isStopKeyword(text?.body ?? "")) return false
+  const phoneE164 = `+${digits}`
+
+  const [last] = await context.db
+    .select({ hotelId: messages.hotelId })
+    .from(messages)
+    .innerJoin(guests, and(eq(guests.id, messages.guestId), eq(guests.hotelId, messages.hotelId)))
+    .where(
+      and(
+        eq(guests.phoneE164, phoneE164),
+        eq(messages.channel, "whatsapp"),
+        inArray(messages.status, ["sent", "delivered"]),
+      ),
+    )
+    .orderBy(desc(messages.createdAt))
+    .limit(1)
+  const hotelId = last?.hotelId
+  const [guest] = await context.db
+    .select({ language: guests.language })
+    .from(guests)
+    .where(
+      hotelId ? and(eq(guests.phoneE164, phoneE164), eq(guests.hotelId, hotelId)) : eq(guests.phoneE164, phoneE164),
+    )
+  if (!guest) return false
+
+  const changed = await applyStopReply(context.db, { phoneE164, hotelId, at: context.now() })
+  if (changed > 0)
+    await context.notification.replyWhatsApp(phoneE164, stopConfirmation(guest.language)).catch(() => null)
+  return changed > 0
 }
