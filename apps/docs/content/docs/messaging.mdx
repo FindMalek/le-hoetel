@@ -63,9 +63,16 @@ Every automatic send first claims a row in `automation_sends` (unique per guest,
 | --- | --- | --- |
 | `welcome-guest` | queued right after a guest is saved from the QR page, staff quick add or csv import | the channels the guest agreed to, once per guest and channel |
 | `birthday-guests` | every hour, which handles each hotel from 09:00 to 20:59 in its own timezone | guests whose birthday is today and who agreed to a channel, once per year |
+| `holiday-guests` | every hour, same window | guests who agreed to a channel the hotel picked for a holiday it switched on, one holiday message per channel and day |
 
 The welcome carries the hotel's newest active offer with the `welcome` trigger that can be redeemed right now, with the guest's own code and the page link (`triggerOffer` in `packages/orpc/src/lib/automations.ts`). Without one it goes out without an offer. A failed queue never fails the sign-up.
 
 ### Birthday
 
 pg-boss cron runs in UTC, hotels do not, so the job runs hourly and each hotel is handled on its first run after 09:00 local time (never in quiet hours, 21:00 to 08:00). A worker that was down at 09:00 still sends the same day. The claim (`kind` `birthday`, `period` the hotel's local year) keeps it to one message a year per guest and channel. Someone born on 29 February is celebrated on 28 February in a year without one. The message carries the hotel's newest redeemable `birthday` offer; a hotel without one sends nothing. Local time helpers: `@le-hoetel/common/hotel-time`.
+
+### Holidays
+
+The list lives in `packages/common/src/holidays.ts`: Ramadan start, Eid al-Fitr, Eid al-Adha, Mawlid, Independence Day (20 March), Republic Day (25 July) and New Year, each with its name and greeting in en, fr and ar. Fixed dates are `MM-DD`; the Islamic ones come from a static table (Umm al-Qura calendar, 2026 to 2035), no network. Tunisia sights the moon locally, so a date can be a day off. A test fails when the table no longer covers the next five years.
+
+A hotel switches each holiday on or off and picks the channel (both, email, WhatsApp) in the dashboard under Holidays (owners and managers). Everything is off by default: no row means no message. The greeting is sent with the `message` hotel email template, a text the hotel or the product wrote, already in the guest's language, with the unsubscribe or STOP line like every other message.

@@ -161,7 +161,8 @@
     "users": "Utilisateurs",
     "auditLog": "Journal d'audit",
     "settings": "Paramètres",
-    "admin": "Plateforme"
+    "admin": "Plateforme",
+    "holidays": "Fêtes"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -635,5 +636,20 @@
     "title": "Page introuvable",
     "body": "Le lien est peut-être incorrect, ou la page a changé d'adresse.",
     "home": "Retour à l'accueil"
+  },
+  "holidays": {
+    "title": "Messages de fête",
+    "description": "Un petit mot les jours qui comptent pour vos clients. Désactivé tant que vous n'activez pas une fête.",
+    "saved": "Enregistré",
+    "next": "Prochaine : {date}",
+    "noDate": "Date pas encore connue",
+    "channelFor": "Canal pour {name}",
+    "switchFor": "Envoyer le message {name}",
+    "channel": {
+      "both": "E-mail et WhatsApp",
+      "email": "E-mail seulement",
+      "whatsapp": "WhatsApp seulement"
+    },
+    "footnote": "Envoyé à 9 h, heure de l'hôtel, uniquement aux clients qui ont accepté le canal. Les dates islamiques suivent le calendrier astronomique et peuvent varier d'un jour."
   }
 }
