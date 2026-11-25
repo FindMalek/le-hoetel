@@ -13,6 +13,7 @@ import { jobsRouter } from "./jobs"
 import { leadsRouter } from "./leads"
 import { managerAlertsRouter } from "./manager-alerts"
 import { messagesRouter } from "./messages"
+import { metricsRouter } from "./metrics"
 import { notesRouter } from "./notes"
 import { notificationRouter } from "./notification"
 import { offersRouter } from "./offers"
@@ -45,6 +46,7 @@ export const appRouter = {
   guests: guestsRouter,
   messages: messagesRouter,
   offers: offersRouter,
+  metrics: metricsRouter,
   overview: overviewRouter,
   me: meRouter,
   notes,
