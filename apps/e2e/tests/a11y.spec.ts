@@ -19,7 +19,13 @@ for (const locale of LOCALES.filter((l) => l !== "fr")) {
       const { violations } = await new AxeBuilder({ page }).analyze()
       const blocking = violations
         .filter((v) => BLOCKING.includes(v.impact ?? ""))
-        .map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.slice(0, 3).map((n) => `${n.target.join(" ")} ${n.html.slice(0, 140)} ${n.any[0]?.message ?? ""}`) }))
+        .map((v) => ({
+          id: v.id,
+          impact: v.impact,
+          nodes: v.nodes
+            .slice(0, 3)
+            .map((n) => `${n.target.join(" ")} ${n.html.slice(0, 140)} ${n.any[0]?.message ?? ""}`),
+        }))
       expect(blocking).toEqual([])
     })
   }
