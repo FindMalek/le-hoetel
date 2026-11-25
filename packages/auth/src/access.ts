@@ -6,6 +6,7 @@ export const statements = {
   ...defaultStatements,
   guest: ["create", "read", "update", "delete", "export", "import"],
   offer: ["create", "read", "update", "delete", "redeem"],
+  campaign: ["create", "read", "update", "delete", "send"],
 } as const
 
 export const ac = createAccessControl(statements)
@@ -20,6 +21,7 @@ export const hotelRoles = {
     ac: ["create", "read", "update", "delete"],
     guest: ["create", "read", "update", "delete", "export", "import"],
     offer: ["create", "read", "update", "delete", "redeem"],
+    campaign: ["create", "read", "update", "delete", "send"],
   }),
   manager: ac.newRole({
     organization: ["update"],
@@ -27,6 +29,7 @@ export const hotelRoles = {
     invitation: ["create", "cancel"],
     guest: ["create", "read", "update", "delete", "export", "import"],
     offer: ["create", "read", "update", "delete", "redeem"],
+    campaign: ["create", "read", "update", "delete", "send"],
     team: [],
     ac: ["read"],
   }),
@@ -36,6 +39,7 @@ export const hotelRoles = {
     invitation: [],
     guest: ["create", "read", "update"],
     offer: ["read", "redeem"],
+    campaign: [],
     team: [],
     ac: ["read"],
   }),

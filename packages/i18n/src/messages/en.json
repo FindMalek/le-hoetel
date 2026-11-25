@@ -158,7 +158,8 @@
     "auditLog": "Audit log",
     "settings": "Settings",
     "admin": "Platform",
-    "holidays": "Holidays"
+    "holidays": "Holidays",
+    "campaigns": "Campaigns"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -832,6 +833,94 @@
       "terms": "Terms",
       "status": "Status",
       "rights": "Made in Tunisia"
+    }
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "description": "Send one message to the guests who agreed to hear from you.",
+    "new": "New campaign",
+    "empty": "No campaigns yet",
+    "emptyHint": "Write a message, pick who gets it, and send it or schedule it.",
+    "resultsLine": "{sent} of {total} sent",
+    "columns": {
+      "name": "Name",
+      "channel": "Channel",
+      "status": "Status",
+      "results": "Results",
+      "when": "When"
+    },
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "sending": "Sending",
+      "sent": "Sent",
+      "cancelled": "Cancelled"
+    },
+    "channel": {
+      "both": "Email and WhatsApp",
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    },
+    "results": {
+      "targeted": "Reached out to",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "skipped": "Skipped"
+    },
+    "detail": {
+      "title": "Campaign",
+      "description": "Check the message, send a test to yourself, then send or schedule it.",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel campaign",
+      "cancelTitle": "Cancel this campaign?",
+      "cancelBody": "Messages not sent yet will not go out.",
+      "cancelled": "Campaign cancelled",
+      "keep": "Keep it",
+      "messageTitle": "Message",
+      "quietNote": "Messages only go out between 9:00 and 20:00 hotel time.",
+      "schedule": "Schedule",
+      "scheduleAt": "Send on",
+      "scheduled": "Campaign scheduled",
+      "sendNow": "Send now",
+      "startsAt": "Starts {date}",
+      "testSend": "Send a test to me",
+      "testSent": "Test sent to {to}"
+    },
+    "form": {
+      "newTitle": "New campaign",
+      "editTitle": "Edit campaign",
+      "hint": "Only guests who gave consent for the channel receive it.",
+      "basics": "Basics",
+      "basicsHint": "The name is only for you.",
+      "name": "Campaign name",
+      "channel": "Channel",
+      "audience": "Who gets it",
+      "audienceHint": "Leave everything empty to reach all guests.",
+      "languages": "Languages",
+      "countries": "Countries",
+      "countriesHint": "Separate with commas",
+      "sources": "How they joined",
+      "lastVisit": "Last stay",
+      "anyTime": "Any time",
+      "lastDays": "Last {days} days",
+      "reachLoading": "Counting guests…",
+      "reach": "{guests} guests, {email} by email, {whatsapp} on WhatsApp",
+      "consentNote": "Guests who unsubscribed or never agreed are always left out.",
+      "message": "Message",
+      "messageHint": "Write it in one or more languages. Each guest gets their own language.",
+      "subject": "Subject",
+      "body": "Message text",
+      "bodyHint": "Keep it short and friendly.",
+      "offer": "Offer",
+      "offerHint": "Attach an offer guests can redeem.",
+      "noOffer": "No offer",
+      "needText": "Write the message in at least one language",
+      "saveDraft": "Save draft",
+      "saving": "Saving…",
+      "cancel": "Cancel"
     }
   }
 }

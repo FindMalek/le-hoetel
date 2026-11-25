@@ -158,7 +158,8 @@
     "auditLog": "Journal d'audit",
     "settings": "Paramètres",
     "admin": "Plateforme",
-    "holidays": "Fêtes"
+    "holidays": "Fêtes",
+    "campaigns": "Campagnes"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -832,6 +833,94 @@
       "terms": "Conditions",
       "status": "État du service",
       "rights": "Fait en Tunisie"
+    }
+  },
+  "campaigns": {
+    "title": "Campagnes",
+    "description": "Envoyez un message aux clients qui ont accepté de vous lire.",
+    "new": "Nouvelle campagne",
+    "empty": "Aucune campagne pour l'instant",
+    "emptyHint": "Écrivez un message, choisissez les destinataires, puis envoyez-le ou programmez-le.",
+    "resultsLine": "{sent} sur {total} envoyés",
+    "columns": {
+      "name": "Nom",
+      "channel": "Canal",
+      "status": "Statut",
+      "results": "Résultats",
+      "when": "Quand"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "scheduled": "Programmée",
+      "sending": "En cours",
+      "sent": "Envoyée",
+      "cancelled": "Annulée"
+    },
+    "channel": {
+      "both": "E-mail et WhatsApp",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp"
+    },
+    "results": {
+      "targeted": "Contactés",
+      "sent": "Envoyés",
+      "delivered": "Reçus",
+      "failed": "Échecs",
+      "skipped": "Ignorés"
+    },
+    "detail": {
+      "title": "Campagne",
+      "description": "Vérifiez le message, envoyez-vous un test, puis envoyez ou programmez.",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler la campagne",
+      "cancelTitle": "Annuler cette campagne ?",
+      "cancelBody": "Les messages pas encore envoyés ne partiront pas.",
+      "cancelled": "Campagne annulée",
+      "keep": "La garder",
+      "messageTitle": "Message",
+      "quietNote": "Les messages partent seulement entre 9h et 20h, heure de l'hôtel.",
+      "schedule": "Programmer",
+      "scheduleAt": "Envoyer le",
+      "scheduled": "Campagne programmée",
+      "sendNow": "Envoyer maintenant",
+      "startsAt": "Début : {date}",
+      "testSend": "M'envoyer un test",
+      "testSent": "Test envoyé à {to}"
+    },
+    "form": {
+      "newTitle": "Nouvelle campagne",
+      "editTitle": "Modifier la campagne",
+      "hint": "Seuls les clients ayant donné leur accord pour le canal le reçoivent.",
+      "basics": "Général",
+      "basicsHint": "Le nom n'est visible que par vous.",
+      "name": "Nom de la campagne",
+      "channel": "Canal",
+      "audience": "Destinataires",
+      "audienceHint": "Laissez tout vide pour joindre tous les clients.",
+      "languages": "Langues",
+      "countries": "Pays",
+      "countriesHint": "Séparés par des virgules",
+      "sources": "Comment ils ont rejoint",
+      "lastVisit": "Dernier séjour",
+      "anyTime": "À tout moment",
+      "lastDays": "Derniers {days} jours",
+      "reachLoading": "Comptage des clients…",
+      "reach": "{guests} clients, {email} par e-mail, {whatsapp} sur WhatsApp",
+      "consentNote": "Les clients désinscrits ou sans accord sont toujours exclus.",
+      "message": "Message",
+      "messageHint": "Écrivez-le dans une ou plusieurs langues. Chaque client reçoit sa langue.",
+      "subject": "Objet",
+      "body": "Texte du message",
+      "bodyHint": "Restez court et chaleureux.",
+      "offer": "Offre",
+      "offerHint": "Joignez une offre que le client peut utiliser.",
+      "noOffer": "Aucune offre",
+      "needText": "Écrivez le message dans au moins une langue",
+      "saveDraft": "Enregistrer le brouillon",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler"
     }
   }
 }
