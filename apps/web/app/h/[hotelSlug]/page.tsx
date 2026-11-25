@@ -39,7 +39,7 @@ export default async function CapturePage({ params, searchParams }: Props) {
       </span>
       <div className="grid gap-1 text-start">
         <h2 className="font-semibold">{hotel.welcomeOffer?.title ?? t("perkTitle")}</h2>
-        <p className="text-muted-foreground text-sm leading-relaxed rtl:leading-7">
+        <p className="text-foreground/80 text-sm leading-relaxed rtl:leading-7">
           {hotel.welcomeOffer?.text || t("perkBody", { hotel: hotel.displayName })}
         </p>
       </div>

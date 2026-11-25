@@ -9,6 +9,7 @@
     "install:browser": "playwright install chromium"
   },
   "dependencies": {
+    "@axe-core/playwright": "catalog:",
     "@le-hoetel/common": "workspace:*",
     "postgres": "catalog:"
   },
