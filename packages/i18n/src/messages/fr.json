@@ -1708,6 +1708,26 @@
     },
     "forbidden": "Seuls les propriétaires et les gérants voient le solde."
   },
+  "survey": {
+    "invalidTitle": "Ce lien n'est pas valide",
+    "invalid": "Rouvrez le lien de votre message, ou demandez à la réception.",
+    "title": "Comment s'est passé votre séjour ?",
+    "intro": "Une minute. Votre réponse arrive directement à l'équipe de {hotel}.",
+    "nps": "Recommanderiez-vous {hotel} à un proche ?",
+    "npsLow": "Pas du tout",
+    "npsHigh": "Sans hésiter",
+    "rooms": "Votre chambre",
+    "cleanliness": "Propreté",
+    "service": "Personnel et restauration",
+    "optional": "Facultatif",
+    "comment": "Quelque chose à nous dire ?",
+    "send": "Envoyer ma réponse",
+    "error": "Nous n'avons pas pu enregistrer votre réponse. Réessayez.",
+    "thanksTitle": "Merci",
+    "thanks": "Nous lisons chaque réponse. Au plaisir de vous revoir à {hotel}.",
+    "expiredTitle": "Ce questionnaire est clos",
+    "expired": "Merci d'avoir séjourné à {hotel}."
+  },
   "metrics": {
     "title": "Statistiques",
     "description": "Ce que votre liste de clients et vos messages apportent à l'hôtel.",
@@ -1735,9 +1755,9 @@
       "offers": "Offres utilisées",
       "redemption": "{rate} sur {issued} envoyées",
       "reviews": "Avis demandés",
-      "reviewsHint": "Compté dès que les demandes d'avis partent.",
+      "reviewsHint": "Clients qui ont ouvert le lien d'avis Google.",
       "survey": "Note moyenne",
-      "surveyHint": "{count, plural, one {# réponse} other {# réponses}}",
+      "surveyHint": "{count, plural, one {# réponse} other {# réponses}}, {unhappy} mécontents",
       "surveyEmpty": "Aucune réponse au sondage pour l'instant."
     }
   }

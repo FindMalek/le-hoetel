@@ -1,6 +1,14 @@
 import { GUEST_SOURCES } from "@le-hoetel/common/consent"
-import { guestConsents, guests, hotelSettings, messages, offerCodes, offerRedemptions } from "@le-hoetel/db"
-import { and, count, eq, gte, sql } from "drizzle-orm"
+import {
+  guestConsents,
+  guests,
+  hotelSettings,
+  messages,
+  offerCodes,
+  offerRedemptions,
+  surveyResponses,
+} from "@le-hoetel/db"
+import { and, avg, count, eq, gte, sql } from "drizzle-orm"
 import { z } from "zod"
 import { can, hotelProcedure } from "../procedures"
 
@@ -19,8 +27,8 @@ export const metricsSchema = z.object({
   consent: z.object({ guests: z.number(), email: z.number(), whatsapp: z.number() }),
   messages: z.object({ sent: z.number(), delivered: z.number(), failed: z.number() }),
   offers: z.object({ issued: z.number(), redeemed: z.number() }),
-  reviewsRequested: z.number().nullable(),
-  survey: z.object({ responses: z.number(), average: z.number().nullable(), unhappy: z.number() }).nullable(),
+  reviewsRequested: z.number(),
+  survey: z.object({ responses: z.number(), average: z.number().nullable(), unhappy: z.number() }),
 })
 
 const isoDay = (date: Date) => date.toISOString().slice(0, 10)
@@ -117,6 +125,16 @@ export const metricsRouter = {
         .from(offerRedemptions)
         .where(and(eq(offerRedemptions.hotelId, hotelId), gte(offerRedemptions.redeemedAt, since)))
 
+      const [survey] = await context.db
+        .select({
+          responses: count(),
+          average: avg(surveyResponses.nps),
+          unhappy: count(sql`case when ${surveyResponses.nps} <= 6 then 1 end`),
+          reviews: count(surveyResponses.reviewLinkClickedAt),
+        })
+        .from(surveyResponses)
+        .where(and(eq(surveyResponses.hotelId, hotelId), gte(surveyResponses.submittedAt, since)))
+
       return {
         days: input.days,
         bucket,
@@ -124,8 +142,12 @@ export const metricsRouter = {
         consent: { guests: consent?.guests ?? 0, email: consent?.email ?? 0, whatsapp: consent?.whatsapp ?? 0 },
         messages: { sent: sent?.sent ?? 0, delivered: sent?.delivered ?? 0, failed: sent?.failed ?? 0 },
         offers: { issued: issued?.n ?? 0, redeemed: redeemed?.n ?? 0 },
-        reviewsRequested: null,
-        survey: null,
+        reviewsRequested: survey?.reviews ?? 0,
+        survey: {
+          responses: survey?.responses ?? 0,
+          average: survey?.average ? Math.round(Number(survey.average) * 10) / 10 : null,
+          unhappy: survey?.unhappy ?? 0,
+        },
       }
     }),
 }

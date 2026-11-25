@@ -9,6 +9,7 @@ import {
   publicHotelSchema,
   statusSchema,
 } from "@le-hoetel/common/schemas"
+import { surveyAnswerSchema } from "@le-hoetel/common/survey"
 import { hotelSettings, organization } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { and, eq, ne, sql } from "drizzle-orm"
@@ -19,6 +20,7 @@ import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
 import { offerPage, welcomeOffer } from "../lib/offers"
 import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
+import { submitSurvey, surveyPage } from "../lib/surveys"
 import { changeChoices, unsubscribeAll, unsubscribePage } from "../lib/unsubscribe"
 import { publicProcedure } from "../procedures"
 
@@ -94,6 +96,46 @@ const unsubscribeRouter = {
     .handler(({ context, input }) => unsubscribeAll(context, input.token)),
 }
 
+const surveyRouter = {
+  get: publicProcedure
+    .route({
+      method: "POST",
+      path: "/public/survey/get",
+      summary: "The hotel and the state behind a survey link",
+      tags: ["public"],
+    })
+    .input(z.object({ token }))
+    .output(
+      z.object({
+        hotel: z.object({
+          displayName: z.string(),
+          logoUrl: z.string().nullable(),
+          primaryColor: z.string().nullable(),
+          accentColor: z.string().nullable(),
+        }),
+        language: z.enum(HOTEL_LANGUAGES),
+        state: z.enum(["open", "answered", "expired"]),
+      }),
+    )
+    .handler(({ context, input }) => surveyPage(context, input.token)),
+
+  submit: publicProcedure
+    .route({
+      method: "POST",
+      path: "/public/survey/submit",
+      summary: "A guest's answers to the post-stay survey, once per link",
+      tags: ["public"],
+    })
+    .input(z.object({ token }).extend(surveyAnswerSchema.shape))
+    .output(z.object({ state: z.literal("answered") }))
+    .handler(async ({ context, input }) => {
+      await enforceRateLimit(context, "capture.ip", RATE_LIMITS.captureIp)
+      const { token: link, ...answer } = input
+      const { state } = await submitSurvey(context, link, answer)
+      return { state }
+    }),
+}
+
 /** Bots get the same "ok" a guest gets, so they learn nothing: a filled honeypot, a form sent too fast, a link as a name. */
 function looksLikeBot(input: z.output<typeof captureInputSchema>, now: Date): boolean {
   return (
@@ -103,6 +145,7 @@ function looksLikeBot(input: z.output<typeof captureInputSchema>, now: Date): bo
 
 export const publicRouter = {
   unsubscribe: unsubscribeRouter,
+  survey: surveyRouter,
 
   offer: publicProcedure
     .route({

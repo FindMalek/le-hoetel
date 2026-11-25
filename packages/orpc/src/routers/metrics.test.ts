@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { guests, messages } from "@le-hoetel/db"
+import { guests, messages, surveyInvites, surveyResponses } from "@le-hoetel/db"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 import { bucketStarts } from "./metrics"
@@ -60,12 +60,28 @@ test("metrics count only this hotel's guests, consent and messages inside the pe
     },
   ])
 
+  const [invite] = await app.services.db
+    .insert(surveyInvites)
+    .values({ hotelId: mine.hotelId, guestId: a.id, expiresAt: new Date(Date.now() + 86_400_000) })
+    .returning()
+  await app.services.db
+    .insert(surveyResponses)
+    .values({
+      hotelId: mine.hotelId,
+      guestId: a.id,
+      inviteId: invite!.id,
+      nps: 4,
+      language: "fr",
+      reviewLinkClickedAt: new Date(),
+    })
+
   const month = await mine.client.metrics.get({ days: 30 })
   expect(month.captured.total).toBe(1)
   expect(month.captured.bySource.qr_room).toBe(1)
   expect(month.consent).toEqual({ guests: 1, email: 0, whatsapp: 1 })
   expect(month.messages).toEqual({ sent: 1, delivered: 1, failed: 1 })
-  expect(month.survey).toBeNull()
+  expect(month.survey).toEqual({ responses: 1, average: 4, unhappy: 1 })
+  expect(month.reviewsRequested).toBe(1)
 
   const quarter = await mine.client.metrics.get({ days: 90 })
   expect(quarter.captured.total).toBe(2)

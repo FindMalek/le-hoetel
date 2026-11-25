@@ -120,6 +120,20 @@
       "when": 1795607459203,
       "tag": "0020_illegal_domino",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795608044520,
+      "tag": "0021_dark_supreme_intelligence",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795608330932,
+      "tag": "0022_light_night_nurse",
+      "breakpoints": true
     }
   ]
 }
