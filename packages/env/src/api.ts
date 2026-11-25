@@ -52,6 +52,8 @@ const schema = z.object({
   GLITCHTIP_DSN: optional,
 
   MESSAGING_LIVE: z.enum(["true", "false"]).default("false"),
+  /** Staging only: also trust the browser origins of PR previews and *.findmalek.engineer (see docs: previews). */
+  ALLOW_PREVIEW_ORIGINS: z.enum(["true", "false"]).default("false"),
   RESEND_API_KEY: optional,
   RESEND_WEBHOOK_SECRET: optional,
   EMAIL_FROM: z.string().default("Le Hoetel <onboarding@resend.dev>"),

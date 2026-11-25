@@ -1,6 +1,6 @@
 name: preview
 
-# Every pull request gets a Dokploy preview per app, a sticky comment and github deployments.
+# Every pull request gets a Dokploy preview of what changed (turbo affected), its own postgres, a sticky comment and github deployments.
 # Needs repo variables DOKPLOY_URL, PREVIEW_DOMAIN, DOKPLOY_ENVIRONMENT_ID and secret DOKPLOY_TOKEN.
 # Optional: secret PREVIEW_GIT_TOKEN (private repos), secret PREVIEW_APP_ENV (extra env lines), variable PREVIEW_HTTPS.
 # Without them the job exits green with a note in the summary.
@@ -27,6 +27,8 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -40,6 +42,14 @@ jobs:
           PREVIEW_HTTPS: ${{ vars.PREVIEW_HTTPS }}
           PREVIEW_GIT_TOKEN: ${{ secrets.PREVIEW_GIT_TOKEN }}
           PREVIEW_APP_ENV: ${{ secrets.PREVIEW_APP_ENV }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          STAGING_DOMAIN: ${{ vars.STAGING_DOMAIN }}
+          WHODB_URL: ${{ vars.WHODB_URL }}
+          OPENOBSERVE_PUBLIC_URL: ${{ vars.OPENOBSERVE_PUBLIC_URL }}
+          UMAMI_URL: ${{ vars.UMAMI_URL }}
+          UMAMI_API_TOKEN: ${{ secrets.UMAMI_API_TOKEN }}
+          GLITCHTIP_URL: ${{ vars.GLITCHTIP_URL }}
+          GLITCHTIP_API_TOKEN: ${{ secrets.GLITCHTIP_API_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
