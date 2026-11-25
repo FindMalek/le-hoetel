@@ -2,6 +2,7 @@ import type { Messages } from "@le-hoetel/i18n"
 import {
   BuildingIcon,
   DatabaseIcon,
+  GaugeIcon,
   GiftIcon,
   HistoryIcon,
   HotelIcon,
@@ -41,6 +42,7 @@ export const NAV: NavItem[] = [
   { href: "/qr-codes", label: "qrCodes", icon: QrCodeIcon },
   { href: "/team", label: "team", icon: UsersIcon },
   { href: "/data", label: "data", icon: DatabaseIcon },
+  { href: "/admin/overview", label: "adminOverview", icon: GaugeIcon, admin: true },
   { href: "/admin/hotels", label: "hotels", icon: BuildingIcon, admin: true },
   { href: "/users", label: "users", icon: UserCogIcon, admin: true },
   { href: "/audit-log", label: "auditLog", icon: HistoryIcon, admin: true },
