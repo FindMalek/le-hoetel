@@ -1726,7 +1726,9 @@
     "thanksTitle": "Merci",
     "thanks": "Nous lisons chaque réponse. Au plaisir de vous revoir à {hotel}.",
     "expiredTitle": "Ce questionnaire est clos",
-    "expired": "Merci d'avoir séjourné à {hotel}."
+    "expired": "Merci d'avoir séjourné à {hotel}.",
+    "shareOnGoogle": "Partager sur Google",
+    "reviewPrompt": "Votre séjour vous a plu ? Un court avis Google aide d'autres voyageurs à nous trouver."
   },
   "metrics": {
     "title": "Statistiques",

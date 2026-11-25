@@ -1726,7 +1726,9 @@
     "thanksTitle": "شكرًا لك",
     "thanks": "نقرأ كل إجابة. نتمنى أن نستقبلك في {hotel} قريبًا.",
     "expiredTitle": "انتهى هذا الاستبيان",
-    "expired": "شكرًا لإقامتك في {hotel}."
+    "expired": "شكرًا لإقامتك في {hotel}.",
+    "shareOnGoogle": "شارك على Google",
+    "reviewPrompt": "أعجبتك إقامتك؟ تقييم قصير على Google يساعد مسافرين آخرين على إيجادنا."
   },
   "metrics": {
     "title": "الإحصاءات",

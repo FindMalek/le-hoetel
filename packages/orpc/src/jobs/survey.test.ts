@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { signSurveyToken } from "@le-hoetel/common/survey"
-import { guests, surveyInvites, surveyResponses } from "@le-hoetel/db"
+import { guests, hotelSettings, surveyInvites, surveyResponses } from "@le-hoetel/db"
 import type { SendEmailInput } from "@le-hoetel/notification"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
@@ -90,4 +90,33 @@ test("a survey is answered once per invite and expires after 14 days", async () 
     inviteId: stale!.id,
   })
   expect(app.anonymous.public.survey.submit({ token: old, nps: 8 })).rejects.toThrow()
+})
+
+test("Share on Google is offered after any score, hidden without a link, and a click is stamped once", async () => {
+  const { hotelId, guestId } = await guestCaptured("survey-review")
+  const [invite] = await app.services.db
+    .insert(surveyInvites)
+    .values({ hotelId, guestId, expiresAt: new Date(Date.now() + 864e5) })
+    .returning()
+  const secret = app.services.config.tokenSecret
+  const token = signSurveyToken(secret, "survey", { hotelId, inviteId: invite!.id })
+  await app.anonymous.public.survey.submit({ token, nps: 2 })
+
+  expect((await app.anonymous.public.survey.get({ token })).reviewToken).toBeNull()
+  await app.services.db
+    .update(hotelSettings)
+    .set({ googleReviewUrl: "https://g.page/r/dar-amel/review" })
+    .where(eq(hotelSettings.organizationId, hotelId))
+  const { reviewToken } = await app.anonymous.public.survey.get({ token })
+  expect(reviewToken).toBeString()
+
+  expect(await app.anonymous.public.survey.review({ token: reviewToken! })).toEqual({
+    url: "https://g.page/r/dar-amel/review",
+  })
+  const [first] = await app.services.db.select().from(surveyResponses).where(eq(surveyResponses.inviteId, invite!.id))
+  await app.anonymous.public.survey.review({ token: reviewToken! })
+  const [second] = await app.services.db.select().from(surveyResponses).where(eq(surveyResponses.inviteId, invite!.id))
+  expect(first?.reviewLinkClickedAt).not.toBeNull()
+  expect(second?.reviewLinkClickedAt).toEqual(first!.reviewLinkClickedAt!)
+  expect(app.anonymous.public.survey.review({ token })).rejects.toThrow()
 })

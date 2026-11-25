@@ -20,7 +20,7 @@ import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
 import { offerPage, welcomeOffer } from "../lib/offers"
 import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
-import { submitSurvey, surveyPage } from "../lib/surveys"
+import { reviewClick, submitSurvey, surveyPage } from "../lib/surveys"
 import { changeChoices, unsubscribeAll, unsubscribePage } from "../lib/unsubscribe"
 import { publicProcedure } from "../procedures"
 
@@ -115,9 +115,21 @@ const surveyRouter = {
         }),
         language: z.enum(HOTEL_LANGUAGES),
         state: z.enum(["open", "answered", "expired"]),
+        reviewToken: z.string().nullable(),
       }),
     )
     .handler(({ context, input }) => surveyPage(context, input.token)),
+
+  review: publicProcedure
+    .route({
+      method: "POST",
+      path: "/public/survey/review",
+      summary: "Records a click on Share on Google and returns the hotel's review page",
+      tags: ["public"],
+    })
+    .input(z.object({ token }))
+    .output(z.object({ url: z.string() }))
+    .handler(({ context, input }) => reviewClick(context, input.token)),
 
   submit: publicProcedure
     .route({

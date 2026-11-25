@@ -1,7 +1,7 @@
 import { getDirection } from "@le-hoetel/i18n"
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button, buttonVariants } from "@le-hoetel/ui/components/button"
 import { Textarea } from "@le-hoetel/ui/components/textarea"
-import { CircleAlertIcon } from "lucide-react"
+import { CircleAlertIcon, ExternalLinkIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"
@@ -74,6 +74,19 @@ export default async function Page({ params, searchParams }: PageProps<"/s/[toke
             <p className="text-muted-foreground leading-relaxed">
               {answered ? t("thanks", { hotel }) : t("expired", { hotel })}
             </p>
+            {page.reviewToken ? (
+              <div className="mt-4 grid gap-3 border-t pt-6">
+                <p className="text-muted-foreground leading-relaxed">{t("reviewPrompt")}</p>
+                <a
+                  href={`/r/${page.reviewToken}`}
+                  rel="noreferrer"
+                  className={buttonVariants({ variant: "outline", size: "lg", className: "min-h-12 w-full text-base" })}
+                >
+                  {t("shareOnGoogle")}
+                  <ExternalLinkIcon aria-hidden className="rtl:-scale-x-100" />
+                </a>
+              </div>
+            ) : null}
           </div>
         ) : (
           <form action={sendSurvey.bind(null, token)} className="grid gap-8">

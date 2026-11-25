@@ -120,10 +120,19 @@ export const metricsRouter = {
         .select({ n: count() })
         .from(offerCodes)
         .where(and(eq(offerCodes.hotelId, hotelId), gte(offerCodes.createdAt, since)))
+      // Only redemptions of codes issued in the period, so the rate compares like with like.
       const [redeemed] = await context.db
         .select({ n: count() })
         .from(offerRedemptions)
-        .where(and(eq(offerRedemptions.hotelId, hotelId), gte(offerRedemptions.redeemedAt, since)))
+        .innerJoin(
+          offerCodes,
+          and(
+            eq(offerCodes.hotelId, offerRedemptions.hotelId),
+            eq(offerCodes.offerId, offerRedemptions.offerId),
+            eq(offerCodes.guestId, offerRedemptions.guestId),
+          ),
+        )
+        .where(and(eq(offerRedemptions.hotelId, hotelId), gte(offerCodes.createdAt, since)))
 
       const [survey] = await context.db
         .select({

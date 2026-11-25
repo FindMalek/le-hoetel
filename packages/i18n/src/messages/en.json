@@ -1726,7 +1726,9 @@
     "thanksTitle": "Thank you",
     "thanks": "We read every answer. We hope to welcome you back at {hotel} soon.",
     "expiredTitle": "This survey has closed",
-    "expired": "Thank you for staying at {hotel}."
+    "expired": "Thank you for staying at {hotel}.",
+    "shareOnGoogle": "Share on Google",
+    "reviewPrompt": "Enjoyed your stay? A short Google review helps other travelers find us."
   },
   "metrics": {
     "title": "Metrics",
