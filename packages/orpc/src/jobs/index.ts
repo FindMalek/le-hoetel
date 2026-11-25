@@ -1,5 +1,6 @@
 import type { Job } from "@le-hoetel/jobs"
 import { birthdayJob } from "./birthday"
+import { holidayJob } from "./holidays"
 import { type JobServices, welcomeJob } from "./welcome"
 
 export { enqueueWelcome, type JobServices } from "./welcome"
@@ -8,4 +9,5 @@ export { enqueueWelcome, type JobServices } from "./welcome"
 export const createMessageJobs = (services: JobServices): readonly Job[] => [
   welcomeJob(services),
   birthdayJob(services),
+  holidayJob(services),
 ]

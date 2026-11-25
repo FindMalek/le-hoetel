@@ -161,7 +161,8 @@
     "users": "Users",
     "auditLog": "Audit log",
     "settings": "Settings",
-    "admin": "Platform"
+    "admin": "Platform",
+    "holidays": "Holidays"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -635,5 +636,20 @@
     "title": "Page not found",
     "body": "The link may be wrong, or the page has moved.",
     "home": "Back to home"
+  },
+  "holidays": {
+    "title": "Holiday messages",
+    "description": "A short greeting on the days that matter to your guests. Off until you switch a holiday on.",
+    "saved": "Saved",
+    "next": "Next: {date}",
+    "noDate": "No date known yet",
+    "channelFor": "Channel for {name}",
+    "switchFor": "Send {name} greeting",
+    "channel": {
+      "both": "Email and WhatsApp",
+      "email": "Email only",
+      "whatsapp": "WhatsApp only"
+    },
+    "footnote": "Sent at 09:00 hotel time, only to guests who agreed to the channel. Islamic dates follow the astronomical calendar and can move by a day."
   }
 }

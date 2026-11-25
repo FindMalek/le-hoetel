@@ -97,5 +97,29 @@ const reminder: Builder<"reminder"> = (ctx, { offer, ctaUrl }) => {
   }
 }
 
-export const EMAILS: { [Key in HotelEmailKey]: Builder<Key> } = { welcome, birthday, survey, reminder }
+const message: Builder<"message"> = (ctx, { subject, title, body, offer, ctaUrl, ctaLabel }) => ({
+  subject: ctx.t(subject),
+  preview: ctx.t(title),
+  body: (
+    <>
+      <Title ctx={ctx}>{ctx.t(title)}</Title>
+      {ctx
+        .t(body)
+        .split(/\n{2,}/)
+        .map((text) => (
+          <Paragraph key={text} ctx={ctx}>
+            {text}
+          </Paragraph>
+        ))}
+      {offer ? <OfferCard ctx={ctx} offer={offer} /> : null}
+      {ctaUrl ? (
+        <Cta ctx={ctx} href={ctaUrl}>
+          {ctaLabel ?? ctx.copy.message.cta}
+        </Cta>
+      ) : null}
+    </>
+  ),
+})
+
+export const EMAILS: { [Key in HotelEmailKey]: Builder<Key> } = { welcome, birthday, survey, reminder, message }
 export type { Builder }

@@ -56,6 +56,16 @@ export const GUEST_WHATSAPP_TEMPLATES: Record<HotelEmailKey, GuestWhatsAppTempla
       ar: "مرحبًا {{guest_name}}، تذكير من {{hotel_name}}: عرضك {{offer}} ما زال بانتظارك. أظهر هذه الرسالة في الاستقبال للاستفادة منه.",
     },
   },
+  message: {
+    name: "guest_message",
+    params: ["guest_name", "hotel_name", "text"],
+    examples: { guest_name: "Amel", hotel_name: "Dar Amel", text: "Happy Eid from all of us." },
+    body: {
+      en: "Hello {{guest_name}}, a message from {{hotel_name}}: {{text}} Warm regards.",
+      fr: "Bonjour {{guest_name}}, un message de {{hotel_name}} : {{text}} Cordialement.",
+      ar: "مرحبًا {{guest_name}}، رسالة من {{hotel_name}}: {{text}} مع أطيب التحيات.",
+    },
+  },
 }
 
 /** The footer of every template: the STOP line, fixed text because Meta footers take no variables. */
@@ -76,8 +86,9 @@ export function guestTemplateParams<Key extends HotelEmailKey>(
   { guestName, hotelName, props }: { guestName: string; hotelName: string; props: EmailProps[Key] },
 ): Record<string, string> {
   const base = { guest_name: required(guestName, "missing_name"), hotel_name: required(hotelName, "missing_hotel") }
-  const { offer, ctaUrl } = props as { offer?: { title: string }; ctaUrl?: string }
+  const { offer, ctaUrl, body } = props as { offer?: { title: string }; ctaUrl?: string; body?: string }
   if (key === "birthday" || key === "reminder") return { ...base, offer: required(offer?.title, "missing_offer") }
   if (key === "survey") return { ...base, link: required(ctaUrl, "missing_link") }
+  if (key === "message") return { ...base, text: required(body, "missing_text") }
   return base
 }

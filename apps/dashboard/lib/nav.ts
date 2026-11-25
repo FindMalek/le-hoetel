@@ -1,6 +1,7 @@
 import type { Messages } from "@le-hoetel/i18n"
 import {
   BuildingIcon,
+  CalendarHeartIcon,
   DatabaseIcon,
   GiftIcon,
   HistoryIcon,
@@ -38,6 +39,7 @@ export const NAV: NavItem[] = [
   { href: "/redeem", label: "redeem", icon: ScanLineIcon },
   { href: "/offers", label: "offers", icon: GiftIcon },
   { href: "/emails", label: "emails", icon: MailIcon },
+  { href: "/holidays", label: "holidays", icon: CalendarHeartIcon },
   { href: "/qr-codes", label: "qrCodes", icon: QrCodeIcon },
   { href: "/team", label: "team", icon: UsersIcon },
   { href: "/data", label: "data", icon: DatabaseIcon },

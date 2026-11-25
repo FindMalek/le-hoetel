@@ -7,6 +7,8 @@ export interface LocalTime {
   hour: number
   /** `MM-DD`, how birthdays are compared. */
   monthDay: string
+  /** `YYYY-MM-DD`. */
+  date: string
 }
 
 const pad = (n: number) => String(n).padStart(2, "0")
@@ -28,7 +30,7 @@ export function localTime(now: Date, timeZone: string): LocalTime {
     number,
     number,
   ]
-  return { year, month, day, hour, monthDay: `${pad(month)}-${pad(day)}` }
+  return { year, month, day, hour, monthDay: `${pad(month)}-${pad(day)}`, date: `${year}-${pad(month)}-${pad(day)}` }
 }
 
 export const isLeapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0

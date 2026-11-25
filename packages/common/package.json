@@ -17,6 +17,7 @@
     "./unsubscribe": "./src/unsubscribe.ts",
     "./qr": "./src/qr.ts",
     "./hotel-time": "./src/hotel-time.ts",
+    "./holidays": "./src/holidays.ts",
     "./demo": "./src/demo.ts",
     "./csv": "./src/csv.ts",
     "./offers": "./src/offers.ts",
