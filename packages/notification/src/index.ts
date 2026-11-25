@@ -82,6 +82,8 @@ export interface Notifier {
   send: <Name extends TemplateName>(input: SendInput<Name>) => Promise<SendResult>
   /** An email that is already rendered (the hotel templates): sent with the hotel's name, reply-to and headers. */
   sendEmail: (input: SendEmailInput) => Promise<SendResult>
+  /** A free-form WhatsApp reply to a guest who just wrote to us (the STOP confirmation). Log-only outside live messaging. */
+  replyWhatsApp: (to: string, text: string) => Promise<SendResult>
   /** An approved named template to a guest. Log-only outside live messaging. */
   sendWhatsApp: (input: SendWhatsAppInput) => Promise<SendResult>
   /** Plain text to every configured channel (or the ones asked for). One channel failing doesn't stop the rest. */
@@ -164,6 +166,15 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       if (!email) return { channel: "email", sent: false }
       const result = await email.send(to, rendered, extras)
       return { channel: "email", sent: true, id: result.id }
+    },
+    async replyWhatsApp(to, text) {
+      if (!live) {
+        log.info("message not sent, log-only provider", { channel: "whatsapp", template: "stop_confirmation" })
+        return { channel: "whatsapp", sent: false }
+      }
+      if (!whatsapp) return { channel: "whatsapp", sent: false }
+      const result = await whatsapp.sendText(to, text)
+      return { channel: "whatsapp", sent: true, id: result.id }
     },
     async sendWhatsApp({ to, template, language, params }) {
       if (!live) {

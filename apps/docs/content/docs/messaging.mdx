@@ -41,6 +41,14 @@ There is no body and no recipient column, and nothing logs the phone, email or n
 
 `POST /whatsapp/webhook` takes Kapso's message events, checked with the `X-Webhook-Signature` header (hex HMAC sha256 of the raw body with `KAPSO_WEBHOOK_SECRET`, answers 404 without it). `whatsapp.message.sent`, `delivered` and `failed` go through `applyDeliveryUpdate`; a failure stores Meta's numeric code in `error_code`. WhatsApp messages use named, approved templates, one per message type and language: see [WhatsApp templates](/docs/whatsapp-templates).
 
+### Inbound STOP
+
+The same webhook gets `whatsapp.message.received` (single or batched). `handleInboundWhatsApp` ignores everything except a text that is, as a whole, a stop word: `stop`, `arrêt`, `إيقاف`, `توقف` and the usual variants (case, accents and punctuation do not matter, "don't stop" does nothing). Then:
+
+- **Hotel:** one business number serves every hotel, so the number alone does not say which hotel. The hotel is the one whose WhatsApp message that guest number got last. A number we never wrote to is unsubscribed in every hotel, the safe side.
+- **Consent:** `applyStopReply` withdraws WhatsApp consent with a consent event, source `stop_reply`. Email consent is untouched.
+- **Reply:** when a consent really changed, one free-form confirmation goes back in the guest's language (allowed inside the 24 hour window the guest just opened). A repeated delivery changes nothing and sends nothing. Log-only outside live messaging.
+
 ## Dashboard
 
 `/messages` in the dashboard lists the hotel's latest messages in en, fr and ar. Owners, managers and staff can read it.
