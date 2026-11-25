@@ -114,7 +114,9 @@ export default async function MetricsPage({ searchParams }: PageProps<"/metrics"
                   label={t("outcomes.survey")}
                   value={data.survey.average ?? "–"}
                   hint={
-                    data.survey ? t("outcomes.surveyHint", { count: data.survey.responses }) : t("outcomes.surveyEmpty")
+                    data.survey.responses > 0
+                      ? t("outcomes.surveyHint", { count: data.survey.responses, unhappy: data.survey.unhappy })
+                      : t("outcomes.surveyEmpty")
                   }
                   icon={<StarIcon />}
                 />
