@@ -113,8 +113,14 @@ export const guestUpdateSchema = z.object({
   nextDestination: extras.nextDestination.nullable().optional(),
 })
 
+/** `none` is a guest we may not message: neither email nor WhatsApp consent. */
+export const GUEST_CONSENT_FILTERS = [...CONSENT_CHANNELS, "none"] as const
+
 export const guestListInputSchema = z.object({
   q: z.string().trim().max(80).optional(),
+  consent: z.enum(GUEST_CONSENT_FILTERS).optional(),
+  source: z.enum(GUEST_SOURCES).optional(),
+  language: z.enum(HOTEL_LANGUAGES).optional(),
   limit: z.number().int().min(1).max(GUEST_LIST_MAX).default(50),
   offset: z.number().int().min(0).default(0),
 })

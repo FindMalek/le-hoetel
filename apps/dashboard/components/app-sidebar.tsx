@@ -17,7 +17,9 @@ import {
 import { LogOutIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { CommandPalette } from "@/components/command-palette"
+import { type HotelChoice, HotelSwitcher } from "@/components/hotel-switcher"
 import { visibleNav } from "@/lib/nav"
 
 interface Me {
@@ -27,8 +29,17 @@ interface Me {
   role: string | null
 }
 
-export function AppSidebar({ me }: { me: Me }) {
+export function AppSidebar({
+  me,
+  hotels,
+  activeHotelId,
+}: {
+  me: Me
+  hotels: HotelChoice[]
+  activeHotelId: string | null
+}) {
   const pathname = usePathname()
+  const t = useTranslations("nav")
   const signOut = async () => {
     await authClient.signOut()
     window.location.assign("/sign-in")
@@ -38,10 +49,7 @@ export function AppSidebar({ me }: { me: Me }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<Link href="/" />}>
-              <span className="grid size-8 place-items-center bg-primary font-bold text-primary-foreground">a</span>
-              <span className="font-heading font-semibold">le-hoetel</span>
-            </SidebarMenuButton>
+            <HotelSwitcher hotels={hotels} activeId={activeHotelId} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -53,12 +61,12 @@ export function AppSidebar({ me }: { me: Me }) {
               {visibleNav(me.role).map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
-                    tooltip={item.label}
+                    tooltip={t(item.label)}
                     isActive={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
                     render={<Link href={item.href} />}
                   >
                     <item.icon />
-                    <span>{item.label}</span>
+                    <span>{t(item.label)}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
