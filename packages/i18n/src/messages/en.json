@@ -414,6 +414,23 @@
       "cancel": "Cancel",
       "deleted": "Guest deleted.",
       "error": "Something went wrong. Try again."
+    },
+    "finder": {
+      "label": "Find a guest",
+      "placeholder": "Type a phone or a name",
+      "none": "No guest found.",
+      "add": "Add them",
+      "markVisit": "Mark visit",
+      "marked": "Visit saved",
+      "error": "Could not load. Try again.",
+      "firstStay": "First stay. A warm welcome is enough.",
+      "welcomeBack": "Welcome back, {count, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stay",
+      "visits": "Visits",
+      "firstVisit": "First visit",
+      "lastVisit": "Last visit",
+      "language": "Language",
+      "lastOffer": "Last offer used",
+      "consents": "Can contact"
     }
   },
   "guestData": {

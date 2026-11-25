@@ -21,6 +21,8 @@ Use the helpers from `@le-hoetel/i18n` (or `@le-hoetel/i18n/config` when you onl
 - `getDirection(locale)` is `"ltr"` or `"rtl"`
 - `LOCALE_META[locale]` has `dir`, `hreflang` and `ogLocale`
 - `alternateUrls(origin, pathname)` is the hreflang map, with `x-default`. The web layout writes it into every page and the sitemap
+- The social card (`apps/web/app/opengraph-image.tsx`) is drawn per language; the Arabic card loads Cairo from `apps/web/assets` and lays words out one by one because satori reorders wrapped RTL text
+- `robots.txt` blocks `/h/`, `/s/`, `/u/`, `/o/` and `/api/`, and everything on previews and localhost. `/llms.txt` on the web app lists the landing pages and the FAQ in English
 
 Email layouts take a `locale` prop and set `lang` and `dir` from it. Guest pages must use the same helpers.
 

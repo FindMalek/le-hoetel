@@ -8,17 +8,19 @@ export interface OgColors {
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/** Markup for next/og's ImageResponse: satori only takes inline styles and hex colors. */
+/** Markup for next/og's ImageResponse: satori only takes inline styles and hex colors. Arabic is laid out word by word because satori reorders words when RTL text wraps. */
 export function OgCard({
   name,
   title,
   description,
   colors,
+  rtl,
 }: {
   name: string
   title: string
   description?: string
   colors: OgColors
+  rtl?: boolean
 }) {
   return (
     <div
@@ -29,6 +31,7 @@ export function OgCard({
         padding: 40,
         background: colors.background,
         color: colors.foreground,
+        ...(rtl ? { fontFamily: "Cairo" } : {}),
       }}
     >
       <div
@@ -46,7 +49,27 @@ export function OgCard({
           {name}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ fontSize: 84, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>{title}</div>
+          {rtl ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                flexWrap: "wrap",
+                gap: 20,
+                fontSize: 76,
+                lineHeight: 1.3,
+                maxWidth: 900,
+              }}
+            >
+              {title.split(" ").map((word, index) => (
+                <div key={index} style={{ display: "flex" }}>
+                  {word}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ fontSize: 84, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>{title}</div>
+          )}
           {description ? (
             <div style={{ fontSize: 32, lineHeight: 1.35, color: colors.muted, maxWidth: 900 }}>{description}</div>
           ) : null}

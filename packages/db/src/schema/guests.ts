@@ -101,3 +101,23 @@ export const consentEvents = pgTable(
     index("consent_events_hotel_idx").on(t.hotelId, t.at),
   ],
 )
+
+/**
+ * One row per stay or visit the hotel recorded: the QR capture is the first, staff add the next ones. Recognition
+ * only (no points or tiers). Removed with the guest.
+ */
+export const guestVisits = pgTable(
+  "guest_visits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    guestId: uuid("guest_id").notNull(),
+    hotelId: text("hotel_id").notNull(),
+    source: guestSource("source").notNull(),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.guestId, t.hotelId], foreignColumns: [guests.id, guests.hotelId] }).onDelete("cascade"),
+    index("guest_visits_guest_idx").on(t.guestId, t.at),
+    index("guest_visits_hotel_idx").on(t.hotelId, t.at),
+  ],
+)
