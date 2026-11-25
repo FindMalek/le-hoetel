@@ -5,6 +5,7 @@ export const SURVEY_INVITE_DAYS = 14
 export const SURVEY_HOURS_AFTER_STAY = 24
 export const DEFAULT_LOW_SCORE_THRESHOLD = 6
 export const SURVEY_COMMENT_MAX = 1000
+export const FEEDBACK_CASE_STATUSES = ["new", "contacted", "resolved"] as const
 
 export const SURVEY_RATINGS = ["rooms", "cleanliness", "service"] as const
 

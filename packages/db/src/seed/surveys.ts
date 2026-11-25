@@ -1,16 +1,18 @@
-import type { surveyInvites, surveyResponses } from "../schema"
+import type { feedbackCases, surveyInvites, surveyResponses } from "../schema"
 import type { HotelScenario } from "./hotels"
 import { random } from "./random"
 
 const DAY = 864e5
 
 type NewInvite = typeof surveyInvites.$inferInsert
+type NewCase = typeof feedbackCases.$inferInsert
 type NewResponse = typeof surveyResponses.$inferInsert
 type Language = NewResponse["language"]
 
 export interface SurveyScenario {
   surveyInvites: NewInvite[]
   surveyResponses: NewResponse[]
+  feedbackCases: NewCase[]
 }
 
 const GOOD: Record<Language, string[]> = {
@@ -63,7 +65,7 @@ export function buildSurveyScenario(now: Date, hotels: HotelScenario, seed = 202
   const int = (max: number) => Math.floor(rand() * max)
   const hex = (n: number) => Array.from({ length: n }, () => int(16).toString(16)).join("")
   const uuid = () => `${hex(8)}-${hex(4)}-4${hex(3)}-${"89ab"[int(4)]}${hex(3)}-${hex(12)}`
-  const out: SurveyScenario = { surveyInvites: [], surveyResponses: [] }
+  const out: SurveyScenario = { surveyInvites: [], surveyResponses: [], feedbackCases: [] }
   hotels.guests.forEach((guest, index) => {
     if (index % 5 !== 0) return
     const sentAt = new Date(now.getTime() - (1 + int(60)) * DAY)
@@ -81,7 +83,9 @@ export function buildSurveyScenario(now: Date, hotels: HotelScenario, seed = 202
     const stars = (base: number) => Math.max(1, Math.min(5, base + int(2) - (rand() < 0.2 ? 1 : 0)))
     const base = nps >= 9 ? 4 : nps >= 7 ? 4 : 2
     const words = nps <= 6 ? BAD : GOOD
+    const responseId = uuid()
     out.surveyResponses.push({
+      id: responseId,
       hotelId: guest.hotelId,
       guestId: guest.id!,
       inviteId: id,
@@ -93,6 +97,10 @@ export function buildSurveyScenario(now: Date, hotels: HotelScenario, seed = 202
       language: guest.language,
       submittedAt: new Date(sentAt.getTime() + int(3 * DAY)),
     })
+    if (nps <= 6) {
+      const status = (["new", "new", "contacted", "resolved"] as const)[int(4)]!
+      out.feedbackCases.push({ hotelId: guest.hotelId, responseId, status, createdAt: sentAt, updatedAt: sentAt })
+    }
   })
   return out
 }

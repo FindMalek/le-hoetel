@@ -1,5 +1,5 @@
 import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "@le-hoetel/common/hotel"
-import { pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { pgEnum, pgTable, smallint, text, timestamp } from "drizzle-orm/pg-core"
 import { organization } from "./orgs"
 
 export const hotelLanguage = pgEnum("hotel_language", HOTEL_LANGUAGES)
@@ -20,6 +20,8 @@ export const hotelSettings = pgTable("hotel_settings", {
   timezone: text("timezone").notNull().default("Africa/Tunis"),
   address: text("address"),
   googleReviewUrl: text("google_review_url"),
+  /** A survey score at or below this opens a feedback case and alerts the manager. */
+  lowScoreThreshold: smallint("low_score_threshold").notNull().default(6),
   managerWhatsapp: text("manager_whatsapp"),
   managerTelegram: text("manager_telegram"),
   telegramChatId: text("telegram_chat_id"),
