@@ -24,6 +24,19 @@ export function dokploy(method, path, body) {
 
 export const createApplication = (name, environmentId) =>
   dokploy("POST", "application.create", { name, appName: name, environmentId })
+export const createPostgres = (name, environmentId, db) =>
+  dokploy("POST", "postgres.create", {
+    name,
+    appName: name,
+    environmentId,
+    databaseName: db.database,
+    databaseUser: db.user,
+    databasePassword: db.password,
+    dockerImage: "postgres:17-alpine",
+  })
+export const deployPostgres = (postgresId) => dokploy("POST", "postgres.deploy", { postgresId })
+export const getPostgres = (postgresId) => dokploy("GET", "postgres.one", { postgresId })
+export const removePostgres = (postgresId) => dokploy("POST", "postgres.remove", { postgresId })
 export const saveGitProvider = (body) => dokploy("POST", "application.saveGitProvider", body)
 export const saveBuildType = (body) => dokploy("POST", "application.saveBuildType", body)
 export const saveEnvironment = (body) => dokploy("POST", "application.saveEnvironment", body)

@@ -12,6 +12,7 @@ import { ensureAdmin } from "./admin"
 import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 import { startOpenObserve } from "./openobserve"
+import { PREVIEW_ORIGINS } from "./origins"
 import { createServer } from "./server"
 
 const env = loadApiEnv()
@@ -24,7 +25,11 @@ const jobs = await startJobs(env, db, { worker: env.JOBS_WORKER })
 
 const notification = createNotifier(env, { appUrl: env.DASHBOARD_URL })
 
-const trustedOrigins = [env.WEB_URL, env.DASHBOARD_URL]
+const trustedOrigins = [
+  env.WEB_URL,
+  env.DASHBOARD_URL,
+  ...(env.ALLOW_PREVIEW_ORIGINS === "true" ? PREVIEW_ORIGINS : []),
+]
 
 const auth = createAuth({
   db,

@@ -35,6 +35,7 @@
     "scripts",
     "deploy",
     "releases",
+    "previews",
     "observability",
     "analytics"
   ]

@@ -1,12 +1,16 @@
+import { execFileSync } from "node:child_process"
 import { appendFileSync, existsSync, readdirSync, readFileSync } from "node:fs"
 import {
   createApplication,
   createDomain,
   createGithubDeployment,
+  createPostgres,
   deployApplication,
+  deployPostgres,
   failureExcerpt,
   findStickyComment,
   getApplication,
+  getPostgres,
   inspectUrl,
   listDeployments,
   saveBuildType,
@@ -15,7 +19,18 @@ import {
   setDeploymentStatus,
   upsertComment,
 } from "./preview-api.mjs"
-import { dockerPort, pickLatest, prAppName, previewHost, renderComment, toStatus } from "./preview-lib.mjs"
+import { demoOwnerEmail } from "./preview-demo.mjs"
+import {
+  dockerPort,
+  pickLatest,
+  prAppName,
+  previewDb,
+  previewHost,
+  previewSecret,
+  renderComment,
+  stagingUrl,
+  toStatus,
+} from "./preview-lib.mjs"
 
 const env = process.env
 const summary = (text) => env.GITHUB_STEP_SUMMARY && appendFileSync(env.GITHUB_STEP_SUMMARY, `${text}\n`)
@@ -44,33 +59,121 @@ function discoverApps() {
   return apps.filter((a) => existsSync(a.dockerfile))
 }
 
-const apps = discoverApps()
+const all = discoverApps()
+
+// Smart reuse: only what turbo says changed (and what depends on it) is built, the rest links to staging.
+function affectedApps() {
+  try {
+    const base = env.BASE_REF ? `origin/${env.BASE_REF}` : "origin/main"
+    const out = execFileSync("npx", ["--yes", "turbo@2.11.9", "ls", "--affected", "--output=json"], {
+      encoding: "utf8",
+      env: { ...env, TURBO_SCM_BASE: base, TURBO_SCM_HEAD: sha },
+    })
+    return new Set(JSON.parse(out).packages.items.map((p) => p.name))
+  } catch (e) {
+    console.log(`turbo ls --affected failed, deploying everything: ${e.message}`)
+    return null
+  }
+}
+const affected = affectedApps()
+const isAffected = (app) => !affected || affected.has(app)
+const hasApi = all.some((a) => a.app === "api")
+const apiChanged = hasApi && isAffected("api")
+const apps = all.filter(({ app }) => {
+  if (app === "api") return apiChanged
+  if (app === "docs") return isAffected("docs")
+  return apiChanged || isAffected(app)
+})
+const deployed = new Set(apps.map((a) => a.app))
 const hostOf = (app) => previewHost(pr, app, env.PREVIEW_DOMAIN)
-const urlOf = (app) => `${https ? "https" : "http"}://${hostOf(app)}`
+const previewUrl = (app) => `${https ? "https" : "http"}://${hostOf(app)}`
+const urlOf = (app) => (deployed.has(app) ? previewUrl(app) : stagingUrl(app, env.STAGING_DOMAIN || undefined))
+const db = apiChanged ? previewDb(pr, env.DOKPLOY_TOKEN, "") : null
+const password = previewSecret(env.DOKPLOY_TOKEN, pr, "demo")
 
 const sticky = await findStickyComment(repo, pr)
 const state = { ...(sticky?.state ?? {}) }
 let commentId = sticky?.id
 const now = () => new Date().toISOString()
-const rows = apps.map(({ app }) => ({ app, status: "building", url: urlOf(app), updatedAt: now() }))
+const rows = all.map(({ app }) =>
+  deployed.has(app)
+    ? { app, status: "building", url: urlOf(app), updatedAt: now() }
+    : { app, status: "reused", url: urlOf(app), updatedAt: now() },
+)
+
+function extraInfo() {
+  const tools = []
+  if (env.OPENOBSERVE_PUBLIC_URL)
+    tools.push({
+      name: `OpenObserve (stream pr-${pr})`,
+      url: `${env.OPENOBSERVE_PUBLIC_URL.replace(/\/+$/, "")}/web/logs`,
+    })
+  if (env.UMAMI_URL && env.UMAMI_API_TOKEN) tools.push({ name: "Umami", url: env.UMAMI_URL })
+  if (env.GLITCHTIP_URL && env.GLITCHTIP_API_TOKEN) tools.push({ name: "GlitchTip", url: env.GLITCHTIP_URL })
+  const extra = { tools }
+  if (!deployed.size) extra.note = "No app changed in this PR, every link points to staging."
+  else if (!apiChanged)
+    extra.note = `The api did not change: previews use the **staging api and database** (shared, demo data). Unchanged apps link to staging.`
+  if (apiChanged) {
+    extra.creds = {
+      ownerEmail: demoOwnerEmail("dar-zitouna"),
+      adminEmail: env.PREVIEW_ADMIN_EMAIL ?? "admin@le-hoetel.local",
+      password,
+    }
+    if (state._db) extra.db = { ...db, host: state._db }
+    extra.whodbUrl = env.WHODB_URL ?? "https://whodb-lehoetel.findmalek.engineer"
+  }
+  return extra
+}
 
 let queue = Promise.resolve()
 function publish() {
   queue = queue.then(async () => {
-    const res = await upsertComment(repo, pr, renderComment({ pr, sha, rows, state }), commentId)
+    const res = await upsertComment(repo, pr, renderComment({ pr, sha, rows, state, extra: extraInfo() }), commentId)
     commentId = res.id
   })
   return queue
 }
 
-function appEnv() {
-  const own = {
+function appEnv(app) {
+  const apiPublic = urlOf("api")
+  const lines = {
     WEB_URL: urlOf("web"),
     DASHBOARD_URL: urlOf("dashboard"),
-    API_PUBLIC_URL: urlOf("api"),
+    DOCS_URL: urlOf("docs"),
+    API_PUBLIC_URL: apiPublic,
   }
-  const lines = Object.entries(own).map(([k, v]) => `${k}=${v}`)
-  return [...lines, env.PREVIEW_APP_ENV ?? ""].filter(Boolean).join("\n")
+  if (app === "api") {
+    Object.assign(lines, {
+      DEPLOY_ENV: `pr-${pr}`,
+      DATABASE_URL: `postgres://${db.user}:${db.password}@${state._db}:5432/${db.database}`,
+      SEED: "demo",
+      DEMO_PASSWORD: password,
+      ADMIN_EMAIL: env.PREVIEW_ADMIN_EMAIL ?? "admin@le-hoetel.local",
+      ADMIN_PASSWORD: password,
+      BETTER_AUTH_SECRET: previewSecret(env.DOKPLOY_TOKEN, pr, "auth", 40),
+      MESSAGING_LIVE: "false",
+    })
+  } else {
+    lines.API_URL = apiPublic
+  }
+  return [...Object.entries(lines).map(([k, v]) => `${k}=${v}`), env.PREVIEW_APP_ENV ?? ""].filter(Boolean).join("\n")
+}
+
+async function ensurePostgres() {
+  if (!state.postgres) {
+    const created = await createPostgres(`pr-${pr}-db`, env.DOKPLOY_ENVIRONMENT_ID, db)
+    state.postgres = created.postgresId
+    state._db = created.appName
+    await publish()
+    await deployPostgres(state.postgres)
+  }
+  const deadline = Date.now() + 5 * 60_000
+  while (Date.now() < deadline) {
+    if ((await getPostgres(state.postgres)).applicationStatus === "done") return
+    await new Promise((r) => setTimeout(r, 5_000))
+  }
+  throw new Error("preview postgres did not start")
 }
 
 function gitUrl() {
@@ -120,6 +223,7 @@ async function runApp({ app, dockerfile }) {
   pending.add(ghDeployment)
   const status = (st, extra) => setDeploymentStatus(repo, ghDeployment, st, { auto_inactive: false, ...extra })
   try {
+    if (app === "api") await ensurePostgres()
     const id = await ensureApplication({ app, dockerfile })
     row.inspectUrl = inspectUrl(id, await getApplication(id).catch(() => null))
     await status("in_progress", { log_url: row.inspectUrl, environment_url: row.url })
@@ -136,13 +240,13 @@ async function runApp({ app, dockerfile }) {
       buildType: "dockerfile",
       dockerfile,
       dockerContextPath: ".",
-      dockerBuildStage: null,
+      dockerBuildStage: app === "api" ? "runner" : null,
       herokuVersion: null,
       railpackVersion: null,
     })
     await saveEnvironment({
       applicationId: id,
-      env: appEnv(),
+      env: appEnv(app),
       buildArgs: null,
       buildSecrets: null,
       createEnvFile: true,
@@ -167,6 +271,7 @@ async function runApp({ app, dockerfile }) {
 
 await publish()
 await Promise.all(apps.map(runApp))
+await publish()
 
 summary(`### Preview deployments\n\n${rows.map((r) => `- ${r.app}: ${r.status} ${r.url}`).join("\n")}`)
 if (rows.some((r) => r.status === "failed")) process.exit(1)
