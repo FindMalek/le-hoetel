@@ -187,3 +187,10 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
     </>
   )
 }
+
+// i18n-used: guests.detail.granted
+// i18n-used: guests.detail.notGranted
+// i18n-used: guests.detail.since
+// i18n-used: guests.detail.withdrawnOn
+// i18n-used: guests.detail.eventGranted
+// i18n-used: guests.detail.eventWithdrawn
