@@ -61,9 +61,9 @@ export const GUEST_WHATSAPP_TEMPLATES: Record<HotelEmailKey, GuestWhatsAppTempla
     params: ["guest_name", "hotel_name", "text"],
     examples: { guest_name: "Amel", hotel_name: "Dar Amel", text: "Happy Eid from all of us." },
     body: {
-      en: "Hello {{guest_name}}, a message from {{hotel_name}}: {{text}}",
-      fr: "Bonjour {{guest_name}}, un message de {{hotel_name}} : {{text}}",
-      ar: "مرحبًا {{guest_name}}، رسالة من {{hotel_name}}: {{text}}",
+      en: "Hello {{guest_name}}, a message from {{hotel_name}}: {{text}} Warm regards.",
+      fr: "Bonjour {{guest_name}}, un message de {{hotel_name}} : {{text}} Cordialement.",
+      ar: "مرحبًا {{guest_name}}، رسالة من {{hotel_name}}: {{text}} مع أطيب التحيات.",
     },
   },
 }
