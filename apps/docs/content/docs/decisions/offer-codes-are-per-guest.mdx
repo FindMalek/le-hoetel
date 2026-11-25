@@ -1,0 +1,34 @@
+---
+title: Offer codes are per guest
+description: Each guest gets their own short code and QR for an offer, so a redemption is once per guest and a code cannot be passed around.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+A hotel wants to measure offers: how many guests used the welcome drink, and no double use. A shared promo code cannot do that, and a code that only the staff can read (a long signed token) cannot be typed when a phone camera fails.
+
+## Decision
+
+An offer has a promo code (unique per hotel, for the hotel's own use and for unbound redemptions) and every guest who opens their offer link gets their own short code, stored in `offer_codes` and shown as a QR. A redemption is one row, unique per offer and guest.
+
+## Why
+
+- The unique constraint is the only thing that stops two staff members redeeming the same guest at once, no locking needed.
+- A short code of 8 characters (31 letters and digits that cannot be confused) can be typed at the desk and is unique across hotels, so a code from another hotel is reported as "wrong hotel" and not as unknown.
+- The link to the offer page is a signed token, the QR holds only the short code.
+
+## Why not
+
+- One signed token as the QR content: long, dense QR, impossible to type.
+- Deriving the short code from the guest id: it cannot be looked up without the id, and a table is simple.
+
+## Consequences
+
+- A code row exists for every guest who opened an offer link. Deleting a guest deletes their codes.
+- Offer text is one language per offer for now.
+
+## Revisit when
+
+A hotel needs offers in several languages, or codes that expire per guest.

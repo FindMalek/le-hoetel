@@ -55,6 +55,7 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
     "displayName",
     "primaryColor",
     "slug",
+    "welcomeOffer",
   ])
   await expect(app.anonymous.public.hotel({ slug: "nope" })).rejects.toThrow("Hotel not found.")
   await expect(
