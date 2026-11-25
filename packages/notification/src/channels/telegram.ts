@@ -14,11 +14,14 @@ export interface TelegramUpdate {
   message?: { chat: { id: number }; text?: string }
 }
 
+/** Called for `/start <code>`: true when the code linked the chat to a hotel. */
+export type TelegramStartHandler = (code: string, chatId: string) => Promise<boolean>
+
 export interface TelegramChannel {
   /** Messages `to`, or the configured chat. `markdown` turns on Telegram's legacy Markdown. */
   send: (text: string, options?: { to?: string; markdown?: boolean }) => Promise<void>
   /** The api route for Telegram's webhook: checks the secret, answers `/start` with the chat id. */
-  handleWebhook: (request: Request) => Promise<Response>
+  handleWebhook: (request: Request, onStart?: TelegramStartHandler) => Promise<Response>
   call: <T>(method: string, body?: Record<string, unknown>) => Promise<T>
 }
 
@@ -49,18 +52,24 @@ export function createTelegramChannel(config: TelegramConfig): TelegramChannel |
         ...(options.markdown ? { parse_mode: "Markdown", link_preview_options: { is_disabled: true } } : {}),
       })
     },
-    async handleWebhook(request) {
+    async handleWebhook(request, onStart) {
       if (!verifySecretHeader(request, "x-telegram-bot-api-secret-token", webhookSecret)) {
         return Response.json({ message: "Forbidden." }, { status: 403 })
       }
       const update = (await request.json().catch(() => null)) as TelegramUpdate | null
       const message = update?.message
       if (message?.text?.startsWith("/start")) {
+        const code = message.text.split(/\s+/)[1]
+        const linked = code && onStart ? await onStart(code, String(message.chat.id)).catch(() => false) : false
+        const text = linked
+          ? "Linked. This chat now receives your hotel's alerts."
+          : code
+            ? "This link code is invalid or expired. Create a new one in your hotel settings."
+            : `Your chat id is ${message.chat.id}. Set TELEGRAM_CHAT_ID to it to get notifications here.`
         // A 500 makes Telegram retry the same update, so a failed reply is logged and acknowledged.
-        await call("sendMessage", {
-          chat_id: message.chat.id,
-          text: `Your chat id is ${message.chat.id}. Set TELEGRAM_CHAT_ID to it to get notifications here.`,
-        }).catch((error) => console.error("[telegram] reply failed", error))
+        await call("sendMessage", { chat_id: message.chat.id, text }).catch((error) =>
+          console.error("[telegram] reply failed", error),
+        )
       }
       return Response.json({ ok: true })
     },

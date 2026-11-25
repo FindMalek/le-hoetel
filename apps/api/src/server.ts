@@ -1,5 +1,6 @@
 import type { Auth } from "@le-hoetel/auth"
 import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@le-hoetel/orpc"
+import { linkTelegramChat } from "@le-hoetel/orpc/manager-alerts"
 import { applyKapsoEvent, applyResendEvent, type KapsoPayload, type ResendEvent } from "@le-hoetel/orpc/messages"
 import { handleInboundWhatsApp, unsubscribeAll } from "@le-hoetel/orpc/unsubscribe"
 import { isPublicKey } from "@le-hoetel/storage"
@@ -113,7 +114,9 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
       return Response.json({ ok: true })
     }
     if (pathname === "/telegram/webhook" && request.method === "POST") {
-      return services.notification.handleTelegramWebhook(request)
+      return services.notification.handleTelegramWebhook(request, (code, chatId) =>
+        linkTelegramChat(services.db, code, chatId, services.now()),
+      )
     }
     if (pathname.startsWith("/files/")) {
       if (!services.storage) return Response.json({ message: "Storage is not configured." }, { status: 404 })

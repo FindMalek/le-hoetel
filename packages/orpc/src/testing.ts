@@ -33,6 +33,7 @@ export async function createTestApp(options: { storage?: Storage } = {}) {
       dashboardUrl: "http://localhost:3002",
       apiUrl: "http://localhost:3001",
       tokenSecret: SECRET,
+      telegramBot: "le_hoetel_test_bot",
     },
     rateLimiter: createRateLimiter({}),
     storage: options.storage ?? null,
