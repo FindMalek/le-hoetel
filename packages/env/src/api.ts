@@ -59,6 +59,7 @@ const schema = z.object({
   TELEGRAM_CHAT_ID: optional,
   TELEGRAM_WEBHOOK_SECRET: optional,
   KAPSO_API_KEY: optional,
+  KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,
   WHATSAPP_NOTIFY_TO: optional,
   WHATSAPP_TEMPLATE_NAME: z.string().default("app_notification"),
