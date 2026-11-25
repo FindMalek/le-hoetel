@@ -78,7 +78,7 @@ const fetch = createServer(
       bucket: env.S3_BUCKET,
       accessKeyId: env.S3_ACCESS_KEY_ID,
       secretAccessKey: env.S3_SECRET_ACCESS_KEY,
-      prefix: env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : "",
+      prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
     }),
     notification,
     model: resolveModel(env.AI_MODEL, env),

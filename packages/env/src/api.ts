@@ -41,6 +41,8 @@ const schema = z.object({
   S3_ENDPOINT: optional,
   S3_REGION: z.string().default("auto"),
   S3_BUCKET: optional,
+  /** Key prefix inside the bucket, e.g. "staging/". Empty for production, "pr-<n>/" is used for previews. */
+  S3_PREFIX: optional,
   S3_ACCESS_KEY_ID: optional,
   S3_SECRET_ACCESS_KEY: optional,
 
