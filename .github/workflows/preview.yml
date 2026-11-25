@@ -42,6 +42,10 @@ jobs:
           PREVIEW_HTTPS: ${{ vars.PREVIEW_HTTPS }}
           PREVIEW_GIT_TOKEN: ${{ secrets.PREVIEW_GIT_TOKEN }}
           PREVIEW_APP_ENV: ${{ secrets.PREVIEW_APP_ENV }}
+          INFISICAL_URL: ${{ vars.INFISICAL_URL }}
+          INFISICAL_PROJECT_ID: ${{ vars.INFISICAL_PROJECT_ID }}
+          INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+          INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
           STAGING_DOMAIN: ${{ vars.STAGING_DOMAIN }}
           WHODB_URL: ${{ vars.WHODB_URL }}
