@@ -121,7 +121,7 @@ function extraInfo() {
       password,
     }
     if (state._db) extra.db = { ...db, host: state._db }
-    extra.whodbUrl = env.WHODB_URL ?? "https://whodb-lehoetel.findmalek.engineer"
+    extra.whodbUrl = env.WHODB_URL || "https://whodb-lehoetel.findmalek.engineer"
   }
   return extra
 }
