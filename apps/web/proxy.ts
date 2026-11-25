@@ -2,7 +2,7 @@ import { PATHNAME_HEADER } from "@le-hoetel/i18n"
 import { localeProxy } from "@le-hoetel/i18n/proxy"
 import { type NextRequest, NextResponse } from "next/server"
 
-const GUEST_PATHS = ["/h/", "/u/"]
+const GUEST_PATHS = ["/h/", "/u/", "/s/", "/r/"]
 
 export function proxy(request: NextRequest) {
   // Guest pages pick their language from the hotel, the guest and `?lang=`, never from the site's locale cookie.
@@ -15,4 +15,4 @@ export function proxy(request: NextRequest) {
 }
 
 /** `/u/` carries a signed token with a dot in it, which the generic matcher would read as a file. */
-export const config = { matcher: ["/((?!api|_next|.*\\..*).*)", "/u/:path*"] }
+export const config = { matcher: ["/((?!api|_next|.*\\..*).*)", "/u/:path*", "/s/:path*", "/r/:path*"] }

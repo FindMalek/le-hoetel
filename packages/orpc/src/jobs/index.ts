@@ -2,6 +2,7 @@ import type { Job } from "@le-hoetel/jobs"
 import { birthdayJob } from "./birthday"
 import { campaignJob } from "./campaigns"
 import { holidayJob } from "./holidays"
+import { surveyJob } from "./survey"
 import { type JobServices, welcomeJob } from "./welcome"
 
 export { enqueueWelcome, type JobServices } from "./welcome"
@@ -14,5 +15,6 @@ export const createMessageJobs = (
   welcomeJob(services),
   birthdayJob(services),
   holidayJob(services),
+  surveyJob(services),
   campaignJob(services, { pauseMs: options.campaignPauseMs, batchSize: options.campaignBatchSize }),
 ]

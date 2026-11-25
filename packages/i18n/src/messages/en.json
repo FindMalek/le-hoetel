@@ -1706,5 +1706,25 @@
       "refund": "Refund (not delivered)"
     },
     "forbidden": "Only owners and managers can see the balance."
+  },
+  "survey": {
+    "invalidTitle": "This link is not valid",
+    "invalid": "Open the link from your message again, or ask the front desk.",
+    "title": "How was your stay?",
+    "intro": "One minute. Your answer goes straight to the team at {hotel}.",
+    "nps": "How likely are you to recommend {hotel} to a friend?",
+    "npsLow": "Not at all",
+    "npsHigh": "Definitely",
+    "rooms": "Your room",
+    "cleanliness": "Cleanliness",
+    "service": "Staff and food",
+    "optional": "Optional",
+    "comment": "Anything you want to tell us?",
+    "send": "Send my answer",
+    "error": "We could not save your answer. Please try again.",
+    "thanksTitle": "Thank you",
+    "thanks": "We read every answer. We hope to welcome you back at {hotel} soon.",
+    "expiredTitle": "This survey has closed",
+    "expired": "Thank you for staying at {hotel}."
   }
 }
