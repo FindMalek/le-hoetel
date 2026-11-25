@@ -140,11 +140,7 @@
     "retry": "Réessayer",
     "reference": "Référence {digest}"
   },
-  "hero": {
-    "badge": "accès anticipé",
-    "getStarted": "Commencer",
-    "apiDocs": "Docs de l'API"
-  },
+  "hero": {},
   "nav": {
     "redeem": "Utiliser",
     "offers": "Offres",

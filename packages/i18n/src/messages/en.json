@@ -140,11 +140,7 @@
     "retry": "Try again",
     "reference": "Reference {digest}"
   },
-  "hero": {
-    "badge": "early access",
-    "getStarted": "Get started",
-    "apiDocs": "API docs"
-  },
+  "hero": {},
   "nav": {
     "redeem": "Redeem",
     "offers": "Offers",

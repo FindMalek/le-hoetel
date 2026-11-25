@@ -140,11 +140,7 @@
     "retry": "إعادة المحاولة",
     "reference": "المرجع {digest}"
   },
-  "hero": {
-    "badge": "وصول مبكر",
-    "getStarted": "ابدأ الآن",
-    "apiDocs": "وثائق واجهة البرمجة"
-  },
+  "hero": {},
   "nav": {
     "redeem": "استخدام",
     "offers": "العروض",
