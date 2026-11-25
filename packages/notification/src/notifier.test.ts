@@ -142,3 +142,55 @@ test("a footer ends the email in both bodies and the whatsapp text", async () =>
   expect(body.html).toContain('<a href="https://web.test/u/abc">')
   expect(JSON.stringify(calls[1]?.body)).toContain(footer)
 })
+
+test("a rendered hotel email goes out from the hotel's name with reply-to and list headers", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier(
+    { ...LIVE, RESEND_API_KEY: "re_test", EMAIL_FROM: "Le Hoetel <hello@example.com>" },
+    { fetch: doFetch },
+  )
+
+  await notifier.sendEmail({
+    to: "ada@example.com",
+    email: { subject: "Hi", html: "<p>Hi</p>", text: "Hi" },
+    fromName: 'Dar "Amel" <Hotel>',
+    replyTo: "desk@dar-amel.test",
+    headers: { "List-Unsubscribe": "<https://api.test/unsubscribe/t>" },
+  })
+
+  expect(calls[0]?.body).toMatchObject({
+    from: '"Dar Amel Hotel" <hello@example.com>',
+    reply_to: ["desk@dar-amel.test"],
+    headers: { "List-Unsubscribe": "<https://api.test/unsubscribe/t>" },
+  })
+})
+
+test("a guest template goes to kapso by name and language with named variables", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier({ ...LIVE, KAPSO_API_KEY: "k", WHATSAPP_PHONE_NUMBER_ID: "555" }, { fetch: doFetch })
+
+  const result = await notifier.sendWhatsApp({
+    to: "+21620222222",
+    template: "guest_welcome",
+    language: "ar",
+    params: { guest_name: "Amel", hotel_name: "Dar Amel" },
+  })
+
+  expect(result).toEqual({ channel: "whatsapp", sent: true, id: "wamid_1" })
+  expect(calls[0]?.body).toMatchObject({
+    to: "+21620222222",
+    template: {
+      name: "guest_welcome",
+      language: { code: "ar" },
+      components: [
+        {
+          type: "body",
+          parameters: [
+            { type: "text", text: "Amel", parameter_name: "guest_name" },
+            { type: "text", text: "Dar Amel", parameter_name: "hotel_name" },
+          ],
+        },
+      ],
+    },
+  })
+})

@@ -19,6 +19,7 @@
     "@le-hoetel/notification": "workspace:*",
     "@le-hoetel/orpc": "workspace:*",
     "@le-hoetel/storage": "workspace:*",
+    "@le-hoetel/webhooks": "workspace:*",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/exporter-trace-otlp-http": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",

@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { messages } from "@le-hoetel/db"
-import type { SendInput } from "@le-hoetel/notification"
-import { eq } from "drizzle-orm"
-import { applyDeliveryUpdate, sendToGuest } from "../lib/messages"
+import { guestConsents, hotelSettings, messages } from "@le-hoetel/db"
+import type { SendEmailInput, SendWhatsAppInput } from "@le-hoetel/notification"
+import { and, eq, inArray } from "drizzle-orm"
+import { applyDeliveryUpdate, applyKapsoEvent, applyResendEvent, sendToGuest } from "../lib/messages"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -11,13 +11,18 @@ beforeAll(async () => {
 })
 afterAll(() => app.close())
 
-const sent: SendInput[] = []
+const sent: SendEmailInput[] = []
+const sentWhatsApp: SendWhatsAppInput[] = []
 const notification = {
   live: false,
   channels: [],
-  send: async (input: SendInput) => {
+  sendEmail: async (input: SendEmailInput) => {
     sent.push(input)
-    return { channel: input.channel, sent: false }
+    return { channel: "email", sent: false }
+  },
+  sendWhatsApp: async (input: SendWhatsAppInput) => {
+    sentWhatsApp.push(input)
+    return { channel: "whatsapp", sent: true, id: "wamid.sent" }
   },
 }
 const ctx = () => ({ ...app.services, notification: notification as unknown as typeof app.services.notification })
@@ -46,7 +51,7 @@ test("without consent nothing is sent and the row says skipped_no_consent", asyn
     guestId,
     channel: "whatsapp",
     template: "welcome",
-    data: { url: "https://example.test" },
+    props: {},
   })
 
   expect(outcome.status).toBe("skipped_no_consent")
@@ -55,8 +60,12 @@ test("without consent nothing is sent and the row says skipped_no_consent", asyn
   expect(items).toMatchObject([{ status: "skipped_no_consent", channel: "whatsapp", templateKey: "welcome" }])
 })
 
-test("with consent the message ends with the unsubscribe line and is logged without body or recipient", async () => {
+test("an email goes out branded, with one unsubscribe link and the list headers, and is logged without body or recipient", async () => {
   const { hotelId, guestId, client } = await hotelWithGuest("msg-consent", { email: true, whatsapp: true })
+  await app.services.db
+    .update(hotelSettings)
+    .set({ displayName: "Dar Amel", replyToEmail: "front-desk@dar-amel.test" })
+    .where(eq(hotelSettings.organizationId, hotelId))
   sent.length = 0
 
   const outcome = await sendToGuest(ctx(), {
@@ -64,12 +73,16 @@ test("with consent the message ends with the unsubscribe line and is logged with
     guestId,
     channel: "email",
     template: "welcome",
-    data: { url: "https://example.test" },
+    props: {},
   })
 
   expect(outcome.status).toBe("sent")
-  expect(sent[0]?.to).toBe("amel@example.test")
-  expect(sent[0]?.footer).toContain("http://localhost:3000/fr/u/")
+  const [mail] = sent
+  expect(mail).toMatchObject({ to: "amel@example.test", fromName: "Dar Amel", replyTo: "front-desk@dar-amel.test" })
+  expect(mail?.headers?.["List-Unsubscribe"]).toMatch(/^<http:\/\/localhost:3001\/unsubscribe\/.+>$/)
+  expect(mail?.headers?.["List-Unsubscribe-Post"]).toBe("List-Unsubscribe=One-Click")
+  expect(mail?.email.html.match(/localhost:3000\/fr\/u\//g)).toHaveLength(1)
+  expect(mail?.email.text.match(/localhost:3000\/fr\/u\//g)).toHaveLength(1)
   const [row] = await app.services.db.select().from(messages).where(eq(messages.id, outcome.messageId))
   expect(row).toMatchObject({ status: "sent", providerId: "log-only", language: "fr" })
   expect(JSON.stringify(row)).not.toContain("amel@example.test")
@@ -99,4 +112,95 @@ test("a status webhook only moves a message forward", async () => {
   expect(await applyDeliveryUpdate(app.services.db, { providerId: "wamid.1", status: "sent", at })).toHaveLength(0)
   const [after] = await app.services.db.select().from(messages).where(eq(messages.id, row!.id))
   expect(after).toMatchObject({ status: "delivered" })
+})
+
+test("a bounce fails the message and a complaint withdraws email consent", async () => {
+  const { hotelId, guestId } = await hotelWithGuest("msg-complaint", { email: true, whatsapp: true })
+  const values = { hotelId, guestId, channel: "email", templateKey: "welcome", language: "fr", status: "sent" } as const
+  await app.services.db.insert(messages).values([
+    { ...values, providerId: "re_bounce" },
+    { ...values, providerId: "re_spam" },
+  ])
+
+  expect(await applyResendEvent(app.services.db, { type: "email.bounced", data: { email_id: "re_bounce" } })).toBe(true)
+  const [bounced] = await app.services.db.select().from(messages).where(eq(messages.providerId, "re_bounce"))
+  expect(bounced).toMatchObject({ status: "failed", errorCode: "bounced" })
+  const consent = () =>
+    app.services.db
+      .select({ granted: guestConsents.granted })
+      .from(guestConsents)
+      .where(and(eq(guestConsents.guestId, guestId), eq(guestConsents.channel, "email")))
+  expect(await consent()).toEqual([{ granted: true }])
+
+  expect(await applyResendEvent(app.services.db, { type: "email.complained", data: { email_id: "re_spam" } })).toBe(
+    true,
+  )
+  expect(await consent()).toEqual([{ granted: false }])
+  const [whatsapp] = await app.services.db
+    .select({ granted: guestConsents.granted })
+    .from(guestConsents)
+    .where(and(eq(guestConsents.guestId, guestId), eq(guestConsents.channel, "whatsapp")))
+  expect(whatsapp?.granted).toBe(true)
+})
+
+test("whatsapp sends the hotel's named template in the guest's language, and a missing link fails the message", async () => {
+  const { hotelId, guestId } = await hotelWithGuest("msg-whatsapp", { email: false, whatsapp: true })
+  await app.services.db
+    .update(hotelSettings)
+    .set({ displayName: "Dar Amel" })
+    .where(eq(hotelSettings.organizationId, hotelId))
+  const base = { hotelId, guestId, channel: "whatsapp" } as const
+  sentWhatsApp.length = 0
+
+  const ok = await sendToGuest(ctx(), {
+    ...base,
+    template: "survey",
+    props: { ctaUrl: "https://le-hoetel.test/s/abc" },
+  })
+  expect(ok.status).toBe("sent")
+  expect(sentWhatsApp).toEqual([
+    {
+      to: "+21620222222",
+      template: "guest_survey",
+      language: "fr",
+      params: { guest_name: "Amel Ben Salah", hotel_name: "Dar Amel", link: "https://le-hoetel.test/s/abc" },
+    },
+  ])
+  const [row] = await app.services.db.select().from(messages).where(eq(messages.id, ok.messageId))
+  expect(row).toMatchObject({ providerId: "wamid.sent" })
+
+  const bad = await sendToGuest(ctx(), { ...base, template: "survey", props: {} as { ctaUrl: string } })
+  expect(bad.status).toBe("failed")
+  const [failed] = await app.services.db.select().from(messages).where(eq(messages.id, bad.messageId))
+  expect(failed).toMatchObject({ errorCode: "missing_link" })
+  expect(sentWhatsApp).toHaveLength(1)
+})
+
+test("kapso status events move a whatsapp message and a failure keeps the numeric code", async () => {
+  const { hotelId, guestId } = await hotelWithGuest("msg-kapso", { email: true, whatsapp: true })
+  const values = {
+    hotelId,
+    guestId,
+    channel: "whatsapp",
+    templateKey: "welcome",
+    language: "fr",
+    status: "sent",
+  } as const
+  await app.services.db.insert(messages).values([
+    { ...values, providerId: "wamid.ok" },
+    { ...values, providerId: "wamid.bad" },
+  ])
+  const payload = (id: string, extra = {}) => ({ message: { id, kapso: { direction: "outbound", ...extra } } })
+
+  expect(await applyKapsoEvent(app.services.db, "whatsapp.message.delivered", payload("wamid.ok"))).toBe(true)
+  expect(await applyKapsoEvent(app.services.db, "whatsapp.message.received", payload("wamid.ok"))).toBe(false)
+  const failure = { statuses: [{ status: "failed", errors: [{ code: 131026, message: "Undeliverable" }] }] }
+  expect(await applyKapsoEvent(app.services.db, "whatsapp.message.failed", payload("wamid.bad", failure))).toBe(true)
+
+  const rows = await app.services.db
+    .select()
+    .from(messages)
+    .where(inArray(messages.providerId, ["wamid.ok", "wamid.bad"]))
+  expect(rows.find((row) => row.providerId === "wamid.ok")).toMatchObject({ status: "delivered" })
+  expect(rows.find((row) => row.providerId === "wamid.bad")).toMatchObject({ status: "failed", errorCode: "131026" })
 })

@@ -53,11 +53,13 @@ const schema = z.object({
 
   MESSAGING_LIVE: z.enum(["true", "false"]).default("false"),
   RESEND_API_KEY: optional,
+  RESEND_WEBHOOK_SECRET: optional,
   EMAIL_FROM: z.string().default("Le Hoetel <onboarding@resend.dev>"),
   TELEGRAM_BOT_TOKEN: optional,
   TELEGRAM_CHAT_ID: optional,
   TELEGRAM_WEBHOOK_SECRET: optional,
   KAPSO_API_KEY: optional,
+  KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,
   WHATSAPP_NOTIFY_TO: optional,
   WHATSAPP_TEMPLATE_NAME: z.string().default("app_notification"),

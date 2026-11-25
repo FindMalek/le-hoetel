@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { createTestApp, type TestApp } from "@le-hoetel/orpc/testing"
+import { hmacSha256 } from "@le-hoetel/webhooks"
 import { createServer } from "./server"
 
 const ORIGIN = "http://localhost:3002"
@@ -42,4 +43,46 @@ test("sign up over http, then use the session cookie on the REST api", async () 
 
 test("unknown paths are a 404", async () => {
   expect((await call("/nope")).status).toBe(404)
+})
+
+test("the Resend webhook needs a valid svix signature", async () => {
+  const secret = `whsec_${Buffer.from("resend-test-secret").toString("base64")}`
+  const withSecret = createServer(
+    { ...app.services, config: { ...app.services.config, webhookSecrets: { resend: secret } } },
+    { publicUrl: "http://localhost:3001" },
+  )
+  const body = JSON.stringify({ type: "email.delivered", data: { email_id: "re_unknown" } })
+  const timestamp = String(Math.floor(Date.now() / 1000))
+  const signature = hmacSha256(Buffer.from("resend-test-secret"), `msg_1.${timestamp}.${body}`, "base64")
+  const post = (headers: Record<string, string>) =>
+    withSecret(new Request("http://localhost:3001/resend/webhook", { method: "POST", headers, body }))
+
+  expect((await post({ "svix-id": "msg_1", "svix-timestamp": timestamp, "svix-signature": "v1,nope" })).status).toBe(
+    401,
+  )
+  expect(
+    (await post({ "svix-id": "msg_1", "svix-timestamp": timestamp, "svix-signature": `v1,${signature}` })).status,
+  ).toBe(200)
+  expect((await call("/resend/webhook", { method: "POST", body })).status).toBe(404)
+})
+
+test("the WhatsApp webhook needs a valid signature header", async () => {
+  const secret = "kapso-test-secret"
+  const withSecret = createServer(
+    { ...app.services, config: { ...app.services.config, webhookSecrets: { kapso: secret } } },
+    { publicUrl: "http://localhost:3001" },
+  )
+  const body = JSON.stringify({ message: { id: "wamid.unknown", kapso: { direction: "outbound" } } })
+  const post = (signature: string) =>
+    withSecret(
+      new Request("http://localhost:3001/whatsapp/webhook", {
+        method: "POST",
+        headers: { "x-webhook-event": "whatsapp.message.delivered", "x-webhook-signature": signature },
+        body,
+      }),
+    )
+
+  expect((await post("nope")).status).toBe(401)
+  expect((await post(hmacSha256(secret, body))).status).toBe(200)
+  expect((await call("/whatsapp/webhook", { method: "POST", body })).status).toBe(404)
 })

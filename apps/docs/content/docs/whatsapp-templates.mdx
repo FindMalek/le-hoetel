@@ -1,0 +1,152 @@
+---
+title: WhatsApp templates
+description: The exact texts to submit to Meta for approval, in en, fr and ar.
+---
+
+Business-initiated WhatsApp messages must use a template that Meta approved. Each message type is one template name with three translations. The dispatcher (`sendToGuest`) picks the name from the message type and the language from the guest, and fills the named variables. Hotel name is the hotel's display name; `guest_name` is the guest's name.
+
+Submit them all with `pnpm --filter @le-hoetel/notification whatsapp:setup` (needs `KAPSO_API_KEY` and `WHATSAPP_BUSINESS_ACCOUNT_ID`). The texts live in `packages/notification/src/whatsapp-guest.ts`; a test keeps this page in sync with them.
+
+## Rules for every template
+
+- Category: Marketing. Variables are named, in lowercase with underscores.
+- The body never starts or ends with a variable, and a variable never holds a line break.
+- Each template has the same footer: the STOP line. Guests who reply STOP are unsubscribed, see [Messaging](/docs/messaging).
+- Nothing is sent without the guest's WhatsApp consent. A missing offer or link fails the message instead of sending an empty variable.
+- Delivery status comes back on `POST /whatsapp/webhook` (Kapso, signature checked) and updates the `messages` row.
+
+## Welcome: `guest_welcome`
+
+Variables: `guest_name` (example: Amel), `hotel_name` (example: Dar Amel).
+
+**English (`en`)**
+
+Body:
+
+```text
+Hello {{guest_name}}, welcome to {{hotel_name}}. We are glad to have you with us and we are here if you need anything during your stay.
+```
+
+Footer: `Reply STOP to unsubscribe.`
+
+**French (`fr`)**
+
+Body:
+
+```text
+Bonjour {{guest_name}}, bienvenue à {{hotel_name}}. Nous sommes ravis de vous accueillir et restons à votre disposition pendant votre séjour.
+```
+
+Footer: `Répondez STOP pour vous désabonner.`
+
+**Arabic (`ar`)**
+
+Body:
+
+```text
+مرحبًا {{guest_name}}، أهلًا بك في {{hotel_name}}. يسعدنا استقبالك ونحن في خدمتك طوال مدة إقامتك.
+```
+
+Footer: `للإلغاء أرسل STOP.`
+
+## Birthday offer: `guest_birthday`
+
+Variables: `guest_name` (example: Amel), `hotel_name` (example: Dar Amel), `offer` (example: a free dessert at dinner).
+
+**English (`en`)**
+
+Body:
+
+```text
+Happy birthday {{guest_name}}! {{hotel_name}} has a gift for you: {{offer}}. Show this message at the front desk to enjoy it.
+```
+
+Footer: `Reply STOP to unsubscribe.`
+
+**French (`fr`)**
+
+Body:
+
+```text
+Joyeux anniversaire {{guest_name}} ! {{hotel_name}} a un cadeau pour vous : {{offer}}. Présentez ce message à la réception pour en profiter.
+```
+
+Footer: `Répondez STOP pour vous désabonner.`
+
+**Arabic (`ar`)**
+
+Body:
+
+```text
+عيد ميلاد سعيد {{guest_name}}! يقدم لك {{hotel_name}} هدية: {{offer}}. أظهر هذه الرسالة في الاستقبال للاستفادة منها.
+```
+
+Footer: `للإلغاء أرسل STOP.`
+
+## Survey invite: `guest_survey`
+
+Variables: `guest_name` (example: Amel), `hotel_name` (example: Dar Amel), `link` (example: https://le-hoetel.com/s/abc123).
+
+**English (`en`)**
+
+Body:
+
+```text
+Hello {{guest_name}}, thank you for staying at {{hotel_name}}. How was your stay? Tell us in one minute: {{link}} Your answer helps us improve.
+```
+
+Footer: `Reply STOP to unsubscribe.`
+
+**French (`fr`)**
+
+Body:
+
+```text
+Bonjour {{guest_name}}, merci d'avoir séjourné à {{hotel_name}}. Comment s'est passé votre séjour ? Répondez en une minute : {{link}} Votre avis nous aide à nous améliorer.
+```
+
+Footer: `Répondez STOP pour vous désabonner.`
+
+**Arabic (`ar`)**
+
+Body:
+
+```text
+مرحبًا {{guest_name}}، شكرًا لإقامتك في {{hotel_name}}. كيف كانت إقامتك؟ شاركنا رأيك في دقيقة: {{link}} رأيك يساعدنا على التحسن.
+```
+
+Footer: `للإلغاء أرسل STOP.`
+
+## Offer reminder: `guest_reminder`
+
+Variables: `guest_name` (example: Amel), `hotel_name` (example: Dar Amel), `offer` (example: a free dessert at dinner).
+
+**English (`en`)**
+
+Body:
+
+```text
+Hello {{guest_name}}, a reminder from {{hotel_name}}: your offer {{offer}} is still waiting for you. Show this message at the front desk to use it.
+```
+
+Footer: `Reply STOP to unsubscribe.`
+
+**French (`fr`)**
+
+Body:
+
+```text
+Bonjour {{guest_name}}, un rappel de {{hotel_name}} : votre offre {{offer}} vous attend toujours. Présentez ce message à la réception pour en profiter.
+```
+
+Footer: `Répondez STOP pour vous désabonner.`
+
+**Arabic (`ar`)**
+
+Body:
+
+```text
+مرحبًا {{guest_name}}، تذكير من {{hotel_name}}: عرضك {{offer}} ما زال بانتظارك. أظهر هذه الرسالة في الاستقبال للاستفادة منه.
+```
+
+Footer: `للإلغاء أرسل STOP.`

@@ -1,13 +1,19 @@
 import { type Logger, logger } from "@le-hoetel/logger"
-import { createEmailChannel } from "./channels/email"
+import { createEmailChannel, type EmailExtras } from "./channels/email"
 import { createTelegramChannel } from "./channels/telegram"
 import { createWhatsAppChannel } from "./channels/whatsapp"
-import { renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
+import { type RenderedEmail, renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
 
 export { type AuthEmails, authEmails } from "./auth"
 export * from "./hotel-email"
 export { type TemplateData, type TemplateName, templates } from "./templates"
+export {
+  GUEST_WHATSAPP_TEMPLATES,
+  type GuestWhatsAppTemplate,
+  guestTemplateFooter,
+  guestTemplateParams,
+} from "./whatsapp-guest"
 
 export const CHANNELS = ["email", "telegram", "whatsapp"] as const
 export type Channel = (typeof CHANNELS)[number]
@@ -54,6 +60,19 @@ export interface SendResult {
   error?: string
 }
 
+export interface SendEmailInput extends EmailExtras {
+  to: string
+  email: RenderedEmail
+}
+
+export interface SendWhatsAppInput {
+  to: string
+  /** The Meta template name, see `GUEST_WHATSAPP_TEMPLATES`. */
+  template: string
+  language: string
+  params: Record<string, string>
+}
+
 export interface Notifier {
   /** False outside production or without `MESSAGING_LIVE=true`: every send is only logged. */
   live: boolean
@@ -61,6 +80,10 @@ export interface Notifier {
   channels: Channel[]
   /** Renders a template for the channel and sends it. An unconfigured channel is skipped, a provider failure throws. */
   send: <Name extends TemplateName>(input: SendInput<Name>) => Promise<SendResult>
+  /** An email that is already rendered (the hotel templates): sent with the hotel's name, reply-to and headers. */
+  sendEmail: (input: SendEmailInput) => Promise<SendResult>
+  /** An approved named template to a guest. Log-only outside live messaging. */
+  sendWhatsApp: (input: SendWhatsAppInput) => Promise<SendResult>
   /** Plain text to every configured channel (or the ones asked for). One channel failing doesn't stop the rest. */
   notify: (text: string, options?: { channels?: Channel[] }) => Promise<SendResult[]>
   /** The api route for Telegram's webhook; answers 404 when Telegram isn't configured. */
@@ -132,6 +155,24 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       const text = channel === "telegram" ? toTelegram(summary) : toWhatsApp(summary, footer)
       const result = await sendChat(channel, to, text, channel === "telegram")
       return { channel, sent: true, id: result.id }
+    },
+    async sendEmail({ to, email: rendered, ...extras }) {
+      if (!live) {
+        log.info("message not sent, log-only provider", { channel: "email" })
+        return { channel: "email", sent: false }
+      }
+      if (!email) return { channel: "email", sent: false }
+      const result = await email.send(to, rendered, extras)
+      return { channel: "email", sent: true, id: result.id }
+    },
+    async sendWhatsApp({ to, template, language, params }) {
+      if (!live) {
+        log.info("message not sent, log-only provider", { channel: "whatsapp", template })
+        return { channel: "whatsapp", sent: false }
+      }
+      if (!whatsapp) return { channel: "whatsapp", sent: false }
+      const result = await whatsapp.sendTemplate({ to, name: template, language, params })
+      return { channel: "whatsapp", sent: true, id: result.id }
     },
     async notify(text, notifyOptions = {}) {
       const targets = notifyOptions.channels ?? channels
