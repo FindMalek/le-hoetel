@@ -140,11 +140,7 @@
     "retry": "Try again",
     "reference": "Reference {digest}"
   },
-  "hero": {
-    "badge": "early access",
-    "getStarted": "Get started",
-    "apiDocs": "API docs"
-  },
+  "hero": {},
   "nav": {
     "redeem": "Redeem",
     "offers": "Offers",
@@ -162,6 +158,7 @@
     "auditLog": "Audit log",
     "settings": "Settings",
     "admin": "Platform",
+    "holidays": "Holidays",
     "adminOverview": "Platform overview"
   },
   "hotel": {
@@ -318,40 +315,111 @@
     "consentVersion": "Wording version",
     "privacy": {
       "title": "Privacy policy",
-      "intro": "This is a placeholder for the privacy policy of le-hoetel. Hotels collect a guest's name, phone and language with their consent. Optional details are kept only if the guest agrees. We never collect continuous location, ID numbers or payment cards. A guest can ask a hotel to export or delete their data at any time."
+      "intro": "What a hotel and le-hoetel keep about you, why, and how to take it back.",
+      "sections": {
+        "collect": {
+          "title": "What is collected",
+          "body": "Your name, phone number and language, because the hotel needs them to welcome you. Your birthday and email only if you add them. Nothing else without a clear yes: never your location, ID or passport number, or payment card."
+        },
+        "use": {
+          "title": "Why",
+          "body": "So the hotel can welcome you, send a birthday wish, ask how your stay went, and answer you if something was wrong."
+        },
+        "consent": {
+          "title": "Messages and your yes",
+          "body": "Offers and news come by WhatsApp or email only if you switched that channel on. We record when, where and with which wording you said yes. Every message has a link to stop, and replying STOP on WhatsApp works too."
+        },
+        "rights": {
+          "title": "Your rights",
+          "body": "Ask the hotel for a copy of your data or for its deletion at any time. Deletion is complete. You can also take your yes back with the link in any message. Tunisian law on personal data protection applies (Organic Law 2004-63)."
+        },
+        "keep": {
+          "title": "Who sees it and for how long",
+          "body": "Only the staff of the hotel you signed up at. Hotels never see each other's guests. Data is kept while the hotel uses le-hoetel and is deleted when you ask or when the hotel leaves."
+        }
+      }
     },
     "terms": {
       "title": "Terms of service",
-      "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
+      "intro": "The simple rules for hotels using le-hoetel.",
+      "sections": {
+        "service": {
+          "title": "The service",
+          "body": "le-hoetel helps a hotel collect guests with their consent, send messages they agreed to, and hear from unhappy guests early. It is in pilot: features and prices can change."
+        },
+        "duties": {
+          "title": "What a hotel promises",
+          "body": "To collect only guests who said yes, to honour every stop request, never to send spam, and to answer export and delete requests."
+        },
+        "pilot": {
+          "title": "Pilot and price",
+          "body": "The pilot is free for 60 to 90 days. Nothing is charged without a written agreement. Prices shown during the pilot are not final."
+        },
+        "data": {
+          "title": "Your data",
+          "body": "The hotel owns its guest list and can export or delete it at any time. We do not sell or share it."
+        },
+        "end": {
+          "title": "Ending",
+          "body": "Either side can stop at any time. When it ends the hotel can take its data and we delete the rest."
+        }
+      }
     },
     "hotel": "the hotel"
   },
   "capture": {
-    "welcome": "Welcome to {hotel}",
-    "intro": "Leave your details and we will take care of you during your stay.",
-    "perkTitle": "Your welcome perk",
-    "perkBody": "A small gift from {hotel} is waiting for you. Ask at the front desk after you sign up.",
+    "welcome": "Welcome. Join in ten seconds and we will take care of you.",
+    "perkTitle": "Welcome gift",
+    "perkBody": "A small gift from {hotel} is waiting for you at the front desk.",
     "name": "Your name",
     "phone": "Phone number",
     "dialCode": "Country code",
-    "language": "Your language",
-    "birthday": "Birthday (optional)",
-    "email": "Email (optional)",
+    "language": "Language for our messages",
+    "birthday": "Birthday",
+    "email": "Email",
     "consentTitle": "Stay in touch",
-    "consentHint": "Both are optional and unticked. You can change your mind at any time.",
-    "emailNeeded": "Add your email to get offers by email.",
-    "submit": "Sign up",
-    "sending": "Sending...",
-    "thanksTitle": "Thank you",
-    "thanksBody": "You are all set. Enjoy your stay at {hotel}.",
+    "consentHint": "Optional and off by default. Every message has a link to stop.",
+    "emailNeeded": "Add your email above to get offers by email.",
+    "submit": "Join",
+    "thanksTitle": "You are in, {name}",
+    "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
     "errorInvalid": "Please check your name and phone number.",
     "errorTooMany": "Too many tries. Please wait a moment and try again.",
-    "privacy": "Privacy policy",
-    "languageLabel": "Language"
+    "privacy": "Privacy",
+    "languageLabel": "Language",
+    "nameError": "Add your name.",
+    "phoneError": "Check your phone number.",
+    "optionalTitle": "More about you",
+    "optionalHint": "Optional: birthday and email.",
+    "whatsappTitle": "WhatsApp",
+    "emailTitle": "Email",
+    "submitHint": "No message is sent unless you switch one on.",
+    "thanksPerk": "Show this screen at the front desk to get it.",
+    "terms": "Terms"
   },
   "adminHotels": {
     "title": "Hotels",
     "description": "Every hotel on the platform, its numbers and what needs attention.",
+    "empty": {
+      "title": "No hotel yet",
+      "description": "Create the first hotel, invite its owner and print its QR codes. It takes about two minutes."
+    },
+    "columns": {
+      "hotel": "Hotel",
+      "guests": "Guests",
+      "health": "Health",
+      "consent": "Consent rate",
+      "lastCapture": "Last capture",
+      "pilotEnd": "Pilot ends",
+      "plan": "Plan"
+    },
+    "health": {
+      "healthy": "Healthy",
+      "quiet": "No new guest for 2 weeks",
+      "no-guests": "No guests yet",
+      "no-owner": "Owner not joined",
+      "suspended": "Suspended"
+    },
     "new": "New hotel",
     "loading": "Loading hotels",
     "search": "Search by name or slug",
@@ -367,26 +435,10 @@
       "active": "Active",
       "suspended": "Suspended"
     },
-    "health": {
-      "healthy": "Healthy",
-      "quiet": "No new guest for 2 weeks",
-      "no-guests": "No guests yet",
-      "no-owner": "Owner not joined",
-      "suspended": "Suspended"
-    },
     "plan": {
       "starter": "Starter",
       "growth": "Growth",
       "pro": "Pro"
-    },
-    "columns": {
-      "hotel": "Hotel",
-      "health": "Health",
-      "guests": "Guests",
-      "consent": "Consent rate",
-      "lastCapture": "Last capture",
-      "pilotEnd": "Pilot ends",
-      "plan": "Plan"
     },
     "noCapture": "No capture yet",
     "noPilotEnd": "Not set",
@@ -395,10 +447,6 @@
     "noMatch": {
       "title": "No hotel matches",
       "description": "Try another name or clear the filters."
-    },
-    "empty": {
-      "title": "No hotel yet",
-      "description": "Create the first hotel, invite its owner and print its QR codes. It takes about two minutes."
     }
   },
   "hotelSettings": {
@@ -602,6 +650,212 @@
       "exhausted": "No redemptions left",
       "wrongHotel": "This code belongs to another hotel",
       "unknown": "Code not found"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link may be wrong, or the page has moved.",
+    "home": "Back to home"
+  },
+  "holidays": {
+    "title": "Holiday messages",
+    "description": "A short greeting on the days that matter to your guests. Off until you switch a holiday on.",
+    "saved": "Saved",
+    "next": "Next: {date}",
+    "noDate": "No date known yet",
+    "channelFor": "Channel for {name}",
+    "switchFor": "Send {name} greeting",
+    "channel": {
+      "both": "Email and WhatsApp",
+      "email": "Email only",
+      "whatsapp": "WhatsApp only"
+    },
+    "footnote": "Sent at 09:00 hotel time, only to guests who agreed to the channel. Islamic dates follow the astronomical calendar and can move by a day."
+  },
+  "landing": {
+    "meta": {
+      "title": "le-hoetel: hear about unhappy guests first, own your guest list",
+      "description": "Guests join by QR code, you keep the contacts, and a low score reaches you the same day. More Google reviews, more guests coming back direct. Free pilot for hotels in Tunisia."
+    },
+    "nav": {
+      "how": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "demo": "Request a demo",
+      "menu": "Sections"
+    },
+    "hero": {
+      "eyebrow": "For hotels in Tunisia",
+      "title": "Hear about an unhappy guest before they write the review.",
+      "subtitle": "Guests join with a QR code, you keep the contact list, and a low score reaches you the same day. More Google reviews, more guests coming back direct.",
+      "demo": "Request a demo",
+      "whatsapp": "Chat on WhatsApp",
+      "note": "Free pilot for 60 to 90 days. No app for your guests."
+    },
+    "outcomes": {
+      "alerts": {
+        "title": "Unhappy guests reach you first",
+        "body": "A low score alerts the manager within a day, so a problem is fixed before it becomes a review."
+      },
+      "reviews": {
+        "title": "More Google reviews",
+        "body": "Happy guests get a link to review you on Google. Unhappy ones talk to you instead."
+      },
+      "list": {
+        "title": "A guest list you own",
+        "body": "Name, phone and consent in your hands, not in the hands of a booking site."
+      }
+    },
+    "how": {
+      "title": "How it works",
+      "subtitle": "Three steps, and the first one takes a guest ten seconds.",
+      "step": "Step {number}",
+      "qr": {
+        "title": "A QR code in every room",
+        "body": "Guests scan it in the room, at the table or at the desk. Name, phone, language and a clear yes, in French, Arabic or English."
+      },
+      "messages": {
+        "title": "Warm messages, only with consent",
+        "body": "A welcome, a thank-you after the stay, a birthday wish. On WhatsApp or email, only the channel the guest chose, with a way to stop every time."
+      },
+      "feedback": {
+        "title": "Feedback that finds you",
+        "body": "One question after the stay. Happy guests are invited to Google. A low score lands on the manager's phone with the guest's contact."
+      }
+    },
+    "preview": {
+      "title": "What happened this week, on one screen",
+      "subtitle": "Who joined, who is unhappy, what to do next.",
+      "sample": "Sample data",
+      "label": "A sample of the hotel dashboard with made-up numbers",
+      "week": "This week",
+      "newGuests": "New guests",
+      "score": "Average score",
+      "invited": "Reviews invited",
+      "delta": "{value} vs last week",
+      "alertTitle": "Unhappy guest",
+      "alertBody": "Room 204 scored 2 out of 5: \"The air conditioning did not work.\"",
+      "alertAction": "Call guest",
+      "chart": "New guests per day",
+      "latest": "Latest guests",
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "room": "Room {place}",
+      "table": "Table {place}",
+      "desk": "Front desk"
+    },
+    "pricing": {
+      "badge": "Pilot pricing",
+      "title": "Free to start, simple to continue",
+      "subtitle": "Pilot pricing: prices are our best guess and we set the final ones with the first hotels.",
+      "free": "Free for 60 to 90 days",
+      "freeBody": "You pay only if you see results. Setup is free for the first hotels.",
+      "month": "TND per month",
+      "popular": "Most hotels",
+      "starter": {
+        "name": "Starter",
+        "for": "Up to 15 rooms",
+        "f1": "1,000 guests",
+        "f2": "Email and WhatsApp",
+        "f3": "Welcome, birthday and survey messages"
+      },
+      "growth": {
+        "name": "Growth",
+        "for": "16 to 60 rooms",
+        "f1": "5,000 guests",
+        "f2": "Campaigns and offers with a redemption QR",
+        "f3": "Low score alerts"
+      },
+      "pro": {
+        "name": "Pro",
+        "for": "60+ rooms, spa or restaurant",
+        "f1": "Unlimited guests",
+        "f2": "Your own sender domain",
+        "f3": "Priority support"
+      },
+      "note": "WhatsApp messages are billed at cost plus a small margin from a prepaid balance, so there are no surprise bills."
+    },
+    "trust": {
+      "title": "Your guests' data, handled properly",
+      "subtitle": "Built for the Tunisian law on personal data from the first line.",
+      "privacy": "Read the privacy policy",
+      "consent": {
+        "title": "Consent per channel",
+        "body": "WhatsApp and email are separate choices, both off by default. Every yes is logged with the date and the exact wording."
+      },
+      "stop": {
+        "title": "A stop link in every message",
+        "body": "A guest leaves in one tap, and replying STOP on WhatsApp works too."
+      },
+      "control": {
+        "title": "Export or delete, any time",
+        "body": "One guest or the whole hotel, in one click."
+      },
+      "apart": {
+        "title": "Hotels never see each other's guests",
+        "body": "Every hotel's data is kept apart."
+      },
+      "minimum": {
+        "title": "Only what is needed",
+        "body": "Name, phone and language. Birthday and email only if the guest adds them. Never location, ID numbers or payment cards."
+      }
+    },
+    "faq": {
+      "title": "Questions hotels ask",
+      "guest": {
+        "q": "What does my guest actually do?",
+        "a": "Scans the QR code, types a name and a phone number, and chooses what they agree to receive. No app and no account."
+      },
+      "setup": {
+        "q": "How long does it take to start?",
+        "a": "A day. You send your logo and two colors, we give you QR codes to print for rooms, tables and the desk."
+      },
+      "whatsapp": {
+        "q": "Can I message guests on WhatsApp?",
+        "a": "Yes, only guests who said yes to WhatsApp, and every message gives them a way to stop."
+      },
+      "price": {
+        "q": "How much does it cost after the pilot?",
+        "a": "Plans start at 99 TND a month. The pilot is free for 60 to 90 days and nothing is charged without a written agreement."
+      },
+      "leave": {
+        "q": "What if a guest asks me to delete their data?",
+        "a": "One click exports or deletes that guest and everything linked to them."
+      },
+      "own": {
+        "q": "Who owns the guest list?",
+        "a": "You do. You can export it at any time, and we never sell or share it."
+      }
+    },
+    "demo": {
+      "title": "See it on your own hotel",
+      "subtitle": "Leave your number. We call or message you on WhatsApp within one working day and show you a demo.",
+      "name": "Your name",
+      "nameError": "Add your name.",
+      "hotel": "Hotel name",
+      "hotelError": "Add the name of your hotel.",
+      "phone": "Phone number",
+      "phoneError": "Check your phone number.",
+      "dialCode": "Country code",
+      "city": "City",
+      "cityError": "Add your city.",
+      "language": "Language for our call",
+      "submit": "Request a demo",
+      "hint": "We only use your number to arrange the demo.",
+      "thanksTitle": "Thank you, {name}",
+      "thanksBody": "We will contact you within one working day.",
+      "errorInvalid": "Please check your details and try again.",
+      "errorTooMany": "Too many tries. Please wait a few minutes.",
+      "whatsappLead": "Prefer WhatsApp?",
+      "whatsapp": "Chat on WhatsApp",
+      "whatsappText": "Hello, I would like a demo of le-hoetel for my hotel."
+    },
+    "footer": {
+      "tagline": "Guest relationships for hotels in Tunisia.",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "status": "Status",
+      "rights": "Made in Tunisia"
     }
   },
   "adminHotel": {

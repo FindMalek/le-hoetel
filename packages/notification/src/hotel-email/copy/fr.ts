@@ -56,4 +56,5 @@ export const fr: Copy = {
     body: "Un petit rappel de {hotel} : votre offre est toujours à vous, et nous serions heureux de vous revoir.",
     cta: "Profiter de mon offre",
   },
+  message: { cta: "En savoir plus" },
 }

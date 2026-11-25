@@ -31,8 +31,12 @@
     "offers",
     "hotel-emails",
     "messaging",
+    "whatsapp-templates",
     "scripts",
     "deploy",
+    "releases",
+    "deploy-runbook",
+    "previews",
     "observability",
     "analytics"
   ]

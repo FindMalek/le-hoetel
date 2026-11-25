@@ -9,9 +9,11 @@ import { createRateLimiter } from "@le-hoetel/orpc"
 import { createStorage } from "@le-hoetel/storage"
 import * as Sentry from "@sentry/bun"
 import { ensureAdmin } from "./admin"
+import { serviceConfig } from "./config"
 import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 import { startOpenObserve } from "./openobserve"
+import { PREVIEW_ORIGINS } from "./origins"
 import { createServer } from "./server"
 
 const env = loadApiEnv()
@@ -20,11 +22,14 @@ Sentry.init({ dsn: env.GLITCHTIP_DSN, environment: env.DEPLOY_ENV })
 startOpenObserve(env)
 const db = createDb(env.DATABASE_URL)
 await runMigrations(db)
-const jobs = await startJobs(env, db, { worker: env.JOBS_WORKER })
-
 const notification = createNotifier(env, { appUrl: env.DASHBOARD_URL })
+const jobs = await startJobs(env, db, { worker: env.JOBS_WORKER, notification })
 
-const trustedOrigins = [env.WEB_URL, env.DASHBOARD_URL]
+const trustedOrigins = [
+  env.WEB_URL,
+  env.DASHBOARD_URL,
+  ...(env.ALLOW_PREVIEW_ORIGINS === "true" ? PREVIEW_ORIGINS : []),
+]
 
 const auth = createAuth({
   db,
@@ -51,17 +56,7 @@ const fetch = createServer(
     db,
     auth,
     now: () => new Date(),
-    config: {
-      deployEnv: env.DEPLOY_ENV,
-      githubAuth: Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
-      githubRepo: env.GITHUB_REPO,
-      githubToken: env.GITHUB_TOKEN,
-      webUrl: env.WEB_URL,
-      dashboardUrl: env.DASHBOARD_URL,
-      apiUrl: env.API_PUBLIC_URL,
-      tokenSecret: env.BETTER_AUTH_SECRET,
-      webhookSecrets: { resend: env.RESEND_WEBHOOK_SECRET },
-    },
+    config: serviceConfig(env),
     jobs,
     rateLimiter: createRateLimiter({
       upstashUrl: env.UPSTASH_REDIS_REST_URL,
@@ -73,7 +68,7 @@ const fetch = createServer(
       bucket: env.S3_BUCKET,
       accessKeyId: env.S3_ACCESS_KEY_ID,
       secretAccessKey: env.S3_SECRET_ACCESS_KEY,
-      prefix: env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : "",
+      prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
     }),
     notification,
     model: resolveModel(env.AI_MODEL, env),
