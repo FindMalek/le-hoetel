@@ -9,6 +9,7 @@
     "apiDocs": "API docs"
   },
   "nav": {
+    "offers": "Offers",
     "hotelNav": "Hotel",
     "emails": "Emails",
     "qrCodes": "QR codes",
@@ -335,5 +336,73 @@
       "fr": "Français",
       "ar": "العربية"
     }
+  },
+  "offers": {
+    "title": "Offers",
+    "description": "Perks you give guests. Each one has a code, and a QR guests show at the desk.",
+    "add": "New offer",
+    "empty": "No offers yet",
+    "emptyHint": "Create a welcome drink or a birthday dessert. Guests show the QR, staff scan it.",
+    "edit": "Edit",
+    "remove": "Delete",
+    "removeTitle": "Delete this offer?",
+    "removeBody": "“{title}” and its redemptions will be deleted. Guests lose their QR for it.",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Offer saved.",
+    "removed": "Offer deleted.",
+    "formNew": "New offer",
+    "formEdit": "Edit offer",
+    "formHint": "The preview shows what the guest sees.",
+    "fieldTitle": "Title",
+    "fieldText": "Details",
+    "fieldCode": "Promo code",
+    "fieldCodeHint": "Letters, numbers and dashes. Unique in your hotel.",
+    "fieldTrigger": "Given automatically to",
+    "triggerNone": "Nobody (staff hand it out)",
+    "triggerWelcome": "New guests (welcome)",
+    "triggerBirthday": "Guests on their birthday",
+    "triggerManual": "Chosen guests (manual)",
+    "fieldFrom": "Valid from",
+    "fieldUntil": "Valid until",
+    "fieldUntilHint": "Empty means no end date.",
+    "fieldMax": "Maximum redemptions",
+    "fieldMaxHint": "Empty means no limit.",
+    "fieldActive": "Active",
+    "redeemed": "{count} redeemed",
+    "redeemedOf": "{count} of {max} redeemed",
+    "forever": "No end date",
+    "until": "Until {date}",
+    "state": {
+      "ready": "Active",
+      "inactive": "Paused",
+      "notStarted": "Not started",
+      "expired": "Expired",
+      "exhausted": "All redeemed"
+    },
+    "preview": {
+      "title": "What the guest sees",
+      "code": "Your code",
+      "show": "Show this QR at the desk.",
+      "validFrom": "Valid from {from}",
+      "validBetween": "Valid {from} to {until}"
+    }
+  },
+  "offer": {
+    "invalidTitle": "Link not valid",
+    "invalid": "This offer link is not valid. Ask the hotel for a new one.",
+    "state": {
+      "ready": "Your offer is ready.",
+      "inactive": "This offer is not available right now.",
+      "notStarted": "This offer has not started yet.",
+      "expired": "This offer has expired.",
+      "exhausted": "All of these offers have been taken.",
+      "redeemed": "You already used this offer. Enjoy!"
+    },
+    "qrAlt": "QR code {code}",
+    "code": "Your code",
+    "show": "Show this QR at the desk.",
+    "validFrom": "Valid from {from}",
+    "validBetween": "Valid {from} to {until}"
   }
 }

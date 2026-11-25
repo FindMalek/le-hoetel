@@ -1,10 +1,11 @@
 import { MESSAGE_CHANNELS, type MessageChannel } from "@le-hoetel/common/consent"
 import { verifyUnsubscribeToken } from "@le-hoetel/common/unsubscribe"
-import { type Db, guestConsents, guests, hotelSettings, organization } from "@le-hoetel/db"
+import { type Db, guestConsents, guests } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { and, eq } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
+import { hotelBranding } from "./hotel"
 
 type Ctx = Pick<Context, "db" | "config" | "now">
 
@@ -36,25 +37,9 @@ async function pageState(context: Ctx, hotelId: string, guestId: string, hasEmai
 /** What the public page shows: the hotel's branding and the guest's own switches. Never the guest's name, phone or email. */
 export async function unsubscribePage(context: Ctx, token: string) {
   const { subject, guest } = await openToken(context, token)
-  const [hotel] = await context.db
-    .select({
-      name: organization.name,
-      displayName: hotelSettings.displayName,
-      logoKey: hotelSettings.logoKey,
-      primaryColor: hotelSettings.primaryColor,
-      accentColor: hotelSettings.accentColor,
-    })
-    .from(organization)
-    .leftJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
-    .where(eq(organization.id, subject.hotelId))
-  if (!hotel) throw new ORPCError("NOT_FOUND", { message: "This link is not valid." })
+  const hotel = await hotelBranding(context, subject.hotelId)
   return {
-    hotel: {
-      displayName: hotel.displayName ?? hotel.name,
-      logoUrl: hotel.logoKey ? `${context.config.apiUrl}/files/${hotel.logoKey}` : null,
-      primaryColor: hotel.primaryColor,
-      accentColor: hotel.accentColor,
-    },
+    hotel,
     language: guest.language,
     channel: subject.channel,
     channels: await pageState(context, subject.hotelId, subject.guestId, Boolean(guest.email)),

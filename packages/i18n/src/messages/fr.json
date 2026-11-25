@@ -9,6 +9,7 @@
     "apiDocs": "Docs de l'API"
   },
   "nav": {
+    "offers": "Offres",
     "hotelNav": "Hôtel",
     "emails": "E-mails",
     "qrCodes": "Codes QR",
@@ -335,5 +336,73 @@
       "fr": "Français",
       "ar": "العربية"
     }
+  },
+  "offers": {
+    "title": "Offres",
+    "description": "Les avantages offerts à vos clients. Chacun a un code et un QR à présenter à la réception.",
+    "add": "Nouvelle offre",
+    "empty": "Aucune offre pour l’instant",
+    "emptyHint": "Créez une boisson de bienvenue ou un dessert d’anniversaire. Le client montre son QR, le personnel le scanne.",
+    "edit": "Modifier",
+    "remove": "Supprimer",
+    "removeTitle": "Supprimer cette offre ?",
+    "removeBody": "« {title} » et ses utilisations seront supprimées. Les clients perdent leur QR.",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saved": "Offre enregistrée.",
+    "removed": "Offre supprimée.",
+    "formNew": "Nouvelle offre",
+    "formEdit": "Modifier l’offre",
+    "formHint": "L’aperçu montre ce que voit le client.",
+    "fieldTitle": "Titre",
+    "fieldText": "Détails",
+    "fieldCode": "Code promo",
+    "fieldCodeHint": "Lettres, chiffres et tirets. Unique dans votre hôtel.",
+    "fieldTrigger": "Offerte automatiquement à",
+    "triggerNone": "Personne (remise par le personnel)",
+    "triggerWelcome": "Nouveaux clients (bienvenue)",
+    "triggerBirthday": "Clients le jour de leur anniversaire",
+    "triggerManual": "Clients choisis (manuel)",
+    "fieldFrom": "Valable à partir du",
+    "fieldUntil": "Valable jusqu’au",
+    "fieldUntilHint": "Vide : pas de date de fin.",
+    "fieldMax": "Utilisations maximum",
+    "fieldMaxHint": "Vide : pas de limite.",
+    "fieldActive": "Active",
+    "redeemed": "{count} utilisée(s)",
+    "redeemedOf": "{count} sur {max} utilisées",
+    "forever": "Sans date de fin",
+    "until": "Jusqu’au {date}",
+    "state": {
+      "ready": "Active",
+      "inactive": "En pause",
+      "notStarted": "Pas commencée",
+      "expired": "Expirée",
+      "exhausted": "Toutes utilisées"
+    },
+    "preview": {
+      "title": "Ce que voit le client",
+      "code": "Votre code",
+      "show": "Présentez ce QR à la réception.",
+      "validFrom": "Valable dès le {from}",
+      "validBetween": "Valable du {from} au {until}"
+    }
+  },
+  "offer": {
+    "invalidTitle": "Lien non valide",
+    "invalid": "Ce lien d’offre n’est pas valide. Demandez-en un nouveau à l’hôtel.",
+    "state": {
+      "ready": "Votre offre est prête.",
+      "inactive": "Cette offre n’est pas disponible pour le moment.",
+      "notStarted": "Cette offre n’a pas encore commencé.",
+      "expired": "Cette offre a expiré.",
+      "exhausted": "Cette offre a été entièrement utilisée.",
+      "redeemed": "Vous avez déjà utilisé cette offre. Profitez-en !"
+    },
+    "qrAlt": "QR code {code}",
+    "code": "Votre code",
+    "show": "Présentez ce QR à la réception.",
+    "validFrom": "Valable dès le {from}",
+    "validBetween": "Valable du {from} au {until}"
   }
 }

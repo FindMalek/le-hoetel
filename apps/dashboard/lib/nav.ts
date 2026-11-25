@@ -2,6 +2,7 @@ import type { Messages } from "@le-hoetel/i18n"
 import {
   BuildingIcon,
   DatabaseIcon,
+  GiftIcon,
   LayoutDashboardIcon,
   MailIcon,
   MessageSquareIcon,
@@ -26,6 +27,7 @@ export const NAV: NavItem[] = [
   { href: "/guests", label: "guests", icon: UsersIcon },
   { href: "/inbox", label: "inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "notes", icon: NotebookPenIcon },
+  { href: "/offers", label: "offers", icon: GiftIcon },
   { href: "/hotel", label: "hotelNav", icon: BuildingIcon },
   { href: "/emails", label: "emails", icon: MailIcon },
   { href: "/qr-codes", label: "qrCodes", icon: QrCodeIcon },

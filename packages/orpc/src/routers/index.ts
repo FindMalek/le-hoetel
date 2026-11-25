@@ -10,6 +10,7 @@ import { jobsRouter } from "./jobs"
 import { messagesRouter } from "./messages"
 import { notesRouter } from "./notes"
 import { notificationRouter } from "./notification"
+import { offersRouter } from "./offers"
 import { privacyRouter } from "./privacy"
 import { publicRouter } from "./public"
 import { statusRouter } from "./status"
@@ -34,6 +35,7 @@ export const appRouter = {
   emails: emailsRouter,
   guests: guestsRouter,
   messages: messagesRouter,
+  offers: offersRouter,
   me: meRouter,
   notes,
   privacy: privacyRouter,
