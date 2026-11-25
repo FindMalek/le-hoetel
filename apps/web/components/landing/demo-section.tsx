@@ -1,5 +1,6 @@
 import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
-import { Button } from "@le-hoetel/ui/components/button"
+import { buttonVariants } from "@le-hoetel/ui/components/button"
+import { cn } from "@le-hoetel/ui/lib/utils"
 import { MessageCircleIcon } from "lucide-react"
 import { getLocale, getTranslations } from "next-intl/server"
 import { DemoForm } from "./demo-form"
@@ -17,16 +18,15 @@ export async function DemoSection({ whatsappUrl }: { whatsappUrl: string | null 
           {whatsappUrl ? (
             <div className="mt-4 grid gap-3 border-t pt-6">
               <p className="text-muted-foreground text-sm">{t("whatsappLead")}</p>
-              <Button
-                variant="outline"
-                size="lg"
-                render={<a href={whatsappUrl} target="_blank" rel="noreferrer" />}
-                nativeButton={false}
-                className="min-h-12 w-fit bg-background px-6"
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(buttonVariants({ variant: "outline", size: "lg" }), "min-h-12 w-fit bg-background px-6")}
               >
                 <MessageCircleIcon data-icon="inline-start" />
                 {t("whatsapp")}
-              </Button>
+              </a>
             </div>
           ) : null}
         </div>

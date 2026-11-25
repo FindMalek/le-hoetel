@@ -1,5 +1,6 @@
 import { LocaleSwitcher } from "@le-hoetel/i18n/switcher"
-import { Button } from "@le-hoetel/ui/components/button"
+import { buttonVariants } from "@le-hoetel/ui/components/button"
+import { cn } from "@le-hoetel/ui/lib/utils"
 import { getTranslations } from "next-intl/server"
 import { SITE } from "@/lib/site"
 import { ThemeToggle } from "../theme-toggle"
@@ -37,9 +38,9 @@ export async function Header() {
         <div className="flex items-center gap-1">
           <LocaleSwitcher mode="path" />
           <ThemeToggle />
-          <Button render={<a href="#demo" />} nativeButton={false} className="ms-2 hidden min-h-9 sm:inline-flex">
+          <a href="#demo" className={cn(buttonVariants(), "ms-2 hidden min-h-9 sm:inline-flex")}>
             {t("demo")}
-          </Button>
+          </a>
         </div>
       </div>
     </header>

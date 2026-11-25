@@ -1,4 +1,5 @@
-import { Button } from "@le-hoetel/ui/components/button"
+import { buttonVariants } from "@le-hoetel/ui/components/button"
+import { cn } from "@le-hoetel/ui/lib/utils"
 import { MessageCircleIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { Zellige } from "../zellige"
@@ -22,20 +23,19 @@ export async function Hero({ whatsappUrl }: { whatsappUrl: string | null }) {
           <h1 className="text-balance font-bold text-display tracking-tight rtl:leading-snug">{t("hero.title")}</h1>
           <p className="max-w-2xl text-lg text-muted-foreground leading-relaxed">{t("hero.subtitle")}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" render={<a href="#demo" />} nativeButton={false} className="min-h-12 px-6">
+            <a href="#demo" className={cn(buttonVariants({ size: "lg" }), "min-h-12 px-6")}>
               {t("hero.demo")}
-            </Button>
+            </a>
             {whatsappUrl ? (
-              <Button
-                size="lg"
-                variant="outline"
-                render={<a href={whatsappUrl} target="_blank" rel="noreferrer" />}
-                nativeButton={false}
-                className="min-h-12 bg-background px-6"
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(buttonVariants({ size: "lg", variant: "outline" }), "min-h-12 bg-background px-6")}
               >
                 <MessageCircleIcon data-icon="inline-start" />
                 {t("hero.whatsapp")}
-              </Button>
+              </a>
             ) : null}
           </div>
           <p className="text-muted-foreground text-sm">{t("hero.note")}</p>
