@@ -18,8 +18,13 @@ Each environment is one Dokploy compose service built from `docker-compose.deplo
 
 All hosts are under `findmalek.engineer`. Health: the api answers `/health`, every image ships a docker `HEALTHCHECK`, the deploy job waits for the api `/health`.
 
+## Secrets
+
+App secrets come from Infisical, see [secrets](/docs/secrets): the deploy job exports the `staging` or `prod` environment and writes it, with the computed urls and flags, to the Dokploy compose env before deploying. Without the `INFISICAL_*` settings the env already in Dokploy is used.
+
 ## Set up from scratch
 
+0. optional: the Infisical settings (secrets `INFISICAL_CLIENT_ID`, `INFISICAL_CLIENT_SECRET`, variables `INFISICAL_URL`, `INFISICAL_PROJECT_ID`), see [secrets](/docs/secrets)
 1. an api key for a Dokploy user (Dokploy UI, profile, api keys) as repo secret `DOKPLOY_TOKEN`, plus repo variables `DOKPLOY_URL`, `PREVIEW_DOMAIN`, `DOKPLOY_ENVIRONMENT_ID` (previews environment), `STAGING_API_URL`, `PRODUCTION_API_URL`
 2. `DOKPLOY_URL=... DOKPLOY_TOKEN=... TARGET=staging ENVIRONMENT_ID=<env id> node .github/scripts/dokploy-bootstrap.mjs`, then again with `TARGET=production`. It creates the compose service, a random env (secrets, admin password) and the domains, and prints the compose id. Set it as variable `DOKPLOY_STAGING_COMPOSE_ID` or `DOKPLOY_PRODUCTION_COMPOSE_ID`. Re-running keeps the env of an existing service
 3. add the provider keys (Resend, Kapso, S3, GlitchTip, OpenObserve) in the compose Environment tab, the keys are listed in `docker-compose.deploy.yml`

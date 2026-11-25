@@ -36,6 +36,7 @@
     "deploy",
     "releases",
     "deploy-runbook",
+    "secrets",
     "previews",
     "observability",
     "analytics"

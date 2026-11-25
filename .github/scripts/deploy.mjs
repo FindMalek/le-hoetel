@@ -1,4 +1,5 @@
 import { appendFileSync } from "node:fs"
+import { formatDotenv, infisicalConfigured, parseDotenv, pullSecrets } from "./secrets-lib.mjs"
 
 // TARGET=staging|production, REF = branch or tag to build (default: main for staging, required for production).
 const env = process.env
@@ -18,16 +19,49 @@ if (!env.DOKPLOY_URL || !env.DOKPLOY_TOKEN || !composeId) {
 if (!ref) throw new Error("REF is required for production")
 
 const base = env.DOKPLOY_URL.replace(/\/+$/, "")
-async function dokploy(path, body) {
-  const res = await fetch(`${base}/api/${path}`, {
-    method: "POST",
+async function dokploy(path, body, method = "POST") {
+  const res = await fetch(`${base}/api/${path}${method === "GET" ? `?${new URLSearchParams(body)}` : ""}`, {
+    method,
     headers: { "x-api-key": env.DOKPLOY_TOKEN, "content-type": "application/json" },
-    body: JSON.stringify(body),
+    body: method === "GET" ? undefined : JSON.stringify(body),
   })
   if (!res.ok) throw new Error(`dokploy ${path} failed (${res.status}): ${(await res.text()).slice(0, 300)}`)
+  const text = await res.text()
+  return text ? JSON.parse(text) : {}
 }
 
-await dokploy("compose.update", { composeId, customGitBranch: ref })
+const prod = target === "production"
+const domain = env.DEPLOY_DOMAIN || "findmalek.engineer"
+const hosts = prod
+  ? { web: "lehoetel", dashboard: "app-lehoetel", api: "api-lehoetel", docs: "docs-lehoetel" }
+  : {
+      web: "staging-lehoetel",
+      dashboard: "app-staging-lehoetel",
+      api: "api-staging-lehoetel",
+      docs: "docs-staging-lehoetel",
+    }
+const url = (app) => `https://${hosts[app]}.${domain}`
+const computed = {
+  DEPLOY_ENV: target,
+  WEB_URL: url("web"),
+  DASHBOARD_URL: url("dashboard"),
+  API_PUBLIC_URL: url("api"),
+  DOCS_URL: url("docs"),
+  SEED: prod ? "none" : "demo",
+  MESSAGING_LIVE: prod ? "true" : "false",
+  ALLOW_PREVIEW_ORIGINS: prod ? "false" : "true",
+  S3_PREFIX: prod ? "" : "staging/",
+}
+
+// Infisical wins over what Dokploy already holds, computed values win over both. Without INFISICAL_* the env is left alone.
+const update = { composeId, customGitBranch: ref }
+if (infisicalConfigured(env)) {
+  const current = parseDotenv((await dokploy("compose.one", { composeId }, "GET")).env)
+  const secrets = await pullSecrets(prod ? "prod" : "staging", env)
+  update.env = formatDotenv({ ...current, ...secrets, ...computed })
+  summary(`${target} env from infisical (${Object.keys(secrets).length} keys)`)
+}
+await dokploy("compose.update", update)
 await dokploy("compose.deploy", { composeId, title: `${target} ${ref}` })
 summary(`${target} deploy started for \`${ref}\``)
 

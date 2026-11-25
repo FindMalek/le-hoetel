@@ -25,6 +25,9 @@
     "email:export": "turbo export -F email",
     "dev:worker": "bun --watch --env-file=.env apps/api/src/worker.ts",
     "test:e2e": "pnpm --filter e2e run e2e",
+    "dev:secrets": "infisical run --env=dev -- turbo dev",
+    "env:check": "node scripts/env-check.mjs",
+    "secrets:pull": "node .github/scripts/secrets-pull.mjs",
     "i18n:check": "bun packages/i18n/src/check-cli.ts"
   },
   "devDependencies": {
