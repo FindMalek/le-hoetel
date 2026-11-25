@@ -146,6 +146,7 @@
     "apiDocs": "Docs de l'API"
   },
   "nav": {
+    "redeem": "Utiliser",
     "offers": "Offres",
     "hotelNav": "Hôtel",
     "emails": "E-mails",
@@ -542,5 +543,41 @@
     "show": "Présentez ce QR à la réception.",
     "validFrom": "Valable dès le {from}",
     "validBetween": "Valable du {from} au {until}"
+  },
+  "redeem": {
+    "title": "Utilisation",
+    "description": "Scannez le QR du client ou saisissez le code. Un geste le marque comme utilisé.",
+    "scan": "Scanner le QR code",
+    "stopScan": "Arrêter la caméra",
+    "scanLabel": "Vue de la caméra pour scanner un QR code",
+    "noCamera": "Ce navigateur ne peut pas scanner de QR code. Saisissez le code ci-dessous.",
+    "cameraFailed": "La caméra n’a pas démarré. Autorisez l’accès à la caméra ou saisissez le code.",
+    "typeCode": "Ou saisissez le code",
+    "codePlaceholder": "AB3D-EF7H",
+    "check": "Vérifier",
+    "redeem": "Marquer comme utilisée",
+    "redeeming": "Enregistrement...",
+    "next": "Code suivant",
+    "guest": "Client",
+    "validUntil": "Valable jusqu’au",
+    "noEnd": "Sans date de fin",
+    "redeemedAt": "Utilisée",
+    "redeemedBy": "par",
+    "justNow": "Utilisée. Merci !",
+    "today": "Aujourd’hui",
+    "week": "7 jours",
+    "total": "Total",
+    "recent": "Dernières utilisations",
+    "noRecent": "Rien d’utilisé pour l’instant.",
+    "status": {
+      "ready": "Valide. Prête à être utilisée.",
+      "redeemed": "Déjà utilisée",
+      "expired": "Expirée",
+      "notStarted": "Pas encore valable",
+      "inactive": "Cette offre est en pause",
+      "exhausted": "Plus aucune utilisation possible",
+      "wrongHotel": "Ce code appartient à un autre hôtel",
+      "unknown": "Code introuvable"
+    }
   }
 }

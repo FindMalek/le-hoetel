@@ -146,6 +146,7 @@
     "apiDocs": "API docs"
   },
   "nav": {
+    "redeem": "Redeem",
     "offers": "Offers",
     "hotelNav": "Hotel",
     "emails": "Emails",
@@ -542,5 +543,41 @@
     "show": "Show this QR at the desk.",
     "validFrom": "Valid from {from}",
     "validBetween": "Valid {from} to {until}"
+  },
+  "redeem": {
+    "title": "Redeem",
+    "description": "Scan a guest's QR or type the code. One tap marks it used.",
+    "scan": "Scan QR code",
+    "stopScan": "Stop camera",
+    "scanLabel": "Camera view for scanning a QR code",
+    "noCamera": "This browser can't scan QR codes. Type the code below.",
+    "cameraFailed": "The camera didn't start. Allow camera access or type the code.",
+    "typeCode": "Or type the code",
+    "codePlaceholder": "AB3D-EF7H",
+    "check": "Check",
+    "redeem": "Mark as redeemed",
+    "redeeming": "Saving...",
+    "next": "Next code",
+    "guest": "Guest",
+    "validUntil": "Valid until",
+    "noEnd": "No end date",
+    "redeemedAt": "Redeemed",
+    "redeemedBy": "by",
+    "justNow": "Redeemed. Thank you!",
+    "today": "Today",
+    "week": "7 days",
+    "total": "Total",
+    "recent": "Latest redemptions",
+    "noRecent": "Nothing redeemed yet.",
+    "status": {
+      "ready": "Valid. Ready to redeem.",
+      "redeemed": "Already redeemed",
+      "expired": "Expired",
+      "notStarted": "Not valid yet",
+      "inactive": "This offer is paused",
+      "exhausted": "No redemptions left",
+      "wrongHotel": "This code belongs to another hotel",
+      "unknown": "Code not found"
+    }
   }
 }

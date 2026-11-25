@@ -82,3 +82,51 @@ export const offerPageSchema = z.object({
 
 /** The perk shown on the public capture page: the hotel's active welcome offer, title and text only. */
 export const welcomeOfferSchema = z.object({ title: z.string(), text: z.string() })
+
+export const OFFER_CODE_MAX = 64
+export const offerCodeInputSchema = z.object({ code: z.string().trim().min(1).max(OFFER_CODE_MAX) })
+
+export const REDEEM_STATUSES = [
+  "ready",
+  "redeemed",
+  "expired",
+  "notStarted",
+  "inactive",
+  "exhausted",
+  "wrongHotel",
+  "unknown",
+] as const
+
+/** What the staff see after a scan: the offer, the guest's first name only and why a code can or cannot be redeemed. */
+export const offerLookupSchema = z.object({
+  status: z.enum(REDEEM_STATUSES),
+  offer: z
+    .object({
+      id: z.string(),
+      title: z.string(),
+      text: z.string(),
+      validFrom: z.date(),
+      validUntil: z.date().nullable(),
+    })
+    .nullable(),
+  guestFirstName: z.string().nullable(),
+  redeemed: z.object({ at: z.date(), by: z.string().nullable() }).nullable(),
+  /** True only for the call that made the redemption, so a retry after a lost answer reads as already redeemed. */
+  justNow: z.boolean(),
+})
+export type OfferLookup = z.infer<typeof offerLookupSchema>
+
+export const redemptionStatsSchema = z.object({
+  today: z.number(),
+  week: z.number(),
+  total: z.number(),
+  recent: z.array(
+    z.object({
+      id: z.string(),
+      offerTitle: z.string(),
+      guestFirstName: z.string().nullable(),
+      redeemedAt: z.date(),
+      redeemedBy: z.string().nullable(),
+    }),
+  ),
+})
