@@ -1,20 +1,24 @@
 import { BellIcon } from "lucide-react"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 
-/** Floats top right on every app page, with the unread count. */
-export function InboxBell({ unread }: { unread: number }) {
+export async function InboxBell({ unread }: { unread: number }) {
+  const t = await getTranslations("shell")
   return (
     <Link
       href="/inbox"
-      aria-label={unread ? `${unread} unread notifications` : "Notifications"}
-      className="fixed end-4 top-3 z-40 inline-flex size-11 items-center justify-center rounded-lg border bg-card text-muted-foreground hover:text-foreground"
+      aria-label={unread ? t("unread", { count: unread }) : t("notifications")}
+      className="relative inline-flex size-11 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
     >
-      <BellIcon className="size-4" />
-      {unread > 0 && (
-        <span className="-top-1.5 -end-1.5 absolute grid min-w-5 place-items-center rounded-full bg-primary px-1 text-xs text-primary-foreground">
+      <BellIcon className="size-5" />
+      {unread > 0 ? (
+        <span
+          aria-hidden
+          className="absolute end-1 top-1 grid min-w-5 place-items-center rounded-full bg-primary px-1 text-primary-foreground text-xs tabular-nums"
+        >
           {unread > 9 ? "9+" : unread}
         </span>
-      )}
+      ) : null}
     </Link>
   )
 }

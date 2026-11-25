@@ -20,33 +20,30 @@ test("both apps reach the api through /api/health", async ({ request }) => {
   }
 })
 
-test("sign up, sign out, sign in, then create and list a note", async ({ page }) => {
+test("sign up, sign out, sign in, then ask for a password reset", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.com`
 
   await page.goto(`${URLS.dashboard}/sign-up`)
-  await page.getByLabel("Name").fill("E2E")
+  await page.getByLabel("Your name").fill("E2E")
   await page.getByLabel("Email").fill(email)
-  await page.getByLabel("Password").fill(PASSWORD)
+  await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
   await page.getByRole("button", { name: "Create account" }).click()
-  await expect(page.getByText(email)).toBeVisible()
+  await expect(page.getByRole("heading", { name: "Hello E2E" })).toBeVisible()
 
-  await page.getByRole("button", { name: email }).click()
+  await page.getByRole("button", { name: "Account" }).click()
+  await page.getByRole("menuitem", { name: "Sign out" }).click()
   await expect(page).toHaveURL(/\/sign-in$/)
 
   await page.getByLabel("Email").fill(email)
-  await page.getByLabel("Password").fill(PASSWORD)
+  await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
   await page.getByRole("button", { name: "Sign in" }).click()
-  await expect(page.getByText(email)).toBeVisible()
+  await expect(page.getByRole("heading", { name: "Hello E2E" })).toBeVisible()
 
-  await page.goto(`${URLS.dashboard}/notes`)
-  await expect(page.getByText("No notes yet")).toBeVisible()
-  await page.getByLabel("Title").fill("Smoke note")
-  await page.getByRole("button", { name: "Add note" }).click()
-  await expect(page.getByText("Smoke note")).toBeVisible()
-  await expect(page.getByText("No notes yet")).toBeHidden()
-
-  await page.reload()
-  await expect(page.getByText("Smoke note")).toBeVisible()
+  await page.context().clearCookies()
+  await page.goto(`${URLS.dashboard}/forgot-password`)
+  await page.getByLabel("Email").fill(email)
+  await page.getByRole("button", { name: "Send reset link" }).click()
+  await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible()
 })
 
 test("the seeded demo owner and super admin can sign in", async ({ request }) => {

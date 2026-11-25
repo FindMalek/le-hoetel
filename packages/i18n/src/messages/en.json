@@ -3,6 +3,143 @@
     "label": "Language",
     "description": "The language of this app."
   },
+  "shell": {
+    "skip": "Skip to content",
+    "search": "Search",
+    "searchPlaceholder": "Search or jump to…",
+    "noResults": "Nothing found.",
+    "goTo": "Go to",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "account": "Account",
+    "signOut": "Sign out",
+    "more": "More",
+    "notifications": "Notifications",
+    "unread": "{count} unread notifications",
+    "mainNav": "Main navigation",
+    "tabs": "Quick navigation",
+    "appearance": "Appearance and language",
+    "loading": "Loading…"
+  },
+  "home": {
+    "greeting": "Hello {name}",
+    "hotelDescription": "Here is how {hotel} is doing.",
+    "adminDescription": "Every hotel on the platform at a glance.",
+    "guests": "Guests",
+    "guestsHint": "shared their details",
+    "hotels": "Hotels",
+    "needAttention": "Need attention",
+    "attentionHint": "quiet or without an owner",
+    "latest": "Latest guests",
+    "name": "Name",
+    "phone": "Phone",
+    "language": "Language",
+    "added": "Added",
+    "emptyTitle": "No guests yet",
+    "emptyBody": "Put your QR code at the front desk or on the tables, and guests will show up here.",
+    "captureTitle": "Your guest sign-up page",
+    "captureBody": "Guests open it from your QR code. You can also send it to them.",
+    "copy": "Copy link",
+    "copied": "Link copied.",
+    "open": "Open page",
+    "hotelColumn": "Hotel",
+    "healthColumn": "Health",
+    "tableCaption": "Latest guests",
+    "hotelsCaption": "Hotels",
+    "hotelsAction": "Manage hotels",
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "ar": "Arabic"
+    },
+    "noHotelsTitle": "No hotel yet",
+    "noHotelsBody": "Create the first hotel and invite its owner. They will see their guests here.",
+    "noAccessTitle": "You are not part of a hotel yet",
+    "noAccessBody": "Ask your hotel manager to invite you. The invitation arrives by email, open it to join."
+  },
+  "auth": {
+    "brandTitle": "Know your guests. Welcome them back.",
+    "brandBody": "Collect guest details with their consent, remember what they like and bring them back to your hotel.",
+    "email": "Email",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "or": "or",
+    "github": "Continue with GitHub",
+    "back": "Back to sign in",
+    "signIn": {
+      "title": "Welcome back",
+      "description": "Sign in to see how your guests are doing.",
+      "submit": "Sign in",
+      "forgot": "Forgot password?",
+      "noAccount": "New here?",
+      "create": "Create an account"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "description": "It takes less than a minute.",
+      "name": "Your name",
+      "submit": "Create account",
+      "have": "Already have an account?",
+      "signIn": "Sign in",
+      "hint": "At least 10 characters."
+    },
+    "forgot": {
+      "title": "Forgot your password?",
+      "description": "Enter your email and we will send you a link to choose a new one.",
+      "submit": "Send reset link",
+      "sentTitle": "Check your email",
+      "sent": "If an account exists for {email}, a reset link is on its way. It works for one hour."
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "description": "Pick something you do not use anywhere else.",
+      "password": "New password",
+      "confirm": "Confirm password",
+      "submit": "Update password",
+      "mismatch": "The two passwords do not match.",
+      "invalidTitle": "This link has expired",
+      "invalid": "A reset link works once and for one hour. Ask for a new one.",
+      "again": "Get a new link",
+      "done": "Password updated. You can sign in now."
+    },
+    "errors": {
+      "required": "Fill in this field.",
+      "email": "Enter a valid email address.",
+      "passwordShort": "Use at least 10 characters.",
+      "invalidCredentials": "Wrong email or password.",
+      "exists": "An account with this email already exists. Try signing in.",
+      "tooMany": "Too many tries. Wait a minute and try again.",
+      "generic": "Something went wrong. Try again."
+    },
+    "invitation": {
+      "title": "Join {hotel}",
+      "description": "{inviter} invited you as {role}.",
+      "accept": "Accept invitation",
+      "signedInAs": "Signed in as {email}",
+      "wrongAccount": "This invitation was sent to another email address. Sign in with that one to accept it.",
+      "switchAccount": "Use another account",
+      "invalidTitle": "This invitation is not valid",
+      "invalid": "It may have expired or already been used. Ask the hotel for a new one.",
+      "role": {
+        "owner": "owner",
+        "manager": "manager",
+        "staff": "team member"
+      }
+    }
+  },
+  "errorPages": {
+    "notFoundTitle": "This page does not exist",
+    "notFoundBody": "The link may be old or mistyped. Let us get you back.",
+    "home": "Back to home",
+    "errorTitle": "Something went wrong",
+    "errorBody": "It is on our side. Try again, and if it keeps happening let us know.",
+    "retry": "Try again",
+    "reference": "Reference {digest}"
+  },
   "hero": {
     "badge": "early access",
     "getStarted": "Get started",
@@ -20,15 +157,16 @@
     "overview": "Overview",
     "guests": "Guests",
     "inbox": "Inbox",
-    "notes": "Notes",
     "team": "Team",
     "users": "Users",
     "auditLog": "Audit log",
-    "settings": "Settings"
+    "settings": "Settings",
+    "admin": "Platform"
   },
   "hotel": {
     "switch": "Switch hotel",
-    "yours": "Your hotels"
+    "yours": "Your hotels",
+    "switchError": "Could not switch hotel. Try again."
   },
   "guests": {
     "title": "Guests",

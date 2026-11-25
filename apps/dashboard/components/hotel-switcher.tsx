@@ -15,39 +15,41 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
+import { BrandMark } from "@/components/brand-mark"
 
+const Initial = ({ name }: { name: string }) => (
+  <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary font-semibold text-primary-foreground">
+    {name.trim().slice(0, 1).toUpperCase()}
+  </span>
+)
+
+/** The active hotel as the sidebar header. With more than one hotel it opens the list to switch. */
 export interface HotelChoice {
   id: string
   name: string
 }
 
-const Logo = ({ name }: { name: string }) => (
-  <span className="grid size-8 shrink-0 place-items-center bg-primary font-bold text-primary-foreground">
-    {name.slice(0, 1).toUpperCase()}
-  </span>
-)
-
 export function HotelSwitcher({ hotels, activeId }: { hotels: HotelChoice[]; activeId: string | null }) {
   const t = useTranslations("hotel")
   const router = useRouter()
   const active = hotels.find((hotel) => hotel.id === activeId)
-  if (!active) {
+
+  if (!active)
     return (
       <SidebarMenuButton size="lg" render={<Link href="/" />}>
-        <Logo name="le-hoetel" />
-        <span className="font-heading font-semibold">le-hoetel</span>
+        <BrandMark />
       </SidebarMenuButton>
     )
-  }
+
   const label = (
     <>
-      <Logo name={active.name} />
+      <Initial name={active.name} />
       <span className="truncate font-heading font-semibold">{active.name}</span>
     </>
   )
   if (hotels.length < 2)
     return (
-      <SidebarMenuButton size="lg" render={<Link href="/guests" />}>
+      <SidebarMenuButton size="lg" render={<Link href="/" />}>
         {label}
       </SidebarMenuButton>
     )
@@ -55,8 +57,8 @@ export function HotelSwitcher({ hotels, activeId }: { hotels: HotelChoice[]; act
   async function pick(organizationId: string) {
     if (organizationId === activeId) return
     const { error } = await orgClient.organization.setActive({ organizationId })
-    if (error) return void toast.error(error.message ?? "Something went wrong.")
-    router.push("/guests")
+    if (error) return void toast.error(error.message ?? t("switchError"))
+    router.push("/")
     router.refresh()
   }
 
@@ -72,7 +74,7 @@ export function HotelSwitcher({ hotels, activeId }: { hotels: HotelChoice[]; act
           {hotels.map((hotel) => (
             <DropdownMenuItem key={hotel.id} className="min-h-11" onClick={() => pick(hotel.id)}>
               <span className="truncate">{hotel.name}</span>
-              {hotel.id === activeId && <CheckIcon className="ms-auto" />}
+              {hotel.id === activeId ? <CheckIcon className="ms-auto" /> : null}
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
