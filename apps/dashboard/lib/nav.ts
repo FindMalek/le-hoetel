@@ -5,6 +5,7 @@ import {
   LayoutDashboardIcon,
   MessageSquareIcon,
   NotebookPenIcon,
+  QrCodeIcon,
   SettingsIcon,
   UsersIcon,
 } from "lucide-react"
@@ -25,6 +26,7 @@ export const NAV: NavItem[] = [
   { href: "/inbox", label: "inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "notes", icon: NotebookPenIcon },
   { href: "/hotel", label: "hotelNav", icon: BuildingIcon },
+  { href: "/qr-codes", label: "qrCodes", icon: QrCodeIcon },
   { href: "/messages", label: "messages", icon: MessageSquareIcon },
   { href: "/team", label: "team", icon: UsersIcon },
   { href: "/data", label: "data", icon: DatabaseIcon },
