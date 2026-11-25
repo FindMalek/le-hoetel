@@ -18,6 +18,7 @@ export const hotelSettings = pgTable("hotel_settings", {
   replyToEmail: text("reply_to_email"),
   defaultLanguage: hotelLanguage("default_language").notNull().default("fr"),
   timezone: text("timezone").notNull().default("Africa/Tunis"),
+  address: text("address"),
   googleReviewUrl: text("google_review_url"),
   managerWhatsapp: text("manager_whatsapp"),
   managerTelegram: text("manager_telegram"),

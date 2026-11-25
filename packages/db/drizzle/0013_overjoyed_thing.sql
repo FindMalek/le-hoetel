@@ -1,0 +1,1 @@
+ALTER TABLE "hotel_settings" ADD COLUMN "address" text;

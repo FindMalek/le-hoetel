@@ -37,7 +37,7 @@ test("arabic is right to left, the brand button reads, unsubscribe is in both pa
   expect(email.html).toContain('dir="rtl"')
   expect(email.html).toContain("background-color:#ffff00")
   expect(email.html).toMatch(/color:#000000/)
-  expect(email.html).toContain("عنوان الفندق")
+  expect(email.html).not.toContain("Rue de la Médina")
   expect(email.html).toContain(guest.unsubscribeUrl)
   expect(email.text).toContain(guest.unsubscribeUrl)
 })

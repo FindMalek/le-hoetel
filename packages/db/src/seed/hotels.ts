@@ -196,6 +196,7 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
       displayName: hotel.name,
       primaryColor: hotel.primary,
       accentColor: hotel.accent,
+      address: `${hotel.name}, ${hotel.city}, Tunisia`,
       replyToEmail: `hello@${slug}.${DEMO_EMAIL_DOMAIN}`,
       defaultLanguage: hotel.language,
       googleReviewUrl: `https://search.google.com/local/writereview?placeid=demo-${slug}`,

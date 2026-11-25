@@ -38,6 +38,7 @@ export const hotelBrandingInputSchema = z.object({
   replyToEmail: z.email().max(200).nullable(),
   defaultLanguage: z.enum(HOTEL_LANGUAGES),
   timezone,
+  address: nullableText(200),
   googleReviewUrl: httpsUrl,
   managerWhatsapp: nullableText(40),
   managerTelegram: nullableText(80),

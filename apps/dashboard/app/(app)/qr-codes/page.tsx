@@ -14,34 +14,11 @@ export default async function QrCodesPage() {
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <QrCodesBoard
-          labels={{
-            newTitle: t("newTitle"),
-            newDescription: t("newDescription"),
-            where: t("where"),
-            rooms: t("rooms"),
-            tables: t("tables"),
-            desk: t("desk"),
-            room: t("room"),
-            table: t("table"),
-            roomHint: t("roomHint"),
-            tableHint: t("tableHint"),
-            deskHint: t("deskHint"),
-            spots: t("spots"),
-            spotsHint: t("spotsHint"),
-            generate: t("generate"),
-            guestsSoFar: t("guestsSoFar"),
-            alt: t("alt"),
-            tableTitle: t("tableTitle"),
-            tableDescription: t("tableDescription"),
-            empty: t("empty"),
-            colWhere: t("colWhere"),
-            colSpot: t("colSpot"),
-            colGuests: t("colGuests"),
-          }}
-        />
-      </HydrationBoundary>
+      <div className="p-4 md:p-6">
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <QrCodesBoard />
+        </HydrationBoundary>
+      </div>
     </>
   )
 }

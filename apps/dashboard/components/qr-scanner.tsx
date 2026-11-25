@@ -69,7 +69,7 @@ export function QrScanner({
       aria-label={label}
       playsInline
       muted
-      className="aspect-square w-full rounded-lg bg-muted object-cover"
+      className="size-full object-cover"
     />
   )
 }

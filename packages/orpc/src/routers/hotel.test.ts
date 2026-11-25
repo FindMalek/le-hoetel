@@ -70,8 +70,14 @@ test("branding: owner and manager edit it, staff only read it, plan and status s
     accentColor: "#f2b134",
     defaultLanguage: "ar",
     replyToEmail: "hello@darzarrouk.test",
+    address: "12 Rue de la Médina, Tunis",
   })
-  expect(updated).toMatchObject({ displayName: "Dar Zarrouk", primaryColor: "#0a7c66", defaultLanguage: "ar" })
+  expect(updated).toMatchObject({
+    displayName: "Dar Zarrouk",
+    primaryColor: "#0a7c66",
+    defaultLanguage: "ar",
+    address: "12 Rue de la Médina, Tunis",
+  })
   expect(await asStaff.client.hotel.get()).toMatchObject({ displayName: "Dar Zarrouk" })
 
   await expect(asStaff.client.hotel.update({ displayName: "Hacked" })).rejects.toMatchObject({ code: "FORBIDDEN" })
