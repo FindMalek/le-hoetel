@@ -40,3 +40,9 @@ A response with `nps` at or below the hotel's `hotel_settings.low_score_threshol
 - calls `notifyManager(hotelId, text)`: Telegram first, email when there is no chat. The text has the guest's first name, the score, a comment excerpt (140 characters) and a link to `/feedback/<case id>` in the dashboard. Never a phone number or email.
 
 A failed alert never fails the guest's answer. One case per response.
+
+## Share on Google
+
+After the survey, whatever the score (never gated by score), the thank you state shows a secondary button "Share on Google" with a short line, in en, fr and ar. It only shows when the hotel has a `hotel_settings.google_review_url`.
+
+The button points to `/r/<token>` in `apps/web`, a signed redirect (a `review` token, which cannot open the survey and the other way round). It stamps `survey_responses.review_link_clicked_at` on the first click and redirects to the hotel's page. A hotel without a link, or a bad token, gets a 404. Nothing else is sent after the survey, so the thank you page is the thank you message.

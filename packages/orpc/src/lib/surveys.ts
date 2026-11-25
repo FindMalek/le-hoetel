@@ -3,11 +3,12 @@ import {
   DEFAULT_LOW_SCORE_THRESHOLD,
   SURVEY_INVITE_DAYS,
   type SurveyAnswer,
+  signSurveyToken,
   verifySurveyToken,
 } from "@le-hoetel/common/survey"
 import { feedbackCases, guests, hotelSettings, surveyInvites, surveyResponses } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
-import { eq } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelBranding } from "./hotel"
 import { notifyManager } from "./manager-alerts"
@@ -46,7 +47,41 @@ export type SurveyState = "open" | "answered" | "expired"
 export async function surveyPage(context: Ctx, token: string) {
   const invite = await openInvite(context, token)
   const state: SurveyState = invite.responseId ? "answered" : invite.expiresAt <= context.now() ? "expired" : "open"
-  return { hotel: await hotelBranding(context, invite.hotelId), language: invite.language, state }
+  const reviewToken = state === "answered" && (await reviewUrl(context, invite.hotelId))
+  return {
+    hotel: await hotelBranding(context, invite.hotelId),
+    language: invite.language,
+    state,
+    reviewToken: reviewToken
+      ? signSurveyToken(context.config.tokenSecret, "review", { hotelId: invite.hotelId, inviteId: invite.id })
+      : null,
+  }
+}
+
+async function reviewUrl(context: Ctx, hotelId: string): Promise<string | null> {
+  const [row] = await context.db
+    .select({ url: hotelSettings.googleReviewUrl })
+    .from(hotelSettings)
+    .where(eq(hotelSettings.organizationId, hotelId))
+  return row?.url || null
+}
+
+/** The signed redirect behind "Share on Google": the first click is stamped on the response, every click goes on to the hotel's page. Offered after every score, never gated. */
+export async function reviewClick(context: Ctx, token: string): Promise<{ url: string }> {
+  const subject = verifySurveyToken(context.config.tokenSecret, "review", token)
+  const url = subject ? await reviewUrl(context, subject.hotelId) : null
+  if (!subject || !url) throw new ORPCError("NOT_FOUND", { message: "This link is not valid." })
+  await context.db
+    .update(surveyResponses)
+    .set({ reviewLinkClickedAt: context.now() })
+    .where(
+      and(
+        eq(surveyResponses.inviteId, subject.inviteId),
+        eq(surveyResponses.hotelId, subject.hotelId),
+        isNull(surveyResponses.reviewLinkClickedAt),
+      ),
+    )
+  return { url }
 }
 
 /** One response per invite: a second submit (double tap, retry) changes nothing and still says `answered`. */
