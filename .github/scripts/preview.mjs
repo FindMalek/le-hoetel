@@ -31,6 +31,7 @@ import {
   stagingUrl,
   toStatus,
 } from "./preview-lib.mjs"
+import { formatDotenv, infisicalConfigured, pullSecrets } from "./secrets-lib.mjs"
 
 const env = process.env
 const summary = (text) => env.GITHUB_STEP_SUMMARY && appendFileSync(env.GITHUB_STEP_SUMMARY, `${text}\n`)
@@ -90,6 +91,8 @@ const previewUrl = (app) => `${https ? "https" : "http"}://${hostOf(app)}`
 const urlOf = (app) => (deployed.has(app) ? previewUrl(app) : stagingUrl(app, env.STAGING_DOMAIN || undefined))
 const db = apiChanged ? previewDb(pr, env.DOKPLOY_TOKEN, "") : null
 const password = previewSecret(env.DOKPLOY_TOKEN, pr, "demo")
+const fromInfisical = infisicalConfigured(env)
+const infisicalEnv = fromInfisical ? await pullSecrets("preview", env) : {}
 
 const sticky = await findStickyComment(repo, pr)
 const state = { ...(sticky?.state ?? {}) }
@@ -157,6 +160,7 @@ function appEnv(app) {
   } else {
     lines.API_URL = apiPublic
   }
+  if (fromInfisical) return formatDotenv({ ...infisicalEnv, ...lines })
   return [...Object.entries(lines).map(([k, v]) => `${k}=${v}`), env.PREVIEW_APP_ENV ?? ""].filter(Boolean).join("\n")
 }
 
