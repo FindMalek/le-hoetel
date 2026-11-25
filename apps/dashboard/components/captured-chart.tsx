@@ -1,5 +1,6 @@
 import { GUEST_SOURCES } from "@le-hoetel/common/consent"
 import { getLocale, getTranslations } from "next-intl/server"
+import type { CSSProperties } from "react"
 
 const SWATCH: Record<(typeof GUEST_SOURCES)[number], string> = {
   qr_room: "bg-chart-3",
@@ -28,12 +29,16 @@ export async function CapturedChart({ points, bySource }: { points: Point[]; byS
         {points.map((point) => (
           <div key={point.start} className="flex h-full min-w-0 flex-1 flex-col justify-end">
             <div
-              className="flex flex-col-reverse overflow-hidden rounded-t-sm"
-              style={{ height: `${(point.total / max) * 100}%` }}
+              className="flex h-(--bar) flex-col-reverse overflow-hidden rounded-t-sm"
+              style={{ "--bar": `${(point.total / max) * 100}%` } as CSSProperties}
             >
               {GUEST_SOURCES.map((source) =>
                 point.bySource[source] ? (
-                  <div key={source} className={SWATCH[source]} style={{ flexGrow: point.bySource[source] }} />
+                  <div
+                    key={source}
+                    className={`grow-(--share) ${SWATCH[source]}`}
+                    style={{ "--share": point.bySource[source] } as CSSProperties}
+                  />
                 ) : null,
               )}
             </div>
