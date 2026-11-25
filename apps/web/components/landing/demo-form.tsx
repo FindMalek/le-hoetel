@@ -29,7 +29,7 @@ const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Fran
 const CONTROL =
   "h-12 w-full min-w-0 rounded-xl border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 aria-invalid:border-destructive"
 
-function Error({ id, children }: { id: string; children?: string | null }) {
+function FieldError({ id, children }: { id: string; children?: string | null }) {
   return (
     <p id={id} role="alert" hidden={!children} className="flex items-center gap-1.5 text-destructive text-sm">
       {children ? <CircleAlertIcon aria-hidden className="size-4 shrink-0" /> : null}
@@ -108,7 +108,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           aria-describedby="demo-name-error"
           className={CONTROL}
         />
-        <Error id="demo-name-error">{tried && bad.name ? copy.nameError : null}</Error>
+        <FieldError id="demo-name-error">{tried && bad.name ? copy.nameError : null}</FieldError>
       </div>
       <div className="grid gap-2">
         <label htmlFor="demo-hotel" className="font-medium text-sm">
@@ -126,7 +126,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           aria-describedby="demo-hotel-error"
           className={CONTROL}
         />
-        <Error id="demo-hotel-error">{tried && bad.hotel ? copy.hotelError : null}</Error>
+        <FieldError id="demo-hotel-error">{tried && bad.hotel ? copy.hotelError : null}</FieldError>
       </div>
       <div className="grid gap-2">
         <label htmlFor="demo-phone" className="font-medium text-sm">
@@ -144,7 +144,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           aria-describedby="demo-phone-error"
           className="h-12 rounded-xl bg-background"
         />
-        <Error id="demo-phone-error">{tried && bad.phone ? copy.phoneError : null}</Error>
+        <FieldError id="demo-phone-error">{tried && bad.phone ? copy.phoneError : null}</FieldError>
       </div>
       <div className="grid gap-2">
         <label htmlFor="demo-city" className="font-medium text-sm">
@@ -162,7 +162,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           aria-describedby="demo-city-error"
           className={CONTROL}
         />
-        <Error id="demo-city-error">{tried && bad.city ? copy.cityError : null}</Error>
+        <FieldError id="demo-city-error">{tried && bad.city ? copy.cityError : null}</FieldError>
       </div>
       <fieldset className="grid gap-2">
         <legend className="mb-2 font-medium text-sm">{copy.language}</legend>

@@ -47,11 +47,7 @@ export async function DashboardPreview() {
               <span className="font-medium text-sm">{t("chart")}</span>
               <div className="flex min-h-32 items-end gap-2 border-b md:gap-3">
                 {BARS.map((height, index) => (
-                  <div
-                    // biome-ignore lint/suspicious/noArrayIndexKey: a fixed decorative list
-                    key={index}
-                    className={cn("flex-1 rounded-t-sm bg-primary/80", height)}
-                  />
+                  <div key={index} className={cn("flex-1 rounded-t-sm bg-primary/80", height)} />
                 ))}
               </div>
             </div>

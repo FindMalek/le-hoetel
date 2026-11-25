@@ -16,7 +16,9 @@ export async function Hero({ whatsappUrl }: { whatsappUrl: string | null }) {
       <Zellige className="-z-10 text-primary/10" />
       <div className={`${CONTAINER} pt-14 pb-12 md:pt-24 md:pb-16`}>
         <div className="grid max-w-3xl gap-6">
-          <p className="font-medium text-muted-foreground text-sm uppercase tracking-wide rtl:tracking-normal rtl:normal-case">{t("hero.eyebrow")}</p>
+          <p className="font-medium text-muted-foreground text-sm uppercase tracking-wide rtl:tracking-normal rtl:normal-case">
+            {t("hero.eyebrow")}
+          </p>
           <h1 className="text-balance font-bold text-display tracking-tight rtl:leading-snug">{t("hero.title")}</h1>
           <p className="max-w-2xl text-lg text-muted-foreground leading-relaxed">{t("hero.subtitle")}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
