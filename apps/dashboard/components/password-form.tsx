@@ -72,7 +72,11 @@ export function PasswordForm() {
         )}
       </FormField>
       <div className="flex items-center gap-3">
-        <Checkbox id="revoke-others" checked={revokeOthers} onCheckedChange={(checked) => setRevokeOthers(checked === true)} />
+        <Checkbox
+          id="revoke-others"
+          checked={revokeOthers}
+          onCheckedChange={(checked) => setRevokeOthers(checked === true)}
+        />
         <Label htmlFor="revoke-others" className="font-normal">
           {t("signOutOthers")}
         </Label>

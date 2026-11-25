@@ -101,6 +101,18 @@ docker build -f apps/web/Dockerfile -t le-hoetel-web .
 
 The Next apps also run on Vercel with the app folder as the root directory. Set the same env keys everywhere, see `.env.example`.
 
+### Environments
+
+| | web | dashboard | api | docs |
+| --- | --- | --- | --- | --- |
+| production | [lehoetel](https://lehoetel.findmalek.engineer) | [app-lehoetel](https://app-lehoetel.findmalek.engineer) | [api-lehoetel](https://api-lehoetel.findmalek.engineer/health) | [docs-lehoetel](https://docs-lehoetel.findmalek.engineer) |
+| staging | [staging-lehoetel](https://staging-lehoetel.findmalek.engineer) | [app-staging-lehoetel](https://app-staging-lehoetel.findmalek.engineer) | [api-staging-lehoetel](https://api-staging-lehoetel.findmalek.engineer/health) | [docs-staging-lehoetel](https://docs-staging-lehoetel.findmalek.engineer) |
+
+- every merge to `main` deploys staging, a published release deploys production (`.github/workflows/staging.yml`, `release.yml`)
+- every PR gets a preview at `pr-<N>-<app>.preview-lehoetel.findmalek.engineer` for what changed, the rest links to staging, see the docs page `previews`. WhoDB for preview databases: [whodb-lehoetel](https://whodb-lehoetel.findmalek.engineer)
+- releases: release-please keeps a release PR open, merging it tags `vX.Y.Z` and deploys production. Cut a release when a milestone is done: `v0.1.0` foundation and hotel core, `v0.2.0` messaging, `v0.3.0` feedback and dashboard, `v1.0.0` pilot launch
+- rollback, backups and setup: docs pages `deploy-runbook` and `releases`
+
 ---
 
 ## Agents

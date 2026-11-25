@@ -33,7 +33,7 @@ type Member = {
 }
 
 const rolesOf = (role: string): string[] => role.split(",").map((value) => value.trim())
-const topRole = (role: string): string => (["owner", "manager", "staff"].find((r) => rolesOf(role).includes(r)) ?? role)
+const topRole = (role: string): string => ["owner", "manager", "staff"].find((r) => rolesOf(role).includes(r)) ?? role
 
 function RoleHelp() {
   const t = useTranslations("team")
@@ -163,7 +163,11 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
         disabled={busy === member.id}
         className="w-36"
         onChange={(event) =>
-          run(member.id, orgClient.organization.updateMemberRole({ memberId: member.id, role: event.target.value }), t("roleChanged"))
+          run(
+            member.id,
+            orgClient.organization.updateMemberRole({ memberId: member.id, role: event.target.value }),
+            t("roleChanged"),
+          )
         }
       >
         {ASSIGNABLE.map((value) => (
@@ -234,7 +238,10 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
           <Section title={t("pending", { count: pending.length })} description={t("pendingHint")}>
             <ul className="flex flex-col divide-y rounded-lg border bg-card">
               {pending.map((invitation) => (
-                <li key={invitation.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <li
+                  key={invitation.id}
+                  className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                >
                   <div className="flex min-w-0 flex-col gap-1">
                     <span className="truncate font-medium" dir="ltr">
                       {invitation.email}

@@ -66,7 +66,15 @@ const valuesOf = (hotel: Hotel): Values => ({
   managerTelegram: hotel.managerTelegram ?? "",
 })
 
-export function HotelSettingsForm({ hotel, copies, readOnly }: { hotel: Hotel; copies: PreviewCopies; readOnly: boolean }) {
+export function HotelSettingsForm({
+  hotel,
+  copies,
+  readOnly,
+}: {
+  hotel: Hotel
+  copies: PreviewCopies
+  readOnly: boolean
+}) {
   const t = useTranslations("hotelSettings")
   const router = useRouter()
   const initial = valuesOf(hotel)
@@ -77,7 +85,8 @@ export function HotelSettingsForm({ hotel, copies, readOnly }: { hotel: Hotel; c
     if (v.accentColor && !isHexColor(v.accentColor)) errors.accentColor = t("errors.color")
     if (v.replyToEmail && !EMAIL.test(v.replyToEmail)) errors.replyToEmail = t("errors.email")
     if (v.googleReviewUrl && !/^https:\/\/\S+\.\S+/.test(v.googleReviewUrl)) errors.googleReviewUrl = t("errors.https")
-    if (v.managerWhatsapp && !PHONE.test(v.managerWhatsapp.replace(/[\s-]/g, ""))) errors.managerWhatsapp = t("errors.phone")
+    if (v.managerWhatsapp && !PHONE.test(v.managerWhatsapp.replace(/[\s-]/g, "")))
+      errors.managerWhatsapp = t("errors.phone")
     return errors
   })
   const { values } = form
@@ -136,103 +145,182 @@ export function HotelSettingsForm({ hotel, copies, readOnly }: { hotel: Hotel; c
           </InlineAlert>
         ) : null}
         <fieldset disabled={readOnly} className="contents">
-        <FormSection title={t("sections.identity.title")} description={t("sections.identity.description")}>
-          <FormField id="displayName" label={t("displayName")} hint={t("displayNameHint")} error={form.error("displayName")}>
-            {(aria) => <Input {...aria} {...text("displayName")} maxLength={80} autoComplete="organization" enterKeyHint="next" />}
-          </FormField>
-          <HotelLogo name={values.displayName || hotel.name} logoKey={hotel.logoKey} />
-        </FormSection>
+          <FormSection title={t("sections.identity.title")} description={t("sections.identity.description")}>
+            <FormField
+              id="displayName"
+              label={t("displayName")}
+              hint={t("displayNameHint")}
+              error={form.error("displayName")}
+            >
+              {(aria) => (
+                <Input
+                  {...aria}
+                  {...text("displayName")}
+                  maxLength={80}
+                  autoComplete="organization"
+                  enterKeyHint="next"
+                />
+              )}
+            </FormField>
+            <HotelLogo name={values.displayName || hotel.name} logoKey={hotel.logoKey} />
+          </FormSection>
 
-        <FormSection title={t("sections.brand.title")} description={t("sections.brand.description")}>
-          <ColorField
-            id="primaryColor"
-            label={t("primaryColor")}
-            hint={t("primaryColorHint")}
-            value={values.primaryColor}
-            onChange={(next) => form.set("primaryColor", next)}
-            onBlur={() => form.blur("primaryColor")}
-            error={form.error("primaryColor")}
-            fallback="#0a7c66"
-          />
-          <ColorField
-            id="accentColor"
-            label={t("accentColor")}
-            hint={t("accentColorHint")}
-            value={values.accentColor}
-            onChange={(next) => form.set("accentColor", next)}
-            onBlur={() => form.blur("accentColor")}
-            error={form.error("accentColor")}
-            fallback="#f2b134"
-          />
-          <BrandPreview draft={draft} copies={copies} className="lg:hidden" />
-        </FormSection>
+          <FormSection title={t("sections.brand.title")} description={t("sections.brand.description")}>
+            <ColorField
+              id="primaryColor"
+              label={t("primaryColor")}
+              hint={t("primaryColorHint")}
+              value={values.primaryColor}
+              onChange={(next) => form.set("primaryColor", next)}
+              onBlur={() => form.blur("primaryColor")}
+              error={form.error("primaryColor")}
+              fallback="#0a7c66"
+            />
+            <ColorField
+              id="accentColor"
+              label={t("accentColor")}
+              hint={t("accentColorHint")}
+              value={values.accentColor}
+              onChange={(next) => form.set("accentColor", next)}
+              onBlur={() => form.blur("accentColor")}
+              error={form.error("accentColor")}
+              fallback="#f2b134"
+            />
+            <BrandPreview draft={draft} copies={copies} className="lg:hidden" />
+          </FormSection>
 
-        <FormSection title={t("sections.language.title")} description={t("sections.language.description")}>
-          <FormField id="defaultLanguage" label={t("defaultLanguage")} hint={t("defaultLanguageHint")}>
-            {(aria) => (
-              <NativeSelect
-                {...aria}
-                value={values.defaultLanguage}
-                onChange={(event) => form.set("defaultLanguage", event.target.value as HotelLanguage)}
-              >
-                {HOTEL_LANGUAGES.map((value) => (
-                  <option key={value} value={value}>
-                    {LOCALE_NAMES[value]}
-                  </option>
-                ))}
-              </NativeSelect>
-            )}
-          </FormField>
-          <FormField id="timezone" label={t("timezone")} hint={t("timezoneHint")}>
-            {(aria) => (
-              <NativeSelect {...aria} value={values.timezone} onChange={(event) => form.set("timezone", event.target.value)}>
-                {timezones.map((zone) => (
-                  <option key={zone} value={zone}>
-                    {zone.replace("_", " ")}
-                  </option>
-                ))}
-              </NativeSelect>
-            )}
-          </FormField>
-        </FormSection>
+          <FormSection title={t("sections.language.title")} description={t("sections.language.description")}>
+            <FormField id="defaultLanguage" label={t("defaultLanguage")} hint={t("defaultLanguageHint")}>
+              {(aria) => (
+                <NativeSelect
+                  {...aria}
+                  value={values.defaultLanguage}
+                  onChange={(event) => form.set("defaultLanguage", event.target.value as HotelLanguage)}
+                >
+                  {HOTEL_LANGUAGES.map((value) => (
+                    <option key={value} value={value}>
+                      {LOCALE_NAMES[value]}
+                    </option>
+                  ))}
+                </NativeSelect>
+              )}
+            </FormField>
+            <FormField id="timezone" label={t("timezone")} hint={t("timezoneHint")}>
+              {(aria) => (
+                <NativeSelect
+                  {...aria}
+                  value={values.timezone}
+                  onChange={(event) => form.set("timezone", event.target.value)}
+                >
+                  {timezones.map((zone) => (
+                    <option key={zone} value={zone}>
+                      {zone.replace("_", " ")}
+                    </option>
+                  ))}
+                </NativeSelect>
+              )}
+            </FormField>
+          </FormSection>
 
-        <FormSection title={t("sections.contact.title")} description={t("sections.contact.description")}>
-          <FormField id="replyToEmail" label={t("replyTo")} hint={t("replyToHint")} error={form.error("replyToEmail")}>
-            {(aria) => (
-              <Input {...aria} {...text("replyToEmail")} type="email" dir="ltr" inputMode="email" autoComplete="off" enterKeyHint="next" />
-            )}
-          </FormField>
-          <FormField id="address" label={t("address")} hint={t("addressHint")} error={form.error("address")}>
-            {(aria) => <Input {...aria} {...text("address")} maxLength={200} autoComplete="street-address" enterKeyHint="next" />}
-          </FormField>
-          <FormField id="googleReviewUrl" label={t("reviewUrl")} hint={t("reviewUrlHint")} error={form.error("googleReviewUrl")}>
-            {(aria) => (
-              <Input {...aria} {...text("googleReviewUrl")} type="url" dir="ltr" inputMode="url" placeholder="https://" autoComplete="off" enterKeyHint="next" />
-            )}
-          </FormField>
-        </FormSection>
+          <FormSection title={t("sections.contact.title")} description={t("sections.contact.description")}>
+            <FormField
+              id="replyToEmail"
+              label={t("replyTo")}
+              hint={t("replyToHint")}
+              error={form.error("replyToEmail")}
+            >
+              {(aria) => (
+                <Input
+                  {...aria}
+                  {...text("replyToEmail")}
+                  type="email"
+                  dir="ltr"
+                  inputMode="email"
+                  autoComplete="off"
+                  enterKeyHint="next"
+                />
+              )}
+            </FormField>
+            <FormField id="address" label={t("address")} hint={t("addressHint")} error={form.error("address")}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  {...text("address")}
+                  maxLength={200}
+                  autoComplete="street-address"
+                  enterKeyHint="next"
+                />
+              )}
+            </FormField>
+            <FormField
+              id="googleReviewUrl"
+              label={t("reviewUrl")}
+              hint={t("reviewUrlHint")}
+              error={form.error("googleReviewUrl")}
+            >
+              {(aria) => (
+                <Input
+                  {...aria}
+                  {...text("googleReviewUrl")}
+                  type="url"
+                  dir="ltr"
+                  inputMode="url"
+                  placeholder="https://"
+                  autoComplete="off"
+                  enterKeyHint="next"
+                />
+              )}
+            </FormField>
+          </FormSection>
 
-        <FormSection title={t("sections.alerts.title")} description={t("sections.alerts.description")}>
-          <FormField id="managerWhatsapp" label={t("whatsapp")} hint={t("whatsappHint")} error={form.error("managerWhatsapp")}>
-            {(aria) => (
-              <Input {...aria} {...text("managerWhatsapp")} type="tel" dir="ltr" inputMode="tel" placeholder="+216 20 123 456" autoComplete="off" enterKeyHint="next" />
-            )}
-          </FormField>
-          <FormField id="managerTelegram" label={t("telegram")} hint={t("telegramHint")} optional={t("optional")}>
-            {(aria) => <Input {...aria} {...text("managerTelegram")} dir="ltr" maxLength={80} autoComplete="off" enterKeyHint="done" />}
-          </FormField>
-        </FormSection>
-
+          <FormSection title={t("sections.alerts.title")} description={t("sections.alerts.description")}>
+            <FormField
+              id="managerWhatsapp"
+              label={t("whatsapp")}
+              hint={t("whatsappHint")}
+              error={form.error("managerWhatsapp")}
+            >
+              {(aria) => (
+                <Input
+                  {...aria}
+                  {...text("managerWhatsapp")}
+                  type="tel"
+                  dir="ltr"
+                  inputMode="tel"
+                  placeholder="+216 20 123 456"
+                  autoComplete="off"
+                  enterKeyHint="next"
+                />
+              )}
+            </FormField>
+            <FormField id="managerTelegram" label={t("telegram")} hint={t("telegramHint")} optional={t("optional")}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  {...text("managerTelegram")}
+                  dir="ltr"
+                  maxLength={80}
+                  autoComplete="off"
+                  enterKeyHint="done"
+                />
+              )}
+            </FormField>
+          </FormSection>
         </fieldset>
         {readOnly ? null : (
-        <StickyFormActions>
-          <Button type="button" variant="outline" disabled={!dirty || update.isPending} onClick={() => form.reset(initial)}>
-            {t("discard")}
-          </Button>
-          <Button type="submit" loading={update.isPending} disabled={!dirty}>
-            {t("save")}
-          </Button>
-        </StickyFormActions>
+          <StickyFormActions>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!dirty || update.isPending}
+              onClick={() => form.reset(initial)}
+            >
+              {t("discard")}
+            </Button>
+            <Button type="submit" loading={update.isPending} disabled={!dirty}>
+              {t("save")}
+            </Button>
+          </StickyFormActions>
         )}
       </form>
       <aside className="sticky top-20 max-lg:hidden">

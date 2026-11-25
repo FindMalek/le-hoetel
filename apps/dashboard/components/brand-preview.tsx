@@ -95,7 +95,15 @@ function EmailPreview({ draft, copy }: { draft: BrandDraft; copy: PreviewCopy })
 }
 
 /** What a guest sees of the hotel's branding: the sign-up page behind the QR code and the header and footer of its emails. Updates with every keystroke. */
-export function BrandPreview({ draft, copies, className }: { draft: BrandDraft; copies: PreviewCopies; className?: string }) {
+export function BrandPreview({
+  draft,
+  copies,
+  className,
+}: {
+  draft: BrandDraft
+  copies: PreviewCopies
+  className?: string
+}) {
   const t = useTranslations("hotelSettings.preview")
   const [view, setView] = useState<"capture" | "email">("capture")
   const copy = copies[draft.language]
@@ -122,7 +130,11 @@ export function BrandPreview({ draft, copies, className }: { draft: BrandDraft; 
         data-view={view}
       >
         <div aria-hidden>
-          {view === "capture" ? <CapturePreview draft={draft} copy={copy} /> : <EmailPreview draft={draft} copy={copy} />}
+          {view === "capture" ? (
+            <CapturePreview draft={draft} copy={copy} />
+          ) : (
+            <EmailPreview draft={draft} copy={copy} />
+          )}
         </div>
       </div>
       <p className="text-pretty text-muted-foreground text-sm">{t("hint")}</p>

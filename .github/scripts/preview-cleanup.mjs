@@ -1,5 +1,12 @@
 import { appendFileSync } from "node:fs"
-import { deleteApplication, findStickyComment, github, setDeploymentStatus, upsertComment } from "./preview-api.mjs"
+import {
+  deleteApplication,
+  findStickyComment,
+  github,
+  removePostgres,
+  setDeploymentStatus,
+  upsertComment,
+} from "./preview-api.mjs"
 import { renderComment } from "./preview-lib.mjs"
 
 const env = process.env
@@ -17,10 +24,10 @@ const sticky = await findStickyComment(repo, pr)
 const state = sticky?.state ?? {}
 const rows = []
 
-for (const [app, id] of Object.entries(state)) {
+for (const [app, id] of Object.entries(state).filter(([k]) => !k.startsWith("_"))) {
   let error
   try {
-    await deleteApplication(id)
+    await (app === "postgres" ? removePostgres(id) : deleteApplication(id))
   } catch (e) {
     error = String(e.message ?? e)
     console.error(`could not delete ${app}: ${error}`)

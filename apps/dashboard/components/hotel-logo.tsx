@@ -58,7 +58,11 @@ export function HotelLogo({ name, logoKey }: { name: string; logoKey: string | n
       <div className="flex items-center gap-4">
         {logoKey ? (
           // biome-ignore lint/performance/noImgElement: a private redirecting url, next/image can't optimize it
-          <img src={`/api/files/${logoKey}`} alt={name} className="size-20 shrink-0 rounded-lg border bg-card object-contain p-1" />
+          <img
+            src={`/api/files/${logoKey}`}
+            alt={name}
+            className="size-20 shrink-0 rounded-lg border bg-card object-contain p-1"
+          />
         ) : (
           <span
             aria-hidden

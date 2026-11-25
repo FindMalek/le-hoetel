@@ -111,7 +111,12 @@ export function QrCodesBoard() {
             </TabsList>
           </Tabs>
         </div>
-        <FormField id="spots" label={t("spots")} hint={t("spotsHint")} optional={source === "desk" ? ` (${t("optional")})` : undefined}>
+        <FormField
+          id="spots"
+          label={t("spots")}
+          hint={t("spotsHint")}
+          optional={source === "desk" ? ` (${t("optional")})` : undefined}
+        >
           {(aria) => (
             <Textarea
               {...aria}
@@ -171,10 +176,18 @@ export function QrCodesBoard() {
                       </p>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
-                      <Button variant="outline" size="sm" onClick={() => save(fileName(source, code.location, "svg"), svgUrl(code.svg))}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => save(fileName(source, code.location, "svg"), svgUrl(code.svg))}
+                      >
                         <DownloadIcon data-icon="inline-start" /> SVG
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => savePng(fileName(source, code.location, "png"), code.svg)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => savePng(fileName(source, code.location, "png"), code.svg)}
+                      >
                         <DownloadIcon data-icon="inline-start" /> PNG
                       </Button>
                       <Button variant="outline" size="sm" aria-label={t("copyLink")} onClick={() => copy(code.url)}>

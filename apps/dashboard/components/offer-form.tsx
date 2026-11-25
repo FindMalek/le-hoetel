@@ -1,7 +1,7 @@
 "use client"
 
 import { PROMO_CODE_PATTERN } from "@le-hoetel/common/offers"
-import { OFFER_TEXT_MAX, OFFER_TITLE_MAX, type Hotel, type Offer } from "@le-hoetel/common/schemas"
+import { type Hotel, OFFER_TEXT_MAX, OFFER_TITLE_MAX, type Offer } from "@le-hoetel/common/schemas"
 import { errorMessage } from "@le-hoetel/orpc/errors"
 import { orpc } from "@le-hoetel/orpc/react"
 import { Button } from "@le-hoetel/ui/components/button"
@@ -70,7 +70,14 @@ export function OfferForm({
     if (!PROMO_CODE_PATTERN.test(v.promoCode.trim().toUpperCase())) errors.promoCode = t("errors.code")
     if (!v.validFrom) errors.validFrom = t("errors.from")
     if (v.validUntil && v.validFrom && v.validUntil < v.validFrom) errors.validUntil = t("errors.until")
-    if (v.maxRedemptions && !(Number.isInteger(Number(v.maxRedemptions)) && Number(v.maxRedemptions) >= 1 && Number(v.maxRedemptions) <= 100000)) {
+    if (
+      v.maxRedemptions &&
+      !(
+        Number.isInteger(Number(v.maxRedemptions)) &&
+        Number(v.maxRedemptions) >= 1 &&
+        Number(v.maxRedemptions) <= 100000
+      )
+    ) {
       errors.maxRedemptions = t("errors.max")
     }
     return errors
@@ -136,9 +143,16 @@ export function OfferForm({
       <form onSubmit={submit} noValidate className="flex min-w-0 flex-col">
         <FormSection title={t("sections.offer.title")} description={t("sections.offer.description")}>
           <FormField id="title" label={t("fieldTitle")} error={form.error("title")}>
-            {(aria) => <Input {...aria} {...bind("title")} maxLength={OFFER_TITLE_MAX} autoComplete="off" enterKeyHint="next" />}
+            {(aria) => (
+              <Input {...aria} {...bind("title")} maxLength={OFFER_TITLE_MAX} autoComplete="off" enterKeyHint="next" />
+            )}
           </FormField>
-          <FormField id="text" label={t("fieldText")} hint={t("fieldTextHint", { max: OFFER_TEXT_MAX })} optional={` (${t("optional")})`}>
+          <FormField
+            id="text"
+            label={t("fieldText")}
+            hint={t("fieldTextHint", { max: OFFER_TEXT_MAX })}
+            optional={` (${t("optional")})`}
+          >
             {(aria) => <Textarea {...aria} {...bind("text")} rows={3} maxLength={OFFER_TEXT_MAX} />}
           </FormField>
           <FormField id="promoCode" label={t("fieldCode")} hint={t("fieldCodeHint")} error={form.error("promoCode")}>
@@ -181,12 +195,32 @@ export function OfferForm({
             <FormField id="validFrom" label={t("fieldFrom")} error={form.error("validFrom")}>
               {(aria) => <Input {...aria} {...bind("validFrom")} type="date" />}
             </FormField>
-            <FormField id="validUntil" label={t("fieldUntil")} hint={t("fieldUntilHint")} error={form.error("validUntil")}>
+            <FormField
+              id="validUntil"
+              label={t("fieldUntil")}
+              hint={t("fieldUntilHint")}
+              error={form.error("validUntil")}
+            >
               {(aria) => <Input {...aria} {...bind("validUntil")} type="date" min={values.validFrom} />}
             </FormField>
           </div>
-          <FormField id="maxRedemptions" label={t("fieldMax")} hint={t("fieldMaxHint")} error={form.error("maxRedemptions")}>
-            {(aria) => <Input {...aria} {...bind("maxRedemptions")} type="number" inputMode="numeric" min={1} max={100000} enterKeyHint="done" />}
+          <FormField
+            id="maxRedemptions"
+            label={t("fieldMax")}
+            hint={t("fieldMaxHint")}
+            error={form.error("maxRedemptions")}
+          >
+            {(aria) => (
+              <Input
+                {...aria}
+                {...bind("maxRedemptions")}
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={100000}
+                enterKeyHint="done"
+              />
+            )}
           </FormField>
           <Field orientation="horizontal" className="items-start justify-between rounded-lg border p-4">
             <div className="flex flex-col gap-0.5">

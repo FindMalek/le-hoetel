@@ -54,5 +54,5 @@ test("a key missing from a translation falls back to english", () => {
     a: "Hello",
     nested: { b: "Au revoir", c: "Thanks" },
   })
-  expect(getMessages("ar").hero.getStarted).not.toBe(getMessages("en").hero.getStarted)
+  expect(getMessages("ar").landing.hero.demo).not.toBe(getMessages("en").landing.hero.demo)
 })

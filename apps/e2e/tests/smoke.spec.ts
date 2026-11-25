@@ -8,8 +8,7 @@ test("the landing page renders its hero", async ({ page }) => {
   const response = await page.goto(URLS.web)
   expect(response?.status()).toBe(200)
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
-  await expect(page.getByRole("button", { name: "Get started" })).toBeVisible()
-  await expect(page.getByText(/^ok · \d+ ms$/)).toBeVisible()
+  await expect(page.getByRole("main").getByRole("link", { name: "Request a demo" }).first()).toBeVisible()
 })
 
 test("both apps reach the api through /api/health", async ({ request }) => {

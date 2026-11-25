@@ -1,5 +1,6 @@
 import { createDb } from "@le-hoetel/db"
 import { loadApiEnv } from "@le-hoetel/env/api"
+import { createNotifier } from "@le-hoetel/notification"
 import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 
@@ -7,6 +8,9 @@ import { startLogger } from "./logger"
 const env = loadApiEnv()
 startLogger(env)
 const db = createDb(env.DATABASE_URL)
-const jobs = await startJobs(env, db, { worker: true })
+const jobs = await startJobs(env, db, {
+  worker: true,
+  notification: createNotifier(env, { appUrl: env.DASHBOARD_URL }),
+})
 shutdownOnSignal(jobs)
 console.info(`worker running (${env.DEPLOY_ENV})`)

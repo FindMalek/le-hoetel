@@ -92,9 +92,7 @@ export function RedeemScreen() {
           <p className="text-balance font-heading font-semibold text-3xl leading-tight tracking-tight md:text-4xl">
             {done ? t("justNow") : t(`status.${result.status}`)}
           </p>
-          {result.offer ? (
-            <p className="text-balance text-xl opacity-90">{result.offer.title}</p>
-          ) : null}
+          {result.offer ? <p className="text-balance text-xl opacity-90">{result.offer.title}</p> : null}
         </div>
 
         <dl className="grid gap-4 text-base">
@@ -116,7 +114,11 @@ export function RedeemScreen() {
               <dt className="text-muted-foreground">{t("redeemedAt")}</dt>
               <dd className="text-end">
                 <LocalDate value={result.redeemed.at} time />
-                {result.redeemed.by ? <span className="block text-muted-foreground text-sm">{t("redeemedBy")} {result.redeemed.by}</span> : null}
+                {result.redeemed.by ? (
+                  <span className="block text-muted-foreground text-sm">
+                    {t("redeemedBy")} {result.redeemed.by}
+                  </span>
+                ) : null}
               </dd>
             </div>
           ) : null}
@@ -124,11 +126,21 @@ export function RedeemScreen() {
 
         <StickyFormActions>
           {result.status === "ready" ? (
-            <Button size="lg" className="h-16 text-lg" loading={redeem.isPending} onClick={() => redeem.mutate({ code })}>
+            <Button
+              size="lg"
+              className="h-16 text-lg"
+              loading={redeem.isPending}
+              onClick={() => redeem.mutate({ code })}
+            >
               {t("redeem")}
             </Button>
           ) : null}
-          <Button variant={result.status === "ready" ? "outline" : "default"} size="lg" className="h-14 text-base" onClick={reset}>
+          <Button
+            variant={result.status === "ready" ? "outline" : "default"}
+            size="lg"
+            className="h-14 text-base"
+            onClick={reset}
+          >
             {t("next")}
           </Button>
         </StickyFormActions>
@@ -153,7 +165,9 @@ export function RedeemScreen() {
               <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
                 <div className="size-2/3 max-w-72 rounded-3xl border-4 border-primary-foreground/90 shadow-[0_0_0_9999px_oklch(0_0_0/0.35)]" />
               </div>
-              <p className="absolute inset-x-4 bottom-4 text-center font-medium text-primary-foreground text-sm drop-shadow">{t("scanning")}</p>
+              <p className="absolute inset-x-4 bottom-4 text-center font-medium text-primary-foreground text-sm drop-shadow">
+                {t("scanning")}
+              </p>
             </>
           ) : supported ? (
             <button
@@ -168,7 +182,9 @@ export function RedeemScreen() {
               <span className="max-w-64 text-pretty text-muted-foreground text-sm">{t("scanHint")}</span>
             </button>
           ) : (
-            <p className="absolute inset-0 grid place-items-center p-8 text-center text-muted-foreground">{t("noCamera")}</p>
+            <p className="absolute inset-0 grid place-items-center p-8 text-center text-muted-foreground">
+              {t("noCamera")}
+            </p>
           )}
         </div>
         {scanning ? (
@@ -197,7 +213,13 @@ export function RedeemScreen() {
             onChange={(event) => setTyped(event.target.value)}
             className="h-14 font-mono text-lg tracking-widest md:text-lg"
           />
-          <Button type="submit" size="lg" className="h-14 px-6 text-base" loading={lookup.isPending} disabled={!typed.trim()}>
+          <Button
+            type="submit"
+            size="lg"
+            className="h-14 px-6 text-base"
+            loading={lookup.isPending}
+            disabled={!typed.trim()}
+          >
             {t("check")}
           </Button>
         </div>
@@ -215,7 +237,9 @@ export function RedeemScreen() {
               <li key={row.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                 <span className="flex min-w-0 flex-col">
                   <span className="truncate font-medium">{row.offerTitle}</span>
-                  {row.guestFirstName ? <span className="truncate text-muted-foreground">{row.guestFirstName}</span> : null}
+                  {row.guestFirstName ? (
+                    <span className="truncate text-muted-foreground">{row.guestFirstName}</span>
+                  ) : null}
                 </span>
                 <span className="shrink-0 text-muted-foreground">
                   <LocalDate value={row.redeemedAt} time />

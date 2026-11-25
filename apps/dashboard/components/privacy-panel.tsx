@@ -63,7 +63,12 @@ export function PrivacyPanel({ email: ownEmail }: { email: string }) {
             />
           )}
         </FormField>
-        <Button variant="destructive" className="self-start max-md:w-full" disabled={!matches} onClick={() => setOpen(true)}>
+        <Button
+          variant="destructive"
+          className="self-start max-md:w-full"
+          disabled={!matches}
+          onClick={() => setOpen(true)}
+        >
           {t("delete")}
         </Button>
       </div>

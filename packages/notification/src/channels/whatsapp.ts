@@ -17,7 +17,18 @@ export interface WhatsAppConfig {
   fetch?: typeof fetch
 }
 
+export interface GuestTemplateMessage {
+  to: string
+  name: string
+  language: string
+  params: Record<string, string>
+}
+
 export interface WhatsAppChannel {
+  /** A free-form reply, allowed for 24 hours after the guest wrote to us. */
+  sendText: (to: string, body: string) => Promise<{ id?: string }>
+  /** A named template with named variables, for messages to guests. */
+  sendTemplate: (message: GuestTemplateMessage) => Promise<{ id?: string }>
   send: (text: string, options?: { to?: string }) => Promise<{ id?: string }>
 }
 
@@ -27,6 +38,22 @@ export function createWhatsAppChannel(config: WhatsAppConfig): WhatsAppChannel |
   if (!apiKey || !phoneNumberId) return null
   const client = new WhatsAppClient({ baseUrl: KAPSO_BASE_URL, kapsoApiKey: apiKey, fetch: config.fetch })
   return {
+    async sendText(to, body) {
+      const response = await client.messages.sendText({ phoneNumberId, to, body })
+      return { id: response.messages?.[0]?.id }
+    },
+    async sendTemplate({ to, name, language, params }) {
+      const response = await client.messages.sendTemplate({
+        phoneNumberId,
+        to,
+        template: buildTemplateSendPayload({
+          name,
+          language,
+          body: Object.entries(params).map(([parameterName, text]) => ({ type: "text", text, parameterName })),
+        }),
+      })
+      return { id: response.messages?.[0]?.id }
+    },
     async send(text, options = {}) {
       const to = options.to ?? config.to
       if (!to) throw new Error("Set WHATSAPP_NOTIFY_TO to a number like +15551234567.")

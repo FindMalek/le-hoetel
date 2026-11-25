@@ -11,7 +11,10 @@ export function startOpenObserve(env: ApiEnv) {
     serviceName: "api",
     traceExporter: new OTLPTraceExporter({
       url: `${env.OPENOBSERVE_URL}/api/${env.OPENOBSERVE_ORG}/v1/traces`,
-      headers: { Authorization: `Basic ${token}` },
+      headers: {
+        Authorization: `Basic ${token}`,
+        ...(env.DEPLOY_ENV.startsWith("pr-") ? { "stream-name": env.DEPLOY_ENV } : {}),
+      },
     }),
   }).start()
 }

@@ -65,7 +65,9 @@ export function OffersBoard({ canEdit }: { canEdit: boolean }) {
   const stateOf = (offer: Offer) => offerState(offer, offer.redeemed, now)
   const active = offers.filter((offer) => stateOf(offer) === "ready").length
 
-  const statusBadge = (offer: Offer) => <Badge variant={STATE_VARIANT[stateOf(offer)]}>{t(`state.${stateOf(offer)}`)}</Badge>
+  const statusBadge = (offer: Offer) => (
+    <Badge variant={STATE_VARIANT[stateOf(offer)]}>{t(`state.${stateOf(offer)}`)}</Badge>
+  )
   const validity = (offer: Offer) =>
     offer.validUntil ? (
       <span>

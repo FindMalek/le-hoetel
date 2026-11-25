@@ -90,7 +90,12 @@ export function ProfileForm({ me }: { me: { name: string; email: string; image: 
       <FormField id="email" label={t("email")} hint={t("emailHint")}>
         {(aria) => <Input {...aria} value={me.email} dir="ltr" disabled readOnly />}
       </FormField>
-      <Button type="submit" className="self-start max-md:w-full" loading={save.isPending} disabled={form.values.name.trim() === me.name}>
+      <Button
+        type="submit"
+        className="self-start max-md:w-full"
+        loading={save.isPending}
+        disabled={form.values.name.trim() === me.name}
+      >
         {t("save")}
       </Button>
     </form>

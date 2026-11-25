@@ -107,7 +107,9 @@ export function SessionsList() {
                   size="sm"
                   className="text-destructive"
                   loading={busy === session.token}
-                  onClick={() => revoke(session.token, authClient.revokeSession({ token: session.token }), t("sessionEnded"))}
+                  onClick={() =>
+                    revoke(session.token, authClient.revokeSession({ token: session.token }), t("sessionEnded"))
+                  }
                 >
                   {t("endSession")}
                 </Button>

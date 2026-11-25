@@ -13,8 +13,8 @@ import { siteUrl } from "@/lib/seo"
 import { SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
 
-/** The guest QR page ships none of the site chrome (feedback, consent banner, analytics): it must load fast on a weak connection. */
-const CAPTURE_PATH = "/h/"
+/** Guest pages (QR capture, unsubscribe) ship none of the site chrome (feedback, consent banner, analytics): they must load fast on a weak connection. */
+const GUEST_PATHS = ["/h/", "/u/"]
 
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, pathname] = await Promise.all([getLocale(), headers().then((h) => h.get(PATHNAME_HEADER) ?? "/")])
@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full antialiased", fontVariables, "font-sans")}
     >
       <body className="relative flex min-h-full flex-col bg-background text-foreground">
-        {pathname.startsWith(CAPTURE_PATH) ? (
+        {GUEST_PATHS.some((path) => pathname.startsWith(path)) ? (
           children
         ) : (
           <ThemeProvider>

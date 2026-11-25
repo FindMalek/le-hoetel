@@ -13,7 +13,8 @@
     "./proxy": "./src/proxy.ts",
     "./testing": "./src/testing.ts",
     "./unsubscribe": "./src/lib/unsubscribe.ts",
-    "./messages": "./src/lib/messages.ts"
+    "./messages": "./src/lib/messages.ts",
+    "./jobs": "./src/jobs/index.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
