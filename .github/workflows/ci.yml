@@ -20,6 +20,9 @@ jobs:
     env:
       DATABASE_URL: postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
+      TURBO_API: ${{ vars.TURBO_API }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
     services:
       postgres:
         image: postgres:17-alpine
@@ -44,7 +47,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - uses: oven-sh/setup-bun@v2
-      - uses: actions/cache@v6
+      - name: Turbo cache fallback (no remote cache)
+        if: env.TURBO_TOKEN == ''
+        uses: actions/cache@v6
         with:
           path: |
             .turbo/cache
@@ -67,5 +72,5 @@ jobs:
       - name: Build
         run: |
           cp .env.example .env
-          printf 'BETTER_AUTH_SECRET=%s\nADMIN_PASSWORD=%s\n' "$(openssl rand -base64 32)" "$(openssl rand -hex 12)" >> .env
+          printf 'BETTER_AUTH_SECRET=%s\nADMIN_PASSWORD=%s\n' ci-build-only-secret-not-used-at-runtime-0123456789 ci-build-only >> .env
           pnpm build ${{ github.event_name == 'pull_request' && '--affected' || '' }}

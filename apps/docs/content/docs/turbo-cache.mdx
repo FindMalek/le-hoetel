@@ -1,0 +1,35 @@
+---
+title: Turbo cache
+description: How the Turborepo remote cache works in CI, how to use it locally and what it saved.
+---
+
+The cache server runs on The Keep as the Dokploy application `turbo-cache` ([decision](/docs/decisions/turbo-remote-cache)). It listens on `https://turbo-lehoetel.findmalek.engineer`, artifacts live in the volume `lehoetel-turbo-cache-data`.
+
+## CI
+
+`ci.yml` reads the repo variables `TURBO_API` and `TURBO_TEAM` and the secret `TURBO_TOKEN`. When the token is set turbo uses the server. When it is empty (forks, a missing secret) the job restores `.turbo/cache` and `.next/cache` with the GitHub Actions cache instead.
+
+## Locally
+
+```bash
+export TURBO_API=https://turbo-lehoetel.findmalek.engineer TURBO_TEAM=le-hoetel TURBO_TOKEN=<ask Malek>
+pnpm build
+```
+
+Without the variables nothing changes, turbo only uses its local cache.
+
+## Operate
+
+- Health: `curl -H "Authorization: Bearer $TURBO_TOKEN" $TURBO_API/v8/artifacts/status` returns `{"status":"enabled"}`.
+- Rotate the token: change `TURBO_TOKEN` in the Dokploy application environment, redeploy, update the GitHub secret.
+- Clear the cache: delete the files in the volume, it refills on the next run.
+
+## Measured CI time
+
+Wall time of the `ci` workflow, same PR size (no cache hit on the code that changed).
+
+| Setup | Runs | Wall time |
+|---|---|---|
+| GitHub Actions cache only (main, before) | 8 recent runs | 2m21s to 3m07s, about 2m50s |
+| Remote cache, first run (cold, fills it) | RUN_COLD | COLD_TIME |
+| Remote cache, second run (warm) | RUN_WARM | WARM_TIME |

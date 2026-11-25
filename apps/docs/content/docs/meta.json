@@ -38,6 +38,7 @@
     "deploy-runbook",
     "previews",
     "observability",
+    "turbo-cache",
     "analytics"
   ]
 }
