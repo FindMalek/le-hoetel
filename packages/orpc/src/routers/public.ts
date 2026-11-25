@@ -14,6 +14,7 @@ import { ORPCError } from "@orpc/server"
 import { and, eq, ne, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
+import { enqueueWelcome } from "../jobs"
 import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
 import { offerPage, welcomeOffer } from "../lib/offers"
@@ -189,7 +190,8 @@ export const publicRouter = {
       if (!guest.success) {
         throw new ORPCError("BAD_REQUEST", { message: guest.error.issues[0]?.message ?? "Check your details." })
       }
-      await context.db.transaction((tx) => upsertGuest(tx, hotel.id, guest.data, context.now()))
+      const { id } = await context.db.transaction((tx) => upsertGuest(tx, hotel.id, guest.data, context.now()))
+      await enqueueWelcome(context, hotel.id, id, guest.data.consents)
       return { ok: true as const }
     }),
 }

@@ -1,14 +1,27 @@
 import type { Db } from "@le-hoetel/db"
 import type { ApiEnv } from "@le-hoetel/env/api"
-import { connectBoss, createJobs, type JobsRunner } from "@le-hoetel/jobs"
+import { connectBoss, createJobs, JOBS, type JobsRunner } from "@le-hoetel/jobs"
+import type { Notifier } from "@le-hoetel/notification"
+import { createMessageJobs } from "@le-hoetel/orpc/jobs"
+import { serviceConfig } from "./config"
 
 /** Connects pg-boss to the app database, or trigger.dev when `TRIGGER_SECRET_KEY` is set. With `worker` off this process only enqueues. */
-export async function startJobs(env: ApiEnv, db: Db, options: { worker: boolean }): Promise<JobsRunner> {
+export async function startJobs(
+  env: ApiEnv,
+  db: Db,
+  options: { worker: boolean; notification: Notifier },
+): Promise<JobsRunner> {
   const boss = connectBoss(env.DATABASE_URL, {
     worker: options.worker,
     onError: (error) => console.error("[jobs]", error),
   })
-  const jobs = createJobs({ boss, db, worker: options.worker })
+  const messageJobs = createMessageJobs({
+    db,
+    config: serviceConfig(env),
+    now: () => new Date(),
+    notification: options.notification,
+  })
+  const jobs = createJobs({ boss, db, worker: options.worker, jobs: [...JOBS, ...messageJobs] })
   await jobs.start()
   return jobs
 }

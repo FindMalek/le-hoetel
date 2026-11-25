@@ -52,3 +52,15 @@ The same webhook gets `whatsapp.message.received` (single or batched). `handleIn
 ## Dashboard
 
 `/messages` in the dashboard lists the hotel's latest messages in en, fr and ar. Owners, managers and staff can read it.
+
+## Automatic messages
+
+Automations are pg-boss jobs built by `createMessageJobs` (`packages/orpc/src/jobs`). The api hands the dispatcher's services to them, so they only ever send through `sendToGuest`.
+
+Every automatic send first claims a row in `automation_sends` (unique per guest, `kind`, `period` and channel). A retry, a second enqueue or a second worker finds the row and sends nothing. `kind` is the automation, `period` repeats it (empty for once, the year for yearly).
+
+| Job | When | Who |
+| --- | --- | --- |
+| `welcome-guest` | queued right after a guest is saved from the QR page, staff quick add or csv import | the channels the guest agreed to, once per guest and channel |
+
+The welcome carries the hotel's newest active offer with the `welcome` trigger that can be redeemed right now, with the guest's own code and the page link (`triggerOffer` in `packages/orpc/src/lib/automations.ts`). Without one it goes out without an offer. A failed queue never fails the sign-up.
