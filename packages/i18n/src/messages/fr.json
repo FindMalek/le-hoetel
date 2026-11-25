@@ -680,6 +680,25 @@
       "unsubscribe": "Se désabonner"
     }
   },
+  "managerAlerts": {
+    "title": "Alertes gérant sur Telegram",
+    "description": "Recevez une alerte sur votre téléphone quand quelque chose demande votre attention, comme un client mécontent. Ça prend 30 secondes.",
+    "linked": "Connecté. Les alertes arrivent dans votre discussion Telegram.",
+    "notLinked": "Pas encore connecté.",
+    "notConfigured": "Les alertes Telegram ne sont pas encore activées sur la plateforme. Nous vous envoyons vos alertes par e-mail pour l'instant.",
+    "connect": "Connecter Telegram",
+    "reconnect": "Connecter une autre discussion",
+    "step": "Ouvrez le lien et appuyez sur Démarrer dans Telegram. Le code ne marche qu'une fois, pendant 15 minutes.",
+    "open": "Ouvrir Telegram",
+    "code": "Code : {code}",
+    "testButton": "Envoyer une alerte test",
+    "testTelegram": "Test envoyé sur Telegram.",
+    "testEmail": "Test envoyé par e-mail, Telegram n'est pas connecté.",
+    "testNone": "Aucune discussion Telegram ni e-mail où envoyer.",
+    "disconnect": "Déconnecter",
+    "disconnected": "Telegram déconnecté.",
+    "refresh": "J'ai appuyé sur Démarrer"
+  },
   "qrCodes": {
     "title": "Codes QR",
     "description": "Imprimez un code par chambre, table ou réception et voyez lequel inscrit des clients.",

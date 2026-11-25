@@ -1,5 +1,5 @@
 {
-  "id": "cdf21429-697e-4287-90db-44ddf04e63aa",
+  "id": "5231cfc4-49c0-4632-9b1c-aa2a530382f7",
   "prevId": "05b06def-5716-44b2-a30e-962f7dd0bc52",
   "version": "7",
   "dialect": "postgresql",
@@ -601,153 +601,6 @@
         }
       },
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.balance_ledger": {
-      "name": "balance_ledger",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "kind": {
-          "name": "kind",
-          "type": "balance_entry_kind",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount_millimes": {
-          "name": "amount_millimes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "message_id": {
-          "name": "message_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "note": {
-          "name": "note",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "balance_ledger_hotel_created_idx": {
-          "name": "balance_ledger_hotel_created_idx",
-          "columns": [
-            {
-              "expression": "hotel_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "balance_ledger_hotel_id_hotel_balance_hotel_id_fk": {
-          "name": "balance_ledger_hotel_id_hotel_balance_hotel_id_fk",
-          "tableFrom": "balance_ledger",
-          "tableTo": "hotel_balance",
-          "columnsFrom": [
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "hotel_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.hotel_balance": {
-      "name": "hotel_balance",
-      "schema": "",
-      "columns": {
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "balance_millimes": {
-          "name": "balance_millimes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "hotel_balance_hotel_id_organization_id_fk": {
-          "name": "hotel_balance_hotel_id_organization_id_fk",
-          "tableFrom": "hotel_balance",
-          "tableTo": "organization",
-          "columnsFrom": [
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -1691,6 +1544,24 @@
         "manager_telegram": {
           "name": "manager_telegram",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telegram_chat_id": {
+          "name": "telegram_chat_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telegram_link_code": {
+          "name": "telegram_link_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "telegram_link_expires_at": {
+          "name": "telegram_link_expires_at",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
@@ -2739,15 +2610,6 @@
     }
   },
   "enums": {
-    "public.balance_entry_kind": {
-      "name": "balance_entry_kind",
-      "schema": "public",
-      "values": [
-        "top_up",
-        "usage",
-        "refund"
-      ]
-    },
     "public.campaign_channel": {
       "name": "campaign_channel",
       "schema": "public",
@@ -2854,8 +2716,7 @@
         "sent",
         "delivered",
         "failed",
-        "skipped_no_consent",
-        "skipped_no_balance"
+        "skipped_no_consent"
       ]
     },
     "public.offer_trigger": {

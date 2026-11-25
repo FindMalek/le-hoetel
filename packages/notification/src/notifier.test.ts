@@ -194,3 +194,29 @@ test("a guest template goes to kapso by name and language with named variables",
     },
   })
 })
+
+test("/start with a code hands the chat id to the binder and replies with the outcome", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier(
+    { ...LIVE, TELEGRAM_BOT_TOKEN: "123:abc", TELEGRAM_WEBHOOK_SECRET: "s3cret" },
+    { fetch: doFetch },
+  )
+  const bound: string[] = []
+  const start = (text: string) =>
+    new Request("http://api/telegram/webhook", {
+      method: "POST",
+      headers: { "x-telegram-bot-api-secret-token": "s3cret" },
+      body: JSON.stringify({ update_id: 1, message: { chat: { id: 99 }, text } }),
+    })
+  const binder = async (code: string, chatId: string) => {
+    bound.push(`${code}:${chatId}`)
+    return code === "good"
+  }
+
+  await notifier.handleTelegramWebhook(start("/start good"), binder)
+  await notifier.handleTelegramWebhook(start("/start bad"), binder)
+
+  expect(bound).toEqual(["good:99", "bad:99"])
+  expect(String(calls[0]?.body.text)).toContain("Linked")
+  expect(String(calls[1]?.body.text)).toContain("invalid or expired")
+})

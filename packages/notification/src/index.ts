@@ -1,6 +1,6 @@
 import { type Logger, logger } from "@le-hoetel/logger"
 import { createEmailChannel, type EmailExtras } from "./channels/email"
-import { createTelegramChannel } from "./channels/telegram"
+import { createTelegramChannel, type TelegramStartHandler } from "./channels/telegram"
 import { createWhatsAppChannel } from "./channels/whatsapp"
 import { type RenderedEmail, renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
@@ -88,8 +88,10 @@ export interface Notifier {
   sendWhatsApp: (input: SendWhatsAppInput) => Promise<SendResult>
   /** Plain text to every configured channel (or the ones asked for). One channel failing doesn't stop the rest. */
   notify: (text: string, options?: { channels?: Channel[] }) => Promise<SendResult[]>
-  /** The api route for Telegram's webhook; answers 404 when Telegram isn't configured. */
-  handleTelegramWebhook: (request: Request) => Promise<Response>
+  /** Plain text to one Telegram chat. Log-only outside live messaging; a provider failure throws. */
+  sendTelegram: (chatId: string, text: string) => Promise<SendResult>
+  /** The api route for Telegram's webhook; answers 404 when Telegram isn't configured. `onStart` binds `/start <code>`. */
+  handleTelegramWebhook: (request: Request, onStart?: TelegramStartHandler) => Promise<Response>
 }
 
 export const isMessagingLive = (env: NotificationEnv): boolean =>
@@ -205,8 +207,17 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
         }),
       )
     },
-    handleTelegramWebhook: (request) =>
-      telegram?.handleWebhook(request) ??
+    async sendTelegram(chatId, text) {
+      if (!live) {
+        log.info("message not sent, log-only provider", { channel: "telegram", template: "manager_alert" })
+        return { channel: "telegram", sent: false }
+      }
+      if (!telegram) return { channel: "telegram", sent: false }
+      await telegram.send(text, { to: chatId })
+      return { channel: "telegram", sent: true }
+    },
+    handleTelegramWebhook: (request, onStart) =>
+      telegram?.handleWebhook(request, onStart) ??
       Promise.resolve(Response.json({ message: "Telegram is not configured." }, { status: 404 })),
   }
 }
