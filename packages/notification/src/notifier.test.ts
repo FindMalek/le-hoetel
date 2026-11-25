@@ -164,3 +164,33 @@ test("a rendered hotel email goes out from the hotel's name with reply-to and li
     headers: { "List-Unsubscribe": "<https://api.test/unsubscribe/t>" },
   })
 })
+
+test("a guest template goes to kapso by name and language with named variables", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier({ ...LIVE, KAPSO_API_KEY: "k", WHATSAPP_PHONE_NUMBER_ID: "555" }, { fetch: doFetch })
+
+  const result = await notifier.sendWhatsApp({
+    to: "+21620222222",
+    template: "guest_welcome",
+    language: "ar",
+    params: { guest_name: "Amel", hotel_name: "Dar Amel" },
+  })
+
+  expect(result).toEqual({ channel: "whatsapp", sent: true, id: "wamid_1" })
+  expect(calls[0]?.body).toMatchObject({
+    to: "+21620222222",
+    template: {
+      name: "guest_welcome",
+      language: { code: "ar" },
+      components: [
+        {
+          type: "body",
+          parameters: [
+            { type: "text", text: "Amel", parameter_name: "guest_name" },
+            { type: "text", text: "Dar Amel", parameter_name: "hotel_name" },
+          ],
+        },
+      ],
+    },
+  })
+})

@@ -3,7 +3,13 @@ import type { HotelLanguage } from "@le-hoetel/common/hotel"
 import type { MessageStatus } from "@le-hoetel/common/message"
 import { listUnsubscribeHeaders, signUnsubscribeToken, unsubscribePageUrl } from "@le-hoetel/common/unsubscribe"
 import { guestConsents, guests, hotelSettings, messages, organization } from "@le-hoetel/db"
-import { type EmailProps, type HotelEmailKey, renderEmail } from "@le-hoetel/notification"
+import {
+  type EmailProps,
+  GUEST_WHATSAPP_TEMPLATES,
+  guestTemplateParams,
+  type HotelEmailKey,
+  renderEmail,
+} from "@le-hoetel/notification"
 import { and, eq, inArray } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
@@ -120,7 +126,15 @@ async function deliver<Key extends HotelEmailKey>(
   { hotelId, guestId, channel, template, props }: GuestMessage<Key>,
   { to, guest }: Recipient,
 ): Promise<{ sent: boolean; id?: string }> {
-  if (channel !== "email") return { sent: false }
+  if (channel === "whatsapp") {
+    const { name } = await hotelBranding(context, hotelId)
+    return context.notification.sendWhatsApp({
+      to,
+      template: GUEST_WHATSAPP_TEMPLATES[template].name,
+      language: guest.language,
+      params: guestTemplateParams(template, { guestName: guest.name, hotelName: name, props }),
+    })
+  }
   const token = signUnsubscribeToken(context.config.tokenSecret, { hotelId, guestId, channel })
   const hotel = await hotelBranding(context, hotelId)
   const email = await renderEmail(template, {
@@ -195,4 +209,30 @@ export async function applyResendEvent(db: Context["db"], event: ResendEvent): P
     .where(and(eq(messages.providerId, providerId), eq(messages.channel, "email")))
   if (!message) return false
   return recordConsent(db, { ...message, channel: "email", granted: false, source: "guest_request", at })
+}
+
+export interface KapsoPayload {
+  message?: {
+    id?: string
+    kapso?: { direction?: string; statuses?: Array<{ status?: string; errors?: Array<{ code?: number | string }> }> }
+  }
+}
+
+/**
+ * A Kapso status webhook (`X-Webhook-Event` header plus the json body) for a message we sent. `sent`, `delivered`
+ * and `failed` go through `applyDeliveryUpdate`; a failure keeps Meta's numeric code as `error_code`, never its text.
+ * `read` is a delivery we already have. Returns whether a row changed.
+ */
+export async function applyKapsoEvent(db: Context["db"], event: string, payload: KapsoPayload): Promise<boolean> {
+  const providerId = payload.message?.id
+  if (!providerId || payload.message?.kapso?.direction !== "outbound") return false
+  const status = {
+    "whatsapp.message.sent": "sent",
+    "whatsapp.message.delivered": "delivered",
+    "whatsapp.message.failed": "failed",
+  }[event] as DeliveryUpdate["status"] | undefined
+  if (!status) return false
+  const code = payload.message.kapso.statuses?.filter((entry) => entry.status === "failed").at(-1)?.errors?.[0]?.code
+  const errorCode = status === "failed" ? (code === undefined ? "send_failed" : String(code)) : undefined
+  return (await applyDeliveryUpdate(db, { providerId, status, errorCode, at: new Date() })).length > 0
 }
