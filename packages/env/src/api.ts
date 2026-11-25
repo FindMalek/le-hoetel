@@ -24,6 +24,8 @@ const schema = z.object({
   /** First admin, created (or its password reset) on every start. */
   ADMIN_EMAIL: optional,
   ADMIN_PASSWORD: optional,
+  /** Who hears about a new demo request. Defaults to `ADMIN_EMAIL`. */
+  LEADS_NOTIFY_EMAIL: optional,
 
   /** Public repo shown on the landing page (owner/name). */
   GITHUB_REPO: optional,
