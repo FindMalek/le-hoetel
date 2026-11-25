@@ -33,12 +33,12 @@ async function dokploy(path, body, method = "POST") {
 const prod = target === "production"
 const domain = env.DEPLOY_DOMAIN || "findmalek.engineer"
 const hosts = prod
-  ? { web: "lehoetel", dashboard: "app-lehoetel", api: "api-lehoetel", docs: "docs-lehoetel" }
+  ? { web: "ritorno", dashboard: "app-ritorno", api: "api-ritorno", docs: "docs-ritorno" }
   : {
-      web: "staging-lehoetel",
-      dashboard: "app-staging-lehoetel",
-      api: "api-staging-lehoetel",
-      docs: "docs-staging-lehoetel",
+      web: "staging-ritorno",
+      dashboard: "app-staging-ritorno",
+      api: "api-staging-ritorno",
+      docs: "docs-staging-ritorno",
     }
 const url = (app) => `https://${hosts[app]}.${domain}`
 const computed = {
@@ -53,13 +53,20 @@ const computed = {
   S3_PREFIX: prod ? "" : "staging/",
 }
 
-// Infisical wins over what Dokploy already holds, computed values win over both. Without INFISICAL_* the env is left alone.
+// The staging and production volumes were created before the rename and hold this role and database. Used only when
+// the env sets neither key, until a dump and restore moves them (see the deploy-runbook docs page).
+const legacyDb = { POSTGRES_USER: "le_hoetel", POSTGRES_DB: "le_hoetel" }
+
+// Infisical wins over what Dokploy already holds, computed values win over both. Without INFISICAL_* the env is left
+// alone, apart from the legacy database names.
 const update = { composeId, customGitBranch: ref }
+const current = parseDotenv((await dokploy("compose.one", { composeId }, "GET")).env)
 if (infisicalConfigured(env)) {
-  const current = parseDotenv((await dokploy("compose.one", { composeId }, "GET")).env)
   const secrets = await pullSecrets(prod ? "prod" : "staging", env)
-  update.env = formatDotenv({ ...current, ...secrets, ...computed })
+  update.env = formatDotenv({ ...legacyDb, ...current, ...secrets, ...computed })
   summary(`${target} env from infisical (${Object.keys(secrets).length} keys)`)
+} else if (!current.POSTGRES_USER || !current.POSTGRES_DB) {
+  update.env = formatDotenv({ ...legacyDb, ...current })
 }
 await dokploy("compose.update", update)
 await dokploy("compose.deploy", { composeId, title: `${target} ${ref}` })

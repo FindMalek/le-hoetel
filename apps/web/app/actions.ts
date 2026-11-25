@@ -1,6 +1,6 @@
 "use server"
 
-import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
+import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { type CaptureResult, submitLead } from "@/lib/capture"
 
 const field = (form: FormData, key: string) => {

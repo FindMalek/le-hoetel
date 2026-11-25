@@ -1,5 +1,5 @@
-import type { ApiEnv } from "@le-hoetel/env/api"
-import type { Services } from "@le-hoetel/orpc"
+import type { ApiEnv } from "@ritorno/env/api"
+import type { Services } from "@ritorno/orpc"
 
 export const serviceConfig = (env: ApiEnv): Services["config"] => ({
   deployEnv: env.DEPLOY_ENV,

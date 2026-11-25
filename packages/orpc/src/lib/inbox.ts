@@ -1,4 +1,4 @@
-import { type Db, inboxItem } from "@le-hoetel/db"
+import { type Db, inboxItem } from "@ritorno/db"
 
 export interface InboxMessage {
   title: string

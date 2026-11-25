@@ -1,4 +1,4 @@
-import { nextEnv } from "@le-hoetel/env/next"
+import { nextEnv } from "@ritorno/env/next"
 import * as Sentry from "@sentry/nextjs"
 import type { Instrumentation } from "next"
 
@@ -6,8 +6,8 @@ import type { Instrumentation } from "next"
 const startups: Array<() => void | Promise<void>> = []
 startups.push(async () => {
   if (process.env.NEXT_RUNTIME !== "nodejs") return
-  const { nextEnv: loadEnv } = await import("@le-hoetel/env/next")
-  const { registerLogger } = await import("@le-hoetel/logger/next")
+  const { nextEnv: loadEnv } = await import("@ritorno/env/next")
+  const { registerLogger } = await import("@ritorno/logger/next")
   registerLogger({ level: loadEnv().LOG_LEVEL })
 })
 startups.push(() => {
@@ -17,7 +17,7 @@ startups.push(() => {
 const requestErrorHandlers: Instrumentation.onRequestError[] = []
 requestErrorHandlers.push(Sentry.captureRequestError)
 requestErrorHandlers.push(async (...args) => {
-  if (process.env.NEXT_RUNTIME === "nodejs") (await import("@le-hoetel/logger/next")).logRequestError(...args)
+  if (process.env.NEXT_RUNTIME === "nodejs") (await import("@ritorno/logger/next")).logRequestError(...args)
 })
 
 export async function register() {

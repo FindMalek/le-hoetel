@@ -1,6 +1,6 @@
-import { noteInputSchema, noteSchema, noteStatsSchema, noteUpdateSchema } from "@le-hoetel/common/schemas"
-import { notes } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
+import { noteInputSchema, noteSchema, noteStatsSchema, noteUpdateSchema } from "@ritorno/common/schemas"
+import { notes } from "@ritorno/db"
 import { generateText } from "ai"
 import { and, count, desc, eq, type SQL } from "drizzle-orm"
 import { z } from "zod"

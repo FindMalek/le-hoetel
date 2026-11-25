@@ -7,9 +7,9 @@ import {
   type HotelLanguage,
   type HotelPlan,
   type HotelStatus,
-} from "@le-hoetel/common/hotel"
-import { errorMessage } from "@le-hoetel/orpc/errors"
-import { orpc } from "@le-hoetel/orpc/react"
+} from "@ritorno/common/hotel"
+import { errorMessage } from "@ritorno/orpc/errors"
+import { orpc } from "@ritorno/orpc/react"
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -18,9 +18,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@le-hoetel/ui/components/alert-dialog"
-import { Button } from "@le-hoetel/ui/components/button"
-import { StickyFormActions } from "@le-hoetel/ui/components/sticky-form-actions"
+} from "@ritorno/ui/components/alert-dialog"
+import { Button } from "@ritorno/ui/components/button"
+import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"

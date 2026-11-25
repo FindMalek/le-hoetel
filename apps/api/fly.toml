@@ -1,6 +1,6 @@
 # From the repo root: fly launch --no-deploy --copy-config --config apps/api/fly.toml
 # then: fly deploy --config apps/api/fly.toml --dockerfile apps/api/Dockerfile .
-app = "le-hoetel-api"
+app = "ritorno-api"
 primary_region = "fra"
 
 [env]

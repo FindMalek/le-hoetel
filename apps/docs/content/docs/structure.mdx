@@ -4,7 +4,7 @@ description: Apps, packages and the rules between them.
 ---
 
 ```text
-le-hoetel/
+ritorno/
 ├─ apps/
 │  ├─ web/          landing page, next
 │  ├─ dashboard/    login and app shell, next
@@ -24,8 +24,8 @@ le-hoetel/
 
 ## Rules
 
-- `apps/api` is the only app that touches the database, auth and providers. `web` and `dashboard` call it through `@le-hoetel/orpc`, so secrets and data access live in one place
-- anything used by more than one app or package goes in `@le-hoetel/common`: schemas and their types, constants, small utils. Don't redeclare a type in an app when one exists there
+- `apps/api` is the only app that touches the database, auth and providers. `web` and `dashboard` call it through `@ritorno/orpc`, so secrets and data access live in one place
+- anything used by more than one app or package goes in `@ritorno/common`: schemas and their types, constants, small utils. Don't redeclare a type in an app when one exists there
 - the theme lives in `packages/ui/src/styles/theme.css`, use its tokens instead of raw colors
 - the database schema is in `packages/db/src/schema`, change it and run `pnpm db:generate` to get a migration, never write one by hand
 

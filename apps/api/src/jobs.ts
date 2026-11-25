@@ -1,8 +1,8 @@
-import type { Db } from "@le-hoetel/db"
-import type { ApiEnv } from "@le-hoetel/env/api"
-import { connectBoss, createJobs, JOBS, type JobsRunner } from "@le-hoetel/jobs"
-import type { Notifier } from "@le-hoetel/notification"
-import { createMessageJobs } from "@le-hoetel/orpc/jobs"
+import type { Db } from "@ritorno/db"
+import type { ApiEnv } from "@ritorno/env/api"
+import { connectBoss, createJobs, JOBS, type JobsRunner } from "@ritorno/jobs"
+import type { Notifier } from "@ritorno/notification"
+import { createMessageJobs } from "@ritorno/orpc/jobs"
 import { serviceConfig } from "./config"
 
 /** Connects pg-boss to the app database, or trigger.dev when `TRIGGER_SECRET_KEY` is set. With `worker` off this process only enqueues. */

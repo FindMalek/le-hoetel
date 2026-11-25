@@ -1,5 +1,5 @@
 import "server-only"
-import { createServerClient } from "@le-hoetel/orpc/server"
+import { createServerClient } from "@ritorno/orpc/server"
 
 /** The api does the work; the web app only renders. Calls fail soft so a down api never blanks the page. */
 const api = createServerClient()

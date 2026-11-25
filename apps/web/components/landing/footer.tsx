@@ -1,5 +1,5 @@
-import { localizedPath } from "@le-hoetel/i18n"
-import { LocaleSwitcher } from "@le-hoetel/i18n/switcher"
+import { localizedPath } from "@ritorno/i18n"
+import { LocaleSwitcher } from "@ritorno/i18n/switcher"
 import { getLocale, getTranslations } from "next-intl/server"
 import { SITE } from "@/lib/site"
 import { Mark } from "./header"

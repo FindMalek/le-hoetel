@@ -1,9 +1,9 @@
 "use client"
 
-import { formatTnd } from "@le-hoetel/common/pricing"
-import { errorMessage } from "@le-hoetel/orpc/errors"
-import { orpc } from "@le-hoetel/orpc/react"
-import { Button } from "@le-hoetel/ui/components/button"
+import { formatTnd } from "@ritorno/common/pricing"
+import { errorMessage } from "@ritorno/orpc/errors"
+import { orpc } from "@ritorno/orpc/react"
+import { Button } from "@ritorno/ui/components/button"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"

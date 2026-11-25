@@ -7,12 +7,12 @@ const { DOKPLOY_URL, DOKPLOY_TOKEN, TARGET, ENVIRONMENT_ID, SECRETS_OUT, FORCE_E
 const DOMAIN = process.env.DOMAIN ?? "findmalek.engineer"
 const prod = TARGET === "production"
 const hosts = prod
-  ? { web: "lehoetel", dashboard: "app-lehoetel", api: "api-lehoetel", docs: "docs-lehoetel" }
+  ? { web: "ritorno", dashboard: "app-ritorno", api: "api-ritorno", docs: "docs-ritorno" }
   : {
-      web: "staging-lehoetel",
-      dashboard: "app-staging-lehoetel",
-      api: "api-staging-lehoetel",
-      docs: "docs-staging-lehoetel",
+      web: "staging-ritorno",
+      dashboard: "app-staging-ritorno",
+      api: "api-staging-ritorno",
+      docs: "docs-staging-ritorno",
     }
 for (const k of Object.keys(hosts)) hosts[k] = `${hosts[k]}.${DOMAIN}`
 
@@ -28,7 +28,7 @@ const call = async (method, path, body) => {
   return text ? JSON.parse(text) : {}
 }
 
-const name = `lehoetel-${TARGET}`
+const name = `ritorno-${TARGET}`
 const projects = await call("GET", "project.all", {})
 const existing = projects
   .flatMap((p) => p.environments)
@@ -53,19 +53,21 @@ const env = {
   DOCS_URL: `https://${hosts.docs}`,
   POSTGRES_PASSWORD: secret(),
   BETTER_AUTH_SECRET: secret(32),
-  ADMIN_EMAIL: "admin@le-hoetel.local",
+  ADMIN_EMAIL: "admin@ritorno.local",
   ADMIN_PASSWORD: secret(16),
   SEED: prod ? "none" : "demo",
   DEMO_PASSWORD: secret(16),
   MESSAGING_LIVE: prod ? "true" : "false",
   ALLOW_PREVIEW_ORIGINS: prod ? "false" : "true",
   S3_PREFIX: prod ? "" : "staging/",
+  POSTGRES_USER: "ritorno",
+  POSTGRES_DB: "ritorno",
 }
 if (!existing || FORCE_ENV) {
   await call("POST", "compose.update", {
     composeId,
     sourceType: "git",
-    customGitUrl: "https://github.com/FindMalek/le-hoetel.git",
+    customGitUrl: "https://github.com/FindMalek/ritorno.git",
     customGitBranch: "main",
     composePath: "./docker-compose.deploy.yml",
     env: Object.entries(env)

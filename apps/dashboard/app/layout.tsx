@@ -1,10 +1,10 @@
-import "@le-hoetel/ui/globals.css"
-import { ConsentBanner } from "@le-hoetel/compliance/banner"
-import { DEFAULT_LOCALE, htmlAttributes, isLocale } from "@le-hoetel/i18n"
-import { QueryProvider } from "@le-hoetel/orpc/react"
-import { Toaster } from "@le-hoetel/ui/components/sonner"
-import { TooltipProvider } from "@le-hoetel/ui/components/tooltip"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import "@ritorno/ui/globals.css"
+import { ConsentBanner } from "@ritorno/compliance/banner"
+import { DEFAULT_LOCALE, htmlAttributes, isLocale } from "@ritorno/i18n"
+import { QueryProvider } from "@ritorno/orpc/react"
+import { Toaster } from "@ritorno/ui/components/sonner"
+import { TooltipProvider } from "@ritorno/ui/components/tooltip"
+import { cn } from "@ritorno/ui/lib/utils"
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
 import { getLocale } from "next-intl/server"
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   metadataBase: new URL(dashboardUrl()),
-  title: { default: "Dashboard", template: "%s · le-hoetel" },
+  title: { default: "Dashboard", template: "%s · Ritorno" },
   description: SITE.tagline,
   openGraph: { title: `${SITE.name} dashboard`, description: SITE.tagline, siteName: SITE.name },
   twitter: { card: "summary_large_image" },

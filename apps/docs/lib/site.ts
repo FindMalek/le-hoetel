@@ -1,6 +1,6 @@
 /** What the docs say about the project, in one place. */
 export const SITE = {
-  name: "le-hoetel",
+  name: "Ritorno",
   /** Public origin, no trailing slash. Set DOCS_URL when deployed. */
   url: (process.env.DOCS_URL ?? "http://localhost:3003").replace(/\/$/, ""),
   tagline: "Loyalty and guest relationships for hotels in Tunisia",

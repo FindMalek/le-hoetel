@@ -4,9 +4,9 @@ import {
   CONSENT_WORDING_VERSION,
   type ConsentChannel,
   type ConsentSource,
-} from "@le-hoetel/common/consent"
-import type { Guest, guestCreateSchema } from "@le-hoetel/common/schemas"
-import { consentEvents, type Db, guestConsents, guests, guestVisits, offerRedemptions, offers } from "@le-hoetel/db"
+} from "@ritorno/common/consent"
+import type { Guest, guestCreateSchema } from "@ritorno/common/schemas"
+import { consentEvents, type Db, guestConsents, guests, guestVisits, offerRedemptions, offers } from "@ritorno/db"
 import { and, count, desc, eq, inArray, max, min } from "drizzle-orm"
 import type { z } from "zod"
 

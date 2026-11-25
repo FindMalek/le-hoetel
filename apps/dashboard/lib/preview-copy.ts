@@ -1,4 +1,4 @@
-import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
+import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { getTranslations } from "next-intl/server"
 import type { PreviewCopies } from "@/components/brand-preview"
 import type { OfferPreviewCopies } from "@/components/offer-card-preview"

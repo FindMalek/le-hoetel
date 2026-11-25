@@ -1,5 +1,5 @@
-import { buttonVariants } from "@le-hoetel/ui/components/button"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { buttonVariants } from "@ritorno/ui/components/button"
+import { cn } from "@ritorno/ui/lib/utils"
 import { MessageCircleIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { Zellige } from "../zellige"

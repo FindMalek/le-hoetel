@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { auditLog } from "@le-hoetel/db"
+import { auditLog } from "@ritorno/db"
 import { eq, sql } from "drizzle-orm"
 import { hashGuestId } from "../lib/guests"
 import { createTestApp, type TestApp } from "../testing"
@@ -21,7 +21,7 @@ const guest = (phone: string, name: string) =>
   }) as const
 
 async function hotel(slug: string) {
-  const owner = await app.signUp(`${slug}-${crypto.randomUUID().slice(0, 6)}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}-${crypto.randomUUID().slice(0, 6)}@ritorno.test`)
   const hotelId = await app.createHotel(`${slug}-${crypto.randomUUID().slice(0, 6)}`, owner)
   return { hotelId, ...(await app.joinHotel(owner, hotelId, "owner")) }
 }
@@ -89,12 +89,12 @@ test("only owners and managers can export or delete guests, staff cannot", async
   const a = await hotel("roles")
   const created = await a.client.guests.create(guest("+21620999001", "Rim"))
   const manager = await app.joinHotel(
-    await app.signUp(`mgr-${crypto.randomUUID().slice(0, 6)}@le-hoetel.test`),
+    await app.signUp(`mgr-${crypto.randomUUID().slice(0, 6)}@ritorno.test`),
     a.hotelId,
     "manager",
   )
   const staff = await app.joinHotel(
-    await app.signUp(`stf-${crypto.randomUUID().slice(0, 6)}@le-hoetel.test`),
+    await app.signUp(`stf-${crypto.randomUUID().slice(0, 6)}@ritorno.test`),
     a.hotelId,
     "staff",
   )

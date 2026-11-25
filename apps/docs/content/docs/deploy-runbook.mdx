@@ -5,12 +5,12 @@ description: Staging and production on Dokploy at The Keep, rollback and backups
 
 ## What runs
 
-Each environment is one Dokploy compose service built from `docker-compose.deploy.yml`: its own `postgres` (own volume), `api`, `worker` (pg-boss), `web`, `dashboard` and `docs`. Traefik terminates tls with Let's Encrypt. Dokploy projects: `lehoetel-staging`, `lehoetel-production` and `lehoetel-previews`.
+Each environment is one Dokploy compose service built from `docker-compose.deploy.yml`: its own `postgres` (own volume), `api`, `worker` (pg-boss), `web`, `dashboard` and `docs`. Traefik terminates tls with Let's Encrypt. Dokploy projects: `ritorno-staging`, `ritorno-production` and `ritorno-previews`.
 
 | | staging | production |
 | --- | --- | --- |
 | trigger | every merge to `main` | published release (tag) |
-| hosts | `staging-lehoetel`, `app-staging-lehoetel`, `api-staging-lehoetel`, `docs-staging-lehoetel` | `lehoetel`, `app-lehoetel`, `api-lehoetel`, `docs-lehoetel` |
+| hosts | `staging-ritorno`, `app-staging-ritorno`, `api-staging-ritorno`, `docs-staging-ritorno` | `ritorno`, `app-ritorno`, `api-ritorno`, `docs-ritorno` |
 | `SEED` | `demo` | `none` |
 | `MESSAGING_LIVE` | `false` | `true` (a channel still needs its provider keys) |
 | `ALLOW_PREVIEW_ORIGINS` | `true` | `false` |
@@ -28,7 +28,17 @@ App secrets come from Infisical, see [secrets](/docs/secrets): the deploy job ex
 1. an api key for a Dokploy user (Dokploy UI, profile, api keys) as repo secret `DOKPLOY_TOKEN`, plus repo variables `DOKPLOY_URL`, `PREVIEW_DOMAIN`, `DOKPLOY_ENVIRONMENT_ID` (previews environment), `STAGING_API_URL`, `PRODUCTION_API_URL`
 2. `DOKPLOY_URL=... DOKPLOY_TOKEN=... TARGET=staging ENVIRONMENT_ID=<env id> node .github/scripts/dokploy-bootstrap.mjs`, then again with `TARGET=production`. It creates the compose service, a random env (secrets, admin password) and the domains, and prints the compose id. Set it as variable `DOKPLOY_STAGING_COMPOSE_ID` or `DOKPLOY_PRODUCTION_COMPOSE_ID`. Re-running keeps the env of an existing service
 3. add the provider keys (Resend, Kapso, S3, GlitchTip, OpenObserve) in the compose Environment tab, the keys are listed in `docker-compose.deploy.yml`
-4. DNS: a CNAME per host to the server, plus `*.preview-lehoetel`
+4. DNS: a CNAME per host to the server, plus `*.preview-ritorno`
+
+## Database names after the rename
+
+New stacks use the role and database `ritorno` (`POSTGRES_USER` and `POSTGRES_DB` in `docker-compose.deploy.yml`, default `ritorno`). The staging and production volumes were created before the rename and still hold `le_hoetel`, so both keep `POSTGRES_USER=le_hoetel` and `POSTGRES_DB=le_hoetel` in their env (Infisical or the Dokploy Environment tab). The deploy job writes those two values itself when the env sets neither, so a deploy never points the api at a database that does not exist.
+
+To move an environment to `ritorno`: dump the database with `pg_dump --no-owner`, set both keys to `ritorno` and `docker volume rm` the old volume (or point the service at a new one), deploy so postgres starts empty, restore the dump, then check `/health`.
+
+## Hosts after the rename
+
+The Ritorno hosts are added next to the old ones, nothing is removed. Once DNS for the new hosts points to the server, run the `dokploy-domains` workflow (or `TARGET=staging node .github/scripts/dokploy-domains.mjs` with the Dokploy env) for staging and production. Remove the old domains in Dokploy only after the new ones answer.
 
 ## Rollback
 

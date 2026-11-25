@@ -3,7 +3,7 @@ import {
   CAMPAIGN_STATUSES,
   type CampaignContent,
   type CampaignSegment,
-} from "@le-hoetel/common/campaigns"
+} from "@ritorno/common/campaigns"
 import { foreignKey, index, jsonb, pgEnum, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core"
 import { guests } from "./guests"
 import { messageChannel, messages } from "./messages"

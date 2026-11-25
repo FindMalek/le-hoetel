@@ -1,5 +1,5 @@
 import "./globals.css"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import { RootProvider } from "fumadocs-ui/provider/next"
 import type { Metadata } from "next"
 import { SITE } from "@/lib/site"

@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/db",
+  "name": "@ritorno/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -19,13 +19,13 @@
     "db:studio": "bun --env-file=../../.env x drizzle-kit studio"
   },
   "dependencies": {
-    "@le-hoetel/common": "workspace:*",
+    "@ritorno/common": "workspace:*",
     "drizzle-orm": "catalog:",
     "better-auth": "catalog:",
     "postgres": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "drizzle-kit": "catalog:",
     "typescript": "catalog:"

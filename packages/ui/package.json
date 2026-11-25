@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/ui",
+  "name": "@ritorno/ui",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -21,7 +21,7 @@
     "sonner": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

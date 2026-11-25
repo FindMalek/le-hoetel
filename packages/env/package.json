@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/env",
+  "name": "@ritorno/env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
   }

@@ -1,4 +1,4 @@
-import { isLocale } from "@le-hoetel/i18n/config"
+import { isLocale } from "@ritorno/i18n/config"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { EmailPreview } from "@/components/email-preview"

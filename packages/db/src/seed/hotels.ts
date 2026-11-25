@@ -3,9 +3,9 @@ import {
   type ConsentChannel,
   type ConsentSource,
   type GuestSource,
-} from "@le-hoetel/common/consent"
-import { DEMO_EMAIL_DOMAIN, DEMO_HOTEL_SLUGS, type DemoHotelSlug, demoOwnerEmail } from "@le-hoetel/common/demo"
-import type { HotelLanguage, HotelPlan, HotelStatus } from "@le-hoetel/common/hotel"
+} from "@ritorno/common/consent"
+import { DEMO_EMAIL_DOMAIN, DEMO_HOTEL_SLUGS, type DemoHotelSlug, demoOwnerEmail } from "@ritorno/common/demo"
+import type { HotelLanguage, HotelPlan, HotelStatus } from "@ritorno/common/hotel"
 import type {
   account,
   consentEvents,

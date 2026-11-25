@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server"
 import {
   CAMPAIGN_CHANNELS,
   type CampaignInput,
@@ -5,12 +6,11 @@ import {
   campaignSchema,
   campaignSegmentSchema,
   pickContent,
-} from "@le-hoetel/common/campaigns"
-import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
-import { unsubscribePageUrl } from "@le-hoetel/common/unsubscribe"
-import { campaigns, hotelSettings, offers } from "@le-hoetel/db"
-import { type EmailHotel, renderEmail, sampleGuest } from "@le-hoetel/notification"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/common/campaigns"
+import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
+import { unsubscribePageUrl } from "@ritorno/common/unsubscribe"
+import { campaigns, hotelSettings, offers } from "@ritorno/db"
+import { type EmailHotel, renderEmail, sampleGuest } from "@ritorno/notification"
 import { and, desc, eq } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"

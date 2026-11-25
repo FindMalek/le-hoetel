@@ -20,7 +20,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: root,
-  transpilePackages: ["@le-hoetel/ui"],
+  transpilePackages: ["@ritorno/ui"],
   poweredByHeader: false,
   reactStrictMode: true,
   headers: async () => [{ source: "/:path*", headers: securityHeaders }],

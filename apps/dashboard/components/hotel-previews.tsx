@@ -1,9 +1,9 @@
 "use client"
 
-import { brandStyle } from "@le-hoetel/common/color"
-import type { HotelLanguage } from "@le-hoetel/common/hotel"
-import { ZelligePattern } from "@le-hoetel/ui/components/zellige-pattern"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { brandStyle } from "@ritorno/common/color"
+import type { HotelLanguage } from "@ritorno/common/hotel"
+import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
+import { cn } from "@ritorno/ui/lib/utils"
 import { useTranslations } from "next-intl"
 import { isHex } from "@/components/admin-fields"
 

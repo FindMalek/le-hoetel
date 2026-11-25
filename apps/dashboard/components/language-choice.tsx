@@ -1,5 +1,5 @@
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
-import { LOCALE_NAMES } from "@le-hoetel/i18n"
+import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { LOCALE_NAMES } from "@ritorno/i18n"
 
 /** Three native radios dressed as big chips: one tap, keyboard and screen readers work for free. */
 export function LanguageChoice({

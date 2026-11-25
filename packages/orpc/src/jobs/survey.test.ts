@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { signSurveyToken } from "@le-hoetel/common/survey"
-import { guests, hotelSettings, surveyInvites, surveyResponses } from "@le-hoetel/db"
-import type { SendEmailInput } from "@le-hoetel/notification"
+import { signSurveyToken } from "@ritorno/common/survey"
+import { guests, hotelSettings, surveyInvites, surveyResponses } from "@ritorno/db"
+import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 import { createMessageJobs } from "./index"
@@ -26,7 +26,7 @@ const notification = {
 const CAPTURED = new Date("2026-06-10T09:00:00Z")
 
 async function guestCaptured(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const guest = await client.guests.create({

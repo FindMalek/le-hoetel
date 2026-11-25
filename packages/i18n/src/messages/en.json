@@ -265,7 +265,7 @@
     },
     "noHotel": {
       "title": "No hotel yet",
-      "description": "Ask the Le Hoetel team to add you to your hotel."
+      "description": "Ask the Ritorno team to add you to your hotel."
     },
     "loading": "Loading guests",
     "page": "Page {page} of {pages}",
@@ -457,7 +457,7 @@
     "exportDescription": "A copy of every guest with their consent log. Keep it safe, it holds personal data.",
     "count": "{count, plural, one {# guest} other {# guests}}",
     "dangerTitle": "Delete everything",
-    "dangerDescription": "For when the hotel stops using Le Hoetel or a guest list must be cleared. This cannot be undone.",
+    "dangerDescription": "For when the hotel stops using Ritorno or a guest list must be cleared. This cannot be undone.",
     "deleteAllText": "{count, plural, one {This deletes # guest} other {This deletes # guests}} and their consent history. Export first if you need a copy."
   },
   "unsubscribe": {
@@ -480,7 +480,7 @@
     "consentVersion": "Wording version",
     "privacy": {
       "title": "Privacy policy",
-      "intro": "What a hotel and le-hoetel keep about you, why, and how to take it back.",
+      "intro": "What a hotel and Ritorno keep about you, why, and how to take it back.",
       "sections": {
         "collect": {
           "title": "What is collected",
@@ -500,17 +500,17 @@
         },
         "keep": {
           "title": "Who sees it and for how long",
-          "body": "Only the staff of the hotel you signed up at. Hotels never see each other's guests. Data is kept while the hotel uses le-hoetel and is deleted when you ask or when the hotel leaves."
+          "body": "Only the staff of the hotel you signed up at. Hotels never see each other's guests. Data is kept while the hotel uses Ritorno and is deleted when you ask or when the hotel leaves."
         }
       }
     },
     "terms": {
       "title": "Terms of service",
-      "intro": "The simple rules for hotels using le-hoetel.",
+      "intro": "The simple rules for hotels using Ritorno.",
       "sections": {
         "service": {
           "title": "The service",
-          "body": "le-hoetel helps a hotel collect guests with their consent, send messages they agreed to, and hear from unhappy guests early. It is in pilot: features and prices can change."
+          "body": "Ritorno helps a hotel collect guests with their consent, send messages they agreed to, and hear from unhappy guests early. It is in pilot: features and prices can change."
         },
         "duties": {
           "title": "What a hotel promises",
@@ -980,7 +980,7 @@
   },
   "landing": {
     "meta": {
-      "title": "le-hoetel: hear about unhappy guests first, own your guest list",
+      "title": "Ritorno: hear about unhappy guests first, own your guest list",
       "description": "Guests join by QR code, you keep the contacts, and a low score reaches you the same day. More Google reviews, more guests coming back direct. Free pilot for hotels in Tunisia."
     },
     "nav": {
@@ -1154,7 +1154,7 @@
       "errorTooMany": "Too many tries. Please wait a few minutes.",
       "whatsappLead": "Prefer WhatsApp?",
       "whatsapp": "Chat on WhatsApp",
-      "whatsappText": "Hello, I would like a demo of le-hoetel for my hotel."
+      "whatsappText": "Hello, I would like a demo of Ritorno for my hotel."
     },
     "footer": {
       "tagline": "Guest relationships for hotels in Tunisia.",
@@ -1281,21 +1281,21 @@
     },
     "invite": {
       "en": {
-        "subject": "You are invited to run {hotel} on le-hoetel",
+        "subject": "You are invited to run {hotel} on Ritorno",
         "title": "Welcome to {hotel}",
         "body": "Your hotel is ready. Accept the invitation to set a password and see your guests, offers and QR codes.",
         "button": "Accept the invitation",
         "footer": "If you did not expect this email, you can ignore it."
       },
       "fr": {
-        "subject": "Vous êtes invité à gérer {hotel} sur le-hoetel",
+        "subject": "Vous êtes invité à gérer {hotel} sur Ritorno",
         "title": "Bienvenue à {hotel}",
         "body": "Votre hôtel est prêt. Acceptez l'invitation pour choisir un mot de passe et retrouver vos clients, vos offres et vos QR codes.",
         "button": "Accepter l'invitation",
         "footer": "Si vous n'attendiez pas cet e-mail, vous pouvez l'ignorer."
       },
       "ar": {
-        "subject": "دعوة لإدارة {hotel} على le-hoetel",
+        "subject": "دعوة لإدارة {hotel} على ريتورنو",
         "title": "أهلًا بكم في {hotel}",
         "body": "فندقكم جاهز. اقبلوا الدعوة لاختيار كلمة مرور والاطّلاع على نزلائكم وعروضكم ورموز QR.",
         "button": "قبول الدعوة",

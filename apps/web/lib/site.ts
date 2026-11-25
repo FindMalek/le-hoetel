@@ -1,6 +1,6 @@
 /** Everything the landing page says about the project, in one place. */
 export const SITE = {
-  name: "le-hoetel",
+  name: "Ritorno",
   tagline: "Loyalty and guest relationships for hotels in Tunisia",
   badge: "early access",
   license: "MIT License",

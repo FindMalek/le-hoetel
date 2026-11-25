@@ -26,7 +26,7 @@ export async function createFeedbackIssue(
       authorization: `Bearer ${config.token}`,
       accept: "application/vnd.github+json",
       "content-type": "application/json",
-      "user-agent": "le-hoetel-feedback",
+      "user-agent": "ritorno-feedback",
     },
     body: JSON.stringify({ title: `Feedback: ${title}`, body, labels: ["feedback"] }),
   })

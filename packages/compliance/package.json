@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/compliance",
+  "name": "@ritorno/compliance",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,12 +12,12 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@le-hoetel/ui": "workspace:*",
+    "@ritorno/ui": "workspace:*",
     "next": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"

@@ -1,8 +1,8 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
-import { Kbd } from "@le-hoetel/ui/components/kbd"
-import { SidebarTrigger } from "@le-hoetel/ui/components/sidebar"
+import { Button } from "@ritorno/ui/components/button"
+import { Kbd } from "@ritorno/ui/components/kbd"
+import { SidebarTrigger } from "@ritorno/ui/components/sidebar"
 import { SearchIcon } from "lucide-react"
 import type { Route } from "next"
 import Link from "next/link"

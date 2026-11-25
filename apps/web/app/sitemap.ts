@@ -1,4 +1,4 @@
-import { alternateUrls, LOCALES, localizedPath } from "@le-hoetel/i18n"
+import { alternateUrls, LOCALES, localizedPath } from "@ritorno/i18n"
 import type { MetadataRoute } from "next"
 import { siteUrl } from "@/lib/seo"
 

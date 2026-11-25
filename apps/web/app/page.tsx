@@ -1,5 +1,5 @@
-import { nextEnv } from "@le-hoetel/env/next"
-import { alternateUrls, DEFAULT_LOCALE, isLocale, LOCALE_META, LOCALES, localizedPath } from "@le-hoetel/i18n"
+import { nextEnv } from "@ritorno/env/next"
+import { alternateUrls, DEFAULT_LOCALE, isLocale, LOCALE_META, LOCALES, localizedPath } from "@ritorno/i18n"
 import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getLocale, getTranslations } from "next-intl/server"

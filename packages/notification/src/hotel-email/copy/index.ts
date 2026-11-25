@@ -1,4 +1,4 @@
-import type { Locale } from "@le-hoetel/i18n/config"
+import type { Locale } from "@ritorno/i18n/config"
 import { ar } from "./ar"
 import type { Copy } from "./en"
 import { en } from "./en"

@@ -7,9 +7,9 @@ export const URLS = {
 
 /** The server Postgres runs on (`pnpm db:up`). The test uses its own database on it, recreated every run. */
 export const BASE_DATABASE_URL =
-  process.env.E2E_DATABASE_URL || process.env.DATABASE_URL || "postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel"
+  process.env.E2E_DATABASE_URL || process.env.DATABASE_URL || "postgres://ritorno:ritorno@localhost:5432/ritorno"
 
-export const E2E_DATABASE = "le_hoetel_e2e"
+export const E2E_DATABASE = "ritorno_e2e"
 
 export function e2eDatabaseUrl(): string {
   const url = new URL(BASE_DATABASE_URL)

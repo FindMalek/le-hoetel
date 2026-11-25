@@ -1,6 +1,6 @@
 "use client"
 
-import { orgClient } from "@le-hoetel/auth/orgs"
+import { orgClient } from "@ritorno/auth/orgs"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,8 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@le-hoetel/ui/components/dropdown-menu"
-import { SidebarMenuButton } from "@le-hoetel/ui/components/sidebar"
+} from "@ritorno/ui/components/dropdown-menu"
+import { SidebarMenuButton } from "@ritorno/ui/components/sidebar"
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"

@@ -1,8 +1,8 @@
 "use client"
 
-import { brandContrastIssues, readableForeground } from "@le-hoetel/common/color"
-import { Field, FieldDescription, FieldLabel } from "@le-hoetel/ui/components/field"
-import { Input } from "@le-hoetel/ui/components/input"
+import { brandContrastIssues, readableForeground } from "@ritorno/common/color"
+import { Field, FieldDescription, FieldLabel } from "@ritorno/ui/components/field"
+import { Input } from "@ritorno/ui/components/input"
 import { useState } from "react"
 
 export interface ColorLabels {

@@ -5,7 +5,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@le-hoetel/ui/components/breadcrumb"
+} from "@ritorno/ui/components/breadcrumb"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 

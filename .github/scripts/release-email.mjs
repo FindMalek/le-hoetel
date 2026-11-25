@@ -18,7 +18,7 @@ const html = raw
   )
   .join("\n")
 const body = `${html}\n<p style="color:#888;font-size:12px"><a href="{{{RESEND_UNSUBSCRIBE_URL}}}">Unsubscribe</a></p>`
-const subject = `Le Hoetel ${VERSION}: what is new`
+const subject = `Ritorno ${VERSION}: what is new`
 
 if (DRY_RUN !== "false") {
   console.log(`dry run, nothing sent\nsubject: ${subject}\n\n${body}`)

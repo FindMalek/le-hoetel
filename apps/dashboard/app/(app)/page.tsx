@@ -1,13 +1,13 @@
-import { hotelRoles } from "@le-hoetel/auth/access"
-import { firstName } from "@le-hoetel/common/utils"
-import { nextEnv } from "@le-hoetel/env/next"
-import { isForbidden } from "@le-hoetel/orpc/errors"
-import { Badge } from "@le-hoetel/ui/components/badge"
-import { Button } from "@le-hoetel/ui/components/button"
-import { type DataColumn, DataTable } from "@le-hoetel/ui/components/data-table"
-import { EmptyState } from "@le-hoetel/ui/components/empty-state"
-import { Section } from "@le-hoetel/ui/components/section"
-import { StatCard } from "@le-hoetel/ui/components/stat-card"
+import { hotelRoles } from "@ritorno/auth/access"
+import { firstName } from "@ritorno/common/utils"
+import { nextEnv } from "@ritorno/env/next"
+import { isForbidden } from "@ritorno/orpc/errors"
+import { Badge } from "@ritorno/ui/components/badge"
+import { Button } from "@ritorno/ui/components/button"
+import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
+import { EmptyState } from "@ritorno/ui/components/empty-state"
+import { Section } from "@ritorno/ui/components/section"
+import { StatCard } from "@ritorno/ui/components/stat-card"
 import {
   BuildingIcon,
   ChevronRightIcon,

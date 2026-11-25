@@ -1,5 +1,5 @@
-import { hotelSettings } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
+import { hotelSettings } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"

@@ -1,5 +1,5 @@
-import { DEFAULT_LOCALE, htmlAttributes, type Locale } from "@le-hoetel/i18n/config"
 import { Body, Button, Container, Head, Hr, Html, Link, Preview, Section, Text } from "@react-email/components"
+import { DEFAULT_LOCALE, htmlAttributes, type Locale } from "@ritorno/i18n/config"
 import type { CSSProperties, ReactNode } from "react"
 import { BRAND } from "../brand"
 

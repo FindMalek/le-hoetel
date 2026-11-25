@@ -69,7 +69,7 @@ The welcome carries the hotel's newest active offer with the `welcome` trigger t
 
 ### Birthday
 
-pg-boss cron runs in UTC, hotels do not, so the job runs hourly and each hotel is handled on its first run after 09:00 local time (never in quiet hours, 21:00 to 08:00). A worker that was down at 09:00 still sends the same day. The claim (`kind` `birthday`, `period` the hotel's local year) keeps it to one message a year per guest and channel. Someone born on 29 February is celebrated on 28 February in a year without one. The message carries the hotel's newest redeemable `birthday` offer; a hotel without one sends nothing. Local time helpers: `@le-hoetel/common/hotel-time`.
+pg-boss cron runs in UTC, hotels do not, so the job runs hourly and each hotel is handled on its first run after 09:00 local time (never in quiet hours, 21:00 to 08:00). A worker that was down at 09:00 still sends the same day. The claim (`kind` `birthday`, `period` the hotel's local year) keeps it to one message a year per guest and channel. Someone born on 29 February is celebrated on 28 February in a year without one. The message carries the hotel's newest redeemable `birthday` offer; a hotel without one sends nothing. Local time helpers: `@ritorno/common/hotel-time`.
 
 ### Holidays
 
@@ -81,7 +81,7 @@ A hotel switches each holiday on or off and picks the channel (both, email, What
 
 A hotel manager links a Telegram chat in **Hotel** settings: the dashboard shows a one-time code (valid 15 minutes) and the bot link `https://t.me/<TELEGRAM_BOT_USERNAME>?start=<code>`. When the bot receives `/start <code>` on `/telegram/webhook` (secret header `TELEGRAM_WEBHOOK_SECRET` checked), the chat id is stored in `hotel_settings.telegram_chat_id` and the code is cleared, so it works once and only for the hotel that issued it. Without a code, `/start` still answers with the chat id, for the operator's own `TELEGRAM_CHAT_ID`.
 
-`notifyManager(context, hotelId, text)` (`@le-hoetel/orpc/manager-alerts`) sends to the hotel's linked chat and falls back to email (the hotel reply-to, else the owners) when there is no chat or Telegram fails. Like every provider it only logs outside live messaging. The low-score alert will call it. The **Send a test alert** button calls `hotel.alerts.test`.
+`notifyManager(context, hotelId, text)` (`@ritorno/orpc/manager-alerts`) sends to the hotel's linked chat and falls back to email (the hotel reply-to, else the owners) when there is no chat or Telegram fails. Like every provider it only logs outside live messaging. The low-score alert will call it. The **Send a test alert** button calls `hotel.alerts.test`.
 
 ## Prepaid WhatsApp balance
 

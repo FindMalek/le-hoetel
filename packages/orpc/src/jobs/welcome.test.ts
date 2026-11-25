@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { automationSends, messages } from "@le-hoetel/db"
-import type { SendEmailInput } from "@le-hoetel/notification"
+import { automationSends, messages } from "@ritorno/db"
+import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 import { createMessageJobs } from "./index"
@@ -24,7 +24,7 @@ const notification = {
 }
 
 async function hotel(slug: string, consents: { email: boolean; whatsapp: boolean }) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const guest = await client.guests.create({
@@ -78,7 +78,7 @@ test("adding a guest with consent queues the welcome job, without consent it doe
     },
     list: async () => [],
   }
-  const owner = await app.signUp("welcome-queue@le-hoetel.test")
+  const owner = await app.signUp("welcome-queue@ritorno.test")
   const hotelId = await app.createHotel("welcome-queue", owner)
   const { headers } = await app.joinHotel(owner, hotelId, "owner")
   const { createRouterClient } = await import("@orpc/server")

@@ -1,1 +1,1 @@
-export { default } from "@le-hoetel/ui/postcss.config"
+export { default } from "@ritorno/ui/postcss.config"

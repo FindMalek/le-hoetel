@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 import type { Route } from "next"
 import Link from "next/link"

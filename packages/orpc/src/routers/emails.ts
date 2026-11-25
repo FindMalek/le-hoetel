@@ -1,5 +1,6 @@
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
-import { unsubscribePageUrl } from "@le-hoetel/common/unsubscribe"
+import { ORPCError } from "@orpc/server"
+import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { unsubscribePageUrl } from "@ritorno/common/unsubscribe"
 import {
   type EmailHotel,
   HOTEL_EMAIL_KEYS,
@@ -7,8 +8,7 @@ import {
   renderEmail,
   sampleGuest,
   sampleProps,
-} from "@le-hoetel/notification"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/notification"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"

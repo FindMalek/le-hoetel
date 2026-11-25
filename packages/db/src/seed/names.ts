@@ -1,4 +1,4 @@
-import type { HotelLanguage } from "@le-hoetel/common/hotel"
+import type { HotelLanguage } from "@ritorno/common/hotel"
 
 export type Origin = "tn" | "tn_ar" | "dz" | "fr" | "de" | "gb" | "it"
 

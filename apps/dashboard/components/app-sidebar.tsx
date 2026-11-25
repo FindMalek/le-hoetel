@@ -1,6 +1,6 @@
 "use client"
 
-import { Kbd } from "@le-hoetel/ui/components/kbd"
+import { Kbd } from "@ritorno/ui/components/kbd"
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@le-hoetel/ui/components/sidebar"
+} from "@ritorno/ui/components/sidebar"
 import { SearchIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"

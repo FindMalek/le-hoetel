@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/notification",
+  "name": "@ritorno/notification",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,10 +17,10 @@
     "whatsapp:setup": "bun --env-file=../../.env src/setup/whatsapp.ts"
   },
   "dependencies": {
-    "@le-hoetel/common": "workspace:*",
-    "@le-hoetel/i18n": "workspace:*",
-    "@le-hoetel/logger": "workspace:*",
-    "@le-hoetel/webhooks": "workspace:*",
+    "@ritorno/common": "workspace:*",
+    "@ritorno/i18n": "workspace:*",
+    "@ritorno/logger": "workspace:*",
+    "@ritorno/webhooks": "workspace:*",
     "@kapso/whatsapp-cloud-api": "catalog:",
     "@opencoredev/email-sdk": "catalog:",
     "@react-email/components": "catalog:",
@@ -29,7 +29,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"

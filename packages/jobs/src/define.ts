@@ -1,4 +1,4 @@
-import type { Db } from "@le-hoetel/db"
+import type { Db } from "@ritorno/db"
 import type { z } from "zod"
 
 export interface JobContext {

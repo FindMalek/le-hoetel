@@ -3,7 +3,7 @@ import { addDomain, verifyDomain } from "./resend-domain"
 const [domain, flag] = process.argv.slice(2)
 const apiKey = process.env.RESEND_API_KEY
 if (!domain || !apiKey) {
-  console.error("usage: RESEND_API_KEY=... pnpm --filter @le-hoetel/notification domain <example.com> [--verify]")
+  console.error("usage: RESEND_API_KEY=... pnpm --filter @ritorno/notification domain <example.com> [--verify]")
   process.exit(1)
 }
 

@@ -8,7 +8,7 @@ description: The four guest emails, how a hotel's branding shapes them, and wher
 `welcome` (with an optional offer), `birthday`, `survey` and `reminder`. Each has one call to action, a plain text twin and a footer with the hotel address and an unsubscribe link.
 
 ```ts
-import { renderEmail } from "@le-hoetel/notification"
+import { renderEmail } from "@ritorno/notification"
 
 const { subject, html, text } = await renderEmail("birthday", {
   hotel: { name, logoUrl, primaryColor, accentColor, address },
@@ -36,7 +36,7 @@ Tables only, inline styles, a `prefers-color-scheme` block for dark mode. This h
 
 ## Copy and languages
 
-All strings are in `packages/notification/src/hotel-email/copy`, one file per language (`en.ts`, `fr.ts`, `ar.ts`), so a reviewer reads one file. Arabic renders with `dir="rtl"`, taken from `htmlAttributes` in `@le-hoetel/i18n`, and names are isolated so a Latin name doesn't reorder the sentence.
+All strings are in `packages/notification/src/hotel-email/copy`, one file per language (`en.ts`, `fr.ts`, `ar.ts`), so a reviewer reads one file. Arabic renders with `dir="rtl"`, taken from `htmlAttributes` in `@ritorno/i18n`, and names are isolated so a Latin name doesn't reorder the sentence.
 
 ## Tests
 

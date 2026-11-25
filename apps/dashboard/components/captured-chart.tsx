@@ -1,4 +1,4 @@
-import { GUEST_SOURCES } from "@le-hoetel/common/consent"
+import { GUEST_SOURCES } from "@ritorno/common/consent"
 import { getLocale, getTranslations } from "next-intl/server"
 import type { CSSProperties } from "react"
 

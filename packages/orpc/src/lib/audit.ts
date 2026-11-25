@@ -1,4 +1,4 @@
-import { auditLog } from "@le-hoetel/db"
+import { auditLog } from "@ritorno/db"
 import type { Context } from "../context"
 import type { ActiveHotel } from "./hotel"
 

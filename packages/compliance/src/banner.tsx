@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { CONSENT_COOKIE, type Consent, consentCookie } from "./consent"

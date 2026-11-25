@@ -3,7 +3,7 @@
   "cliVersion": "0.1.0",
   "templateVersion": "0.1.0",
   "answers": {
-    "name": "le-hoetel",
+    "name": "ritorno",
     "pitch": "Loyalty and guest relationships for hotels in Tunisia",
     "preset": "monochrome",
     "profile": "custom",
@@ -29,7 +29,7 @@
       "status"
     ],
     "postgresPort": 5432,
-    "adminEmail": "admin@le-hoetel.local"
+    "adminEmail": "admin@ritorno.local"
   },
   "done": [
     "generate",

@@ -1,4 +1,4 @@
-import type { Locale } from "@le-hoetel/i18n/config"
+import type { Locale } from "@ritorno/i18n/config"
 
 export const HOTEL_EMAIL_KEYS = ["welcome", "birthday", "survey", "reminder", "message"] as const
 export type HotelEmailKey = (typeof HOTEL_EMAIL_KEYS)[number]

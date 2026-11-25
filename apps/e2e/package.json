@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "@axe-core/playwright": "catalog:",
-    "@le-hoetel/common": "workspace:*",
+    "@ritorno/common": "workspace:*",
     "postgres": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@playwright/test": "catalog:",
     "@types/bun": "catalog:",
     "typescript": "catalog:"

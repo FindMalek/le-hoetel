@@ -1,12 +1,12 @@
 "use client"
 
 // i18n-used: campaigns
-import type { Campaign } from "@le-hoetel/common/campaigns"
-import { orpc } from "@le-hoetel/orpc/react"
-import { Badge } from "@le-hoetel/ui/components/badge"
-import { Button } from "@le-hoetel/ui/components/button"
-import { DataTable } from "@le-hoetel/ui/components/data-table"
-import { EmptyState } from "@le-hoetel/ui/components/empty-state"
+import type { Campaign } from "@ritorno/common/campaigns"
+import { orpc } from "@ritorno/orpc/react"
+import { Badge } from "@ritorno/ui/components/badge"
+import { Button } from "@ritorno/ui/components/button"
+import { DataTable } from "@ritorno/ui/components/data-table"
+import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { MegaphoneIcon, PlusIcon } from "lucide-react"
 import Link from "next/link"

@@ -1,8 +1,8 @@
-import type { Auth, Session } from "@le-hoetel/auth"
-import type { Db } from "@le-hoetel/db"
-import type { Jobs } from "@le-hoetel/jobs"
-import type { Notifier } from "@le-hoetel/notification"
-import type { Storage } from "@le-hoetel/storage"
+import type { Auth, Session } from "@ritorno/auth"
+import type { Db } from "@ritorno/db"
+import type { Jobs } from "@ritorno/jobs"
+import type { Notifier } from "@ritorno/notification"
+import type { Storage } from "@ritorno/storage"
 import type { LanguageModel } from "ai"
 import type { RateLimiter } from "./lib/rate-limit"
 

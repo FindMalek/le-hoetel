@@ -1,4 +1,4 @@
-import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "@le-hoetel/common/hotel"
+import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "@ritorno/common/hotel"
 import { pgEnum, pgTable, smallint, text, timestamp } from "drizzle-orm/pg-core"
 import { organization } from "./orgs"
 

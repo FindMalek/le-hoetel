@@ -11,13 +11,13 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@le-hoetel/common": "workspace:*",
-    "@le-hoetel/compliance": "workspace:*",
-    "@le-hoetel/env": "workspace:*",
-    "@le-hoetel/logger": "workspace:*",
-    "@le-hoetel/i18n": "workspace:*",
-    "@le-hoetel/orpc": "workspace:*",
-    "@le-hoetel/ui": "workspace:*",
+    "@ritorno/common": "workspace:*",
+    "@ritorno/compliance": "workspace:*",
+    "@ritorno/env": "workspace:*",
+    "@ritorno/logger": "workspace:*",
+    "@ritorno/i18n": "workspace:*",
+    "@ritorno/orpc": "workspace:*",
+    "@ritorno/ui": "workspace:*",
     "@next/env": "catalog:",
     "@sentry/nextjs": "catalog:",
     "@tanstack/react-query": "catalog:",
@@ -30,7 +30,7 @@
     "server-only": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@types/bun": "catalog:",
     "@types/mdx": "catalog:",

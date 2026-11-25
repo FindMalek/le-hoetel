@@ -1,4 +1,4 @@
-import type { Messages } from "@le-hoetel/i18n"
+import type { Messages } from "@ritorno/i18n"
 import {
   BuildingIcon,
   CalendarHeartIcon,

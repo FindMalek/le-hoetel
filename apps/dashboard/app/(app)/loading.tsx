@@ -1,4 +1,4 @@
-import { Skeleton } from "@le-hoetel/ui/components/skeleton"
+import { Skeleton } from "@ritorno/ui/components/skeleton"
 import { getTranslations } from "next-intl/server"
 
 export default async function Loading() {

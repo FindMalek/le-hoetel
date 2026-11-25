@@ -14,8 +14,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@le-hoetel/ui/lib/utils",
-    "ui": "@le-hoetel/ui/components"
+    "utils": "@ritorno/ui/lib/utils",
+    "ui": "@ritorno/ui/components"
   },
   "rtl": false,
   "menuColor": "default",

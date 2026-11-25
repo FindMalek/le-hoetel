@@ -1,6 +1,6 @@
-import { LOW_BALANCE_MILLIMES } from "@le-hoetel/common/pricing"
-import { organization } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
+import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
+import { organization } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"

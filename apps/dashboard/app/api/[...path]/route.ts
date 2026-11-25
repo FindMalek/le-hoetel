@@ -1,4 +1,4 @@
-import { forwardToApi } from "@le-hoetel/orpc/proxy"
+import { forwardToApi } from "@ritorno/orpc/proxy"
 import { viewedHotelId } from "@/lib/view-hotel"
 
 const forward = async (request: Request) => {

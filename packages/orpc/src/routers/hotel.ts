@@ -1,5 +1,6 @@
-import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
-import { captureUrl } from "@le-hoetel/common/qr"
+import { ORPCError } from "@orpc/server"
+import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
+import { captureUrl } from "@ritorno/common/qr"
 import {
   adminHotelDetailSchema,
   adminHotelSchema,
@@ -14,10 +15,9 @@ import {
   logoUploadSchema,
   qrCodeSchema,
   qrCodesInputSchema,
-} from "@le-hoetel/common/schemas"
-import { guestConsents, guests, hotelSettings, invitation, member, messages, organization, user } from "@le-hoetel/db"
-import { hotelPublicPrefix } from "@le-hoetel/storage"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/common/schemas"
+import { guestConsents, guests, hotelSettings, invitation, member, messages, organization, user } from "@ritorno/db"
+import { hotelPublicPrefix } from "@ritorno/storage"
 import { and, asc, count, countDistinct, eq, gte, inArray, like, max, sql } from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"

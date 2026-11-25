@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { createRateLimiter } from "@le-hoetel/orpc"
+import { createRateLimiter } from "@ritorno/orpc"
 import { limitAuth } from "./rate-limit"
 
 test("the 11th sign-in post from one ip in a minute is a 429, other ips are untouched", async () => {

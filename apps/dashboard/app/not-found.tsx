@@ -1,4 +1,4 @@
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { ErrorScreen } from "@/components/error-screen"

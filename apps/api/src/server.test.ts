@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { createTestApp, type TestApp } from "@le-hoetel/orpc/testing"
-import { hmacSha256 } from "@le-hoetel/webhooks"
+import { createTestApp, type TestApp } from "@ritorno/orpc/testing"
+import { hmacSha256 } from "@ritorno/webhooks"
 import { createServer } from "./server"
 
 const ORIGIN = "http://localhost:3002"
@@ -26,7 +26,7 @@ test("sign up over http, then use the session cookie on the REST api", async () 
   const signUp = await call("/auth/sign-up/email", {
     method: "POST",
     headers: { "content-type": "application/json", origin: ORIGIN },
-    body: JSON.stringify({ email: "web@le-hoetel.test", password: PASSWORD, name: "Web" }),
+    body: JSON.stringify({ email: "web@ritorno.test", password: PASSWORD, name: "Web" }),
   })
   expect(signUp.status).toBe(200)
   const cookie = signUp.headers
@@ -36,7 +36,7 @@ test("sign up over http, then use the session cookie on the REST api", async () 
 
   const me = await call("/v1/me", { headers: { cookie, "x-csrf-token": "orpc" } })
   expect(me.status).toBe(200)
-  expect(await me.json()).toMatchObject({ email: "web@le-hoetel.test" })
+  expect(await me.json()).toMatchObject({ email: "web@ritorno.test" })
 
   expect((await call("/v1/me", { headers: { "x-csrf-token": "orpc" } })).status).toBe(401)
 })

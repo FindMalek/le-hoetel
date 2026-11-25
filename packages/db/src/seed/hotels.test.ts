@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { parsePhone } from "@le-hoetel/common/phone"
+import { parsePhone } from "@ritorno/common/phone"
 import { buildHotelScenario } from "./hotels"
 
 const now = new Date("2026-11-24T10:00:00Z")
@@ -18,7 +18,7 @@ test("four hotels, hundreds of guests, every phone valid and unique per hotel", 
 
 test("covers fr, ar and en guests and accounts on the demo domain", () => {
   expect(new Set(s.guests.map((g) => g.language))).toEqual(new Set(["fr", "ar", "en"]))
-  expect(s.users.every((u) => u.email.endsWith("@demo.le-hoetel.test"))).toBe(true)
+  expect(s.users.every((u) => u.email.endsWith("@demo.ritorno.test"))).toBe(true)
   expect(s.users.find((u) => u.role === "admin")).toBeDefined()
 })
 

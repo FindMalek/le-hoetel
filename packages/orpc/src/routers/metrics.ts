@@ -1,4 +1,4 @@
-import { GUEST_SOURCES } from "@le-hoetel/common/consent"
+import { GUEST_SOURCES } from "@ritorno/common/consent"
 import {
   guestConsents,
   guests,
@@ -7,7 +7,7 @@ import {
   offerCodes,
   offerRedemptions,
   surveyResponses,
-} from "@le-hoetel/db"
+} from "@ritorno/db"
 import { and, avg, count, eq, gte, sql } from "drizzle-orm"
 import { z } from "zod"
 import { can, hotelProcedure } from "../procedures"

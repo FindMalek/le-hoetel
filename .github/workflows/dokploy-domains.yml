@@ -1,0 +1,35 @@
+name: dokploy-domains
+
+# Attaches the Ritorno hosts to the staging or production compose service on Dokploy. The old hosts stay attached.
+# Run it once DNS for the new hosts points to the server. Same variables and secret as the staging and release deploys.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: environment to update
+        type: choice
+        options: [staging, production]
+        default: staging
+
+permissions:
+  contents: read
+
+jobs:
+  domains:
+    name: dokploy domains ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node .github/scripts/dokploy-domains.mjs
+        env:
+          TARGET: ${{ inputs.target }}
+          DEPLOY_DOMAIN: ${{ vars.DEPLOY_DOMAIN }}
+          DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+          DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
+          DOKPLOY_STAGING_COMPOSE_ID: ${{ vars.DOKPLOY_STAGING_COMPOSE_ID }}
+          DOKPLOY_PRODUCTION_COMPOSE_ID: ${{ vars.DOKPLOY_PRODUCTION_COMPOSE_ID }}

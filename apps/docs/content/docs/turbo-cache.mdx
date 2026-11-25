@@ -3,7 +3,7 @@ title: Turbo cache
 description: How the Turborepo remote cache works in CI, how to use it locally and what it saved.
 ---
 
-The cache server runs on The Keep as the Dokploy application `turbo-cache` ([decision](/docs/decisions/turbo-remote-cache)). It listens on `https://turbo-lehoetel.findmalek.engineer`, artifacts live in the volume `lehoetel-turbo-cache-data`.
+The cache server runs on The Keep as the Dokploy application `turbo-cache` ([decision](/docs/decisions/turbo-remote-cache)). It listens on `https://turbo-ritorno.findmalek.engineer`, artifacts live in the volume `ritorno-turbo-cache-data`.
 
 ## CI
 
@@ -12,7 +12,7 @@ The cache server runs on The Keep as the Dokploy application `turbo-cache` ([dec
 ## Locally
 
 ```bash
-export TURBO_API=https://turbo-lehoetel.findmalek.engineer TURBO_TEAM=le-hoetel TURBO_TOKEN=<ask Malek>
+export TURBO_API=https://turbo-ritorno.findmalek.engineer TURBO_TEAM=ritorno TURBO_TOKEN=<ask Malek>
 pnpm build
 ```
 

@@ -17,7 +17,7 @@ const guest = (phone: string, name: string) =>
   }) as const
 
 async function hotelAs(slug: string) {
-  const owner = await app.signUp(`${slug}-owner@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}-owner@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   return app.joinHotel(owner, hotelId, "owner")
 }

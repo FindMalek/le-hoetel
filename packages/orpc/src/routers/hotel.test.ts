@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { hotelSettings, invitation } from "@le-hoetel/db"
+import { hotelSettings, invitation } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 
@@ -10,12 +10,12 @@ beforeAll(async () => {
 afterAll(() => app.close())
 
 test("the app admin creates a hotel with branding and invites the owner, who joins on accepting", async () => {
-  const admin = await app.signUp("hotel-admin@le-hoetel.test", { role: "admin" })
-  const owner = await app.signUp("hotel-owner@le-hoetel.test")
+  const admin = await app.signUp("hotel-admin@ritorno.test", { role: "admin" })
+  const owner = await app.signUp("hotel-owner@ritorno.test")
   const input = {
     name: "Hotel Medina",
     slug: "hotel-medina",
-    ownerEmail: "Hotel-Owner@le-hoetel.test",
+    ownerEmail: "Hotel-Owner@ritorno.test",
     primaryColor: "#0a7c66",
     defaultLanguage: "ar",
   } as const
@@ -39,7 +39,7 @@ test("the app admin creates a hotel with branding and invites the owner, who joi
   expect(await listed()).toMatchObject({ guestCount: 0, ownerCount: 0, health: "no-owner" })
 
   const [invite] = await app.services.db.select().from(invitation).where(eq(invitation.organizationId, hotel.id))
-  expect(invite).toMatchObject({ email: "hotel-owner@le-hoetel.test", role: "owner" })
+  expect(invite).toMatchObject({ email: "hotel-owner@ritorno.test", role: "owner" })
   await app.services.auth.api.acceptInvitation({ body: { invitationId: invite!.id }, headers: owner.headers })
 
   expect(await listed()).toMatchObject({ ownerCount: 1, health: "no-guests" })
@@ -56,10 +56,10 @@ test("the app admin creates a hotel with branding and invites the owner, who joi
 })
 
 test("branding: owner and manager edit it, staff only read it, plan and status stay with the admin", async () => {
-  const admin = await app.signUp("brand-admin@le-hoetel.test", { role: "admin" })
-  const owner = await app.signUp("brand-owner@le-hoetel.test")
-  const manager = await app.signUp("brand-manager@le-hoetel.test")
-  const staff = await app.signUp("brand-staff@le-hoetel.test")
+  const admin = await app.signUp("brand-admin@ritorno.test", { role: "admin" })
+  const owner = await app.signUp("brand-owner@ritorno.test")
+  const manager = await app.signUp("brand-manager@ritorno.test")
+  const staff = await app.signUp("brand-staff@ritorno.test")
   const hotelId = await app.createHotel("brand-hotel", owner)
   const asManager = await app.joinHotel(manager, hotelId, "manager")
   const asStaff = await app.joinHotel(staff, hotelId, "staff")
@@ -92,9 +92,9 @@ test("branding: owner and manager edit it, staff only read it, plan and status s
 })
 
 test("a hotel user lands in their hotel at sign in and lists only their hotels", async () => {
-  const owner = await app.signUp("lands-owner@le-hoetel.test")
+  const owner = await app.signUp("lands-owner@ritorno.test")
   const hotelId = await app.createHotel("lands-hotel", owner)
-  await app.createHotel("lands-other", await app.signUp("lands-other@le-hoetel.test"))
+  await app.createHotel("lands-other", await app.signUp("lands-other@ritorno.test"))
   expect(await owner.client.hotel.mine()).toEqual({
     activeId: null,
     role: null,
@@ -102,7 +102,7 @@ test("a hotel user lands in their hotel at sign in and lists only their hotels",
   })
 
   const login = await app.services.auth.api.signInEmail({
-    body: { email: "lands-owner@le-hoetel.test", password: app.password },
+    body: { email: "lands-owner@ritorno.test", password: app.password },
     returnHeaders: true,
   })
   const cookie = login.headers
@@ -114,18 +114,18 @@ test("a hotel user lands in their hotel at sign in and lists only their hotels",
 })
 
 test("admin hotel detail has the numbers and people, the slug check and the funnel follow, delete needs the slug", async () => {
-  const admin = await app.signUp("detail-admin@le-hoetel.test", { role: "admin" })
-  const owner = await app.signUp("detail-owner@le-hoetel.test")
+  const admin = await app.signUp("detail-admin@ritorno.test", { role: "admin" })
+  const owner = await app.signUp("detail-owner@ritorno.test")
   const hotel = await admin.client.admin.hotels.create({
     name: "Dar Detail",
     slug: "dar-detail",
-    ownerEmail: "detail-owner@le-hoetel.test",
+    ownerEmail: "detail-owner@ritorno.test",
   })
   expect(await admin.client.admin.hotels.slugAvailable({ slug: "dar-detail" })).toEqual({ available: false })
   expect(await admin.client.admin.hotels.slugAvailable({ slug: "dar-free" })).toEqual({ available: true })
 
   const pending = await admin.client.admin.hotels.get({ id: hotel.id })
-  expect(pending.invitations).toMatchObject([{ email: "detail-owner@le-hoetel.test", role: "owner" }])
+  expect(pending.invitations).toMatchObject([{ email: "detail-owner@ritorno.test", role: "owner" }])
   expect(pending.members).toEqual([])
   expect(pending.capturePageUrl).toContain("/h/dar-detail")
 
@@ -143,7 +143,7 @@ test("admin hotel detail has the numbers and people, the slug check and the funn
 
   const detail = await admin.client.admin.hotels.get({ id: hotel.id })
   expect(detail).toMatchObject({ guestCount: 1, consentedCount: 1, invitations: [] })
-  expect(detail.members.map((m) => m.email)).toContain("detail-owner@le-hoetel.test")
+  expect(detail.members.map((m) => m.email)).toContain("detail-owner@ritorno.test")
   expect((await admin.client.admin.hotels.overview()).guests.total).toBeGreaterThanOrEqual(1)
   await expect(owner.client.admin.hotels.overview()).rejects.toMatchObject({ code: "FORBIDDEN" })
 
@@ -155,18 +155,18 @@ test("admin hotel detail has the numbers and people, the slug check and the funn
 })
 
 test("the audit log filters by hotel, actor and dates, and pages", async () => {
-  const admin = await app.signUp("audit-admin@le-hoetel.test", { role: "admin" })
+  const admin = await app.signUp("audit-admin@ritorno.test", { role: "admin" })
   const hotel = await admin.client.admin.hotels.create({
     name: "Dar Audit",
     slug: "dar-audit",
-    ownerEmail: "audit-owner@le-hoetel.test",
+    ownerEmail: "audit-owner@ritorno.test",
   })
   await admin.client.admin.hotels.update({ id: hotel.id, plan: "growth" })
   const me = await admin.client.me.get()
 
   const forHotel = await admin.client.admin.audit.list({ hotelId: hotel.id })
   expect(forHotel.entries.map((e) => e.action).sort()).toEqual(["hotel.admin-update", "hotel.create"])
-  expect(forHotel.entries[0]).toMatchObject({ hotelName: "Dar Audit", actorEmail: "audit-admin@le-hoetel.test" })
+  expect(forHotel.entries[0]).toMatchObject({ hotelName: "Dar Audit", actorEmail: "audit-admin@ritorno.test" })
 
   const byActor = await admin.client.admin.audit.list({ actorId: me.id, action: "hotel.create" })
   expect(byActor.entries.every((e) => e.action === "hotel.create")).toBe(true)

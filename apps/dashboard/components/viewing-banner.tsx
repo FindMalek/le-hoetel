@@ -1,4 +1,4 @@
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import { EyeIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { leaveHotel } from "@/app/(app)/admin/hotels/actions"

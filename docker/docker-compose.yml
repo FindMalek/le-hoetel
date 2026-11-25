@@ -3,13 +3,13 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: le_hoetel
-      POSTGRES_PASSWORD: le_hoetel
-      POSTGRES_DB: le_hoetel
+      POSTGRES_USER: ${POSTGRES_USER:-ritorno}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ritorno}
+      POSTGRES_DB: ${POSTGRES_DB:-ritorno}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - le_hoetel-pg:/var/lib/postgresql/data
+      - ritorno-pg:/var/lib/postgresql/data
 
 volumes:
-  le_hoetel-pg:
+  ritorno-pg:

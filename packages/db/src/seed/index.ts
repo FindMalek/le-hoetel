@@ -1,4 +1,4 @@
-import { DEFAULT_DEMO_PASSWORD } from "@le-hoetel/common/demo"
+import { DEFAULT_DEMO_PASSWORD } from "@ritorno/common/demo"
 import { count } from "drizzle-orm"
 import type { Db } from "../index"
 import {

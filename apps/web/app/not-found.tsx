@@ -1,4 +1,4 @@
-import { localizedPath } from "@le-hoetel/i18n"
+import { localizedPath } from "@ritorno/i18n"
 import { getLocale, getTranslations } from "next-intl/server"
 import { Zellige } from "@/components/zellige"
 

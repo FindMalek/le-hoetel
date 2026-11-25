@@ -1,4 +1,4 @@
-import { ZelligePattern } from "@le-hoetel/ui/components/zellige-pattern"
+import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
 import { BrandMark } from "@/components/brand-mark"
 
 export function ErrorScreen({

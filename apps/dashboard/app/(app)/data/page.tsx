@@ -1,5 +1,5 @@
-import { hotelRoles } from "@le-hoetel/auth/access"
-import { EmptyState } from "@le-hoetel/ui/components/empty-state"
+import { hotelRoles } from "@ritorno/auth/access"
+import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { LockIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { connection } from "next/server"

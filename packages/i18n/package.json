@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/i18n",
+  "name": "@ritorno/i18n",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,14 +14,14 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@le-hoetel/ui": "workspace:*",
+    "@ritorno/ui": "workspace:*",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-intl": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"

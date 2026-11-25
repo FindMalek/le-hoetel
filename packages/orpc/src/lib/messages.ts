@@ -1,16 +1,16 @@
-import type { MessageChannel } from "@le-hoetel/common/consent"
-import type { HotelLanguage } from "@le-hoetel/common/hotel"
-import type { MessageStatus } from "@le-hoetel/common/message"
-import { whatsappPriceMillimes } from "@le-hoetel/common/pricing"
-import { listUnsubscribeHeaders, signUnsubscribeToken, unsubscribePageUrl } from "@le-hoetel/common/unsubscribe"
-import { guestConsents, guests, hotelSettings, messages, organization } from "@le-hoetel/db"
+import type { MessageChannel } from "@ritorno/common/consent"
+import type { HotelLanguage } from "@ritorno/common/hotel"
+import type { MessageStatus } from "@ritorno/common/message"
+import { whatsappPriceMillimes } from "@ritorno/common/pricing"
+import { listUnsubscribeHeaders, signUnsubscribeToken, unsubscribePageUrl } from "@ritorno/common/unsubscribe"
+import { guestConsents, guests, hotelSettings, messages, organization } from "@ritorno/db"
 import {
   type EmailProps,
   GUEST_WHATSAPP_TEMPLATES,
   guestTemplateParams,
   type HotelEmailKey,
   renderEmail,
-} from "@le-hoetel/notification"
+} from "@ritorno/notification"
 import { and, eq, inArray } from "drizzle-orm"
 import type { Context } from "../context"
 import { debit, refund } from "./balance"

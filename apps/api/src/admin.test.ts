@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { user } from "@le-hoetel/db"
-import { createTestApp, type TestApp } from "@le-hoetel/orpc/testing"
+import { user } from "@ritorno/db"
+import { createTestApp, type TestApp } from "@ritorno/orpc/testing"
 import { eq } from "drizzle-orm"
 import { ensureAdmin } from "./admin"
 
@@ -23,7 +23,7 @@ test("ensureAdmin does nothing without credentials", async () => {
 
 test("ensureAdmin creates the admin, then resets its password and role on the next start", async () => {
   const { db, auth } = app.services
-  const email = "Root@le-hoetel.test"
+  const email = "Root@ritorno.test"
   const id = await ensureAdmin(db, auth, email, "first password 1")
   expect(id).toBeString()
   expect(await canSignIn(email, "first password 1")).toBe(true)

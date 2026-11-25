@@ -1,4 +1,4 @@
-import { brandStyle } from "@le-hoetel/common/color"
+import { brandStyle } from "@ritorno/common/color"
 import type { CSSProperties } from "react"
 
 /** The hotel's two colors as theme tokens for a guest page. The focus ring follows the primary color. */

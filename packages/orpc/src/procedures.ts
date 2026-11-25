@@ -1,5 +1,5 @@
-import { hotelRoles } from "@le-hoetel/auth/access"
 import { ORPCError, os } from "@orpc/server"
+import { hotelRoles } from "@ritorno/auth/access"
 import type { Context } from "./context"
 import { type ActiveHotel, resolveHotel } from "./lib/hotel"
 import { activeMembership } from "./lib/org"

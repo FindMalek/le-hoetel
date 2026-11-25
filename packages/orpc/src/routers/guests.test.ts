@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { CONSENT_WORDING_VERSION } from "@le-hoetel/common/consent"
-import { auditLog, consentEvents } from "@le-hoetel/db"
+import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
+import { auditLog, consentEvents } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { hashGuestId } from "../lib/guests"
 import { createTestApp, type TestApp } from "../testing"
@@ -21,7 +21,7 @@ const newGuest = {
 } as const
 
 async function hotelAs(slug: string) {
-  const owner = await app.signUp(`${slug}-owner@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}-owner@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   return { hotelId, ...(await app.joinHotel(owner, hotelId, "owner")) }
 }
@@ -194,7 +194,7 @@ test("deleting a guest removes their consent log too and leaves an audit row wit
 
 test("import: rows fail one by one, a phone merges, consent needs an explicit yes and the hotel's confirmation", async () => {
   const { client } = await hotelAs("import")
-  const staff = await app.signUp("import-staff@le-hoetel.test")
+  const staff = await app.signUp("import-staff@ritorno.test")
   const hotel = await client.hotel.get()
   const asStaff = await app.joinHotel(staff, hotel.id, "staff")
   await expect(

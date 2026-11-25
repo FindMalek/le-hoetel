@@ -1,5 +1,5 @@
 import { TemplateDefinition, WhatsAppClient } from "@kapso/whatsapp-cloud-api"
-import { LOCALES, type Locale } from "@le-hoetel/i18n/config"
+import { LOCALES, type Locale } from "@ritorno/i18n/config"
 import { KAPSO_BASE_URL, NOTIFY_PARAM, NOTIFY_TEMPLATE_BODY } from "../channels/whatsapp"
 import { HOTEL_EMAIL_KEYS, type HotelEmailKey } from "../hotel-email"
 import { GUEST_WHATSAPP_TEMPLATES, guestTemplateFooter } from "../whatsapp-guest"

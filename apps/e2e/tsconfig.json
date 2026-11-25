@@ -1,1 +1,1 @@
-{ "extends": "@le-hoetel/config/bun.json", "include": ["*.ts", "tests"] }
+{ "extends": "@ritorno/config/bun.json", "include": ["*.ts", "tests"] }

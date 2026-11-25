@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 import { readFileSync } from "node:fs"
-import { LOCALES } from "@le-hoetel/i18n/config"
+import { LOCALES } from "@ritorno/i18n/config"
 import { GUEST_WHATSAPP_TEMPLATES, guestTemplateFooter } from "./whatsapp-guest"
 
 const docs = readFileSync(new URL("../../../apps/docs/content/docs/whatsapp-templates.mdx", import.meta.url), "utf8")

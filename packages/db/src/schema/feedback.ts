@@ -1,4 +1,4 @@
-import { FEEDBACK_CASE_STATUSES } from "@le-hoetel/common/survey"
+import { FEEDBACK_CASE_STATUSES } from "@ritorno/common/survey"
 import { index, pgEnum, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core"
 import { user } from "./auth"
 import { organization } from "./orgs"

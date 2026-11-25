@@ -1,4 +1,4 @@
-import { balanceLedger, type Db, hotelBalance } from "@le-hoetel/db"
+import { balanceLedger, type Db, hotelBalance } from "@ritorno/db"
 import { and, desc, eq, gte, sql } from "drizzle-orm"
 
 export async function getBalance(db: Db, hotelId: string): Promise<number> {

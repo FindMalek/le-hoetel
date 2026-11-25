@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto"
 import { z } from "zod"
+import { TOKEN_NAMESPACE } from "./constants"
 
 export const SURVEY_INVITE_DAYS = 14
 export const SURVEY_HOURS_AFTER_STAY = 24
@@ -26,7 +27,7 @@ export interface SurveySubject {
 }
 
 const sign = (secret: string, payload: string): Buffer => {
-  const key = createHmac("sha256", secret).update("le-hoetel:survey:v1").digest()
+  const key = createHmac("sha256", secret).update(`${TOKEN_NAMESPACE}:survey:v1`).digest()
   return createHmac("sha256", key).update(payload).digest()
 }
 

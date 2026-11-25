@@ -7,11 +7,11 @@ Mobile first: most guests scan a QR code on a cheap Android phone, hotel staff u
 
 ## Tokens
 
-The brand tokens live in `packages/ui/src/styles/theme.css` (`:root` and `.dark`) and are the le-hoetel brand as given in the kickoff prompt. Never edit them per component and never hard code a color. Hotels override `--primary` and one accent at runtime through their branding config, so every color in the UI must come from a token (`bg-primary`, `text-muted-foreground`, `border-border`).
+The brand tokens live in `packages/ui/src/styles/theme.css` (`:root` and `.dark`) and are the Ritorno brand as given in the kickoff prompt. Never edit them per component and never hard code a color. Hotels override `--primary` and one accent at runtime through their branding config, so every color in the UI must come from a token (`bg-primary`, `text-muted-foreground`, `border-border`).
 
 ### Hotel branding at runtime
 
-A hotel's `primary_color` and `accent_color` become css variables through `brandStyle` (`@le-hoetel/common/color`): `--primary` with `--primary-foreground`, and `--brand-accent` with `--brand-accent-foreground` (`bg-brand-accent`, `text-brand-accent-foreground`). The foreground is black or white, whichever has more contrast, so text on a brand color always passes AA (4.5:1). The dashboard layout sets them on the app shell, the public capture page does the same. A color that is under 3:1 against the light or dark page background (WCAG 1.4.11, `brandContrastIssues`) is not blocked: the admin create form and the hotel settings page show a warning under the field.
+A hotel's `primary_color` and `accent_color` become css variables through `brandStyle` (`@ritorno/common/color`): `--primary` with `--primary-foreground`, and `--brand-accent` with `--brand-accent-foreground` (`bg-brand-accent`, `text-brand-accent-foreground`). The foreground is black or white, whichever has more contrast, so text on a brand color always passes AA (4.5:1). The dashboard layout sets them on the app shell, the public capture page does the same. A color that is under 3:1 against the light or dark page background (WCAG 1.4.11, `brandContrastIssues`) is not blocked: the admin create form and the hotel settings page show a warning under the field.
 
 - `globals.css` maps the tokens to Tailwind (`@theme inline`), holds the type scale, the `coarse` variant and a few utilities
 - `--radius` is `0.625rem`. Controls and cards use `rounded-lg`, small items (menu rows, kbd, tooltip) `rounded-md`, badges `rounded-full`
@@ -64,7 +64,7 @@ Form inputs are 16 px on mobile (below that iOS zooms the page on focus) and 14 
 
 ## Components
 
-All in `@le-hoetel/ui/components/*`, built on shadcn with Base UI, with the RTL migration applied (`"rtl": true` in `components.json`). Add more with `pnpm ui:add <component>`, then check it against the rules in [component patterns](/docs/component-patterns).
+All in `@ritorno/ui/components/*`, built on shadcn with Base UI, with the RTL migration applied (`"rtl": true` in `components.json`). Add more with `pnpm ui:add <component>`, then check it against the rules in [component patterns](/docs/component-patterns).
 
 | Need | Component |
 | --- | --- |

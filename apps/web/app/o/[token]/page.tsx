@@ -1,5 +1,5 @@
-import { getDirection } from "@le-hoetel/i18n"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@le-hoetel/ui/components/card"
+import { getDirection } from "@ritorno/i18n"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ritorno/ui/components/card"
 import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"

@@ -1,4 +1,4 @@
-import { auditLog, type Db } from "@le-hoetel/db"
+import { auditLog, type Db } from "@ritorno/db"
 import { createAuthMiddleware } from "better-auth/api"
 
 /** Writes admin impersonation to the audit log: who started it as whom, and when they stopped. */

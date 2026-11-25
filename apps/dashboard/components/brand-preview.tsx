@@ -1,9 +1,9 @@
 "use client"
 
-import { brandStyle } from "@le-hoetel/common/color"
-import type { HotelLanguage } from "@le-hoetel/common/hotel"
-import { Tabs, TabsList, TabsTrigger } from "@le-hoetel/ui/components/tabs"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { brandStyle } from "@ritorno/common/color"
+import type { HotelLanguage } from "@ritorno/common/hotel"
+import { Tabs, TabsList, TabsTrigger } from "@ritorno/ui/components/tabs"
+import { cn } from "@ritorno/ui/lib/utils"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 

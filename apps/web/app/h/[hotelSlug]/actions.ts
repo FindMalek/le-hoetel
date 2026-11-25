@@ -1,7 +1,7 @@
 "use server"
 
-import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
-import { CAPTURE_SOURCES, type CaptureSource } from "@le-hoetel/common/schemas"
+import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
+import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
 import { type CaptureResult, submitCapture } from "@/lib/capture"
 
 export type CaptureState = CaptureResult | "idle"

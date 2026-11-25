@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises"
 import { join } from "node:path"
-import { OG_SIZE, OgCard } from "@le-hoetel/ui/brand/og-card"
+import { OG_SIZE, OgCard } from "@ritorno/ui/brand/og-card"
 import { ImageResponse } from "next/og"
 import { getLocale, getTranslations } from "next-intl/server"
 import { SITE } from "@/lib/site"

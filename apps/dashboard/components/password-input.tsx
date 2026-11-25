@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
-import { Input } from "@le-hoetel/ui/components/input"
+import { Button } from "@ritorno/ui/components/button"
+import { Input } from "@ritorno/ui/components/input"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { type ComponentProps, useState } from "react"

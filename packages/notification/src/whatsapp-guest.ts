@@ -1,5 +1,5 @@
-import { unsubscribeFooter } from "@le-hoetel/common/unsubscribe"
-import type { Locale } from "@le-hoetel/i18n/config"
+import { unsubscribeFooter } from "@ritorno/common/unsubscribe"
+import type { Locale } from "@ritorno/i18n/config"
 import { type EmailProps, HOTEL_EMAIL_KEYS, type HotelEmailKey } from "./hotel-email"
 
 export const WHATSAPP_GUEST_KEYS = HOTEL_EMAIL_KEYS
@@ -14,7 +14,7 @@ export interface GuestWhatsAppTemplate {
   body: Record<Locale, string>
 }
 
-/** The texts submitted to Meta (`pnpm --filter @le-hoetel/notification whatsapp:setup`) and published in `whatsapp-templates.mdx`. */
+/** The texts submitted to Meta (`pnpm --filter @ritorno/notification whatsapp:setup`) and published in `whatsapp-templates.mdx`. */
 export const GUEST_WHATSAPP_TEMPLATES: Record<HotelEmailKey, GuestWhatsAppTemplate> = {
   welcome: {
     name: "guest_welcome",
@@ -39,7 +39,7 @@ export const GUEST_WHATSAPP_TEMPLATES: Record<HotelEmailKey, GuestWhatsAppTempla
   survey: {
     name: "guest_survey",
     params: ["guest_name", "hotel_name", "link"],
-    examples: { guest_name: "Amel", hotel_name: "Dar Amel", link: "https://le-hoetel.com/s/abc123" },
+    examples: { guest_name: "Amel", hotel_name: "Dar Amel", link: "https://ritorno.com/s/abc123" },
     body: {
       en: "Hello {{guest_name}}, thank you for staying at {{hotel_name}}. How was your stay? Tell us in one minute: {{link}} Your answer helps us improve.",
       fr: "Bonjour {{guest_name}}, merci d'avoir séjourné à {{hotel_name}}. Comment s'est passé votre séjour ? Répondez en une minute : {{link}} Votre avis nous aide à nous améliorer.",

@@ -18,11 +18,11 @@ test("accept-language picks the best supported language", () => {
 })
 
 test("hreflang alternates point at one url per language", () => {
-  expect(alternateUrls("https://le-hoetel.dev", "/roadmap")).toEqual({
-    en: "https://le-hoetel.dev/roadmap",
-    fr: "https://le-hoetel.dev/fr/roadmap",
-    ar: "https://le-hoetel.dev/ar/roadmap",
-    "x-default": "https://le-hoetel.dev/roadmap",
+  expect(alternateUrls("https://ritorno.dev", "/roadmap")).toEqual({
+    en: "https://ritorno.dev/roadmap",
+    fr: "https://ritorno.dev/fr/roadmap",
+    ar: "https://ritorno.dev/ar/roadmap",
+    "x-default": "https://ritorno.dev/roadmap",
   })
 })
 

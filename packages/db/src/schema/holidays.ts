@@ -1,4 +1,4 @@
-import { HOLIDAY_CHANNELS } from "@le-hoetel/common/holidays"
+import { HOLIDAY_CHANNELS } from "@ritorno/common/holidays"
 import { boolean, pgEnum, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core"
 import { organization } from "./orgs"
 

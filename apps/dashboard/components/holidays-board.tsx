@@ -1,9 +1,9 @@
 "use client"
 
-import { HOLIDAY_CHANNELS, HOLIDAYS, type HolidayChannel } from "@le-hoetel/common/holidays"
-import { errorMessage } from "@le-hoetel/orpc/errors"
-import { orpc } from "@le-hoetel/orpc/react"
-import { Switch } from "@le-hoetel/ui/components/switch"
+import { HOLIDAY_CHANNELS, HOLIDAYS, type HolidayChannel } from "@ritorno/common/holidays"
+import { errorMessage } from "@ritorno/orpc/errors"
+import { orpc } from "@ritorno/orpc/react"
+import { Switch } from "@ritorno/ui/components/switch"
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"

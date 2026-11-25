@@ -265,7 +265,7 @@
     },
     "noHotel": {
       "title": "لا يوجد فندق بعد",
-      "description": "اطلب من فريق Le Hoetel إضافتك إلى فندقك."
+      "description": "اطلب من فريق ريتورنو إضافتك إلى فندقك."
     },
     "loading": "جارٍ تحميل النزلاء",
     "page": "الصفحة {page} من {pages}",
@@ -457,7 +457,7 @@
     "exportDescription": "نسخة من كل نزيل مع سجل موافقاته. احفظوها بأمان لأنها تحتوي بيانات شخصية.",
     "count": "{count, plural, one {# نزيل} other {# نزلاء}}",
     "dangerTitle": "حذف كل شيء",
-    "dangerDescription": "عندما يتوقف الفندق عن استخدام Le Hoetel أو يجب مسح قائمة النزلاء. لا يمكن التراجع.",
+    "dangerDescription": "عندما يتوقف الفندق عن استخدام ريتورنو أو يجب مسح قائمة النزلاء. لا يمكن التراجع.",
     "deleteAllText": "{count, plural, one {سيُحذف # نزيل} other {سيُحذف # نزلاء}} مع سجل موافقاتهم. صدّروا أولًا إن أردتم نسخة."
   },
   "unsubscribe": {
@@ -480,7 +480,7 @@
     "consentVersion": "إصدار النص",
     "privacy": {
       "title": "سياسة الخصوصية",
-      "intro": "ما يحتفظ به الفندق وle-hoetel عنكم، ولماذا، وكيف تستعيدونه.",
+      "intro": "ما يحتفظ به الفندق وريتورنو عنكم، ولماذا، وكيف تستعيدونه.",
       "sections": {
         "collect": {
           "title": "ما الذي نجمعه",
@@ -500,17 +500,17 @@
         },
         "keep": {
           "title": "من يراها ولمدة كم",
-          "body": "فريق الفندق الذي سجلتم فيه فقط. لا ترى الفنادق زبائن بعضها. نحتفظ بالبيانات ما دام الفندق يستخدم le-hoetel، ونحذفها عند طلبكم أو عند مغادرة الفندق."
+          "body": "فريق الفندق الذي سجلتم فيه فقط. لا ترى الفنادق زبائن بعضها. نحتفظ بالبيانات ما دام الفندق يستخدم ريتورنو، ونحذفها عند طلبكم أو عند مغادرة الفندق."
         }
       }
     },
     "terms": {
       "title": "شروط الخدمة",
-      "intro": "القواعد البسيطة للفنادق التي تستخدم le-hoetel.",
+      "intro": "القواعد البسيطة للفنادق التي تستخدم ريتورنو.",
       "sections": {
         "service": {
           "title": "الخدمة",
-          "body": "يساعد le-hoetel الفندق على جمع بيانات نزلائه بموافقتهم، وإرسال الرسائل التي وافقوا عليها، وسماع النزلاء غير الراضين مبكرًا. الخدمة في مرحلة تجريبية: قد تتغير الميزات والأسعار."
+          "body": "يساعد ريتورنو الفندق على جمع بيانات نزلائه بموافقتهم، وإرسال الرسائل التي وافقوا عليها، وسماع النزلاء غير الراضين مبكرًا. الخدمة في مرحلة تجريبية: قد تتغير الميزات والأسعار."
         },
         "duties": {
           "title": "ما يتعهد به الفندق",
@@ -980,7 +980,7 @@
   },
   "landing": {
     "meta": {
-      "title": "le-hoetel: اعرفوا أولًا من هو غير راضٍ وامتلكوا قائمة نزلائكم",
+      "title": "ريتورنو: اعرفوا أولًا من هو غير راضٍ وامتلكوا قائمة نزلائكم",
       "description": "ينضم النزلاء عبر رمز QR، وتحتفظون بجهات الاتصال، ويصلكم التقييم المنخفض في اليوم نفسه. تقييمات أكثر على جوجل ونزلاء يعودون مباشرة. تجربة مجانية للفنادق في تونس."
     },
     "nav": {
@@ -1154,7 +1154,7 @@
       "errorTooMany": "محاولات كثيرة. انتظروا بضع دقائق.",
       "whatsappLead": "تفضلون واتساب؟",
       "whatsapp": "راسلونا على واتساب",
-      "whatsappText": "مرحبًا، أريد عرضًا تجريبيًا لـ le-hoetel لفندقي."
+      "whatsappText": "مرحبًا، أريد عرضًا تجريبيًا لـ ريتورنو لفندقي."
     },
     "footer": {
       "tagline": "علاقات النزلاء للفنادق في تونس.",
@@ -1281,21 +1281,21 @@
     },
     "invite": {
       "en": {
-        "subject": "You are invited to run {hotel} on le-hoetel",
+        "subject": "You are invited to run {hotel} on Ritorno",
         "title": "Welcome to {hotel}",
         "body": "Your hotel is ready. Accept the invitation to set a password and see your guests, offers and QR codes.",
         "button": "Accept the invitation",
         "footer": "If you did not expect this email, you can ignore it."
       },
       "fr": {
-        "subject": "Vous êtes invité à gérer {hotel} sur le-hoetel",
+        "subject": "Vous êtes invité à gérer {hotel} sur Ritorno",
         "title": "Bienvenue à {hotel}",
         "body": "Votre hôtel est prêt. Acceptez l'invitation pour choisir un mot de passe et retrouver vos clients, vos offres et vos QR codes.",
         "button": "Accepter l'invitation",
         "footer": "Si vous n'attendiez pas cet e-mail, vous pouvez l'ignorer."
       },
       "ar": {
-        "subject": "دعوة لإدارة {hotel} على le-hoetel",
+        "subject": "دعوة لإدارة {hotel} على ريتورنو",
         "title": "أهلًا بكم في {hotel}",
         "body": "فندقكم جاهز. اقبلوا الدعوة لاختيار كلمة مرور والاطّلاع على نزلائكم وعروضكم ورموز QR.",
         "button": "قبول الدعوة",

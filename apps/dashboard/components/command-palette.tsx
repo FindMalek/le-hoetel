@@ -1,7 +1,7 @@
 "use client"
 
-import { authClient } from "@le-hoetel/auth/client"
-import { LOCALE_COOKIE, LOCALE_NAMES, LOCALES } from "@le-hoetel/i18n"
+import { authClient } from "@ritorno/auth/client"
+import { LOCALE_COOKIE, LOCALE_NAMES, LOCALES } from "@ritorno/i18n"
 import {
   CommandDialog,
   CommandEmpty,
@@ -9,7 +9,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@le-hoetel/ui/components/command"
+} from "@ritorno/ui/components/command"
 import { LanguagesIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { CONSENT_WORDING_VERSION } from "@le-hoetel/common/consent"
-import { guests, hotelSettings } from "@le-hoetel/db"
+import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
+import { guests, hotelSettings } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { RATE_LIMITS } from "../lib/rate-limit"
 import { createTestApp, type TestApp } from "../testing"
@@ -23,9 +23,9 @@ const scan = {
 } as const
 
 test("a guest scanning a QR code lands in that hotel only, with source, spot and logged consents", async () => {
-  const owner = await app.signUp("capture-owner@le-hoetel.test")
+  const owner = await app.signUp("capture-owner@ritorno.test")
   const hotelId = await app.createHotel("capture-hotel", owner)
-  const other = await app.createHotel("capture-other", await app.signUp("capture-other@le-hoetel.test"))
+  const other = await app.createHotel("capture-other", await app.signUp("capture-other@ritorno.test"))
   const { client } = await app.joinHotel(owner, hotelId, "owner")
 
   await app.anonymous.public.capture({ slug: "capture-hotel", ...scan })
@@ -46,7 +46,7 @@ test("a guest scanning a QR code lands in that hotel only, with source, spot and
 })
 
 test("the public hotel only shows branding, an unknown slug is not found, email consent needs an email", async () => {
-  const owner = await app.signUp("capture-brand@le-hoetel.test")
+  const owner = await app.signUp("capture-brand@ritorno.test")
   await app.createHotel("capture-brand", owner)
 
   expect(Object.keys(await app.anonymous.public.hotel({ slug: "capture-brand" })).sort()).toEqual([
@@ -70,7 +70,7 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
 })
 
 test("bots are dropped silently: honeypot, a form sent too fast, a link as a name", async () => {
-  const owner = await app.signUp("capture-bots@le-hoetel.test")
+  const owner = await app.signUp("capture-bots@ritorno.test")
   const hotelId = await app.createHotel("capture-bots", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const bot = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.0.1" }))
@@ -82,7 +82,7 @@ test("bots are dropped silently: honeypot, a form sent too fast, a link as a nam
 })
 
 test("capture is limited per ip and per hotel", async () => {
-  const owner = await app.signUp("capture-limit@le-hoetel.test")
+  const owner = await app.signUp("capture-limit@ritorno.test")
   const hotelId = await app.createHotel("capture-limit", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const from = (ip: string) => app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": ip }))
@@ -105,7 +105,7 @@ test("capture is limited per ip and per hotel", async () => {
 })
 
 test("QR codes carry the hotel slug, source and spot, and the stats count captures per spot", async () => {
-  const owner = await app.signUp("capture-qr@le-hoetel.test")
+  const owner = await app.signUp("capture-qr@ritorno.test")
   const hotelId = await app.createHotel("capture-qr", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
 

@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/storage",
+  "name": "@ritorno/storage",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
   }

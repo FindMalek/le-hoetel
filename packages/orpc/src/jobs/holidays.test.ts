@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { messages } from "@le-hoetel/db"
-import type { SendEmailInput } from "@le-hoetel/notification"
+import { messages } from "@ritorno/db"
+import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 import { HOLIDAY_JOB } from "./holidays"
@@ -23,7 +23,7 @@ const notification = {
 }
 
 async function hotel(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const add = (phone: string, consents: { email: boolean; whatsapp: boolean }) =>

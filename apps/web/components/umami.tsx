@@ -1,5 +1,5 @@
-import { CONSENT_COOKIE } from "@le-hoetel/compliance"
-import { nextEnv } from "@le-hoetel/env/next"
+import { CONSENT_COOKIE } from "@ritorno/compliance"
+import { nextEnv } from "@ritorno/env/next"
 import { cookies } from "next/headers"
 import { UmamiScript } from "./umami-script"
 

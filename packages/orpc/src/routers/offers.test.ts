@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { signOfferToken } from "@le-hoetel/common/offer-tokens"
-import { auditLog, offerRedemptions } from "@le-hoetel/db"
+import { signOfferToken } from "@ritorno/common/offer-tokens"
+import { auditLog, offerRedemptions } from "@ritorno/db"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -17,7 +17,7 @@ const auditActions = () =>
     .then((rows) => rows.map((row) => row.action))
 
 async function hotelAs(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   return { hotelId, ...(await app.joinHotel(owner, hotelId, "owner")) }
 }
@@ -152,7 +152,7 @@ test("redeeming: expired, paused and used up offers say why, and staff can redee
   await hotel.client.offers.update({ id: limited.id, active: false })
   expect(await hotel.client.offers.lookup({ code: "TWO" })).toMatchObject({ status: "inactive" })
 
-  const staff = await app.signUp("redeem-states-staff@le-hoetel.test")
+  const staff = await app.signUp("redeem-states-staff@ritorno.test")
   const member = await app.joinHotel(staff, hotel.hotelId, "staff")
   expect(await member.client.offers.lookup({ code: "OLD" })).toMatchObject({ status: "expired" })
   await expect(member.client.offers.create({ title: "No", promoCode: "NOPE" })).rejects.toThrow()
