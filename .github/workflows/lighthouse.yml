@@ -1,0 +1,72 @@
+name: lighthouse
+
+# The QR capture page on a throttled phone (Lighthouse mobile defaults). Accessibility blocks, performance and the
+# budgets only warn until the runs prove stable. Only runs when the public site or the shared ui changes.
+
+on:
+  pull_request:
+    paths:
+      - apps/web/**
+      - packages/ui/**
+      - packages/i18n/**
+      - apps/e2e/lighthouserc.json
+      - .github/workflows/lighthouse.yml
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      API_URL: http://localhost:4101
+      API_PUBLIC_URL: http://localhost:4101
+      WEB_URL: http://localhost:4100
+      DASHBOARD_URL: http://localhost:4102
+      TURBO_API: ${{ vars.TURBO_API }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: le-hoetel
+          POSTGRES_PASSWORD: le-hoetel
+          POSTGRES_DB: le-hoetel
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U le-hoetel"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: oven-sh/setup-bun@v2
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter e2e exec playwright install --with-deps chromium
+      - name: Start api and web
+        run: |
+          pnpm --filter web exec next build
+          (cd apps/e2e && E2E_DATABASE_URL=postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel bun prepare-db.ts)
+          (cd apps/api && DATABASE_URL=postgres://le-hoetel:le-hoetel@localhost:5432/le_hoetel_e2e BETTER_AUTH_SECRET=lighthouse-secret-lighthouse-secret-0123 PORT=4101 SEED=demo DEPLOY_ENV=e2e bun src/index.ts > /tmp/api.log 2>&1 &)
+          (cd apps/web && pnpm exec next start --port 4100 > /tmp/web.log 2>&1 &)
+          npx --yes wait-on http://localhost:4101/health http://localhost:4100 --timeout 120000
+      - name: Lighthouse
+        working-directory: apps/e2e
+        run: |
+          export CHROME_PATH="$(pnpm exec node -e "console.log(require('playwright-core').chromium.executablePath())")"
+          pnpm dlx @lhci/cli@0.16.1 autorun
+      - if: failure()
+        run: tail -30 /tmp/api.log /tmp/web.log

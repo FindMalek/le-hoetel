@@ -34,7 +34,7 @@ export function LocaleSwitcherMenu({
   }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" size="sm" aria-label={label} />}>
+      <DropdownMenuTrigger render={<Button variant="outline" size="sm" aria-label={`${LOCALE_NAMES[locale]}, ${label}`} />}>
         <LanguagesIcon data-icon="inline-start" />
         {LOCALE_NAMES[locale]}
       </DropdownMenuTrigger>

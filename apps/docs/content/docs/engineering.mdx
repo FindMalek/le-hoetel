@@ -91,6 +91,11 @@ See [data and consent rules](/docs/data-rules) and [decisions](/docs/decisions).
 - Test through the public function or endpoint. Mock only external boundaries, never our own modules.
 - Tests run against a real Postgres. `createTestDb()` from `@le-hoetel/db/testing` gives a fresh migrated database and `createTestApp()` from `@le-hoetel/orpc/testing` the real services plus `signUp()` for signed-in clients.
 
+### Accessibility and speed budgets
+
+- `apps/e2e/tests/a11y.spec.ts` runs axe on the landing page, the QR capture page and the sign-in page in English and Arabic. Any serious or critical violation fails the e2e job.
+- The `lighthouse` workflow runs Lighthouse CI (`apps/e2e/lighthouserc.json`) on the QR capture page with the mobile throttling defaults, only when a pull request touches `apps/web`, `packages/ui` or `packages/i18n`. Accessibility must be at least 0.95 and blocks. Performance at least 0.8, LCP at most 3000 ms and script transfer at most 300 kB only warn until the runs are stable, then they become errors.
+
 ## Adding an endpoint
 
 See [structure](/docs/structure#adding-an-endpoint).
