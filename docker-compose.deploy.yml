@@ -1,0 +1,125 @@
+# Staging and production on Dokploy (compose service, build from git). One copy per environment, own postgres and volume.
+# Dokploy attaches the domains to api, web, dashboard and docs. Env comes from the compose Environment tab, see .github/scripts/dokploy-bootstrap.mjs.
+x-env: &env
+  DEPLOY_ENV: ${DEPLOY_ENV:?}
+  API_PUBLIC_URL: ${API_PUBLIC_URL:?}
+  WEB_URL: ${WEB_URL:?}
+  DASHBOARD_URL: ${DASHBOARD_URL:?}
+  DOCS_URL: ${DOCS_URL:?}
+  DATABASE_URL: postgres://le_hoetel:${POSTGRES_PASSWORD:?}@postgres:5432/le_hoetel
+  BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
+  ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+  ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+  SEED: ${SEED:-none}
+  DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+  MESSAGING_LIVE: ${MESSAGING_LIVE:-false}
+  ALLOW_PREVIEW_ORIGINS: ${ALLOW_PREVIEW_ORIGINS:-false}
+  S3_ENDPOINT: ${S3_ENDPOINT:-}
+  S3_BUCKET: ${S3_BUCKET:-}
+  S3_PREFIX: ${S3_PREFIX:-}
+  S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+  S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+  RESEND_API_KEY: ${RESEND_API_KEY:-}
+  RESEND_WEBHOOK_SECRET: ${RESEND_WEBHOOK_SECRET:-}
+  EMAIL_FROM: ${EMAIL_FROM:-Le Hoetel <onboarding@resend.dev>}
+  KAPSO_API_KEY: ${KAPSO_API_KEY:-}
+  KAPSO_WEBHOOK_SECRET: ${KAPSO_WEBHOOK_SECRET:-}
+  WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID:-}
+  WHATSAPP_BUSINESS_ACCOUNT_ID: ${WHATSAPP_BUSINESS_ACCOUNT_ID:-}
+  GLITCHTIP_DSN: ${GLITCHTIP_DSN:-}
+  OPENOBSERVE_URL: ${OPENOBSERVE_URL:-}
+  OPENOBSERVE_USER: ${OPENOBSERVE_USER:-}
+  OPENOBSERVE_PASSWORD: ${OPENOBSERVE_PASSWORD:-}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: le_hoetel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: le_hoetel
+    volumes:
+      - pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U le_hoetel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: runner
+    environment:
+      <<: *env
+      JOBS_WORKER: "false"
+    expose:
+      - "3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  worker:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: worker
+    environment:
+      <<: *env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      API_URL: http://api:3001
+      API_PUBLIC_URL: ${API_PUBLIC_URL:?}
+      WEB_URL: ${WEB_URL:?}
+      DASHBOARD_URL: ${DASHBOARD_URL:?}
+      DOCS_URL: ${DOCS_URL:?}
+    expose:
+      - "3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  dashboard:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    environment:
+      API_URL: http://api:3001
+      API_PUBLIC_URL: ${API_PUBLIC_URL:?}
+      WEB_URL: ${WEB_URL:?}
+      DASHBOARD_URL: ${DASHBOARD_URL:?}
+      DOCS_URL: ${DOCS_URL:?}
+    expose:
+      - "3002"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  docs:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: apps/docs/Dockerfile
+    environment:
+      API_PUBLIC_URL: ${API_PUBLIC_URL:?}
+      WEB_URL: ${WEB_URL:?}
+      DASHBOARD_URL: ${DASHBOARD_URL:?}
+      DOCS_URL: ${DOCS_URL:?}
+    expose:
+      - "3003"
+
+volumes:
+  pg:
