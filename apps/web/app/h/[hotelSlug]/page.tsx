@@ -67,8 +67,8 @@ export default async function CapturePage({ params, searchParams }: Props) {
           <p className="mt-2 text-muted-foreground">{t("intro")}</p>
         </header>
         <section className="border bg-accent p-4 text-accent-foreground">
-          <h2 className="font-medium">{t("perkTitle")}</h2>
-          <p className="mt-1 text-sm">{withHotel(t("perkBody"))}</p>
+          <h2 className="font-medium">{hotel.welcomeOffer?.title ?? t("perkTitle")}</h2>
+          <p className="mt-1 text-sm">{hotel.welcomeOffer?.text || withHotel(t("perkBody"))}</p>
         </section>
         <CaptureForm
           slug={hotel.slug}

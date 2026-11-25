@@ -3,11 +3,14 @@ import { nextEnv } from "@le-hoetel/env/next"
 import { Button } from "@le-hoetel/ui/components/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@le-hoetel/ui/components/card"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
 
 export default async function OverviewPage() {
+  const { activeId } = await call((api) => api.hotel.mine())
+  if (activeId) redirect("/guests")
   const [me, stats, notes] = await Promise.all([
     call((api) => api.me.get()),
     call((api) => api.notes.stats()),

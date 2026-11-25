@@ -1,0 +1,48 @@
+---
+title: Offers
+description: Perks a hotel gives guests, the code and QR a guest shows, and how they are scoped and tested.
+---
+
+An offer is a simple perk, not points: a welcome drink, a birthday dessert, a spa credit. Every offer belongs to one hotel.
+
+## What an offer has
+
+`offers`: title, text, validity window (`valid_from`, optional `valid_until`), a promo code that is unique inside the hotel, an optional audience (`welcome`, `birthday`, or none for handed out by staff), an optional `max_redemptions` and an `active` flag. Title and text are one language, the one the hotel writes in.
+
+Owners and managers create, change and delete offers in the dashboard (**Offers**, `/offers`, `offers.*`). Staff can read them. The form shows a preview of the page as the guest sees it, in the hotel's colors. Deleting an offer deletes its redemptions, so pausing (`active` off) is the way to stop one and keep the numbers.
+
+## The guest's code and QR
+
+A guest holds one code per offer, made the first time they open their link (`offer_codes`, unique per offer and guest, unique across hotels). It looks like `AB3D-EF7H` (no `0`, `O`, `1`, `I`, `L`) so it can be typed at a desk. The QR holds that code and is rendered by the api (`lib/qr.ts`, the same helper as the hotel QR codes).
+
+The guest link is `/o/<token>` on the web app (`offerPageUrl` in `@le-hoetel/common/offer-tokens`). The token is signed with the server secret, like unsubscribe links, and carries the hotel, offer and guest. The page is `noindex` and shows the branded offer, its state (ready, paused, not started, expired, all taken, already used) and the QR. It never shows the guest's name or contact. Messages that carry an offer build the link with `signOfferToken`.
+
+## Welcome offer on the capture page
+
+`public.hotel` returns `welcomeOffer` (title and text only): the newest active `welcome` offer that is inside its window. The capture page shows it as the perk instead of the generic one. It has no code: the guest gets the link in the welcome message once they have signed up.
+
+## Redemptions
+
+`offer_redemptions` has one row per redemption: offer, guest (optional), time and the staff user. With a guest the unique `(offer_id, guest_id)` makes a double redemption impossible even when two phones scan at the same moment. Deleting a guest keeps the row without the guest, so counts stay and no personal data does.
+
+## The staff redemption screen
+
+**Redeem** (`/redeem`) is built for a phone at the desk. Staff scan the guest's QR with the phone camera (the browser's `BarcodeDetector`, read in `qr-scanner.tsx`) or type the code, then see the offer, the guest's first name only and the validity. One tap marks it redeemed with who and when. Safari and Firefox have no `BarcodeDetector` yet, so there the screen only offers the typed code.
+
+A code can be a guest's code (`AB3D-EF7H`) or the offer's promo code. A promo code is not bound to a guest, so it can be redeemed many times, up to `max_redemptions`. `offers.lookup` and `offers.redeem` answer with a status, never an error:
+
+| Status | Meaning |
+|---|---|
+| `ready` | can be redeemed now |
+| `redeemed` | already redeemed (with who and when) |
+| `expired`, `notStarted` | outside the validity window |
+| `inactive` | the offer is paused |
+| `exhausted` | `max_redemptions` reached |
+| `wrongHotel` | the guest code belongs to another hotel, nothing about it is shown |
+| `unknown` | no such code |
+
+`offers.redeem` locks the offer row while it counts, then inserts, so two phones scanning the same code at once give one redemption and one "already redeemed". The unique `(offer_id, guest_id)` is the backstop. Each redemption writes an `offer.redeem` audit row (offer id, no guest data). Owners, managers and staff can redeem. `offers.redemptionStats` gives the counts (today in the hotel's timezone, last 7 days, total) and the ten latest redemptions for the screen.
+
+## Demo data
+
+The seed adds three offers per demo hotel (open, open, and one past its end date) with codes and redemptions spread over the last weeks (`packages/db/src/seed/offers.ts`).

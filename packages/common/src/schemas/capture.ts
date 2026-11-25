@@ -2,6 +2,7 @@ import { z } from "zod"
 import type { GuestSource } from "../consent"
 import { HOTEL_LANGUAGES } from "../hotel"
 import { guestFields, phoneInputSchema } from "./guest"
+import { welcomeOfferSchema } from "./offers"
 
 /** The `src` of a QR code url, mapped to the guest source it is stored under. */
 export const CAPTURE_SOURCES = { room: "qr_room", table: "qr_table", desk: "qr_front_desk" } as const satisfies Record<
@@ -21,6 +22,7 @@ export const publicHotelSchema = z.object({
   primaryColor: z.string().nullable(),
   accentColor: z.string().nullable(),
   defaultLanguage: z.enum(HOTEL_LANGUAGES),
+  welcomeOffer: welcomeOfferSchema.nullable(),
 })
 export type PublicHotel = z.infer<typeof publicHotelSchema>
 
@@ -40,3 +42,16 @@ export const captureInputSchema = z.object({
   renderedAt: z.number().int(),
 })
 export type CaptureInput = z.input<typeof captureInputSchema>
+
+export const qrCodesInputSchema = z.object({
+  source: z.enum(Object.keys(CAPTURE_SOURCES) as [CaptureSource, ...CaptureSource[]]),
+  spots: z.array(z.string().trim().min(1).max(CAPTURE_LOCATION_MAX)).max(100),
+})
+
+export const qrCodeSchema = z.object({ location: z.string().nullable(), url: z.string(), svg: z.string() })
+
+export const captureStatSchema = z.object({
+  source: z.enum(Object.values(CAPTURE_SOURCES) as [GuestSource, ...GuestSource[]]),
+  location: z.string().nullable(),
+  guests: z.number(),
+})

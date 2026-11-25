@@ -5,6 +5,7 @@ import {
   CAPTURE_SOURCES,
   captureInputSchema,
   guestCreateSchema,
+  offerPageSchema,
   publicHotelSchema,
   statusSchema,
 } from "@le-hoetel/common/schemas"
@@ -15,6 +16,7 @@ import { z } from "zod"
 import type { Context } from "../context"
 import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
+import { offerPage, welcomeOffer } from "../lib/offers"
 import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
 import { changeChoices, unsubscribeAll, unsubscribePage } from "../lib/unsubscribe"
 import { publicProcedure } from "../procedures"
@@ -100,6 +102,17 @@ function looksLikeBot(input: z.output<typeof captureInputSchema>, now: Date): bo
 export const publicRouter = {
   unsubscribe: unsubscribeRouter,
 
+  offer: publicProcedure
+    .route({
+      method: "POST",
+      path: "/public/offer",
+      summary: "The offer and QR code behind a guest's link",
+      tags: ["public"],
+    })
+    .input(z.object({ token }))
+    .output(offerPageSchema)
+    .handler(({ context, input }) => offerPage(context, input.token)),
+
   status: publicProcedure
     .route({ method: "GET", path: "/public/status", summary: "Live api and database health", tags: ["public"] })
     .output(statusSchema)
@@ -140,8 +153,8 @@ export const publicRouter = {
     .input(z.object({ slug: z.string().min(1).max(100) }))
     .output(publicHotelSchema)
     .handler(async ({ context, input }) => {
-      const { id: _id, ...hotel } = await findPublicHotel(context.db, input.slug)
-      return hotel
+      const { id, ...hotel } = await findPublicHotel(context.db, input.slug)
+      return { ...hotel, welcomeOffer: await welcomeOffer(context.db, id, context.now()) }
     }),
 
   capture: publicProcedure
