@@ -1,6 +1,7 @@
 import type { MessageChannel } from "@le-hoetel/common/consent"
 import type { HotelLanguage } from "@le-hoetel/common/hotel"
 import type { MessageStatus } from "@le-hoetel/common/message"
+import { whatsappPriceMillimes } from "@le-hoetel/common/pricing"
 import { listUnsubscribeHeaders, signUnsubscribeToken, unsubscribePageUrl } from "@le-hoetel/common/unsubscribe"
 import { guestConsents, guests, hotelSettings, messages, organization } from "@le-hoetel/db"
 import {
@@ -12,6 +13,7 @@ import {
 } from "@le-hoetel/notification"
 import { and, eq, inArray } from "drizzle-orm"
 import type { Context } from "../context"
+import { debit, refund } from "./balance"
 import { hotelGuest, recordConsent } from "./guests"
 
 type Ctx = Pick<Context, "db" | "config" | "now" | "notification">
@@ -62,7 +64,7 @@ async function hotelBranding(context: Ctx, hotelId: string) {
 
 /**
  * The only way a message reaches a guest. Checks the guest's current consent for the channel, refuses without it
- * (a `skipped_no_consent` row) and logs one row. The row has no body and no recipient. Emails are rendered with
+ * (a `skipped_no_consent` row) and logs one row. A WhatsApp message first takes its price off the hotel's prepaid balance (`skipped_no_balance` when short, refunded if the send fails); email is free. The row has no body and no recipient. Emails are rendered with
  * the hotel's branding, sent from the hotel's name with its reply-to, and carry the List-Unsubscribe headers; the
  * template's own footer holds the one unsubscribe link. Providers only send when messaging is live; otherwise the
  * row says `sent` with the provider id `log-only`.
@@ -98,7 +100,13 @@ export async function sendToGuest<Key extends HotelEmailKey>(
   if (!to) return record({ status: "failed", errorCode: "no_recipient", failedAt: context.now() })
 
   const queued = await record({ status: "queued" })
+  const price = channel === "whatsapp" ? whatsappPriceMillimes(input.template) : 0
+  if (price > 0 && !(await debit(context.db, hotelId, price, queued.messageId))) {
+    await context.db.update(messages).set({ status: "skipped_no_balance" }).where(eq(messages.id, queued.messageId))
+    return { messageId: queued.messageId, status: "skipped_no_balance" }
+  }
   const finish = async (values: Partial<typeof messages.$inferInsert> & { status: MessageStatus }) => {
+    if (price > 0 && values.status === "failed") await refund(context.db, hotelId, price, queued.messageId)
     await context.db.update(messages).set(values).where(eq(messages.id, queued.messageId))
     return { messageId: queued.messageId, status: values.status }
   }

@@ -2,6 +2,7 @@ import { afterAll, beforeAll, expect, test } from "bun:test"
 import { guestConsents, hotelSettings, messages } from "@le-hoetel/db"
 import type { SendEmailInput, SendWhatsAppInput } from "@le-hoetel/notification"
 import { and, eq, inArray } from "drizzle-orm"
+import { topUp } from "../lib/balance"
 import { applyDeliveryUpdate, applyKapsoEvent, applyResendEvent, sendToGuest } from "../lib/messages"
 import { createTestApp, type TestApp } from "../testing"
 
@@ -149,6 +150,7 @@ test("whatsapp sends the hotel's named template in the guest's language, and a m
     .update(hotelSettings)
     .set({ displayName: "Dar Amel" })
     .where(eq(hotelSettings.organizationId, hotelId))
+  await topUp(app.services.db, hotelId, 1000)
   const base = { hotelId, guestId, channel: "whatsapp" } as const
   sentWhatsApp.length = 0
 

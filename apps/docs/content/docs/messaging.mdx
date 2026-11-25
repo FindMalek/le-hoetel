@@ -22,7 +22,7 @@ One row per message, scoped by hotel and removed with the guest (export and dele
 | `hotel_id`, `guest_id` | whose message it is |
 | `channel` | `email` or `whatsapp` |
 | `template_key`, `language` | which template, in which language |
-| `status` | `queued`, `sent`, `delivered`, `failed`, `skipped_no_consent` |
+| `status` | `queued`, `sent`, `delivered`, `failed`, `skipped_no_consent`, `skipped_no_balance` |
 | `provider_id` | the provider's message id, used to match status webhooks |
 | `error_code` | a short code (`no_recipient`, `channel_not_configured`, `send_failed` or the provider's code), never the provider's text |
 | `created_at`, `sent_at`, `delivered_at`, `failed_at` | timestamps |
@@ -82,3 +82,11 @@ A hotel switches each holiday on or off and picks the channel (both, email, What
 A hotel manager links a Telegram chat in **Hotel** settings: the dashboard shows a one-time code (valid 15 minutes) and the bot link `https://t.me/<TELEGRAM_BOT_USERNAME>?start=<code>`. When the bot receives `/start <code>` on `/telegram/webhook` (secret header `TELEGRAM_WEBHOOK_SECRET` checked), the chat id is stored in `hotel_settings.telegram_chat_id` and the code is cleared, so it works once and only for the hotel that issued it. Without a code, `/start` still answers with the chat id, for the operator's own `TELEGRAM_CHAT_ID`.
 
 `notifyManager(context, hotelId, text)` (`@le-hoetel/orpc/manager-alerts`) sends to the hotel's linked chat and falls back to email (the hotel reply-to, else the owners) when there is no chat or Telegram fails. Like every provider it only logs outside live messaging. The low-score alert will call it. The **Send a test alert** button calls `hotel.alerts.test`.
+
+## Prepaid WhatsApp balance
+
+WhatsApp is paid per message, so each hotel has a prepaid balance in TND millimes (integers, 1 TND = 1000). `hotel_balance` holds the balance, `balance_ledger` is the append-only history (`top_up` and `refund` positive, `usage` negative, so the balance always equals the ledger sum). The super admin tops a hotel up on the admin hotel page (`admin.hotels.balance.topUp`, audited). The hotel sees balance, this month's usage and the latest movements on **Usage** (`/usage`, owners and managers), and a warning at the top of **Messages** under 5 TND.
+
+The dispatcher prices every WhatsApp message with `whatsappPriceMillimes` (`packages/common/src/pricing.ts`): provider cost per message type plus a 25 percent margin, rounded up. It takes the price off the balance atomically before sending. Not enough balance: the message is not sent and the row says `skipped_no_balance`. A message the provider refuses is refunded. Email is free and never touches the balance. Log-only sends (previews, tests, local) are priced too, so the flow behaves the same everywhere.
+
+The cost values (utility 25 millimes, marketing 95 millimes) are **untested guesses** from Meta's public rates. Check them against the first real Meta and Kapso invoice before charging a hotel.

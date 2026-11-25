@@ -1,6 +1,7 @@
 import type { RouterClient } from "@orpc/server"
 import { adminRouter, meRouter } from "./account"
 import { auditRouter } from "./audit"
+import { adminBalanceRouter, balanceRouter } from "./balance"
 import { campaignsRouter } from "./campaigns"
 import { emailsRouter } from "./emails"
 import { feedbackRouter } from "./feedback"
@@ -28,7 +29,7 @@ const admin = {
   ...adminRouter,
   inbox: inboxAdminRouter,
   audit: auditRouter,
-  hotels: adminHotelsRouter,
+  hotels: { ...adminHotelsRouter, balance: adminBalanceRouter },
   notification: notificationRouter,
 }
 
@@ -39,7 +40,7 @@ export const appRouter = {
   campaigns: campaignsRouter,
   holidays: holidaysRouter,
   leads: leadsRouter,
-  hotel: { ...hotelRouter, logo: hotelLogoRouter, alerts: managerAlertsRouter },
+  hotel: { ...hotelRouter, logo: hotelLogoRouter, alerts: managerAlertsRouter, balance: balanceRouter },
   emails: emailsRouter,
   guests: guestsRouter,
   messages: messagesRouter,

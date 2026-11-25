@@ -86,7 +86,7 @@ export async function campaignResults(db: Db, campaignIds: string[]): Promise<Ma
     if (status === "sent") result.sent += n
     else if (status === "delivered") result.delivered += n
     else if (status === "failed") result.failed += n
-    else if (status === "skipped_no_consent") result.skipped += n
+    else if (status === "skipped_no_consent" || status === "skipped_no_balance") result.skipped += n
   }
   return results
 }

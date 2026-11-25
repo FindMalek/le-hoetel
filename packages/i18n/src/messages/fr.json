@@ -755,8 +755,12 @@
       "sent": "Envoyé",
       "delivered": "Délivré",
       "failed": "Échec",
-      "skipped_no_consent": "Sans consentement"
-    }
+      "skipped_no_consent": "Sans consentement",
+      "skipped_no_balance": "Solde insuffisant"
+    },
+    "lowBalance": "Le solde WhatsApp est bas",
+    "lowBalanceHint": "Il reste {balance}. À zéro, les messages WhatsApp sont mis en attente (l'e-mail continue). Demandez-nous une recharge.",
+    "seeUsage": "Voir la consommation"
   },
   "emails": {
     "title": "E-mails",
@@ -1279,7 +1283,14 @@
         "button": "قبول الدعوة",
         "footer": "إذا لم تكونوا تنتظرون هذه الرسالة فيمكنكم تجاهلها."
       }
-    }
+    },
+    "balance": "Solde WhatsApp",
+    "balanceHint": "Crédit prépayé en TND. Chaque message WhatsApp en déduit son prix ; l'e-mail est gratuit.",
+    "topUpAmount": "Montant à ajouter (TND)",
+    "topUpAmountHint": "Par exemple 50 ou 12,500. Entre 1 et 10 000.",
+    "topUpNote": "Note (facultatif)",
+    "topUp": "Ajouter du crédit",
+    "topUpDone": "Crédit ajouté."
   },
   "adminWizard": {
     "title": "Nouvel hôtel",
@@ -1662,5 +1673,21 @@
     "removeBody": "Cette personne perd l'accès à cet hôtel immédiatement.",
     "cancelAction": "Garder",
     "removed": "Membre retiré."
+  },
+  "usage": {
+    "title": "Consommation WhatsApp",
+    "description": "Votre solde prépayé et le coût de chaque message. L'e-mail est gratuit.",
+    "balance": "Solde",
+    "month": "Dépensé ce mois-ci",
+    "monthMessages": "{count, plural, one {# message WhatsApp} other {# messages WhatsApp}}",
+    "low": "Le solde est bas. Les messages WhatsApp s'arrêtent à zéro, l'e-mail n'est pas touché. Demandez-nous une recharge.",
+    "history": "Derniers mouvements",
+    "empty": "Aucun mouvement pour l'instant. Votre première recharge apparaîtra ici.",
+    "kinds": {
+      "top_up": "Recharge",
+      "usage": "Message WhatsApp",
+      "refund": "Remboursement (non remis)"
+    },
+    "forbidden": "Seuls les propriétaires et les gérants voient le solde."
   }
 }
