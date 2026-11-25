@@ -216,7 +216,8 @@
     "admin": "Plateforme",
     "holidays": "Fêtes",
     "adminOverview": "Vue d'ensemble",
-    "campaigns": "Campagnes"
+    "campaigns": "Campagnes",
+    "metrics": "Statistiques"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -1728,5 +1729,38 @@
     "expired": "Merci d'avoir séjourné à {hotel}.",
     "shareOnGoogle": "Partager sur Google",
     "reviewPrompt": "Votre séjour vous a plu ? Un court avis Google aide d'autres voyageurs à nous trouver."
+  },
+  "metrics": {
+    "title": "Statistiques",
+    "description": "Ce que votre liste de clients et vos messages apportent à l'hôtel.",
+    "forbidden": "Les statistiques ne sont pas disponibles pour votre rôle.",
+    "periodLabel": "Période",
+    "period": {
+      "days": "{count} jours"
+    },
+    "captured": {
+      "title": "Clients captés",
+      "description": "{count, plural, one {# nouveau client} other {# nouveaux clients}} sur la période, selon la façon dont ils ont rejoint.",
+      "summary": "{count, plural, one {# client capté} other {# clients captés}}.",
+      "emptyTitle": "Aucun nouveau client sur la période",
+      "emptyBody": "Imprimez un QR code pour une chambre ou une table et les clients apparaîtront ici.",
+      "emptyAction": "Obtenir un QR code"
+    },
+    "outcomes": {
+      "title": "Ce que ça rapporte",
+      "description": "Consentement, messages et offres pour les clients de la période.",
+      "consentWhatsapp": "Consentement WhatsApp",
+      "consentEmail": "Consentement email",
+      "consentHint": "{count} sur {total} nouveaux clients",
+      "messages": "Messages envoyés",
+      "delivered": "{rate} délivrés",
+      "offers": "Offres utilisées",
+      "redemption": "{rate} sur {issued} envoyées",
+      "reviews": "Avis demandés",
+      "reviewsHint": "Clients qui ont ouvert le lien d'avis Google.",
+      "survey": "Note moyenne",
+      "surveyHint": "{count, plural, one {# réponse} other {# réponses}}, {unhappy} mécontents",
+      "surveyEmpty": "Aucune réponse au sondage pour l'instant."
+    }
   }
 }

@@ -2,6 +2,7 @@ import type { Messages } from "@ritorno/i18n"
 import {
   BuildingIcon,
   CalendarHeartIcon,
+  ChartColumnIcon,
   DatabaseIcon,
   GaugeIcon,
   GiftIcon,
@@ -36,6 +37,7 @@ export const NAV: NavItem[] = [
   { href: "/", label: "overview", icon: LayoutDashboardIcon, tab: true },
   { href: "/guests", label: "guests", icon: UsersRoundIcon, tab: true },
   { href: "/messages", label: "messages", icon: MessageSquareIcon, tab: true },
+  { href: "/metrics", label: "metrics", icon: ChartColumnIcon },
   { href: "/inbox", label: "inbox", icon: InboxIcon },
   { href: "/hotel", label: "hotelNav", icon: HotelIcon },
   { href: "/redeem", label: "redeem", icon: ScanLineIcon },

@@ -46,3 +46,13 @@ Consent from a CSV is deliberately strict: it is only granted when the consent c
 One hotel can never read, change, export or delete another hotel's guests. `packages/orpc/src/routers/isolation.test.ts` calls every guest procedure of hotel A with an id of hotel B (always a plain "not found"), checks lists, search and the hotel export, the `x-hotel-id` header, removed members, and fails when a new guest procedure is added without being covered. `apps/e2e/tests/isolation.spec.ts` repeats the core of it over http against the running api.
 
 Guest procedures (`guests.*`): `list`, `get`, `create` (adds or merges by phone), `update`, `setConsent`, `consentHistory`, `export` (one guest), `exportAll` (the hotel), `remove`. Export and delete need the owner or manager role, and both write an audit row without personal data.
+
+## Metrics
+
+The Metrics page (`/metrics`, linked from the dashboard home) answers "what did the guest list bring this period" for 7, 30 or 90 days, all scoped to the active hotel (`metrics.get`):
+
+- Guests captured, as bars per day (7 days) or per week (30, 90), split by source. Plain markup, no chart library
+- Consent rate for WhatsApp and email among the guests captured in the period
+- Messages sent and the share delivered, from the `messages` table
+- Offer codes sent in the period and how many of those same codes were redeemed, so a redemption of an older code never inflates the rate
+- Reviews requested (guests who tapped the Google review link after the survey) and the survey score with the number of unhappy answers (0 to 6), from `survey_responses`. With no answers yet the cards show a dash and say so, the page never invents a number
