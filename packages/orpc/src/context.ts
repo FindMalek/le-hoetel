@@ -18,6 +18,9 @@ export interface Services {
     githubToken?: string
     webUrl: string
     dashboardUrl: string
+    apiUrl: string
+    /** Signs unsubscribe links. Derived from the auth secret, never sent anywhere. */
+    tokenSecret: string
   }
   rateLimiter: RateLimiter
   jobs: Jobs

@@ -109,7 +109,9 @@ test("every guest procedure needs a session, and a new one must be added to the 
     "setConsent",
     "export",
     "exportAll",
+    "exportCsv",
     "remove",
+    "removeAll",
     "consentHistory",
     "import",
   ]
@@ -128,7 +130,9 @@ test("every guest procedure needs a session, and a new one must be added to the 
       }),
     export: () => app.anonymous.guests.export({ id: crypto.randomUUID() }),
     exportAll: () => app.anonymous.guests.exportAll(),
+    exportCsv: () => app.anonymous.guests.exportCsv({}),
     remove: () => app.anonymous.guests.remove({ id: crypto.randomUUID() }),
+    removeAll: () => app.anonymous.guests.removeAll({ confirmCount: 0 }),
     consentHistory: () => app.anonymous.guests.consentHistory({ id: crypto.randomUUID() }),
     import: () =>
       app.anonymous.guests.import({

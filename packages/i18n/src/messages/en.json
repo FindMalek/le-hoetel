@@ -9,6 +9,10 @@
     "apiDocs": "API docs"
   },
   "nav": {
+    "hotelNav": "Hotel",
+    "messages": "Messages",
+    "data": "Guest data",
+    "hotels": "Hotels",
     "overview": "Overview",
     "guests": "Guests",
     "inbox": "Inbox",
@@ -124,6 +128,153 @@
       "errorColumn": "error",
       "lineColumn": "line",
       "another": "Import another file"
+    }
+  },
+  "guestData": {
+    "title": "Guest data",
+    "description": "Export or delete what you store about your guests. Owners and managers only.",
+    "forbidden": "Only owners and managers can export or delete guest data.",
+    "hotelTitle": "All guests",
+    "hotelDescription": "A copy of every guest of the hotel with their consent log, or a full deletion.",
+    "exportJson": "Export JSON",
+    "exportCsv": "Export CSV",
+    "deleteAll": "Delete all guests",
+    "deleteAllTitle": "Delete every guest?",
+    "deleteAllBody": "This permanently deletes {count} guests of {hotel} with their consent history. It cannot be undone. Export first if you need a copy.",
+    "typeName": "Type {hotel} to confirm",
+    "cancel": "Cancel",
+    "confirm": "Delete permanently",
+    "deleted": "Deleted.",
+    "exported": "Export ready.",
+    "guestTitle": "One guest",
+    "guestDescription": "Find a guest by name, phone or email.",
+    "search": "Search guests",
+    "noResults": "No guest found.",
+    "deleteGuest": "Delete",
+    "deleteGuestTitle": "Delete this guest?",
+    "deleteGuestBody": "This permanently deletes {name} and their consent history. It cannot be undone.",
+    "error": "Something went wrong. Try again."
+  },
+  "unsubscribe": {
+    "title": "Your messages from {hotel}",
+    "intro": "Choose what {hotel} may send you. You can change this at any time.",
+    "email": "Email",
+    "whatsapp": "WhatsApp",
+    "stopAll": "Unsubscribe from everything",
+    "stoppedTitle": "You are unsubscribed",
+    "stopped": "{hotel} will not send you any more messages.",
+    "saved": "Saved.",
+    "error": "Something went wrong. Please try again.",
+    "invalidTitle": "This link is not valid",
+    "invalid": "The link is wrong or no longer active. If you keep getting messages, reply STOP to the message.",
+    "consentOn": "Turning this on means: {wording}"
+  },
+  "legal": {
+    "updated": "Draft, not yet reviewed by a lawyer.",
+    "consentTitle": "What guests agree to",
+    "consentVersion": "Wording version",
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "This is a placeholder for the privacy policy of le-hoetel. Hotels collect a guest's name, phone and language with their consent. Optional details are kept only if the guest agrees. We never collect continuous location, ID numbers or payment cards. A guest can ask a hotel to export or delete their data at any time."
+    },
+    "terms": {
+      "title": "Terms of service",
+      "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
+    },
+    "hotel": "the hotel"
+  },
+  "capture": {
+    "welcome": "Welcome to {hotel}",
+    "intro": "Leave your details and we will take care of you during your stay.",
+    "perkTitle": "Your welcome perk",
+    "perkBody": "A small gift from {hotel} is waiting for you. Ask at the front desk after you sign up.",
+    "name": "Your name",
+    "phone": "Phone number",
+    "dialCode": "Country code",
+    "language": "Your language",
+    "birthday": "Birthday (optional)",
+    "email": "Email (optional)",
+    "consentTitle": "Stay in touch",
+    "consentHint": "Both are optional and unticked. You can change your mind at any time.",
+    "emailNeeded": "Add your email to get offers by email.",
+    "submit": "Sign up",
+    "sending": "Sending...",
+    "thanksTitle": "Thank you",
+    "thanksBody": "You are all set. Enjoy your stay at {hotel}.",
+    "errorInvalid": "Please check your name and phone number.",
+    "errorTooMany": "Too many tries. Please wait a moment and try again.",
+    "privacy": "Privacy policy",
+    "languageLabel": "Language"
+  },
+  "adminHotels": {
+    "title": "Hotels",
+    "description": "Every hotel on the platform, with its guests and health.",
+    "createTitle": "New hotel",
+    "name": "Hotel name",
+    "slug": "Slug",
+    "ownerEmail": "Owner email",
+    "ownerHint": "The owner gets an invitation by email.",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "language": "Default language",
+    "submit": "Create hotel and invite owner",
+    "created": "Hotel created, invitation sent.",
+    "empty": "No hotel yet.",
+    "columns": {
+      "hotel": "Hotel",
+      "guests": "Guests",
+      "owners": "Owners",
+      "health": "Health",
+      "created": "Created"
+    },
+    "health": {
+      "healthy": "Healthy",
+      "quiet": "No new guest for 2 weeks",
+      "no-guests": "No guests yet",
+      "no-owner": "Owner not joined",
+      "suspended": "Suspended"
+    }
+  },
+  "hotelSettings": {
+    "title": "Hotel",
+    "description": "Your hotel's logo and branding.",
+    "logo": "Logo",
+    "logoHint": "PNG, JPEG or WebP, 1 MB at most.",
+    "upload": "Upload logo",
+    "remove": "Remove logo",
+    "saved": "Logo saved.",
+    "removed": "Logo removed.",
+    "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
+    "noHotel": "Pick a hotel first.",
+    "branding": "Colors",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "save": "Save",
+    "brandingSaved": "Colors saved.",
+    "sample": "Aa text",
+    "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
+    "contrastDark": "This color is hard to see in dark mode. Pick a lighter one."
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Every message sent to your guests and how it ended. Never the text or the contact.",
+    "empty": "No message yet.",
+    "guest": "Guest",
+    "channel": "Channel",
+    "template": "Message",
+    "language": "Language",
+    "status": "Status",
+    "date": "Date",
+    "channels": {
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "skipped_no_consent": "No consent"
     }
   }
 }

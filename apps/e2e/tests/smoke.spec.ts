@@ -1,3 +1,4 @@
+import { DEFAULT_DEMO_PASSWORD, DEMO_SUPER_ADMIN_EMAIL, demoOwnerEmail } from "@le-hoetel/common/demo"
 import { expect, test } from "@playwright/test"
 import { URLS } from "../env"
 
@@ -46,4 +47,14 @@ test("sign up, sign out, sign in, then create and list a note", async ({ page })
 
   await page.reload()
   await expect(page.getByText("Smoke note")).toBeVisible()
+})
+
+test("the seeded demo owner and super admin can sign in", async ({ request }) => {
+  for (const email of [demoOwnerEmail("dar-zitouna"), DEMO_SUPER_ADMIN_EMAIL]) {
+    const response = await request.post(`${URLS.api}/auth/sign-in/email`, {
+      headers: { origin: URLS.dashboard },
+      data: { email, password: DEFAULT_DEMO_PASSWORD },
+    })
+    expect(response.status()).toBe(200)
+  }
 })

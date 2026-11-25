@@ -1,8 +1,17 @@
-import { HOTEL_ROLES } from "@le-hoetel/common/hotel"
-import { hotelAdminUpdateSchema, hotelCreateSchema, hotelSchema, hotelUpdateSchema } from "@le-hoetel/common/schemas"
-import { hotelSettings, member, organization, user } from "@le-hoetel/db"
+import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
+import {
+  adminHotelSchema,
+  hotelAdminUpdateSchema,
+  hotelCreateSchema,
+  hotelSchema,
+  hotelUpdateSchema,
+  logoUploadInputSchema,
+  logoUploadSchema,
+} from "@le-hoetel/common/schemas"
+import { guests, hotelSettings, member, organization } from "@le-hoetel/db"
+import { hotelPublicPrefix } from "@le-hoetel/storage"
 import { ORPCError } from "@orpc/server"
-import { asc, eq } from "drizzle-orm"
+import { and, asc, count, eq, like, max } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -84,31 +93,142 @@ export const hotelRouter = {
     }),
 }
 
+const requireStorage = (context: Context) => {
+  if (!context.storage) throw new ORPCError("SERVICE_UNAVAILABLE", { message: "Storage isn't configured here." })
+  return context.storage
+}
+
+export const hotelLogoRouter = {
+  uploadUrl: hotelProcedure
+    .use(can({ organization: ["update"] }))
+    .route({
+      method: "POST",
+      path: "/hotel/logo/upload-url",
+      summary: "A presigned url to upload the logo",
+      tags: ["hotel"],
+    })
+    .input(logoUploadInputSchema)
+    .output(logoUploadSchema)
+    .handler(({ context, input }) => {
+      const storage = requireStorage(context)
+      const key = `${hotelPublicPrefix(storage, context.hotel.hotelId)}logo-${crypto.randomUUID()}.${LOGO_TYPES[input.type]}`
+      return { key, url: storage.presignPut(key, input.type), headers: { "content-type": input.type } }
+    }),
+
+  set: hotelProcedure
+    .use(can({ organization: ["update"] }))
+    .route({ method: "PUT", path: "/hotel/logo", summary: "Use an uploaded file as the logo", tags: ["hotel"] })
+    .input(z.object({ key: z.string().max(300) }))
+    .output(hotelSchema)
+    .handler(async ({ context, input }) => {
+      const storage = requireStorage(context)
+      const { hotelId } = context.hotel
+      const folder = hotelPublicPrefix(storage, hotelId)
+      if (!input.key.startsWith(folder) || input.key.slice(folder.length).includes("/")) {
+        throw new ORPCError("FORBIDDEN", { message: "That file is not in your hotel's folder." })
+      }
+      const file = await storage.stat(input.key)
+      if (!file) throw new ORPCError("NOT_FOUND", { message: "Upload the file first." })
+      if (!LOGO_TYPES[file.type] || file.size > LOGO_MAX_BYTES) {
+        await storage.remove(input.key)
+        throw new ORPCError("UNPROCESSABLE_CONTENT", { message: "Use a PNG, JPEG or WebP logo of 1 MB at most." })
+      }
+      const { logoKey: previous } = await loadHotel(context.db, hotelId)
+      await context.db
+        .update(hotelSettings)
+        .set({ logoKey: input.key })
+        .where(eq(hotelSettings.organizationId, hotelId))
+      if (previous && previous !== input.key && previous.startsWith(folder)) await storage.remove(previous)
+      await audit(context, { action: "hotel.logo-set", targetId: hotelId })
+      return loadHotel(context.db, hotelId)
+    }),
+
+  remove: hotelProcedure
+    .use(can({ organization: ["update"] }))
+    .route({ method: "DELETE", path: "/hotel/logo", summary: "Remove the logo", tags: ["hotel"] })
+    .output(hotelSchema)
+    .handler(async ({ context }) => {
+      const { hotelId } = context.hotel
+      const { logoKey } = await loadHotel(context.db, hotelId)
+      await context.db.update(hotelSettings).set({ logoKey: null }).where(eq(hotelSettings.organizationId, hotelId))
+      if (logoKey && context.storage && logoKey.startsWith(hotelPublicPrefix(context.storage, hotelId))) {
+        await context.storage.remove(logoKey)
+      }
+      await audit(context, { action: "hotel.logo-remove", targetId: hotelId })
+      return loadHotel(context.db, hotelId)
+    }),
+}
+
 export const adminHotelsRouter = {
   list: adminProcedure
-    .route({ method: "GET", path: "/admin/hotels", summary: "All hotels (admins only)", tags: ["admin"] })
-    .output(z.array(hotelSchema))
-    .handler(({ context }) => selectHotels(context.db).orderBy(asc(organization.name))),
+    .route({
+      method: "GET",
+      path: "/admin/hotels",
+      summary: "All hotels with guest counts and health",
+      tags: ["admin"],
+    })
+    .output(z.array(adminHotelSchema))
+    .handler(async ({ context }) => {
+      const { db } = context
+      const [hotels, guestStats, owners] = await Promise.all([
+        selectHotels(db).orderBy(asc(organization.name)),
+        db
+          .select({ hotelId: guests.hotelId, guestCount: count(), lastGuestAt: max(guests.createdAt) })
+          .from(guests)
+          .groupBy(guests.hotelId),
+        db
+          .select({ hotelId: member.organizationId, ownerCount: count() })
+          .from(member)
+          .where(like(member.role, "%owner%"))
+          .groupBy(member.organizationId),
+      ])
+      const guestsOf = new Map(guestStats.map((row) => [row.hotelId, row]))
+      const ownersOf = new Map(owners.map((row) => [row.hotelId, row.ownerCount]))
+      const now = context.now()
+      return hotels.map((hotel) => {
+        const guestCount = guestsOf.get(hotel.id)?.guestCount ?? 0
+        const lastGuestAt = guestsOf.get(hotel.id)?.lastGuestAt ?? null
+        const ownerCount = ownersOf.get(hotel.id) ?? 0
+        const health = hotelHealth({ status: hotel.status, ownerCount, guestCount, lastGuestAt, now })
+        return { ...hotel, guestCount, ownerCount, lastGuestAt, health }
+      })
+    }),
 
   create: adminProcedure
-    .route({ method: "POST", path: "/admin/hotels", summary: "Create a hotel for an existing user", tags: ["admin"] })
+    .route({
+      method: "POST",
+      path: "/admin/hotels",
+      summary: "Create a hotel with its branding and invite its owner by email",
+      tags: ["admin"],
+    })
     .input(hotelCreateSchema)
     .output(hotelSchema)
     .handler(async ({ context, input }) => {
-      const [owner] = await context.db
-        .select({ id: user.id })
-        .from(user)
-        .where(eq(user.email, input.ownerEmail.toLowerCase()))
-      if (!owner) throw new ORPCError("NOT_FOUND", { message: "No user with that email: create the user first." })
+      const { ownerEmail, name, slug, ...branding } = input
       const [taken] = await context.db
         .select({ id: organization.id })
         .from(organization)
-        .where(eq(organization.slug, input.slug))
+        .where(eq(organization.slug, slug))
       if (taken) throw new ORPCError("CONFLICT", { message: "That slug is taken." })
-      const created = await context.auth.api.createOrganization({
-        body: { name: input.name, slug: input.slug, userId: owner.id },
-      })
+      // better-auth needs a member to invite from: the admin joins for a moment, the owner replaces them.
+      const created = await context.auth.api.createOrganization({ body: { name, slug, userId: context.user.id } })
       if (!created) throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "The hotel could not be created." })
+      try {
+        await context.auth.api.createInvitation({
+          body: { email: ownerEmail.toLowerCase(), role: "owner", organizationId: created.id },
+          headers: context.headers,
+        })
+        await context.db
+          .delete(member)
+          .where(and(eq(member.organizationId, created.id), eq(member.userId, context.user.id)))
+        const patch = Object.fromEntries(Object.entries(branding).filter(([, value]) => value !== undefined))
+        if (Object.keys(patch).length) {
+          await context.db.update(hotelSettings).set(patch).where(eq(hotelSettings.organizationId, created.id))
+        }
+      } catch (error) {
+        await context.db.delete(organization).where(eq(organization.id, created.id))
+        throw error
+      }
       await audit(context, { action: "hotel.create", targetId: created.id })
       return loadHotel(context.db, created.id)
     }),

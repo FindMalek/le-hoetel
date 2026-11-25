@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test"
+import { defineConfig, devices } from "@playwright/test"
 import { BASE_DATABASE_URL, e2eDatabaseUrl, URLS } from "./env"
 
 const shared = {
@@ -18,6 +18,16 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
   use: { trace: "retain-on-failure" },
+  projects: [
+    { name: "desktop", use: devices["Desktop Chrome"] },
+    // Phone profiles run in chromium (one browser to install); only the language and layout specs, to keep CI short.
+    {
+      name: "iphone",
+      use: { ...devices["iPhone 14"], defaultBrowserType: "chromium" },
+      testMatch: /(web|dashboard)\.spec/,
+    },
+    { name: "android", use: devices["Pixel 7"], testMatch: /(web|dashboard)\.spec/ },
+  ],
   webServer: [
     {
       command: "bun prepare-db.ts && cd ../api && bun src/index.ts",
@@ -31,7 +41,7 @@ export default defineConfig({
         DATABASE_URL: e2eDatabaseUrl(),
         BETTER_AUTH_SECRET: "e2e-secret-e2e-secret-e2e-secret-0123",
         PORT: port(URLS.api),
-        SEED: "none",
+        SEED: "demo",
         DEPLOY_ENV: "e2e",
       },
     },

@@ -1,0 +1,41 @@
+---
+title: Unsubscribe links are signed tokens
+description: Every message links to a public preference page through an HMAC signed token for the guest, hotel and channel. No login, no token table.
+---
+
+**Status:** accepted, November 2026
+
+## Context
+
+Every message must be easy to stop. Guests are not users, so there is no login, and a hotel must never see or reach another hotel's guests.
+
+## Decision
+
+The link carries a token: hotel id, guest id and the channel of the message, signed with HMAC SHA 256 under a key derived from `BETTER_AUTH_SECRET`. The page `/u/<token>` shows the hotel's branding and one switch per channel, plus a one tap "unsubscribe from everything". It never shows the guest's name, phone or email. A change writes `guest_consents` and a `consent_events` row with source `unsubscribe_link`. A guest can switch a channel back on, the page then shows the consent wording next to the switch.
+
+Email also carries `List-Unsubscribe` and `List-Unsubscribe-Post` headers pointing at `POST /unsubscribe/<token>` on the api. WhatsApp messages end with "Reply STOP", and a STOP reply withdraws WhatsApp consent (source `stop_reply`) for that number.
+
+## Why
+
+- A forged or edited token fails the signature, so it cannot reach another guest or hotel.
+- Stateless: no table to leak, no expiry that leaves a guest unable to stop messages from an old email.
+- A deleted guest's link stops working because the guest row is gone.
+
+## Why not
+
+- A random token in a table: one more table of guest links to protect and clean.
+- Asking for the phone or email on the page: friction, and a way to probe who is a guest.
+
+## Consequences
+
+- Rotating `BETTER_AUTH_SECRET` breaks every link already sent. Rotate it only with a plan to resend footers, and keep STOP as the fallback.
+- A STOP from a number that is a guest of several hotels withdraws WhatsApp consent at all of them unless the webhook knows the receiving hotel.
+
+## Revisit when
+
+Messaging uses a per hotel WhatsApp number, or legal review wants links to expire.
+
+## Related
+
+- [Data and consent rules](/docs/data-rules)
+- [The consent log is append only](/docs/decisions/consent-log-append-only)
