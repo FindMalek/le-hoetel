@@ -12,19 +12,28 @@ import {
   guestImportResultSchema,
   guestListInputSchema,
   guestListSchema,
+  guestRecognitionSchema,
   guestSchema,
   guestUpdateSchema,
   guestUpsertResultSchema,
   hotelGuestsExportSchema,
 } from "@le-hoetel/common/schemas"
-import { consentEvents, guestConsents, guests, messages } from "@le-hoetel/db"
+import { consentEvents, guestConsents, guests, guestVisits, messages } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { enqueueWelcome } from "../jobs"
 import { audit } from "../lib/audit"
-import { clearExtras, hashGuestId, hotelGuest, recordConsent, upsertGuest, withConsents } from "../lib/guests"
+import {
+  clearExtras,
+  hashGuestId,
+  hotelGuest,
+  recognitionOf,
+  recordConsent,
+  upsertGuest,
+  withConsents,
+} from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
 
 const guestMessageSchema = z.object({
@@ -102,6 +111,53 @@ export const guestsRouter = {
         .limit(input.limit)
         .offset(input.offset)
       return { items: await withConsents(context.db, hotelId, rows), total: totals?.n ?? 0 }
+    }),
+
+  find: hotelProcedure
+    .use(can({ guest: ["read"] }))
+    .route({
+      method: "GET",
+      path: "/guests/find",
+      summary: "Find guests by phone or name, with visit history",
+      tags: ["guests"],
+    })
+    .input(z.object({ q: z.string().trim().min(2).max(80) }))
+    .output(z.array(guestRecognitionSchema))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const q = `%${escapeLike(input.q)}%`
+      const digits = input.q.replace(/\D/g, "")
+      const rows = await context.db
+        .select()
+        .from(guests)
+        .where(
+          and(
+            eq(guests.hotelId, hotelId),
+            or(ilike(guests.name, q), digits.length >= 3 ? ilike(guests.phoneE164, `%${digits}%`) : undefined),
+          ),
+        )
+        .orderBy(desc(guests.updatedAt), guests.id)
+        .limit(5)
+      return recognitionOf(context.db, hotelId, rows)
+    }),
+
+  markVisit: hotelProcedure
+    .use(can({ guest: ["create"] }))
+    .route({
+      method: "POST",
+      path: "/guests/{id}/visits",
+      summary: "Record that the guest is here again",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(guestRecognitionSchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const [row] = await context.db.select().from(guests).where(hotelGuest(hotelId, input.id))
+      if (!row) throw notFound()
+      await context.db.insert(guestVisits).values({ guestId: row.id, hotelId, source: "staff", at: context.now() })
+      const [card] = await recognitionOf(context.db, hotelId, [row])
+      return card!
     }),
 
   get: hotelProcedure

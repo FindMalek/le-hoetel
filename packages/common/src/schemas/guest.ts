@@ -47,6 +47,18 @@ const extras = {
   nextDestination: text(120),
 }
 
+export const guestRecognitionSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  phoneE164: z.string(),
+  language: z.enum(HOTEL_LANGUAGES),
+  consents: z.object({ email: z.boolean(), whatsapp: z.boolean() }),
+  visits: z.number().int(),
+  firstVisitAt: z.date().nullable(),
+  lastVisitAt: z.date().nullable(),
+  lastOffer: z.object({ title: z.string(), at: z.date() }).nullable(),
+})
+
 export const guestConsentsSchema = z.object({ email: z.boolean(), whatsapp: z.boolean(), profile: z.boolean() })
 
 export const guestSchema = z.object({

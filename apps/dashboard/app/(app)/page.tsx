@@ -26,6 +26,7 @@ import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { CopyLink } from "@/components/copy-link"
 import { FirstRunChecklist } from "@/components/first-run-checklist"
+import { GuestFinder } from "@/components/guest-finder"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
 import { TopBarAction } from "@/components/top-bar"
@@ -59,6 +60,7 @@ async function NoHotelHome({ name }: { name: string }) {
 async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: string; slug: string } }) {
   const t = await getTranslations("home")
   const tLang = await getTranslations("home.languages")
+  const tFinder = await getTranslations("guests.finder")
   const [{ role }, overview, { items }] = await Promise.all([
     call((api) => api.hotel.mine()),
     call((api) => api.overview.get()),
@@ -110,6 +112,10 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
       <PageHeader title={t("greeting", { name })} description={t("hotelDescription", { hotel: hotel.displayName })} />
       <div className="flex flex-col gap-10 p-4 md:p-6">
         {manager && <FirstRunChecklist state={overview.checklist} />}
+
+        <Section title={tFinder("label")}>
+          <GuestFinder />
+        </Section>
 
         <Section title={t("pulse.title")} description={t("pulse.description")}>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 md:gap-4">
