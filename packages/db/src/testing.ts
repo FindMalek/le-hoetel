@@ -2,7 +2,7 @@ import postgres from "postgres"
 import { createDb, type Db } from "./index"
 import { runMigrations } from "./migrate"
 
-const FALLBACK = "postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel"
+const FALLBACK = "postgres://ritorno:ritorno@localhost:5432/ritorno"
 
 export interface TestDb {
   db: Db

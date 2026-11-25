@@ -10,12 +10,12 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@le-hoetel/notification": "workspace:*",
+    "@ritorno/notification": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@react-email/ui": "catalog:",
     "@types/react": "catalog:",
     "react-email": "catalog:",

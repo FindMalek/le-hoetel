@@ -13,20 +13,20 @@ test("public status needs no session and reports a live database", async () => {
 
 test("signed-in procedures answer 401 without a session and 403 without the csrf header", async () => {
   await expect(app.anonymous.me.get()).rejects.toMatchObject({ code: "UNAUTHORIZED" })
-  const { headers } = await app.signUp("csrf@le-hoetel.test")
+  const { headers } = await app.signUp("csrf@ritorno.test")
   headers.delete("x-csrf-token")
   await expect(app.clientFor(headers).me.get()).rejects.toMatchObject({ code: "FORBIDDEN" })
 })
 
 test("me returns the signed-in user and update renames them", async () => {
-  const { client } = await app.signUp("ada@le-hoetel.test")
-  expect(await client.me.get()).toMatchObject({ email: "ada@le-hoetel.test", role: "user" })
+  const { client } = await app.signUp("ada@ritorno.test")
+  expect(await client.me.get()).toMatchObject({ email: "ada@ritorno.test", role: "user" })
   await client.me.update({ name: "Ada L" })
   expect((await client.me.get()).name).toBe("Ada L")
 })
 
 test("notes: create, list, pin, delete", async () => {
-  const { client } = await app.signUp("notes@le-hoetel.test")
+  const { client } = await app.signUp("notes@ritorno.test")
   const note = await client.notes.create({ title: "first" })
   await client.notes.create({ title: "second" })
 
@@ -40,14 +40,14 @@ test("notes: create, list, pin, delete", async () => {
 })
 
 test("pinning a note keeps its body", async () => {
-  const { client } = await app.signUp("pin@le-hoetel.test")
+  const { client } = await app.signUp("pin@ritorno.test")
   const note = await client.notes.create({ title: "keep", body: "the body" })
   expect(await client.notes.update({ id: note.id, pinned: true })).toMatchObject({ body: "the body", pinned: true })
 })
 
 test("notes belong to their owner", async () => {
-  const owner = await app.signUp("owner@le-hoetel.test")
-  const other = await app.signUp("other@le-hoetel.test")
+  const owner = await app.signUp("owner@ritorno.test")
+  const other = await app.signUp("other@ritorno.test")
   const note = await owner.client.notes.create({ title: "private" })
 
   expect(await other.client.notes.list()).toEqual([])
@@ -59,33 +59,33 @@ test("notes belong to their owner", async () => {
 })
 
 test("admin.users is for admins only", async () => {
-  const member = await app.signUp("member@le-hoetel.test")
-  const boss = await app.signUp("boss@le-hoetel.test", { role: "admin" })
+  const member = await app.signUp("member@ritorno.test")
+  const boss = await app.signUp("boss@ritorno.test", { role: "admin" })
 
   await expect(member.client.admin.users()).rejects.toMatchObject({ code: "FORBIDDEN" })
   const { total, users } = await boss.client.admin.users()
-  expect(users.map((u) => u.email)).toContain("boss@le-hoetel.test")
+  expect(users.map((u) => u.email)).toContain("boss@ritorno.test")
   expect(total).toBeGreaterThanOrEqual(2)
 })
 
 test("audit log: actions are recorded and only admins can read them", async () => {
-  const { client } = await app.signUp("audited@le-hoetel.test")
-  const admin = await app.signUp("audit-admin@le-hoetel.test", { role: "admin" })
+  const { client } = await app.signUp("audited@ritorno.test")
+  const admin = await app.signUp("audit-admin@ritorno.test", { role: "admin" })
   const note = await client.notes.create({ title: "temp" })
   await client.notes.remove({ id: note.id })
 
   await expect(client.admin.audit.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
   const { entries } = await admin.client.admin.audit.list({ action: "note." })
   expect(entries).toContainEqual(
-    expect.objectContaining({ action: "note.delete", targetId: note.id, actorEmail: "audited@le-hoetel.test" }),
+    expect.objectContaining({ action: "note.delete", targetId: note.id, actorEmail: "audited@ritorno.test" }),
   )
 })
 
 test("orgs: notes follow the active organization and only members can switch to it", async () => {
-  const ada = await app.signUp("ada-org@le-hoetel.test", { role: "admin" })
-  const bob = await app.signUp("bob-org@le-hoetel.test")
+  const ada = await app.signUp("ada-org@ritorno.test", { role: "admin" })
+  const bob = await app.signUp("bob-org@ritorno.test")
   const created = await app.services.auth.api.createOrganization({
-    body: { name: "Le Hoetel", slug: "le-hoetel" },
+    body: { name: "Ritorno", slug: "ritorno" },
     headers: ada.headers,
     returnHeaders: true,
   })
@@ -108,9 +108,9 @@ test("orgs: notes follow the active organization and only members can switch to 
 })
 
 test("inbox: a message shows up unread for its user only, and reading clears it", async () => {
-  const ada = await app.signUp("inbox-ada@le-hoetel.test")
-  const bob = await app.signUp("inbox-bob@le-hoetel.test")
-  const admin = await app.signUp("inbox-admin@le-hoetel.test", { role: "admin" })
+  const ada = await app.signUp("inbox-ada@ritorno.test")
+  const bob = await app.signUp("inbox-bob@ritorno.test")
+  const admin = await app.signUp("inbox-admin@ritorno.test", { role: "admin" })
 
   await admin.client.admin.inbox.send({ userId: ada.id, title: "Welcome", body: "hi" })
   expect(await ada.client.inbox.list()).toMatchObject({ unread: 1, items: [{ title: "Welcome", readAt: null }] })
@@ -130,26 +130,26 @@ test("feedback: a bot filling the honeypot is dropped quietly, and without GitHu
 })
 
 test("privacy: export returns your data, deleting the account needs your email and removes you", async () => {
-  const { client, id } = await app.signUp("gdpr@le-hoetel.test")
+  const { client, id } = await app.signUp("gdpr@ritorno.test")
   await client.notes.create({ title: "mine" })
 
   const { data } = await client.privacy.export()
   expect(data).toMatchObject({
-    profile: { email: "gdpr@le-hoetel.test" },
+    profile: { email: "gdpr@ritorno.test" },
     notes: [expect.objectContaining({ title: "mine" })],
   })
 
-  await expect(client.privacy.deleteAccount({ email: "other@le-hoetel.test" })).rejects.toMatchObject({
+  await expect(client.privacy.deleteAccount({ email: "other@ritorno.test" })).rejects.toMatchObject({
     code: "BAD_REQUEST",
   })
-  await client.privacy.deleteAccount({ email: "GDPR@le-hoetel.test" })
+  await client.privacy.deleteAccount({ email: "GDPR@ritorno.test" })
   const left = await app.services.db.query.user.findFirst({ where: (u, { eq }) => eq(u.id, id) })
   expect(left).toBeUndefined()
 })
 
 test("audit log: an admin signing in as a user, and stopping, is recorded", async () => {
-  const admin = await app.signUp("imp-admin@le-hoetel.test", { role: "admin" })
-  const target = await app.signUp("imp-target@le-hoetel.test")
+  const admin = await app.signUp("imp-admin@ritorno.test", { role: "admin" })
+  const target = await app.signUp("imp-target@ritorno.test")
   const started = await app.services.auth.api.impersonateUser({
     body: { userId: target.id },
     headers: admin.headers,

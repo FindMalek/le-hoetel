@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { hotelSettings, messages } from "@le-hoetel/db"
+import { hotelSettings, messages } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 
@@ -10,7 +10,7 @@ beforeAll(async () => {
 afterAll(() => app.close())
 
 async function hotelOwner(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   return { hotelId, client }

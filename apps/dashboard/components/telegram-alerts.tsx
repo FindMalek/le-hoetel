@@ -1,9 +1,9 @@
 "use client"
 
-import { errorMessage } from "@le-hoetel/orpc/errors"
-import { orpc } from "@le-hoetel/orpc/react"
-import { Button } from "@le-hoetel/ui/components/button"
-import { FormSection } from "@le-hoetel/ui/components/form-section"
+import { errorMessage } from "@ritorno/orpc/errors"
+import { orpc } from "@ritorno/orpc/react"
+import { Button } from "@ritorno/ui/components/button"
+import { FormSection } from "@ritorno/ui/components/form-section"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"

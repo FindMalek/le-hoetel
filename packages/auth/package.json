@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/auth",
+  "name": "@ritorno/auth",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,8 +15,8 @@
     "auth:schema": "pnpm dlx auth@1.7.10 generate --config auth.config.ts --output ../db/src/schema/auth.ts -y"
   },
   "dependencies": {
-    "@le-hoetel/common": "workspace:*",
-    "@le-hoetel/db": "workspace:*",
+    "@ritorno/common": "workspace:*",
+    "@ritorno/db": "workspace:*",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:"
   },
@@ -24,7 +24,7 @@
     "react": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"

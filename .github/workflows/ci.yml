@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      DATABASE_URL: postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel
+      DATABASE_URL: postgres://ritorno:ritorno@localhost:5432/ritorno
       TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
       TURBO_API: ${{ vars.TURBO_API }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -27,13 +27,13 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: le-hoetel
-          POSTGRES_PASSWORD: le-hoetel
-          POSTGRES_DB: le-hoetel
+          POSTGRES_USER: ritorno
+          POSTGRES_PASSWORD: ritorno
+          POSTGRES_DB: ritorno
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U le-hoetel"
+          --health-cmd "pg_isready -U ritorno"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10

@@ -1,4 +1,4 @@
-import { type Logger, logger } from "@le-hoetel/logger"
+import { type Logger, logger } from "@ritorno/logger"
 import { createEmailChannel, type EmailExtras } from "./channels/email"
 import { createTelegramChannel, type TelegramStartHandler } from "./channels/telegram"
 import { createWhatsAppChannel } from "./channels/whatsapp"

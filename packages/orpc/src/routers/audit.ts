@@ -1,5 +1,5 @@
-import { ADMIN_LIST_LIMIT } from "@le-hoetel/common/constants"
-import { auditLog, hotelSettings, user } from "@le-hoetel/db"
+import { ADMIN_LIST_LIMIT } from "@ritorno/common/constants"
+import { auditLog, hotelSettings, user } from "@ritorno/db"
 import { and, desc, eq, gte, ilike, lt, sql } from "drizzle-orm"
 import { z } from "zod"
 import { adminProcedure } from "../procedures"

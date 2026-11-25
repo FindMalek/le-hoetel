@@ -1,5 +1,5 @@
-import { isForbidden } from "@le-hoetel/orpc/errors"
-import { EmptyState } from "@le-hoetel/ui/components/empty-state"
+import { isForbidden } from "@ritorno/orpc/errors"
+import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { HotelIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"

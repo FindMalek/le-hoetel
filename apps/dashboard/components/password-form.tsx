@@ -1,9 +1,9 @@
 "use client"
 
-import { authClient } from "@le-hoetel/auth/client"
-import { Button } from "@le-hoetel/ui/components/button"
-import { Checkbox } from "@le-hoetel/ui/components/checkbox"
-import { Label } from "@le-hoetel/ui/components/label"
+import { authClient } from "@ritorno/auth/client"
+import { Button } from "@ritorno/ui/components/button"
+import { Checkbox } from "@ritorno/ui/components/checkbox"
+import { Label } from "@ritorno/ui/components/label"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"

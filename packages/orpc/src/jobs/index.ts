@@ -1,4 +1,4 @@
-import type { Job } from "@le-hoetel/jobs"
+import type { Job } from "@ritorno/jobs"
 import { birthdayJob } from "./birthday"
 import { campaignJob } from "./campaigns"
 import { holidayJob } from "./holidays"

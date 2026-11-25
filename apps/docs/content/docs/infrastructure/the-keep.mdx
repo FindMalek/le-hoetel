@@ -3,7 +3,7 @@ title: The Keep
 description: What runs on our home server, what can go wrong, and how staging and the pilot should use it.
 ---
 
-The Keep is a single Ubuntu box at home that runs Dokploy (docker swarm plus compose). Previews, staging and the shared tooling live on it. This page is a read only survey taken on 2026-11-24 (nothing was changed) and a proposal for Le Hoetel.
+The Keep is a single Ubuntu box at home that runs Dokploy (docker swarm plus compose). Previews, staging and the shared tooling live on it. This page is a read only survey taken on 2026-11-24 (nothing was changed) and a proposal for Ritorno.
 
 ## Machine
 
@@ -24,7 +24,7 @@ The Keep is a single Ubuntu box at home that runs Dokploy (docker swarm plus com
 | Dokploy | deploys, domains, previews | v0.31, swarm mode |
 | Traefik | reverse proxy and tls | public web traffic only |
 | Postgres | one container per app and per preview | one per app and preview, see risks |
-| Redis, Valkey | queues and caches of other projects | not used by Le Hoetel |
+| Redis, Valkey | queues and caches of other projects | not used by Ritorno |
 | OpenObserve | logs and traces | already deployed as a compose service |
 | GlitchTip | errors (web and worker) | already deployed as a compose service |
 | Umami | web analytics | already deployed as a compose service |
@@ -33,7 +33,7 @@ The Keep is a single Ubuntu box at home that runs Dokploy (docker swarm plus com
 | trigger.dev | job runner of another project | eight containers (webapp, supervisor, clickhouse, electric, s2, postgres, redis, proxy) |
 | other projects | api, web and dashboard per preview, demos, a few self hosted tools | around 16 live previews of one project alone |
 
-The Le Hoetel preview workflow already deploys one preview per pull request through the Dokploy api, see the repo `.github/workflows/preview.yml`. Dokploy projects were not listed through its api because no token was available on the box.
+The Ritorno preview workflow already deploys one preview per pull request through the Dokploy api, see the repo `.github/workflows/preview.yml`. Dokploy projects were not listed through its api because no token was available on the box.
 
 ## Risks
 

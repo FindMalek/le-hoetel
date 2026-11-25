@@ -1,16 +1,16 @@
-import type { Auth } from "@le-hoetel/auth"
-import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@le-hoetel/orpc"
-import { linkTelegramChat } from "@le-hoetel/orpc/manager-alerts"
-import { applyKapsoEvent, applyResendEvent, type KapsoPayload, type ResendEvent } from "@le-hoetel/orpc/messages"
-import { handleInboundWhatsApp, unsubscribeAll } from "@le-hoetel/orpc/unsubscribe"
-import { isPublicKey } from "@le-hoetel/storage"
-import { verifyHmac, verifySvix } from "@le-hoetel/webhooks"
 import { OpenAPIHandler } from "@orpc/openapi/fetch"
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins"
 import { onError } from "@orpc/server"
 import { RPCHandler } from "@orpc/server/fetch"
 import { SimpleCsrfProtectionHandlerPlugin } from "@orpc/server/plugins"
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4"
+import type { Auth } from "@ritorno/auth"
+import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@ritorno/orpc"
+import { linkTelegramChat } from "@ritorno/orpc/manager-alerts"
+import { applyKapsoEvent, applyResendEvent, type KapsoPayload, type ResendEvent } from "@ritorno/orpc/messages"
+import { handleInboundWhatsApp, unsubscribeAll } from "@ritorno/orpc/unsubscribe"
+import { isPublicKey } from "@ritorno/storage"
+import { verifyHmac, verifySvix } from "@ritorno/webhooks"
 import * as Sentry from "@sentry/bun"
 import { sql } from "drizzle-orm"
 import { withSecurityHeaders } from "./headers"
@@ -48,10 +48,10 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
       new OpenAPIReferencePlugin({
         docsPath: "/docs",
         specPath: "/openapi.json",
-        docsTitle: "Le Hoetel API",
+        docsTitle: "Ritorno API",
         schemaConverters: [new ZodToJsonSchemaConverter()],
         specGenerateOptions: {
-          info: { title: "Le Hoetel API", version: "0.1.0" },
+          info: { title: "Ritorno API", version: "0.1.0" },
           servers: [{ url: `${opts.publicUrl}/v1` }],
         },
       }),

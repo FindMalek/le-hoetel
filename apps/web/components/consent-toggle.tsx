@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import type { ComponentProps } from "react"
 
 export function ConsentToggle({

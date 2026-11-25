@@ -1,7 +1,7 @@
-import type { CampaignChannel, CampaignResults, CampaignSegment } from "@le-hoetel/common/campaigns"
-import type { MessageChannel } from "@le-hoetel/common/consent"
-import { localTime } from "@le-hoetel/common/hotel-time"
-import { campaignRecipients, type Db, guestConsents, guests, messages } from "@le-hoetel/db"
+import type { CampaignChannel, CampaignResults, CampaignSegment } from "@ritorno/common/campaigns"
+import type { MessageChannel } from "@ritorno/common/consent"
+import { localTime } from "@ritorno/common/hotel-time"
+import { campaignRecipients, type Db, guestConsents, guests, messages } from "@ritorno/db"
 import { and, count, eq, gte, inArray, notExists, sql } from "drizzle-orm"
 
 export const campaignChannels = (channel: CampaignChannel): MessageChannel[] =>

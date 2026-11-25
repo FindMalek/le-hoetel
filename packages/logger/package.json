@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/logger",
+  "name": "@ritorno/logger",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "test": "bun test"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
   }

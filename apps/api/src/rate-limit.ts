@@ -1,4 +1,4 @@
-import { clientIp, RATE_LIMITS, type Services } from "@le-hoetel/orpc"
+import { clientIp, RATE_LIMITS, type Services } from "@ritorno/orpc"
 
 /** Sign-in and sign-up posts are the brute-force target, so they get the tight `auth` rule per ip. */
 export async function limitAuth(services: Pick<Services, "rateLimiter">, request: Request): Promise<Response | null> {

@@ -10,7 +10,7 @@ export interface BrandColors {
 
 /** The look of every email. `findplate create` fills the colors, radius and fonts from the preset. */
 export const BRAND = {
-  name: "le-hoetel",
+  name: "Ritorno",
   radius: 0,
   fontSans: "'IBM Plex Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
   fontMono: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",

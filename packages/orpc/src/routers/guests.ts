@@ -1,6 +1,7 @@
-import { type ConsentChannel, MESSAGE_CHANNELS } from "@le-hoetel/common/consent"
-import { guestsToCsv } from "@le-hoetel/common/guest-export"
-import { MESSAGE_STATUSES } from "@le-hoetel/common/message"
+import { ORPCError } from "@orpc/server"
+import { type ConsentChannel, MESSAGE_CHANNELS } from "@ritorno/common/consent"
+import { guestsToCsv } from "@ritorno/common/guest-export"
+import { MESSAGE_STATUSES } from "@ritorno/common/message"
 import {
   consentEventSchema,
   consentSetSchema,
@@ -17,9 +18,8 @@ import {
   guestUpdateSchema,
   guestUpsertResultSchema,
   hotelGuestsExportSchema,
-} from "@le-hoetel/common/schemas"
-import { consentEvents, guestConsents, guests, guestVisits, messages } from "@le-hoetel/db"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/common/schemas"
+import { consentEvents, guestConsents, guests, guestVisits, messages } from "@ritorno/db"
 import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"

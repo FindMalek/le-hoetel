@@ -1,9 +1,9 @@
-import { createAuth } from "@le-hoetel/auth"
-import { user } from "@le-hoetel/db"
-import { createTestDb, type TestDb } from "@le-hoetel/db/testing"
-import { createNotifier } from "@le-hoetel/notification"
-import type { Storage } from "@le-hoetel/storage"
 import { createRouterClient } from "@orpc/server"
+import { createAuth } from "@ritorno/auth"
+import { user } from "@ritorno/db"
+import { createTestDb, type TestDb } from "@ritorno/db/testing"
+import { createNotifier } from "@ritorno/notification"
+import type { Storage } from "@ritorno/storage"
 import { eq } from "drizzle-orm"
 import { createContext, type Services } from "./context"
 import { createRateLimiter } from "./lib/rate-limit"
@@ -33,7 +33,7 @@ export async function createTestApp(options: { storage?: Storage } = {}) {
       dashboardUrl: "http://localhost:3002",
       apiUrl: "http://localhost:3001",
       tokenSecret: SECRET,
-      telegramBot: "le_hoetel_test_bot",
+      telegramBot: "ritorno_test_bot",
     },
     rateLimiter: createRateLimiter({}),
     storage: options.storage ?? null,

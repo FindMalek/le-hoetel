@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import type { Notifier } from "@le-hoetel/notification"
+import type { Notifier } from "@ritorno/notification"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp
@@ -9,7 +9,7 @@ beforeAll(async () => {
 afterAll(() => app.close())
 
 test("a hotel previews its own branding and test sends only go to the signed in user, a few at a time", async () => {
-  const owner = await app.signUp("emails-owner@le-hoetel.test")
+  const owner = await app.signUp("emails-owner@ritorno.test")
   const hotelId = await app.createHotel("emails-a", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   await client.hotel.update({ primaryColor: "#0f766e" })
@@ -28,10 +28,10 @@ test("a hotel previews its own branding and test sends only go to the signed in 
   } satisfies Notifier
   expect(await client.emails.sendTest({ template: "birthday", locale: "fr" })).toEqual({
     sent: true,
-    to: "emails-owner@le-hoetel.test",
+    to: "emails-owner@ritorno.test",
   })
   expect(sent).toHaveLength(1)
-  expect(sent[0]?.to).toBe("emails-owner@le-hoetel.test")
+  expect(sent[0]?.to).toBe("emails-owner@ritorno.test")
   expect(sent[0]?.subject).toStartWith("[Test] ")
 
   for (let i = 0; i < 4; i++) await client.emails.sendTest({ template: "survey", locale: "en" })

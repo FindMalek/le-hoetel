@@ -1,4 +1,4 @@
-import { member } from "@le-hoetel/db"
+import { member } from "@ritorno/db"
 import { and, eq } from "drizzle-orm"
 import type { Context } from "../context"
 

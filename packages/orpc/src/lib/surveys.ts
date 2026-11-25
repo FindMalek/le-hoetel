@@ -1,13 +1,13 @@
-import type { HotelLanguage } from "@le-hoetel/common/hotel"
+import { ORPCError } from "@orpc/server"
+import type { HotelLanguage } from "@ritorno/common/hotel"
 import {
   DEFAULT_LOW_SCORE_THRESHOLD,
   SURVEY_INVITE_DAYS,
   type SurveyAnswer,
   signSurveyToken,
   verifySurveyToken,
-} from "@le-hoetel/common/survey"
-import { feedbackCases, guests, hotelSettings, surveyInvites, surveyResponses } from "@le-hoetel/db"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/common/survey"
+import { feedbackCases, guests, hotelSettings, surveyInvites, surveyResponses } from "@ritorno/db"
 import { and, eq, isNull } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelBranding } from "./hotel"

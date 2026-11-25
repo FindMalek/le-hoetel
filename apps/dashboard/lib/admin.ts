@@ -1,4 +1,4 @@
-import type { HotelHealth } from "@le-hoetel/common/hotel"
+import type { HotelHealth } from "@ritorno/common/hotel"
 
 export const consentRate = (hotel: { guestCount: number; consentedCount: number }): number | null =>
   hotel.guestCount ? Math.round((hotel.consentedCount / hotel.guestCount) * 100) : null

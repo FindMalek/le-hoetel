@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { signUnsubscribeToken } from "@le-hoetel/common/unsubscribe"
-import { consentEvents, messages } from "@le-hoetel/db"
+import { signUnsubscribeToken } from "@ritorno/common/unsubscribe"
+import { consentEvents, messages } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { applyStopReply, handleInboundWhatsApp } from "../lib/unsubscribe"
 import { createTestApp, type TestApp } from "../testing"
@@ -14,7 +14,7 @@ afterAll(() => app.close())
 const SECRET = "test-secret-test-secret-test-secret!"
 
 async function hotelWithGuest(slug: string, phone: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const guest = await client.guests.create({

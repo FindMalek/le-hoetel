@@ -205,36 +205,6 @@ importers:
 
   apps/api:
     dependencies:
-      '@le-hoetel/ai':
-        specifier: workspace:*
-        version: link:../../packages/ai
-      '@le-hoetel/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@le-hoetel/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@le-hoetel/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      '@le-hoetel/jobs':
-        specifier: workspace:*
-        version: link:../../packages/jobs
-      '@le-hoetel/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
-      '@le-hoetel/notification':
-        specifier: workspace:*
-        version: link:../../packages/notification
-      '@le-hoetel/orpc':
-        specifier: workspace:*
-        version: link:../../packages/orpc
-      '@le-hoetel/storage':
-        specifier: workspace:*
-        version: link:../../packages/storage
-      '@le-hoetel/webhooks':
-        specifier: workspace:*
-        version: link:../../packages/webhooks
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.10.0
@@ -253,6 +223,36 @@ importers:
       '@orpc/zod':
         specifier: 'catalog:'
         version: 1.15.7(@opentelemetry/api@1.10.0)(@orpc/contract@1.15.7(@opentelemetry/api@1.10.0))(@orpc/server@1.15.7(@opentelemetry/api@1.10.0)(ws@8.21.3))(ws@8.21.3)(zod@4.6.7)
+      '@ritorno/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
+      '@ritorno/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@ritorno/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@ritorno/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@ritorno/jobs':
+        specifier: workspace:*
+        version: link:../../packages/jobs
+      '@ritorno/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@ritorno/notification':
+        specifier: workspace:*
+        version: link:../../packages/notification
+      '@ritorno/orpc':
+        specifier: workspace:*
+        version: link:../../packages/orpc
+      '@ritorno/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      '@ritorno/webhooks':
+        specifier: workspace:*
+        version: link:../../packages/webhooks
       '@sentry/bun':
         specifier: 'catalog:'
         version: 11.9.0(rollup@4.65.1)
@@ -263,7 +263,7 @@ importers:
         specifier: 'catalog:'
         version: 0.45.4(@opentelemetry/api@1.10.0)(bun-types@1.4.3)(kysely@0.29.6)(pg@8.23.1)(postgres@4.0.0)
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@types/bun':
@@ -275,36 +275,36 @@ importers:
 
   apps/dashboard:
     dependencies:
-      '@le-hoetel/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@le-hoetel/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@le-hoetel/compliance':
-        specifier: workspace:*
-        version: link:../../packages/compliance
-      '@le-hoetel/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      '@le-hoetel/i18n':
-        specifier: workspace:*
-        version: link:../../packages/i18n
-      '@le-hoetel/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
-      '@le-hoetel/orpc':
-        specifier: workspace:*
-        version: link:../../packages/orpc
-      '@le-hoetel/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@next/env':
         specifier: 'catalog:'
         version: 16.4.6
       '@orpc/tanstack-query':
         specifier: 'catalog:'
         version: 1.15.7(@opentelemetry/api@1.10.0)(@orpc/client@1.15.7(@opentelemetry/api@1.10.0))(@tanstack/query-core@5.104.3)
+      '@ritorno/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@ritorno/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@ritorno/compliance':
+        specifier: workspace:*
+        version: link:../../packages/compliance
+      '@ritorno/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@ritorno/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@ritorno/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@ritorno/orpc':
+        specifier: workspace:*
+        version: link:../../packages/orpc
+      '@ritorno/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@sentry/nextjs':
         specifier: 'catalog:'
         version: 11.9.0(next@16.4.6(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
@@ -336,7 +336,7 @@ importers:
         specifier: 'catalog:'
         version: 2.0.8(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@tailwindcss/postcss':
@@ -360,12 +360,12 @@ importers:
 
   apps/docs:
     dependencies:
-      '@le-hoetel/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@next/env':
         specifier: 'catalog:'
         version: 16.4.6
+      '@ritorno/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       fumadocs-core:
         specifier: 'catalog:'
         version: 16.17.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.59.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.6(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.7)
@@ -388,7 +388,7 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@tailwindcss/postcss':
@@ -418,19 +418,19 @@ importers:
       '@axe-core/playwright':
         specifier: 'catalog:'
         version: 4.14.0(playwright-core@1.64.1)
-      '@le-hoetel/common':
+      '@ritorno/common':
         specifier: workspace:*
         version: link:../../packages/common
       postgres:
         specifier: 'catalog:'
         version: 4.0.0
     devDependencies:
-      '@le-hoetel/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.64.1
+      '@ritorno/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@types/bun':
         specifier: 'catalog:'
         version: 1.4.3
@@ -440,7 +440,7 @@ importers:
 
   apps/email:
     dependencies:
-      '@le-hoetel/notification':
+      '@ritorno/notification':
         specifier: workspace:*
         version: link:../../packages/notification
       react:
@@ -450,12 +450,12 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)
     devDependencies:
-      '@le-hoetel/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@react-email/ui':
         specifier: 'catalog:'
         version: 6.11.4(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@ritorno/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -468,30 +468,30 @@ importers:
 
   apps/web:
     dependencies:
-      '@le-hoetel/common':
-        specifier: workspace:*
-        version: link:../../packages/common
-      '@le-hoetel/compliance':
-        specifier: workspace:*
-        version: link:../../packages/compliance
-      '@le-hoetel/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      '@le-hoetel/i18n':
-        specifier: workspace:*
-        version: link:../../packages/i18n
-      '@le-hoetel/logger':
-        specifier: workspace:*
-        version: link:../../packages/logger
-      '@le-hoetel/orpc':
-        specifier: workspace:*
-        version: link:../../packages/orpc
-      '@le-hoetel/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@next/env':
         specifier: 'catalog:'
         version: 16.4.6
+      '@ritorno/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@ritorno/compliance':
+        specifier: workspace:*
+        version: link:../../packages/compliance
+      '@ritorno/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@ritorno/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@ritorno/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@ritorno/orpc':
+        specifier: workspace:*
+        version: link:../../packages/orpc
+      '@ritorno/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@sentry/nextjs':
         specifier: 'catalog:'
         version: 11.9.0(next@16.4.6(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
@@ -520,7 +520,7 @@ importers:
         specifier: 'catalog:'
         version: 0.0.1
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@tailwindcss/postcss':
@@ -560,7 +560,7 @@ importers:
         specifier: 'catalog:'
         version: 7.0.143(zod@4.6.7)
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -572,10 +572,10 @@ importers:
 
   packages/auth:
     dependencies:
-      '@le-hoetel/common':
+      '@ritorno/common':
         specifier: workspace:*
         version: link:../common
-      '@le-hoetel/db':
+      '@ritorno/db':
         specifier: workspace:*
         version: link:../db
       better-auth:
@@ -588,7 +588,7 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -610,7 +610,7 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -622,7 +622,7 @@ importers:
 
   packages/compliance:
     dependencies:
-      '@le-hoetel/ui':
+      '@ritorno/ui':
         specifier: workspace:*
         version: link:../ui
       next:
@@ -632,7 +632,7 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -649,7 +649,7 @@ importers:
 
   packages/db:
     dependencies:
-      '@le-hoetel/common':
+      '@ritorno/common':
         specifier: workspace:*
         version: link:../common
       better-auth:
@@ -662,7 +662,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -681,7 +681,7 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -693,7 +693,7 @@ importers:
 
   packages/i18n:
     dependencies:
-      '@le-hoetel/ui':
+      '@ritorno/ui':
         specifier: workspace:*
         version: link:../ui
       lucide-react:
@@ -709,7 +709,7 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -724,7 +724,7 @@ importers:
 
   packages/jobs:
     dependencies:
-      '@le-hoetel/db':
+      '@ritorno/db':
         specifier: workspace:*
         version: link:../db
       drizzle-orm:
@@ -737,7 +737,7 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -749,7 +749,7 @@ importers:
 
   packages/logger:
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -764,18 +764,6 @@ importers:
       '@kapso/whatsapp-cloud-api':
         specifier: 'catalog:'
         version: 0.4.0
-      '@le-hoetel/common':
-        specifier: workspace:*
-        version: link:../common
-      '@le-hoetel/i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@le-hoetel/logger':
-        specifier: workspace:*
-        version: link:../logger
-      '@le-hoetel/webhooks':
-        specifier: workspace:*
-        version: link:../webhooks
       '@opencoredev/email-sdk':
         specifier: 'catalog:'
         version: 3.0.1(@react-email/render@2.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(ai@7.0.155(zod@4.6.7))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -785,6 +773,18 @@ importers:
       '@react-email/render':
         specifier: 'catalog:'
         version: 2.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@ritorno/common':
+        specifier: workspace:*
+        version: link:../common
+      '@ritorno/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@ritorno/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@ritorno/webhooks':
+        specifier: workspace:*
+        version: link:../webhooks
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -792,7 +792,7 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -807,24 +807,6 @@ importers:
 
   packages/orpc:
     dependencies:
-      '@le-hoetel/auth':
-        specifier: workspace:*
-        version: link:../auth
-      '@le-hoetel/common':
-        specifier: workspace:*
-        version: link:../common
-      '@le-hoetel/db':
-        specifier: workspace:*
-        version: link:../db
-      '@le-hoetel/jobs':
-        specifier: workspace:*
-        version: link:../jobs
-      '@le-hoetel/notification':
-        specifier: workspace:*
-        version: link:../notification
-      '@le-hoetel/storage':
-        specifier: workspace:*
-        version: link:../storage
       '@orpc/client':
         specifier: 'catalog:'
         version: 1.15.7(@opentelemetry/api@1.10.0)
@@ -834,6 +816,24 @@ importers:
       '@orpc/tanstack-query':
         specifier: 'catalog:'
         version: 1.15.7(@opentelemetry/api@1.10.0)(@orpc/client@1.15.7(@opentelemetry/api@1.10.0))(@tanstack/query-core@5.104.3)
+      '@ritorno/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@ritorno/common':
+        specifier: workspace:*
+        version: link:../common
+      '@ritorno/db':
+        specifier: workspace:*
+        version: link:../db
+      '@ritorno/jobs':
+        specifier: workspace:*
+        version: link:../jobs
+      '@ritorno/notification':
+        specifier: workspace:*
+        version: link:../notification
+      '@ritorno/storage':
+        specifier: workspace:*
+        version: link:../storage
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.104.3(react@19.3.0)
@@ -853,7 +853,7 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -871,7 +871,7 @@ importers:
 
   packages/storage:
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':
@@ -920,7 +920,7 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@tailwindcss/postcss':
@@ -944,7 +944,7 @@ importers:
 
   packages/webhooks:
     devDependencies:
-      '@le-hoetel/config':
+      '@ritorno/config':
         specifier: workspace:*
         version: link:../config
       '@types/bun':

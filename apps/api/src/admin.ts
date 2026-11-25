@@ -1,5 +1,5 @@
-import type { Auth } from "@le-hoetel/auth"
-import { type Db, user } from "@le-hoetel/db"
+import type { Auth } from "@ritorno/auth"
+import { type Db, user } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 
 /** The env admin is the source of truth: created on first start, its password and role reset on every start. */

@@ -1,5 +1,5 @@
-import { LocaleSwitcher } from "@le-hoetel/i18n/switcher"
-import { ZelligePattern } from "@le-hoetel/ui/components/zellige-pattern"
+import { LocaleSwitcher } from "@ritorno/i18n/switcher"
+import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
 import { getTranslations } from "next-intl/server"
 import { BrandMark } from "@/components/brand-mark"
 import { ThemeToggle } from "@/components/theme-toggle"

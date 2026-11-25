@@ -1,5 +1,3 @@
-import { contrastRatio, MIN_UI_CONTRAST, readableForeground } from "@le-hoetel/common/color"
-import { htmlAttributes, type Locale } from "@le-hoetel/i18n/config"
 import {
   Body,
   Button,
@@ -13,6 +11,8 @@ import {
   Section,
   Text,
 } from "@react-email/components"
+import { contrastRatio, MIN_UI_CONTRAST, readableForeground } from "@ritorno/common/color"
+import { htmlAttributes, type Locale } from "@ritorno/i18n/config"
 import type { CSSProperties, ReactNode } from "react"
 import { BRAND } from "../brand"
 import type { Copy } from "./copy"

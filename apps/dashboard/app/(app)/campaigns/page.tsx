@@ -1,4 +1,4 @@
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import { PlusIcon } from "lucide-react"
 import type { Metadata } from "next"

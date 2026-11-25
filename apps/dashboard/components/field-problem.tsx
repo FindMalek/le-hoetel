@@ -1,4 +1,4 @@
-import { FieldError } from "@le-hoetel/ui/components/field"
+import { FieldError } from "@ritorno/ui/components/field"
 import { AlertCircleIcon } from "lucide-react"
 
 export function FieldProblem({ id, children }: { id: string; children?: React.ReactNode }) {

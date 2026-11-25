@@ -1,4 +1,4 @@
-import { getMessages, isLocale, LOCALE_COOKIE, negotiateLocale } from "@le-hoetel/i18n"
+import { getMessages, isLocale, LOCALE_COOKIE, negotiateLocale } from "@ritorno/i18n"
 import { cookies, headers } from "next/headers"
 import { getRequestConfig } from "next-intl/server"
 

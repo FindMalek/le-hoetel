@@ -1,5 +1,5 @@
-import { guests } from "@le-hoetel/db"
-import { defineJob } from "@le-hoetel/jobs"
+import { guests } from "@ritorno/db"
+import { defineJob } from "@ritorno/jobs"
 import { z } from "zod"
 import type { Context } from "../context"
 import { claimSend, consentedChannels, triggerOffer } from "../lib/automations"

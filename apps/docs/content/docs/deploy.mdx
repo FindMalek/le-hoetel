@@ -3,7 +3,7 @@ title: Deploy
 description: Ship the apps on Vercel or your own server.
 ---
 
-Le Hoetel deploys as the api, up to four Next apps, and a postgres database. All of them read the same env keys, see [environment](/docs/environment).
+Ritorno deploys as the api, up to four Next apps, and a postgres database. All of them read the same env keys, see [environment](/docs/environment).
 
 ## Vercel
 
@@ -18,10 +18,10 @@ Deploy `web`, `dashboard` and `docs` as separate Vercel projects from the same r
 Every app has a `Dockerfile` in `apps/<app>/`. The build context is the repo root and turbo prunes the workspace to what the app needs:
 
 ```bash
-docker build -f apps/web/Dockerfile -t le-hoetel-web .
-docker build -f apps/dashboard/Dockerfile -t le-hoetel-dashboard .
-docker build -f apps/api/Dockerfile -t le-hoetel-api .
-docker build -f apps/docs/Dockerfile -t le-hoetel-docs .
+docker build -f apps/web/Dockerfile -t ritorno-web .
+docker build -f apps/dashboard/Dockerfile -t ritorno-dashboard .
+docker build -f apps/api/Dockerfile -t ritorno-api .
+docker build -f apps/docs/Dockerfile -t ritorno-docs .
 ```
 
 Next apps are built with `output: "standalone"` and ship a healthcheck. Pass the env at run time.

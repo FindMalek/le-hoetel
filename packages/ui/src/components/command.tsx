@@ -5,7 +5,7 @@ import { cn } from "cn"
 import { SearchIcon } from "lucide-react"
 import type * as React from "react"
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@le-hoetel/ui/components/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@ritorno/ui/components/dialog"
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (

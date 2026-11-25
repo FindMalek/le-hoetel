@@ -11,7 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@le-hoetel/ui": "workspace:*",
+    "@ritorno/ui": "workspace:*",
     "@next/env": "catalog:",
     "fumadocs-core": "catalog:",
     "fumadocs-mdx": "catalog:",
@@ -22,7 +22,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@types/bun": "catalog:",
     "@types/mdx": "catalog:",

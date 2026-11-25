@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import type { Db } from "@le-hoetel/db"
+import type { Db } from "@ritorno/db"
 import { z } from "zod"
 import { type Boss, createJobs, defineJob } from "./index"
 

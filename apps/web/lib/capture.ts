@@ -1,6 +1,6 @@
 import "server-only"
-import type { CaptureInput, LeadInput } from "@le-hoetel/common/schemas"
-import { createServerClient } from "@le-hoetel/orpc/server"
+import type { CaptureInput, LeadInput } from "@ritorno/common/schemas"
+import { createServerClient } from "@ritorno/orpc/server"
 import { headers } from "next/headers"
 
 /** Forwards the guest's ip so the api rate limits the guest, not this server. */

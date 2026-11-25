@@ -1,7 +1,7 @@
 "use client"
 
-import { authClient } from "@le-hoetel/auth/client"
-import { Button } from "@le-hoetel/ui/components/button"
+import { authClient } from "@ritorno/auth/client"
+import { Button } from "@ritorno/ui/components/button"
 import { LinkIcon } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"

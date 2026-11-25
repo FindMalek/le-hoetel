@@ -1,5 +1,5 @@
-import { CHANNELS } from "@le-hoetel/notification"
 import { ORPCError } from "@orpc/server"
+import { CHANNELS } from "@ritorno/notification"
 import { z } from "zod"
 import { adminProcedure } from "../procedures"
 

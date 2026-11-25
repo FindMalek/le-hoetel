@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { leads } from "@le-hoetel/db"
+import { leads } from "@ritorno/db"
 import { createTestApp, type TestApp } from "../testing"
 
 let app: TestApp

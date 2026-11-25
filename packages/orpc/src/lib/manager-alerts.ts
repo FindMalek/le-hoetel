@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto"
-import { type Db, hotelSettings, member, user } from "@le-hoetel/db"
+import { type Db, hotelSettings, member, user } from "@ritorno/db"
 import { and, eq, gt } from "drizzle-orm"
 import type { Context } from "../context"
 

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { member } from "@le-hoetel/db"
+import { member } from "@ritorno/db"
 import { and, eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../testing"
 import { guestsRouter } from "./guests"
@@ -21,8 +21,8 @@ const guest = (phone: string, name: string) =>
   }) as const
 
 async function twoHotels() {
-  const ownerA = await app.signUp(`iso-a-${crypto.randomUUID()}@le-hoetel.test`)
-  const ownerB = await app.signUp(`iso-b-${crypto.randomUUID()}@le-hoetel.test`)
+  const ownerA = await app.signUp(`iso-a-${crypto.randomUUID()}@ritorno.test`)
+  const ownerB = await app.signUp(`iso-b-${crypto.randomUUID()}@ritorno.test`)
   const hotelA = await app.createHotel(`iso-a-${crypto.randomUUID().slice(0, 8)}`, ownerA)
   const hotelB = await app.createHotel(`iso-b-${crypto.randomUUID().slice(0, 8)}`, ownerB)
   const a = await app.joinHotel(ownerA, hotelA, "owner")
@@ -75,7 +75,7 @@ test("the hotel header can't aim at another hotel, only the app admin may", asyn
   await expect(withHeader(a.headers, hotelB).guests.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
   await expect(withHeader(a.headers, hotelA).guests.list({})).resolves.toMatchObject({ total: 1 })
 
-  const admin = await app.signUp(`iso-admin-${crypto.randomUUID()}@le-hoetel.test`, { role: "admin" })
+  const admin = await app.signUp(`iso-admin-${crypto.randomUUID()}@ritorno.test`, { role: "admin" })
   await expect(admin.client.guests.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
   const seen = await withHeader(admin.headers, hotelB).guests.list({})
   expect(seen.items.map((item) => item.id)).toEqual([guestB.id])
@@ -84,7 +84,7 @@ test("the hotel header can't aim at another hotel, only the app admin may", asyn
 
 test("membership is checked on every call: a removed member or a user without a hotel gets nothing", async () => {
   const { a, hotelA } = await twoHotels()
-  const staff = await app.signUp(`iso-staff-${crypto.randomUUID()}@le-hoetel.test`)
+  const staff = await app.signUp(`iso-staff-${crypto.randomUUID()}@ritorno.test`)
   const asStaff = await app.joinHotel(staff, hotelA, "staff")
   await expect(asStaff.client.guests.list({})).resolves.toMatchObject({ total: 1 })
   await expect(asStaff.client.guests.exportAll()).rejects.toMatchObject({ code: "FORBIDDEN" })
@@ -97,7 +97,7 @@ test("membership is checked on every call: a removed member or a user without a 
   await app.services.db.delete(member).where(and(eq(member.userId, staff.id), eq(member.organizationId, hotelA)))
   await expect(asStaff.client.guests.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
 
-  const nobody = await app.signUp(`iso-nobody-${crypto.randomUUID()}@le-hoetel.test`)
+  const nobody = await app.signUp(`iso-nobody-${crypto.randomUUID()}@ritorno.test`)
   await expect(nobody.client.guests.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
 })
 

@@ -2,7 +2,7 @@ import { createORPCClientUtils } from "./client"
 
 /**
  * Client for Next server components and route handlers, straight to the api service (`API_URL`, e.g.
- * http://le-hoetel-api:3001 inside Dokploy). Pass `getHeaders` to forward the visitor's cookie for admin calls.
+ * http://ritorno-api:3001 inside Dokploy). Pass `getHeaders` to forward the visitor's cookie for admin calls.
  */
 export function createServerClient(getHeaders?: () => Promise<Record<string, string>>) {
   return createORPCClientUtils({

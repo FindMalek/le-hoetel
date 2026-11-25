@@ -1,4 +1,4 @@
-import type { Db } from "@le-hoetel/db"
+import type { Db } from "@ritorno/db"
 import { PgBoss } from "pg-boss"
 import type { z } from "zod"
 import type { Job, RetryPolicy } from "./define"

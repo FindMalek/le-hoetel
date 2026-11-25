@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 
 export function BrandMark({ className, showName = true }: { className?: string; showName?: boolean }) {
   return (
@@ -9,7 +9,7 @@ export function BrandMark({ className, showName = true }: { className?: string; 
           <path d="M12 3.2 20.8 12 12 20.8 3.2 12z" strokeLinejoin="round" />
         </svg>
       </span>
-      {showName ? <span>le-hoetel</span> : <span className="sr-only">le-hoetel</span>}
+      {showName ? <span>Ritorno</span> : <span className="sr-only">Ritorno</span>}
     </span>
   )
 }

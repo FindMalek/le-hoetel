@@ -1,9 +1,9 @@
 "use client"
 
-import { LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
-import { errorMessage } from "@le-hoetel/orpc/errors"
-import { orpc } from "@le-hoetel/orpc/react"
-import { Button } from "@le-hoetel/ui/components/button"
+import { LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
+import { errorMessage } from "@ritorno/orpc/errors"
+import { orpc } from "@ritorno/orpc/react"
+import { Button } from "@ritorno/ui/components/button"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"

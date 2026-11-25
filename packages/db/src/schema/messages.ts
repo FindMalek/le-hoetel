@@ -1,5 +1,5 @@
-import { MESSAGE_CHANNELS } from "@le-hoetel/common/consent"
-import { MESSAGE_STATUSES } from "@le-hoetel/common/message"
+import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
+import { MESSAGE_STATUSES } from "@ritorno/common/message"
 import { foreignKey, index, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import { guests } from "./guests"
 import { hotelLanguage } from "./hotels"

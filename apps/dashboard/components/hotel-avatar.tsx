@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import { logoSrc } from "@/lib/admin"
 
 /** The hotel's logo, or its first letter on the hotel's own primary color when it has none. */

@@ -1,4 +1,4 @@
-import { Skeleton } from "@le-hoetel/ui/components/skeleton"
+import { Skeleton } from "@ritorno/ui/components/skeleton"
 import { cn } from "cn"
 
 type LoadingStateProps = React.ComponentProps<"div"> & {

@@ -1,5 +1,5 @@
-import { isNotFound } from "@le-hoetel/orpc/errors"
-import { Badge } from "@le-hoetel/ui/components/badge"
+import { isNotFound } from "@ritorno/orpc/errors"
+import { Badge } from "@ritorno/ui/components/badge"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,11 +7,11 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@le-hoetel/ui/components/breadcrumb"
-import { Button } from "@le-hoetel/ui/components/button"
-import { FormSection } from "@le-hoetel/ui/components/form-section"
-import { Section } from "@le-hoetel/ui/components/section"
-import { StatCard } from "@le-hoetel/ui/components/stat-card"
+} from "@ritorno/ui/components/breadcrumb"
+import { Button } from "@ritorno/ui/components/button"
+import { FormSection } from "@ritorno/ui/components/form-section"
+import { Section } from "@ritorno/ui/components/section"
+import { StatCard } from "@ritorno/ui/components/stat-card"
 import { ExternalLinkIcon, EyeIcon, QrCodeIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"

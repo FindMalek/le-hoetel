@@ -1,14 +1,14 @@
 "use client"
 
-import { browserClient } from "@le-hoetel/orpc/react"
-import { Button } from "@le-hoetel/ui/components/button"
-import { ConfirmDialog } from "@le-hoetel/ui/components/confirm-dialog"
+import { browserClient } from "@ritorno/orpc/react"
+import { Button } from "@ritorno/ui/components/button"
+import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@le-hoetel/ui/components/dropdown-menu"
+} from "@ritorno/ui/components/dropdown-menu"
 import { useMutation } from "@tanstack/react-query"
 import { DownloadIcon, Trash2Icon } from "lucide-react"
 import { useRouter } from "next/navigation"

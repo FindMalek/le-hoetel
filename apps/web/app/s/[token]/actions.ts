@@ -1,6 +1,6 @@
 "use server"
 
-import { SURVEY_COMMENT_MAX } from "@le-hoetel/common/survey"
+import { SURVEY_COMMENT_MAX } from "@ritorno/common/survey"
 import { redirect } from "next/navigation"
 import { submitSurvey } from "@/lib/api"
 

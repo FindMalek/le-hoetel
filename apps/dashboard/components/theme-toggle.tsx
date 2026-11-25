@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import { MoonIcon, SunIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"

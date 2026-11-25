@@ -4,7 +4,7 @@ import type { RenderedEmail } from "../render"
 
 export interface EmailConfig {
   apiKey?: string
-  /** `Name <address@your-domain>`; the domain must be verified in Resend (`pnpm --filter @le-hoetel/notification domain`). */
+  /** `Name <address@your-domain>`; the domain must be verified in Resend (`pnpm --filter @ritorno/notification domain`). */
   from: string
   fetch?: typeof fetch
 }

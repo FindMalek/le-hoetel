@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useEffect } from "react"

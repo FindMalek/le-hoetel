@@ -120,11 +120,11 @@ function extraInfo() {
   if (apiChanged) {
     extra.creds = {
       ownerEmail: demoOwnerEmail("dar-zitouna"),
-      adminEmail: env.PREVIEW_ADMIN_EMAIL ?? "admin@le-hoetel.local",
+      adminEmail: env.PREVIEW_ADMIN_EMAIL ?? "admin@ritorno.local",
       password,
     }
     if (state._db) extra.db = { ...db, host: state._db }
-    extra.whodbUrl = env.WHODB_URL || "https://whodb-lehoetel.findmalek.engineer"
+    extra.whodbUrl = env.WHODB_URL || "https://whodb-ritorno.findmalek.engineer"
   }
   return extra
 }
@@ -152,7 +152,7 @@ function appEnv(app) {
       DATABASE_URL: `postgres://${db.user}:${db.password}@${state._db}:5432/${db.database}`,
       SEED: "demo",
       DEMO_PASSWORD: password,
-      ADMIN_EMAIL: env.PREVIEW_ADMIN_EMAIL ?? "admin@le-hoetel.local",
+      ADMIN_EMAIL: env.PREVIEW_ADMIN_EMAIL ?? "admin@ritorno.local",
       ADMIN_PASSWORD: password,
       BETTER_AUTH_SECRET: previewSecret(env.DOKPLOY_TOKEN, pr, "auth", 40),
       MESSAGING_LIVE: "false",

@@ -1,6 +1,6 @@
 /** What the dashboard says about itself in titles and link previews. */
 export const SITE = {
-  name: "le-hoetel",
+  name: "Ritorno",
   tagline: "Loyalty and guest relationships for hotels in Tunisia",
   /** Colors of the social card (opengraph-image), filled from the preset. Any hex works. */
   og: {

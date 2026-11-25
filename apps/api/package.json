@@ -10,16 +10,16 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@le-hoetel/ai": "workspace:*",
-    "@le-hoetel/auth": "workspace:*",
-    "@le-hoetel/db": "workspace:*",
-    "@le-hoetel/env": "workspace:*",
-    "@le-hoetel/logger": "workspace:*",
-    "@le-hoetel/jobs": "workspace:*",
-    "@le-hoetel/notification": "workspace:*",
-    "@le-hoetel/orpc": "workspace:*",
-    "@le-hoetel/storage": "workspace:*",
-    "@le-hoetel/webhooks": "workspace:*",
+    "@ritorno/ai": "workspace:*",
+    "@ritorno/auth": "workspace:*",
+    "@ritorno/db": "workspace:*",
+    "@ritorno/env": "workspace:*",
+    "@ritorno/logger": "workspace:*",
+    "@ritorno/jobs": "workspace:*",
+    "@ritorno/notification": "workspace:*",
+    "@ritorno/orpc": "workspace:*",
+    "@ritorno/storage": "workspace:*",
+    "@ritorno/webhooks": "workspace:*",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/exporter-trace-otlp-http": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",
@@ -31,7 +31,7 @@
     "drizzle-orm": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
   }

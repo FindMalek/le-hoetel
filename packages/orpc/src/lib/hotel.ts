@@ -1,6 +1,6 @@
-import { HOTEL_ROLES, type HotelRole } from "@le-hoetel/common/hotel"
-import { hotelSettings, organization } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
+import { HOTEL_ROLES, type HotelRole } from "@ritorno/common/hotel"
+import { hotelSettings, organization } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import type { Context } from "../context"
 import { activeMembership } from "./org"

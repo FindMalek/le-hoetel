@@ -36,13 +36,13 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: le-hoetel
-          POSTGRES_PASSWORD: le-hoetel
-          POSTGRES_DB: le-hoetel
+          POSTGRES_USER: ritorno
+          POSTGRES_PASSWORD: ritorno
+          POSTGRES_DB: ritorno
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U le-hoetel"
+          --health-cmd "pg_isready -U ritorno"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
@@ -59,8 +59,8 @@ jobs:
       - name: Start api and web
         run: |
           pnpm --filter web exec next build
-          (cd apps/e2e && E2E_DATABASE_URL=postgres://le-hoetel:le-hoetel@localhost:5432/le-hoetel bun prepare-db.ts)
-          (cd apps/api && DATABASE_URL=postgres://le-hoetel:le-hoetel@localhost:5432/le_hoetel_e2e BETTER_AUTH_SECRET=lighthouse-secret-lighthouse-secret-0123 PORT=4101 SEED=demo DEPLOY_ENV=e2e bun src/index.ts > /tmp/api.log 2>&1 &)
+          (cd apps/e2e && E2E_DATABASE_URL=postgres://ritorno:ritorno@localhost:5432/ritorno bun prepare-db.ts)
+          (cd apps/api && DATABASE_URL=postgres://ritorno:ritorno@localhost:5432/ritorno_e2e BETTER_AUTH_SECRET=lighthouse-secret-lighthouse-secret-0123 PORT=4101 SEED=demo DEPLOY_ENV=e2e bun src/index.ts > /tmp/api.log 2>&1 &)
           (cd apps/web && pnpm exec next start --port 4100 > /tmp/web.log 2>&1 &)
           npx --yes wait-on http://localhost:4101/health http://localhost:4100 --timeout 120000
       - name: Lighthouse

@@ -1,12 +1,12 @@
 "use client"
 
-import { LOCALE_COOKIE, LOCALE_NAMES, LOCALES, type Locale } from "@le-hoetel/i18n"
+import { LOCALE_COOKIE, LOCALE_NAMES, LOCALES, type Locale } from "@ritorno/i18n"
 import {
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-} from "@le-hoetel/ui/components/dropdown-menu"
+} from "@ritorno/ui/components/dropdown-menu"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
 

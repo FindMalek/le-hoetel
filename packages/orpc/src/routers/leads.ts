@@ -1,5 +1,5 @@
-import { leadInputSchema } from "@le-hoetel/common/schemas"
-import { leads } from "@le-hoetel/db"
+import { leadInputSchema } from "@ritorno/common/schemas"
+import { leads } from "@ritorno/db"
 import { z } from "zod"
 import { enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
 import { publicProcedure } from "../procedures"

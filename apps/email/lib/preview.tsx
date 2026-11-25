@@ -1,4 +1,4 @@
-import { getTemplate, type TemplateName } from "@le-hoetel/notification/templates"
+import { getTemplate, type TemplateName } from "@ritorno/notification/templates"
 import { createElement } from "react"
 
 const APP_URL = "https://app.example.com"

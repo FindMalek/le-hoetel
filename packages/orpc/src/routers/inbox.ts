@@ -1,4 +1,4 @@
-import { inboxItem } from "@le-hoetel/db"
+import { inboxItem } from "@ritorno/db"
 import { and, count, desc, eq, isNull } from "drizzle-orm"
 import { z } from "zod"
 import { notifyInbox } from "../lib/inbox"

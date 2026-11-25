@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server"
 import {
   offerCodeInputSchema,
   offerCreateSchema,
@@ -5,9 +6,8 @@ import {
   offerSchema,
   offerUpdateSchema,
   redemptionStatsSchema,
-} from "@le-hoetel/common/schemas"
-import { guests, hotelSettings, offerRedemptions, offers, user } from "@le-hoetel/db"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/common/schemas"
+import { guests, hotelSettings, offerRedemptions, offers, user } from "@ritorno/db"
 import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"

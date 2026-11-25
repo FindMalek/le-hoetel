@@ -1,8 +1,8 @@
 "use client"
 
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
-import { PhoneInput } from "@le-hoetel/ui/components/phone-input"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { PhoneInput } from "@ritorno/ui/components/phone-input"
+import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
 import { captureAction } from "@/app/h/[hotelSlug]/actions"

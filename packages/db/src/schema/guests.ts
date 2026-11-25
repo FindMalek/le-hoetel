@@ -1,4 +1,4 @@
-import { CONSENT_CHANNELS, CONSENT_SOURCES, GUEST_SOURCES } from "@le-hoetel/common/consent"
+import { CONSENT_CHANNELS, CONSENT_SOURCES, GUEST_SOURCES } from "@ritorno/common/consent"
 import {
   boolean,
   date,

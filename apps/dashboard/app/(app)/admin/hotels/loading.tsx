@@ -1,4 +1,4 @@
-import { ListSkeleton } from "@le-hoetel/ui/components/loading-state"
+import { ListSkeleton } from "@ritorno/ui/components/loading-state"
 import { getTranslations } from "next-intl/server"
 import { PageHeader } from "@/components/page-header"
 

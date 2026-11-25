@@ -1,5 +1,5 @@
 import { AlertCircleIcon, CheckCircle2Icon, InfoIcon, TriangleAlertIcon } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@le-hoetel/ui/components/alert"
+import { Alert, AlertDescription, AlertTitle } from "@ritorno/ui/components/alert"
 import { cn } from "cn"
 
 const TONES = {

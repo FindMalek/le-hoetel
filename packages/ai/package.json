@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/ai",
+  "name": "@ritorno/ai",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -16,7 +16,7 @@
     "ai": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
   }

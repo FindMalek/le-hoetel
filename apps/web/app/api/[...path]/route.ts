@@ -1,4 +1,4 @@
-import { proxyToApi } from "@le-hoetel/orpc/proxy"
+import { proxyToApi } from "@ritorno/orpc/proxy"
 
 export const GET = proxyToApi
 export const POST = proxyToApi

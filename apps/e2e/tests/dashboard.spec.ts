@@ -1,5 +1,5 @@
-import { DEFAULT_DEMO_PASSWORD, demoOwnerEmail } from "@le-hoetel/common/demo"
 import { expect, test } from "@playwright/test"
+import { DEFAULT_DEMO_PASSWORD, demoOwnerEmail } from "@ritorno/common/demo"
 import { URLS } from "../env"
 import { expectLocaleLayout, LOCALES } from "../fixtures"
 

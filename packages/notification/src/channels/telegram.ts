@@ -1,8 +1,8 @@
-import { verifySecretHeader } from "@le-hoetel/webhooks"
+import { verifySecretHeader } from "@ritorno/webhooks"
 
 export interface TelegramConfig {
   token?: string
-  /** Where messages go by default. Find it with `/start` (see `pnpm --filter @le-hoetel/notification telegram:setup`). */
+  /** Where messages go by default. Find it with `/start` (see `pnpm --filter @ritorno/notification telegram:setup`). */
   chatId?: string
   /** Sent back by Telegram in `X-Telegram-Bot-Api-Secret-Token` on every webhook call. */
   webhookSecret?: string

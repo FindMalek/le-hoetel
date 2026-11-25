@@ -1,1 +1,1 @@
-{ "extends": "@le-hoetel/config/react-library.json", "include": ["emails", "lib"] }
+{ "extends": "@ritorno/config/react-library.json", "include": ["emails", "lib"] }

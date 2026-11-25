@@ -1,4 +1,4 @@
-import { OG_SIZE, OgCard } from "@le-hoetel/ui/brand/og-card"
+import { OG_SIZE, OgCard } from "@ritorno/ui/brand/og-card"
 import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
 import { SITE } from "@/lib/site"

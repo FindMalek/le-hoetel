@@ -7,7 +7,7 @@ afterEach(() => {
 })
 
 test("only a real, non preview origin is indexable", () => {
-  process.env.WEB_URL = "https://le-hoetel.com/"
+  process.env.WEB_URL = "https://ritorno.com/"
   process.env.DEPLOY_ENV = "production"
   expect(isIndexable()).toBe(true)
 
@@ -20,7 +20,7 @@ test("only a real, non preview origin is indexable", () => {
 })
 
 test("robots blocks guest pages and the schema lists the product", async () => {
-  process.env.WEB_URL = "https://le-hoetel.com"
+  process.env.WEB_URL = "https://ritorno.com"
   process.env.DEPLOY_ENV = "production"
   const rules = (await import("../app/robots")).default().rules
   expect(rules).toMatchObject({ disallow: expect.arrayContaining(["/h/", "/s/", "/u/", "/o/"]) })

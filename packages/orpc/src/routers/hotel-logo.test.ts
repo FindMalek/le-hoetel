@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { LOGO_MAX_BYTES } from "@le-hoetel/common/hotel"
-import type { Storage } from "@le-hoetel/storage"
-import { isPublicKey } from "@le-hoetel/storage"
+import { LOGO_MAX_BYTES } from "@ritorno/common/hotel"
+import type { Storage } from "@ritorno/storage"
+import { isPublicKey } from "@ritorno/storage"
 import { createTestApp, type TestApp } from "../testing"
 
 const objects = new Map<string, { size: number; type: string }>()
@@ -22,7 +22,7 @@ beforeAll(async () => {
 afterAll(() => app.close())
 
 async function hotelAs(slug: string) {
-  const owner = await app.signUp(`${slug}-owner@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}-owner@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   return { hotelId, ...(await app.joinHotel(owner, hotelId, "owner")) }
 }

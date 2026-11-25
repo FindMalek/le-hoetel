@@ -1,7 +1,7 @@
 "use client"
 
-import { LOCALE_NAMES, LOCALES, type Locale } from "@le-hoetel/i18n"
-import { Button } from "@le-hoetel/ui/components/button"
+import { LOCALE_NAMES, LOCALES, type Locale } from "@ritorno/i18n"
+import { Button } from "@ritorno/ui/components/button"
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { useTheme } from "next-themes"

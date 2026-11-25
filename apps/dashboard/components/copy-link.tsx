@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import { CheckIcon, CopyIcon } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"

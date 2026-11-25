@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import { CheckIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import { Section } from "./section"

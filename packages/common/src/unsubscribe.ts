@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto"
 import { MESSAGE_CHANNELS, type MessageChannel } from "./consent"
+import { TOKEN_NAMESPACE } from "./constants"
 import type { HotelLanguage } from "./hotel"
 
 const VERSION = "v1"
@@ -15,7 +16,7 @@ const encode = (value: string): string => Buffer.from(value, "utf8").toString("b
 const decode = (value: string): string => Buffer.from(value, "base64url").toString("utf8")
 
 const sign = (secret: string, payload: string): Buffer => {
-  const key = createHmac("sha256", secret).update("le-hoetel:unsubscribe:v1").digest()
+  const key = createHmac("sha256", secret).update(`${TOKEN_NAMESPACE}:unsubscribe:v1`).digest()
   return createHmac("sha256", key).update(payload).digest()
 }
 

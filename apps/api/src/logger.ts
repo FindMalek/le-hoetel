@@ -1,6 +1,6 @@
-import type { ApiEnv } from "@le-hoetel/env/api"
-import { type Fields, logger, patchConsole, resolveRequestId, withRequestId } from "@le-hoetel/logger"
 import { trace } from "@opentelemetry/api"
+import type { ApiEnv } from "@ritorno/env/api"
+import { type Fields, logger, patchConsole, resolveRequestId, withRequestId } from "@ritorno/logger"
 import * as Sentry from "@sentry/bun"
 import type { Handler } from "./server"
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { Field, FieldDescription, FieldError, FieldLabel } from "@le-hoetel/ui/components/field"
+import { Field, FieldDescription, FieldError, FieldLabel } from "@ritorno/ui/components/field"
 import { AlertCircleIcon } from "lucide-react"
 import type { ReactNode } from "react"
 

@@ -1,5 +1,5 @@
-import { PATHNAME_HEADER } from "@le-hoetel/i18n"
-import { localeProxy } from "@le-hoetel/i18n/proxy"
+import { PATHNAME_HEADER } from "@ritorno/i18n"
+import { localeProxy } from "@ritorno/i18n/proxy"
 import { type NextRequest, NextResponse } from "next/server"
 
 const GUEST_PATHS = ["/h/", "/u/", "/s/", "/r/"]

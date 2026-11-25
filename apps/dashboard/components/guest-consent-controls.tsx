@@ -1,9 +1,9 @@
 "use client"
 
-import type { ConsentChannel } from "@le-hoetel/common/consent"
-import { browserClient } from "@le-hoetel/orpc/react"
-import { Button } from "@le-hoetel/ui/components/button"
-import { ConfirmDialog } from "@le-hoetel/ui/components/confirm-dialog"
+import type { ConsentChannel } from "@ritorno/common/consent"
+import { browserClient } from "@ritorno/orpc/react"
+import { Button } from "@ritorno/ui/components/button"
+import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"

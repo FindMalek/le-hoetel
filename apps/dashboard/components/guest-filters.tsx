@@ -1,18 +1,18 @@
 "use client"
 
-import { GUEST_SOURCES } from "@le-hoetel/common/consent"
-import { GUEST_CONSENT_FILTERS } from "@le-hoetel/common/schemas"
-import { LOCALE_NAMES, LOCALES } from "@le-hoetel/i18n"
-import { Button } from "@le-hoetel/ui/components/button"
+import { GUEST_SOURCES } from "@ritorno/common/consent"
+import { GUEST_CONSENT_FILTERS } from "@ritorno/common/schemas"
+import { LOCALE_NAMES, LOCALES } from "@ritorno/i18n"
+import { Button } from "@ritorno/ui/components/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@le-hoetel/ui/components/dropdown-menu"
-import { Input } from "@le-hoetel/ui/components/input"
-import { cn } from "@le-hoetel/ui/lib/utils"
+} from "@ritorno/ui/components/dropdown-menu"
+import { Input } from "@ritorno/ui/components/input"
+import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon, SearchIcon, XIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"

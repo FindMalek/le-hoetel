@@ -1,4 +1,4 @@
-import { PageHeader as Header } from "@le-hoetel/ui/components/page-header"
+import { PageHeader as Header } from "@ritorno/ui/components/page-header"
 
 /** The title block every page starts with. Pages put their content in their own padded wrapper below it. */
 export function PageHeader(props: Omit<React.ComponentProps<typeof Header>, "className">) {

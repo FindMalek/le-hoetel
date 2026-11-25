@@ -1,4 +1,4 @@
-import { OFFER_TRIGGERS } from "@le-hoetel/common/offers"
+import { OFFER_TRIGGERS } from "@ritorno/common/offers"
 import {
   boolean,
   foreignKey,

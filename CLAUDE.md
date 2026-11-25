@@ -2,7 +2,7 @@
 
 <!-- Source: .ruler/AGENTS.md -->
 
-# Le Hoetel agent rules
+# Ritorno agent rules
 
 Single source for every coding agent. Edit this file, then run `pnpm agents` to regenerate `CLAUDE.md`, `AGENTS.md`, `.cursor/`, `opencode.json`, `.zed/` and the other agent files. Never edit the generated files by hand.
 
@@ -12,7 +12,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 - Next.js app router: `apps/web` (landing) and `apps/dashboard` (better-auth login and app shell)
 - `apps/api`: oRPC on bun, the only app that touches the database, auth, storage and providers
 - `packages/orpc` contracts and clients, `packages/db` drizzle schema and migrations, `packages/auth` better-auth, `packages/env` zod-validated env, `packages/ui` shadcn components and theme
-- The frontends only call the api. Never import `@le-hoetel/db` from `web` or `dashboard`.
+- The frontends only call the api. Never import `@ritorno/db` from `web` or `dashboard`.
 
 ## Commands
 
@@ -26,7 +26,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 - Files are kebab-case (`orders-list.tsx`, `use-orders.ts`)
 - React components: kebab-case file, PascalCase export
 - Functions, hooks, variables: camelCase. Module-level constants: UPPER_SNAKE_CASE
-- Inside an app use the `@/*` alias, across packages use the workspace name (`@le-hoetel/ui`)
+- Inside an app use the `@/*` alias, across packages use the workspace name (`@ritorno/ui`)
 - Server components by default, add `"use client"` only for hooks, handlers or browser APIs
 - Read the app's own `AGENTS.md` before changing Next code: the bundled docs match the installed version
 
@@ -36,7 +36,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 - drizzle: schema in `packages/db/src/schema`. Change the schema, then run `pnpm db:generate`. Never hand-write a migration folder or a timestamp
 - better-auth: configured once in `packages/auth`. Sessions are cookies, signed-in calls send `x-csrf-token: orpc`
 - env: every variable goes through `packages/env` and `.env.example`. App code reads env through `packages/env`, not `process.env`. No secrets in diffs
-- UI: reuse shadcn components from `@le-hoetel/ui` and theme tokens. No hard-coded colors
+- UI: reuse shadcn components from `@ritorno/ui` and theme tokens. No hard-coded colors
 - UI rules (mobile first, 44px targets, logical css only, a11y, states): `apps/docs/content/docs/component-patterns.mdx`, read it before any UI change
 
 ## Product and data rules
@@ -52,7 +52,7 @@ Single source for every coding agent. Edit this file, then run `pnpm agents` to 
 
 ## Design system
 
-Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@le-hoetel/ui`. No hard-coded colors. Fonts, type scale and components: `design-system.mdx`; rules: `component-patterns.mdx` (both in `apps/docs/content/docs`). Read them before building UI.
+Tokens live in `packages/ui/src/styles` (`globals.css`, `theme.css`), components in `@ritorno/ui`. No hard-coded colors. Fonts, type scale and components: `design-system.mdx`; rules: `component-patterns.mdx` (both in `apps/docs/content/docs`). Read them before building UI.
 
 ## Agents and workflow
 
@@ -80,7 +80,7 @@ One issue = one worktree = one branch = one PR:
 - No happy-path padding, snapshot dumps, or tests of types, getters or the framework
 - Smallest inline fixture, reuse existing helpers. Test through the public function or endpoint
 - Mock only external boundaries (network, time, third-party APIs), never your own modules
-- Tests run against a real Postgres (`pnpm db:up`, then `pnpm test`). `createTestDb()` from `@le-hoetel/db/testing` gives a fresh migrated database, and `createTestApp()` from `@le-hoetel/orpc/testing` the real services plus `signUp()` for signed-in clients. Only run the files you touched while iterating (`bun test path/to/file.test.ts`)
+- Tests run against a real Postgres (`pnpm db:up`, then `pnpm test`). `createTestDb()` from `@ritorno/db/testing` gives a fresh migrated database, and `createTestApp()` from `@ritorno/orpc/testing` the real services plus `signUp()` for signed-in clients. Only run the files you touched while iterating (`bun test path/to/file.test.ts`)
 - A test for module code lives in that module's paths, so it is removed with it
 - `pnpm test:e2e` is the Playwright smoke test of web, dashboard and api
 

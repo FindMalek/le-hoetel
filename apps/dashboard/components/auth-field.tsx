@@ -1,7 +1,7 @@
 "use client"
 
-import { Field, FieldDescription, FieldError, FieldLabel } from "@le-hoetel/ui/components/field"
-import { Input } from "@le-hoetel/ui/components/input"
+import { Field, FieldDescription, FieldError, FieldLabel } from "@ritorno/ui/components/field"
+import { Input } from "@ritorno/ui/components/input"
 import { AlertCircleIcon } from "lucide-react"
 import type { ComponentProps, ReactNode } from "react"
 import { PasswordInput } from "@/components/password-input"

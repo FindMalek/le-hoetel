@@ -1,5 +1,6 @@
-import { MESSAGE_CHANNELS } from "@le-hoetel/common/consent"
-import { HOTEL_LANGUAGES } from "@le-hoetel/common/hotel"
+import { ORPCError } from "@orpc/server"
+import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
+import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import {
   CAPTURE_MIN_FILL_MS,
   CAPTURE_SOURCES,
@@ -8,10 +9,9 @@ import {
   offerPageSchema,
   publicHotelSchema,
   statusSchema,
-} from "@le-hoetel/common/schemas"
-import { surveyAnswerSchema } from "@le-hoetel/common/survey"
-import { hotelSettings, organization } from "@le-hoetel/db"
-import { ORPCError } from "@orpc/server"
+} from "@ritorno/common/schemas"
+import { surveyAnswerSchema } from "@ritorno/common/survey"
+import { hotelSettings, organization } from "@ritorno/db"
 import { and, eq, ne, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"

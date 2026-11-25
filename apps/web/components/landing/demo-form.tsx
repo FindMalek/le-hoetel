@@ -1,7 +1,7 @@
 "use client"
 
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
-import { PhoneInput } from "@le-hoetel/ui/components/phone-input"
+import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { PhoneInput } from "@ritorno/ui/components/phone-input"
 import { CheckIcon, CircleAlertIcon, LoaderCircleIcon } from "lucide-react"
 import { type FormEvent, useState, useTransition } from "react"
 import { requestDemo } from "@/app/actions"

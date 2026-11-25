@@ -7,8 +7,8 @@ test("spots: ranges expand, lists split, repeats and blanks go, the count is cap
 })
 
 test("the capture url carries the source and the spot", () => {
-  expect(captureUrl("https://le-hoetel.dev/", "palais", "room", "12 A")).toBe(
-    "https://le-hoetel.dev/h/palais?src=room&loc=12+A",
+  expect(captureUrl("https://ritorno.dev/", "palais", "room", "12 A")).toBe(
+    "https://ritorno.dev/h/palais?src=room&loc=12+A",
   )
-  expect(captureUrl("https://le-hoetel.dev", "palais", "desk")).toBe("https://le-hoetel.dev/h/palais?src=desk")
+  expect(captureUrl("https://ritorno.dev", "palais", "desk")).toBe("https://ritorno.dev/h/palais?src=desk")
 })

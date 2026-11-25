@@ -1,9 +1,9 @@
 {
-  "extends": "@le-hoetel/config/nextjs.json",
+  "extends": "@ritorno/config/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@le-hoetel/ui/*": ["../../packages/ui/src/*"]
+      "@ritorno/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {

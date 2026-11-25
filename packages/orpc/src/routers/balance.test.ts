@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { balanceLedger } from "@le-hoetel/db"
+import { balanceLedger } from "@ritorno/db"
 import { eq, sum } from "drizzle-orm"
 import { getBalance, topUp } from "../lib/balance"
 import { sendToGuest } from "../lib/messages"
@@ -12,7 +12,7 @@ beforeAll(async () => {
 afterAll(() => app.close())
 
 async function hotelWithGuest(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const guest = await client.guests.create({
@@ -56,7 +56,7 @@ test("whatsapp is blocked without balance, email stays free, and the ledger sums
 test("a top-up credits only its own hotel and only the app admin can make one", async () => {
   const a = await hotelWithGuest("balance-a")
   const b = await hotelWithGuest("balance-b")
-  const admin = await app.signUp("balance-admin@le-hoetel.test", { role: "admin" })
+  const admin = await app.signUp("balance-admin@ritorno.test", { role: "admin" })
 
   await expect(a.client.admin.hotels.balance.topUp({ id: a.hotelId, amountMillimes: 20000 })).rejects.toMatchObject({
     code: "FORBIDDEN",

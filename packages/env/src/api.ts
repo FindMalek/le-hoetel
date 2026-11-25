@@ -10,7 +10,7 @@ const schema = z.object({
   DEPLOY_ENV: z.string().default("local"),
   DATABASE_URL: z.string().min(1),
   SEED: z.enum(["none", "demo"]).default("demo"),
-  /** Password of every seeded demo account (fake, on @demo.le-hoetel.test). Defaults to the one in the docs. */
+  /** Password of every seeded demo account (fake, on @demo.ritorno.test). Defaults to the one in the docs. */
   DEMO_PASSWORD: optional,
 
   /** Public origins: the api's own, and the two apps that proxy to it. */
@@ -60,7 +60,7 @@ const schema = z.object({
   ALLOW_PREVIEW_ORIGINS: z.enum(["true", "false"]).default("false"),
   RESEND_API_KEY: optional,
   RESEND_WEBHOOK_SECRET: optional,
-  EMAIL_FROM: z.string().default("Le Hoetel <onboarding@resend.dev>"),
+  EMAIL_FROM: z.string().default("Ritorno <onboarding@resend.dev>"),
   TELEGRAM_BOT_TOKEN: optional,
   TELEGRAM_CHAT_ID: optional,
   TELEGRAM_WEBHOOK_SECRET: optional,

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { EMPTY_SEGMENT } from "@le-hoetel/common/campaigns"
-import type { SendEmailInput } from "@le-hoetel/notification"
+import { EMPTY_SEGMENT } from "@ritorno/common/campaigns"
+import type { SendEmailInput } from "@ritorno/notification"
 import { createTestApp, type TestApp } from "../testing"
 import { CAMPAIGN_JOB } from "./campaigns"
 import { createMessageJobs } from "./index"
@@ -22,7 +22,7 @@ const notification = {
 }
 
 async function hotel(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   let n = 0

@@ -1,13 +1,13 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/grid.svg?title=Le+Hoetel&subtitle=Loyalty+and+guest+relationships+for+hotels+in+Tunisia&align=left&mode=dark" />
-    <img alt="Le Hoetel" src="https://shieldcn.dev/header/grid.svg?title=Le+Hoetel&subtitle=Loyalty+and+guest+relationships+for+hotels+in+Tunisia&align=left&mode=light" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/grid.svg?title=Ritorno&subtitle=Loyalty+and+guest+relationships+for+hotels+in+Tunisia&align=left&mode=dark" />
+    <img alt="Ritorno" src="https://shieldcn.dev/header/grid.svg?title=Ritorno&subtitle=Loyalty+and+guest+relationships+for+hotels+in+Tunisia&align=left&mode=light" />
   </picture>
 </p>
 
 <p align="center">
-  <a href="https://github.com/FindMalek/le-hoetel/actions/workflows/ci.yml"><img alt="build" src="https://shieldcn.dev/github/ci/FindMalek/le-hoetel.svg?variant=secondary" /></a>
-  <a href="https://github.com/FindMalek/le-hoetel/blob/main/LICENSE"><img alt="license" src="https://shieldcn.dev/github/license/FindMalek/le-hoetel.svg?variant=secondary" /></a>
+  <a href="https://github.com/FindMalek/ritorno/actions/workflows/ci.yml"><img alt="build" src="https://shieldcn.dev/github/ci/FindMalek/ritorno.svg?variant=secondary" /></a>
+  <a href="https://github.com/FindMalek/ritorno/blob/main/LICENSE"><img alt="license" src="https://shieldcn.dev/github/license/FindMalek/ritorno.svg?variant=secondary" /></a>
   <img alt="Next.js" src="https://shieldcn.dev/badge/Next.js-16-black.svg?logo=nextdotjs&variant=secondary" />
   <img alt="TypeScript" src="https://shieldcn.dev/badge/TypeScript-5-black.svg?logo=typescript&variant=secondary" />
   <img alt="Bun" src="https://shieldcn.dev/badge/Bun-api-black.svg?logo=bun&variant=secondary" />
@@ -16,7 +16,7 @@
 
 Loyalty and guest relationships for hotels in Tunisia
 
-Le Hoetel helps a hotel own its relationship with its guests, not the booking site or the tour operator. A guest scans a QR code in the room or at the restaurant table, leaves a name, a phone and a clear consent for WhatsApp and email, and the hotel can then talk to them in French, Arabic or English: a welcome, a birthday message, offers to fill low season, and a short survey after the stay. A low score alerts the manager the same day, and every guest gets the Google review invite.
+Ritorno helps a hotel own its relationship with its guests, not the booking site or the tour operator. A guest scans a QR code in the room or at the restaurant table, leaves a name, a phone and a clear consent for WhatsApp and email, and the hotel can then talk to them in French, Arabic or English: a welcome, a birthday message, offers to fill low season, and a short survey after the stay. A low score alerts the manager the same day, and every guest gets the Google review invite.
 
 - **Recognition, not points.** Simple perks delivered as offers with a redemption QR.
 - **Consent first.** Consent is logged per channel in an append-only log, every message has an unsubscribe or STOP, and the hotel can export and delete guest data at any time.
@@ -50,7 +50,7 @@ Sign in to the dashboard with `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `.env`.
 ## Structure
 
 ```text
-le-hoetel/
+ritorno/
 ├─ apps/
 │  ├─ web/        landing page
 │  ├─ dashboard/  login and app shell
@@ -63,14 +63,14 @@ le-hoetel/
 
 | Package | What it holds |
 | --- | --- |
-| `@le-hoetel/ui` | shadcn components and the theme tokens |
-| `@le-hoetel/common` | zod schemas, constants and utils shared by api, web and dashboard |
-| `@le-hoetel/orpc` | procedures and typed clients |
-| `@le-hoetel/db` | drizzle schema, migrations, seed scenario |
-| `@le-hoetel/auth` | better-auth setup |
-| `@le-hoetel/env` | zod-validated env, one root `.env` |
+| `@ritorno/ui` | shadcn components and the theme tokens |
+| `@ritorno/common` | zod schemas, constants and utils shared by api, web and dashboard |
+| `@ritorno/orpc` | procedures and typed clients |
+| `@ritorno/db` | drizzle schema, migrations, seed scenario |
+| `@ritorno/auth` | better-auth setup |
+| `@ritorno/env` | zod-validated env, one root `.env` |
 
-`apps/api` is the only app that touches the database, auth and providers. `web` and `dashboard` call it through `@le-hoetel/orpc`.
+`apps/api` is the only app that touches the database, auth and providers. `web` and `dashboard` call it through `@ritorno/orpc`.
 
 ---
 
@@ -96,7 +96,7 @@ le-hoetel/
 Every app has a `Dockerfile` in `apps/<app>/`, built from the repo root:
 
 ```bash
-docker build -f apps/web/Dockerfile -t le-hoetel-web .
+docker build -f apps/web/Dockerfile -t ritorno-web .
 ```
 
 The Next apps also run on Vercel with the app folder as the root directory. Set the same env keys everywhere, see `.env.example`.
@@ -105,11 +105,11 @@ The Next apps also run on Vercel with the app folder as the root directory. Set 
 
 | | web | dashboard | api | docs |
 | --- | --- | --- | --- | --- |
-| production | [lehoetel](https://lehoetel.findmalek.engineer) | [app-lehoetel](https://app-lehoetel.findmalek.engineer) | [api-lehoetel](https://api-lehoetel.findmalek.engineer/health) | [docs-lehoetel](https://docs-lehoetel.findmalek.engineer) |
-| staging | [staging-lehoetel](https://staging-lehoetel.findmalek.engineer) | [app-staging-lehoetel](https://app-staging-lehoetel.findmalek.engineer) | [api-staging-lehoetel](https://api-staging-lehoetel.findmalek.engineer/health) | [docs-staging-lehoetel](https://docs-staging-lehoetel.findmalek.engineer) |
+| production | [ritorno](https://ritorno.findmalek.engineer) | [app-ritorno](https://app-ritorno.findmalek.engineer) | [api-ritorno](https://api-ritorno.findmalek.engineer/health) | [docs-ritorno](https://docs-ritorno.findmalek.engineer) |
+| staging | [staging-ritorno](https://staging-ritorno.findmalek.engineer) | [app-staging-ritorno](https://app-staging-ritorno.findmalek.engineer) | [api-staging-ritorno](https://api-staging-ritorno.findmalek.engineer/health) | [docs-staging-ritorno](https://docs-staging-ritorno.findmalek.engineer) |
 
 - every merge to `main` deploys staging, a published release deploys production (`.github/workflows/staging.yml`, `release.yml`)
-- every PR gets a preview at `pr-<N>-<app>.preview-lehoetel.findmalek.engineer` for what changed, the rest links to staging, see the docs page `previews`. WhoDB for preview databases: [whodb-lehoetel](https://whodb-lehoetel.findmalek.engineer)
+- every PR gets a preview at `pr-<N>-<app>.preview-ritorno.findmalek.engineer` for what changed, the rest links to staging, see the docs page `previews`. WhoDB for preview databases: [whodb-ritorno](https://whodb-ritorno.findmalek.engineer)
 - releases: release-please keeps a release PR open, merging it tags `vX.Y.Z` and deploys production. Cut a release when a milestone is done: `v0.1.0` foundation and hotel core, `v0.2.0` messaging, `v0.3.0` feedback and dashboard, `v1.0.0` pilot launch
 - rollback, backups and setup: docs pages `deploy-runbook` and `releases`
 

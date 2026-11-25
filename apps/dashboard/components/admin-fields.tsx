@@ -1,9 +1,9 @@
 "use client"
 
-import { brandContrastIssues } from "@le-hoetel/common/color"
-import { Field, FieldDescription, FieldError, FieldLabel } from "@le-hoetel/ui/components/field"
-import { Input } from "@le-hoetel/ui/components/input"
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { brandContrastIssues } from "@ritorno/common/color"
+import { Field, FieldDescription, FieldError, FieldLabel } from "@ritorno/ui/components/field"
+import { Input } from "@ritorno/ui/components/input"
+import { cn } from "@ritorno/ui/lib/utils"
 import { AlertCircleIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useId } from "react"

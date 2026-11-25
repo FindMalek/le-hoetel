@@ -1,11 +1,11 @@
 "use client"
 
 // i18n-used: campaigns
-import { CAMPAIGN_STATUSES, pickContent } from "@le-hoetel/common/campaigns"
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@le-hoetel/common/hotel"
-import { LOCALE_NAMES } from "@le-hoetel/i18n"
-import { errorMessage } from "@le-hoetel/orpc/errors"
-import { orpc } from "@le-hoetel/orpc/react"
+import { CAMPAIGN_STATUSES, pickContent } from "@ritorno/common/campaigns"
+import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { LOCALE_NAMES } from "@ritorno/i18n"
+import { errorMessage } from "@ritorno/orpc/errors"
+import { orpc } from "@ritorno/orpc/react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,11 +16,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@le-hoetel/ui/components/alert-dialog"
-import { Button } from "@le-hoetel/ui/components/button"
-import { Input } from "@le-hoetel/ui/components/input"
-import { Section } from "@le-hoetel/ui/components/section"
-import { StatCard } from "@le-hoetel/ui/components/stat-card"
+} from "@ritorno/ui/components/alert-dialog"
+import { Button } from "@ritorno/ui/components/button"
+import { Input } from "@ritorno/ui/components/input"
+import { Section } from "@ritorno/ui/components/section"
+import { StatCard } from "@ritorno/ui/components/stat-card"
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useRouter } from "next/navigation"

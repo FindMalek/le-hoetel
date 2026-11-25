@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, getMessages, isLocale, LOCALE_HEADER } from "@le-hoetel/i18n"
+import { DEFAULT_LOCALE, getMessages, isLocale, LOCALE_HEADER } from "@ritorno/i18n"
 import { headers } from "next/headers"
 import { getRequestConfig } from "next-intl/server"
 

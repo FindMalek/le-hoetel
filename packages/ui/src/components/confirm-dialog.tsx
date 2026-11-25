@@ -8,8 +8,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@le-hoetel/ui/components/alert-dialog"
-import { Button } from "@le-hoetel/ui/components/button"
+} from "@ritorno/ui/components/alert-dialog"
+import { Button } from "@ritorno/ui/components/button"
 
 type ConfirmDialogProps = {
   open: boolean

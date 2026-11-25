@@ -1,5 +1,5 @@
-import { consentWording } from "@le-hoetel/common/consent"
-import { getDirection } from "@le-hoetel/i18n"
+import { consentWording } from "@ritorno/common/consent"
+import { getDirection } from "@ritorno/i18n"
 import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getTranslations } from "next-intl/server"

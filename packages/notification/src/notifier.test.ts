@@ -40,7 +40,7 @@ test("send renders the template for each channel it goes to", async () => {
     {
       ...LIVE,
       RESEND_API_KEY: "re_test",
-      EMAIL_FROM: "Le Hoetel <hello@example.com>",
+      EMAIL_FROM: "Ritorno <hello@example.com>",
       TELEGRAM_BOT_TOKEN: "123:abc",
       TELEGRAM_CHAT_ID: "42",
     },
@@ -54,7 +54,7 @@ test("send renders the template for each channel it goes to", async () => {
 
   expect(email).toEqual({ channel: "email", sent: true, id: "msg_1" })
   expect(calls[0]?.url).toContain("resend.com")
-  expect(calls[0]?.body).toMatchObject({ from: "Le Hoetel <hello@example.com>", subject: "Verify your email" })
+  expect(calls[0]?.body).toMatchObject({ from: "Ritorno <hello@example.com>", subject: "Verify your email" })
   expect(String(calls[0]?.body.html)).toContain("https://app.test/verify?t=1")
   expect(calls[1]?.body).toMatchObject({ chat_id: "42", parse_mode: "Markdown" })
   expect(String(calls[1]?.body.text)).toContain("*Verify your email*")
@@ -146,7 +146,7 @@ test("a footer ends the email in both bodies and the whatsapp text", async () =>
 test("a rendered hotel email goes out from the hotel's name with reply-to and list headers", async () => {
   const { calls, doFetch } = recorder()
   const notifier = createNotifier(
-    { ...LIVE, RESEND_API_KEY: "re_test", EMAIL_FROM: "Le Hoetel <hello@example.com>" },
+    { ...LIVE, RESEND_API_KEY: "re_test", EMAIL_FROM: "Ritorno <hello@example.com>" },
     { fetch: doFetch },
   )
 

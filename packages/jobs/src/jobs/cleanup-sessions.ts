@@ -1,4 +1,4 @@
-import { session } from "@le-hoetel/db"
+import { session } from "@ritorno/db"
 import { lt } from "drizzle-orm"
 import { z } from "zod"
 import { defineJob } from "../define"

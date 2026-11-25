@@ -44,10 +44,10 @@ export function utc(date) {
 }
 
 export const STAGING_HOSTS = {
-  web: "staging-lehoetel",
-  dashboard: "app-staging-lehoetel",
-  api: "api-staging-lehoetel",
-  docs: "docs-staging-lehoetel",
+  web: "staging-ritorno",
+  dashboard: "app-staging-ritorno",
+  api: "api-staging-ritorno",
+  docs: "docs-staging-ritorno",
 }
 
 export function stagingUrl(app, domain = "findmalek.engineer") {
@@ -60,7 +60,7 @@ export function previewSecret(token, pr, label, length = 20) {
 }
 
 export function previewDb(pr, token, host) {
-  return { host, port: 5432, database: "lehoetel", user: "lehoetel", password: previewSecret(token, pr, "db", 24) }
+  return { host, port: 5432, database: "ritorno", user: "ritorno", password: previewSecret(token, pr, "db", 24) }
 }
 
 // rows: [{ app, status, url, inspectUrl, updatedAt, error }], state: { app: applicationId, _db?: internal host }

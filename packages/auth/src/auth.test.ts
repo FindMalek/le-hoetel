@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { createTestDb, type TestDb } from "@le-hoetel/db/testing"
+import { createTestDb, type TestDb } from "@ritorno/db/testing"
 import { type Auth, createAuth } from "./index"
 
 const ORIGIN = "http://localhost:3002"
@@ -29,7 +29,7 @@ const post = (path: string, body: object) =>
   )
 
 test("sign up, sign in and read the session through the real handlers", async () => {
-  const email = "ada@le-hoetel.test"
+  const email = "ada@ritorno.test"
   expect((await post("/sign-up/email", { email, password: PASSWORD, name: "Ada" })).status).toBe(200)
 
   const signIn = await post("/sign-in/email", { email, password: PASSWORD })
@@ -44,17 +44,13 @@ test("sign up, sign in and read the session through the real handlers", async ()
 })
 
 test("a wrong password or a short one is refused", async () => {
-  await post("/sign-up/email", { email: "grace@le-hoetel.test", password: PASSWORD, name: "Grace" })
-  expect((await post("/sign-in/email", { email: "grace@le-hoetel.test", password: "not the password" })).status).toBe(
-    401,
-  )
-  expect((await post("/sign-up/email", { email: "short@le-hoetel.test", password: "short", name: "S" })).status).toBe(
-    400,
-  )
+  await post("/sign-up/email", { email: "grace@ritorno.test", password: PASSWORD, name: "Grace" })
+  expect((await post("/sign-in/email", { email: "grace@ritorno.test", password: "not the password" })).status).toBe(401)
+  expect((await post("/sign-up/email", { email: "short@ritorno.test", password: "short", name: "S" })).status).toBe(400)
 })
 
 test("an email can only sign up once", async () => {
-  const body = { email: "once@le-hoetel.test", password: PASSWORD, name: "Once" }
+  const body = { email: "once@ritorno.test", password: PASSWORD, name: "Once" }
   expect((await post("/sign-up/email", body)).status).toBe(200)
   expect((await post("/sign-up/email", body)).status).toBeGreaterThanOrEqual(400)
 })

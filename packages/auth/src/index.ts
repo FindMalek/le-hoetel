@@ -1,5 +1,5 @@
-import type { Db } from "@le-hoetel/db"
-import * as schema from "@le-hoetel/db/schema"
+import type { Db } from "@ritorno/db"
+import * as schema from "@ritorno/db/schema"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, magicLink } from "better-auth/plugins"

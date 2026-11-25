@@ -1,4 +1,4 @@
-import { hotelRoles } from "@le-hoetel/auth/access"
+import { hotelRoles } from "@ritorno/auth/access"
 import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { GuestImport } from "@/components/guest-import"

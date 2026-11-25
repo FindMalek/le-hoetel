@@ -21,9 +21,9 @@ const securityHeaders = [
   },
 ]
 
-const transpilePackages = ["@le-hoetel/ui", "@le-hoetel/orpc", "@le-hoetel/common"]
-transpilePackages.push("@le-hoetel/logger")
-transpilePackages.push("@le-hoetel/compliance")
+const transpilePackages = ["@ritorno/ui", "@ritorno/orpc", "@ritorno/common"]
+transpilePackages.push("@ritorno/logger")
+transpilePackages.push("@ritorno/compliance")
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -36,6 +36,6 @@ const nextConfig: NextConfig = {
 
 const plugins: Array<(config: NextConfig) => NextConfig> = []
 plugins.push(createNextIntlPlugin())
-plugins.push((config) => ({ ...config, transpilePackages: [...(config.transpilePackages ?? []), "@le-hoetel/i18n"] }))
+plugins.push((config) => ({ ...config, transpilePackages: [...(config.transpilePackages ?? []), "@ritorno/i18n"] }))
 
 export default plugins.reduce((config, plugin) => plugin(config), nextConfig)

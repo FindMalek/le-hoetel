@@ -1,1 +1,1 @@
-{ "extends": "@le-hoetel/config/bun.json", "include": ["src", "drizzle.config.ts"] }
+{ "extends": "@ritorno/config/bun.json", "include": ["src", "drizzle.config.ts"] }

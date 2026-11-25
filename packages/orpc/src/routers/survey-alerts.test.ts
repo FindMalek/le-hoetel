@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { signSurveyToken } from "@le-hoetel/common/survey"
-import { feedbackCases, hotelSettings, surveyInvites } from "@le-hoetel/db"
-import type { SendEmailInput } from "@le-hoetel/notification"
+import { signSurveyToken } from "@ritorno/common/survey"
+import { feedbackCases, hotelSettings, surveyInvites } from "@ritorno/db"
+import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { submitSurvey } from "../lib/surveys"
 import { createTestApp, type TestApp } from "../testing"
@@ -23,7 +23,7 @@ const notification = {
 const ctx = () => ({ ...app.services, notification: notification as unknown as typeof app.services.notification })
 
 async function invite(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const guest = await client.guests.create({

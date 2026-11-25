@@ -1,4 +1,5 @@
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto"
+import { TOKEN_NAMESPACE } from "./constants"
 import type { HotelLanguage } from "./hotel"
 
 /** No 0/O or 1/I/L: a code read off a phone screen and typed at a front desk. */
@@ -20,7 +21,7 @@ export interface OfferSubject {
 }
 
 const sign = (secret: string, payload: string): Buffer => {
-  const key = createHmac("sha256", secret).update("le-hoetel:offer:v1").digest()
+  const key = createHmac("sha256", secret).update(`${TOKEN_NAMESPACE}:offer:v1`).digest()
   return createHmac("sha256", key).update(payload).digest()
 }
 

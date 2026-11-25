@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon } from "lucide-react"
 
 /** The platform select: 44px tall, 16px text on a phone, so the native picker opens and iOS does not zoom. */

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { hotelSettings } from "@le-hoetel/db"
-import type { SendEmailInput } from "@le-hoetel/notification"
+import { hotelSettings } from "@ritorno/db"
+import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { linkTelegramChat, notifyManager } from "../lib/manager-alerts"
 import { createTestApp, type TestApp } from "../testing"
@@ -26,7 +26,7 @@ const notification = {
 const ctx = () => ({ ...app.services, notification: notification as unknown as typeof app.services.notification })
 
 async function hotel(slug: string) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   return { hotelId, client }
@@ -36,7 +36,7 @@ test("a link code binds one chat to its own hotel, once, and expires", async () 
   const a = await hotel("alerts-a")
   const b = await hotel("alerts-b")
   const { code, url } = await a.client.hotel.alerts.link()
-  expect(url).toBe(`https://t.me/le_hoetel_test_bot?start=${code}`)
+  expect(url).toBe(`https://t.me/ritorno_test_bot?start=${code}`)
 
   expect(await linkTelegramChat(app.services.db, "wrong", "111", new Date())).toBe(false)
   expect(await linkTelegramChat(app.services.db, code, "111", new Date(Date.now() + 16 * 60 * 1000))).toBe(false)
@@ -54,7 +54,7 @@ test("notifyManager uses the linked chat and falls back to the owner's email aft
   telegramTo.length = 0
   emails.length = 0
   expect(await notifyManager(ctx(), hotelId, "low score")).toBe("email")
-  expect(emails[0]?.to).toBe("alerts-notify@le-hoetel.test")
+  expect(emails[0]?.to).toBe("alerts-notify@ritorno.test")
 
   const { code } = await client.hotel.alerts.link()
   await linkTelegramChat(app.services.db, code, "333", new Date())

@@ -1,5 +1,5 @@
 {
-  "name": "@le-hoetel/jobs",
+  "name": "@ritorno/jobs",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,13 +11,13 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@le-hoetel/db": "workspace:*",
+    "@ritorno/db": "workspace:*",
     "drizzle-orm": "catalog:",
     "pg-boss": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@le-hoetel/config": "workspace:*",
+    "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
   }

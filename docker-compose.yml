@@ -15,13 +15,13 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: le_hoetel
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-le_hoetel}
-      POSTGRES_DB: le_hoetel
+      POSTGRES_USER: ${POSTGRES_USER:-ritorno}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ritorno}
+      POSTGRES_DB: ${POSTGRES_DB:-ritorno}
     volumes:
-      - le_hoetel-pg:/var/lib/postgresql/data
+      - ritorno-pg:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U le_hoetel"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -36,7 +36,7 @@ services:
       <<: *app-env
       DEPLOY_ENV: ${DEPLOY_ENV:-production}
       MESSAGING_LIVE: ${MESSAGING_LIVE:-false}
-      DATABASE_URL: postgres://le_hoetel:${POSTGRES_PASSWORD:-le_hoetel}@postgres:5432/le_hoetel
+      DATABASE_URL: postgres://${POSTGRES_USER:-ritorno}:${POSTGRES_PASSWORD:-ritorno}@postgres:5432/${POSTGRES_DB:-ritorno}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET, openssl rand -base64 32}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
@@ -155,7 +155,7 @@ services:
     environment: *glitchtip-env
 
 volumes:
-  le_hoetel-pg:
+  ritorno-pg:
   umami-db:
   openobserve:
   glitchtip-db:

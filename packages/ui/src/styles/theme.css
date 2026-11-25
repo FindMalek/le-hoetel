@@ -1,4 +1,4 @@
-/* le-hoetel brand tokens. Hotels override --primary and one accent at runtime through the branding config. */
+/* Ritorno brand tokens. Hotels override --primary and one accent at runtime through the branding config. */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);

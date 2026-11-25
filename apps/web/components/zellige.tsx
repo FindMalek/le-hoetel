@@ -1,4 +1,4 @@
-import { cn } from "@le-hoetel/ui/lib/utils"
+import { cn } from "@ritorno/ui/lib/utils"
 import { useId } from "react"
 
 /** A quiet eight-point star lattice. Draws in `currentColor`, fades to nothing at the bottom, never carries meaning. */

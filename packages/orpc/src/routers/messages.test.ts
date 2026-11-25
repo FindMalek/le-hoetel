@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { guestConsents, hotelSettings, messages } from "@le-hoetel/db"
-import type { SendEmailInput, SendWhatsAppInput } from "@le-hoetel/notification"
+import { guestConsents, hotelSettings, messages } from "@ritorno/db"
+import type { SendEmailInput, SendWhatsAppInput } from "@ritorno/notification"
 import { and, eq, inArray } from "drizzle-orm"
 import { topUp } from "../lib/balance"
 import { applyDeliveryUpdate, applyKapsoEvent, applyResendEvent, sendToGuest } from "../lib/messages"
@@ -29,7 +29,7 @@ const notification = {
 const ctx = () => ({ ...app.services, notification: notification as unknown as typeof app.services.notification })
 
 async function hotelWithGuest(slug: string, consents: { email: boolean; whatsapp: boolean }) {
-  const owner = await app.signUp(`${slug}@le-hoetel.test`)
+  const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const guest = await client.guests.create({
@@ -157,7 +157,7 @@ test("whatsapp sends the hotel's named template in the guest's language, and a m
   const ok = await sendToGuest(ctx(), {
     ...base,
     template: "survey",
-    props: { ctaUrl: "https://le-hoetel.test/s/abc" },
+    props: { ctaUrl: "https://ritorno.test/s/abc" },
   })
   expect(ok.status).toBe("sent")
   expect(sentWhatsApp).toEqual([
@@ -165,7 +165,7 @@ test("whatsapp sends the hotel's named template in the guest's language, and a m
       to: "+21620222222",
       template: "guest_survey",
       language: "fr",
-      params: { guest_name: "Amel Ben Salah", hotel_name: "Dar Amel", link: "https://le-hoetel.test/s/abc" },
+      params: { guest_name: "Amel Ben Salah", hotel_name: "Dar Amel", link: "https://ritorno.test/s/abc" },
     },
   ])
   const [row] = await app.services.db.select().from(messages).where(eq(messages.id, ok.messageId))

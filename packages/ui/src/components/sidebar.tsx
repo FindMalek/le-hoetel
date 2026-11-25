@@ -6,23 +6,23 @@ import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
-import { useIsMobile } from "@le-hoetel/ui/hooks/use-mobile"
-import { Button } from "@le-hoetel/ui/components/button"
-import { Input } from "@le-hoetel/ui/components/input"
-import { Separator } from "@le-hoetel/ui/components/separator"
+import { useIsMobile } from "@ritorno/ui/hooks/use-mobile"
+import { Button } from "@ritorno/ui/components/button"
+import { Input } from "@ritorno/ui/components/input"
+import { Separator } from "@ritorno/ui/components/separator"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@le-hoetel/ui/components/sheet"
-import { Skeleton } from "@le-hoetel/ui/components/skeleton"
+} from "@ritorno/ui/components/sheet"
+import { Skeleton } from "@ritorno/ui/components/skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@le-hoetel/ui/components/tooltip"
+} from "@ritorno/ui/components/tooltip"
 import { PanelLeftIcon } from "lucide-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"

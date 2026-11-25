@@ -11,11 +11,11 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@le-hoetel/ui/components",
-    "utils": "@le-hoetel/ui/lib/utils",
-    "hooks": "@le-hoetel/ui/hooks",
-    "lib": "@le-hoetel/ui/lib",
-    "ui": "@le-hoetel/ui/components"
+    "components": "@ritorno/ui/components",
+    "utils": "@ritorno/ui/lib/utils",
+    "hooks": "@ritorno/ui/hooks",
+    "lib": "@ritorno/ui/lib",
+    "ui": "@ritorno/ui/components"
   },
   "rtl": true,
   "menuColor": "default",

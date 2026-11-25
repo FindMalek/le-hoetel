@@ -1,7 +1,7 @@
 "use client"
 
-import { LOCALE_NAMES, LOCALES } from "@le-hoetel/i18n"
-import { Button } from "@le-hoetel/ui/components/button"
+import { LOCALE_NAMES, LOCALES } from "@ritorno/i18n"
+import { Button } from "@ritorno/ui/components/button"
 import {
   Sheet,
   SheetContent,
@@ -9,8 +9,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@le-hoetel/ui/components/sheet"
-import { cn } from "@le-hoetel/ui/lib/utils"
+} from "@ritorno/ui/components/sheet"
+import { cn } from "@ritorno/ui/lib/utils"
 import { LogOutIcon, MenuIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"

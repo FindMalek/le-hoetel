@@ -6,8 +6,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@le-hoetel/ui/components/empty"
-import { ZelligePattern } from "@le-hoetel/ui/components/zellige-pattern"
+} from "@ritorno/ui/components/empty"
+import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
 import { cn } from "cn"
 
 type EmptyStateProps = Omit<React.ComponentProps<typeof Empty>, "title"> & {

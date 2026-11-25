@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { LOCALES } from "@le-hoetel/i18n/config"
+import { LOCALES } from "@ritorno/i18n/config"
 import { renderEmail } from "./render"
 import type { EmailHotel, EmailOffer, EmailProps, HotelEmailKey } from "./types"
 
@@ -10,9 +10,9 @@ const hotel: EmailHotel = {
   accentColor: "#f59e0b",
   address: "12 Rue de la Médina, Tunis",
 }
-const guest = { name: "Sara", unsubscribeUrl: "https://hoetel.test/u/token" }
+const guest = { name: "Sara", unsubscribeUrl: "https://ritorno.test/u/token" }
 const offer: EmailOffer = { title: "Free breakfast", description: "For two", validUntil: "2026-12-31", code: "DAR-24" }
-const ctaUrl = "https://hoetel.test/o/1"
+const ctaUrl = "https://ritorno.test/o/1"
 
 const PROPS: { [Key in HotelEmailKey]: EmailProps[Key] } = {
   welcome: { offer, ctaUrl },

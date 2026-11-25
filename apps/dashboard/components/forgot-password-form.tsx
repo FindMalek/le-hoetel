@@ -1,8 +1,8 @@
 "use client"
 
-import { authClient } from "@le-hoetel/auth/client"
-import { Button } from "@le-hoetel/ui/components/button"
-import { InlineAlert } from "@le-hoetel/ui/components/inline-alert"
+import { authClient } from "@ritorno/auth/client"
+import { Button } from "@ritorno/ui/components/button"
+import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { MailCheckIcon } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"

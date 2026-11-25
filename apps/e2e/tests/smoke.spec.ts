@@ -1,5 +1,5 @@
-import { DEFAULT_DEMO_PASSWORD, DEMO_SUPER_ADMIN_EMAIL, demoOwnerEmail } from "@le-hoetel/common/demo"
 import { expect, test } from "@playwright/test"
+import { DEFAULT_DEMO_PASSWORD, DEMO_SUPER_ADMIN_EMAIL, demoOwnerEmail } from "@ritorno/common/demo"
 import { URLS } from "../env"
 
 const PASSWORD = "correct horse battery"

@@ -15,7 +15,7 @@ Owners and managers create, change and delete offers in the dashboard (**Offers*
 
 A guest holds one code per offer, made the first time they open their link (`offer_codes`, unique per offer and guest, unique across hotels). It looks like `AB3D-EF7H` (no `0`, `O`, `1`, `I`, `L`) so it can be typed at a desk. The QR holds that code and is rendered by the api (`lib/qr.ts`, the same helper as the hotel QR codes).
 
-The guest link is `/o/<token>` on the web app (`offerPageUrl` in `@le-hoetel/common/offer-tokens`). The token is signed with the server secret, like unsubscribe links, and carries the hotel, offer and guest. The page is `noindex` and shows the branded offer, its state (ready, paused, not started, expired, all taken, already used) and the QR. It never shows the guest's name or contact. Messages that carry an offer build the link with `signOfferToken`.
+The guest link is `/o/<token>` on the web app (`offerPageUrl` in `@ritorno/common/offer-tokens`). The token is signed with the server secret, like unsubscribe links, and carries the hotel, offer and guest. The page is `noindex` and shows the branded offer, its state (ready, paused, not started, expired, all taken, already used) and the QR. It never shows the guest's name or contact. Messages that carry an offer build the link with `signOfferToken`.
 
 ## Welcome offer on the capture page
 

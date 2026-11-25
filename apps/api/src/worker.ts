@@ -1,6 +1,6 @@
-import { createDb } from "@le-hoetel/db"
-import { loadApiEnv } from "@le-hoetel/env/api"
-import { createNotifier } from "@le-hoetel/notification"
+import { createDb } from "@ritorno/db"
+import { loadApiEnv } from "@ritorno/env/api"
+import { createNotifier } from "@ritorno/notification"
 import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 

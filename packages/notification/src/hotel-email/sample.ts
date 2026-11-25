@@ -1,4 +1,4 @@
-import type { Locale } from "@le-hoetel/i18n/config"
+import type { Locale } from "@ritorno/i18n/config"
 import type { EmailGuest, EmailOffer, EmailProps, HotelEmailKey } from "./types"
 
 const OFFERS: Record<Locale, EmailOffer> = {

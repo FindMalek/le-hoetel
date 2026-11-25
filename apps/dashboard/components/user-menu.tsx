@@ -1,7 +1,7 @@
 "use client"
 
-import { authClient } from "@le-hoetel/auth/client"
-import { Avatar, AvatarFallback, AvatarImage } from "@le-hoetel/ui/components/avatar"
+import { authClient } from "@ritorno/auth/client"
+import { Avatar, AvatarFallback, AvatarImage } from "@ritorno/ui/components/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,8 +10,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@le-hoetel/ui/components/dropdown-menu"
-import { SidebarMenuButton } from "@le-hoetel/ui/components/sidebar"
+} from "@ritorno/ui/components/dropdown-menu"
+import { SidebarMenuButton } from "@ritorno/ui/components/sidebar"
 import { ChevronsUpDownIcon, LogOutIcon, SettingsIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"

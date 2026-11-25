@@ -1,7 +1,7 @@
-import type { ApiEnv } from "@le-hoetel/env/api"
 import { SpanStatusCode, trace } from "@opentelemetry/api"
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http"
 import { NodeSDK } from "@opentelemetry/sdk-node"
+import type { ApiEnv } from "@ritorno/env/api"
 
 /** Sends api traces to OpenObserve's otlp endpoint. Does nothing until `OPENOBSERVE_URL` is set. */
 export function startOpenObserve(env: ApiEnv) {

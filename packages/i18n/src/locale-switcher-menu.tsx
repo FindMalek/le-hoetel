@@ -1,13 +1,13 @@
 "use client"
 
-import { Button } from "@le-hoetel/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@le-hoetel/ui/components/dropdown-menu"
+} from "@ritorno/ui/components/dropdown-menu"
 import { LanguagesIcon } from "lucide-react"
 import { isLocale, LOCALE_COOKIE, LOCALE_NAMES, LOCALES, type Locale, localizedPath, splitLocale } from "./config"
 

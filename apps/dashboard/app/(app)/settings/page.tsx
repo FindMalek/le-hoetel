@@ -1,4 +1,4 @@
-import { FormSection } from "@le-hoetel/ui/components/form-section"
+import { FormSection } from "@ritorno/ui/components/form-section"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { PageHeader } from "@/components/page-header"
