@@ -145,6 +145,68 @@ export const consentEventSchema = z.object({
   at: z.date(),
 })
 
+export const GUEST_IMPORT_MAX_ROWS = 1000
+export const GUEST_IMPORT_MAX_BYTES = 1_000_000
+
+const cell = (max: number) => z.string().max(max).optional()
+
+/** One csv row after column mapping: raw text, checked and normalised per row by the server. */
+export const guestImportRowSchema = z.object({
+  line: z.number().int().min(1),
+  name: cell(200),
+  phone: cell(60),
+  email: cell(200),
+  birthday: cell(20),
+  language: cell(20),
+  consent: cell(20),
+})
+
+export const guestImportInputSchema = z.object({
+  rows: z.array(guestImportRowSchema).min(1).max(GUEST_IMPORT_MAX_ROWS),
+  defaultLanguage: z.enum(HOTEL_LANGUAGES),
+  /** The hotel says it holds the consent of every guest whose consent cell is true. Without it nobody gets consent. */
+  confirmConsent: z.boolean(),
+})
+
+export const guestImportResultSchema = z.object({
+  created: z.number(),
+  merged: z.number(),
+  errors: z.array(z.object({ line: z.number(), message: z.string() })),
+})
+
+export type GuestImportRow = z.infer<typeof guestImportRowSchema>
+export type GuestImportResult = z.infer<typeof guestImportResultSchema>
+
+const EXPLICIT_YES = new Set(["true", "yes", "oui", "1", "y", "نعم"])
+const blank = (value?: string) => value?.trim() || null
+
+/** `31/12/1990` (what spreadsheets export) becomes `1990-12-31`, anything else is left for the schema to judge. */
+const isoDay = (value: string | null) => {
+  const match = value?.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/)
+  return match ? `${match[3]}-${match[2]?.padStart(2, "0")}-${match[1]?.padStart(2, "0")}` : value
+}
+
+/**
+ * The input `guestCreateSchema` checks for one csv row. Consent is only granted by an explicit yes in the consent
+ * cell and only when the hotel confirmed it holds it: a blank or unclear cell is no consent. It covers each
+ * channel the row can use, WhatsApp for a number that takes it and email when there is an address.
+ */
+export function guestFromImportRow(row: GuestImportRow, options: Omit<z.infer<typeof guestImportInputSchema>, "rows">) {
+  const email = blank(row.email)
+  const phone = row.phone ?? ""
+  const yes = options.confirmConsent && EXPLICIT_YES.has((row.consent ?? "").trim().toLowerCase())
+  const parsed = parsePhone(phone)
+  return {
+    name: row.name ?? "",
+    phone,
+    email,
+    birthday: isoDay(blank(row.birthday)),
+    language: blank(row.language)?.toLowerCase() ?? options.defaultLanguage,
+    source: "csv",
+    consents: { email: yes && !!email, whatsapp: yes && !!parsed?.whatsappCapable, profile: false },
+  }
+}
+
 export type Guest = z.infer<typeof guestSchema>
 
 export const guestExportSchema = z.object({

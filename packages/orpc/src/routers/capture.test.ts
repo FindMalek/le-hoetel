@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@le-hoetel/common/consent"
-import { guests } from "@le-hoetel/db"
+import { guests, hotelSettings } from "@le-hoetel/db"
 import { eq } from "drizzle-orm"
 import { RATE_LIMITS } from "../lib/rate-limit"
 import { createTestApp, type TestApp } from "../testing"
@@ -53,9 +53,16 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
     "accentColor",
     "defaultLanguage",
     "displayName",
+    "logoUrl",
     "primaryColor",
     "slug",
+    "welcomeOffer",
   ])
+  await expect(app.anonymous.public.hotel({ slug: "capture-brand" })).resolves.toMatchObject({ logoUrl: null })
+  await app.services.db.update(hotelSettings).set({ logoKey: "pr-1/hotels/h/public/logo.png" })
+  await expect(app.anonymous.public.hotel({ slug: "capture-brand" })).resolves.toMatchObject({
+    logoUrl: "http://localhost:3001/files/pr-1/hotels/h/public/logo.png",
+  })
   await expect(app.anonymous.public.hotel({ slug: "nope" })).rejects.toThrow("Hotel not found.")
   await expect(
     app.anonymous.public.capture({ slug: "capture-brand", ...scan, consents: { email: true, whatsapp: false } }),
@@ -95,4 +102,26 @@ test("capture is limited per ip and per hotel", async () => {
   }
   await expect(from("10.2.0.1").public.capture({ slug: "capture-limit", ...scan })).rejects.toThrow("Too many requests")
   expect((await client.guests.list({})).total).toBe(RATE_LIMITS.captureHotel.limit)
+})
+
+test("QR codes carry the hotel slug, source and spot, and the stats count captures per spot", async () => {
+  const owner = await app.signUp("capture-qr@le-hoetel.test")
+  const hotelId = await app.createHotel("capture-qr", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+
+  const codes = await client.hotel.qrCodes({ source: "room", spots: ["101", "102"] })
+  expect(codes.map((code) => code.location)).toEqual(["101", "102"])
+  expect(codes[0]?.url).toEndWith("/h/capture-qr?src=room&loc=101")
+  expect(codes[0]?.svg).toStartWith("<svg")
+  expect((await client.hotel.qrCodes({ source: "desk", spots: [] }))[0]?.url).toEndWith("?src=desk")
+
+  await app.anonymous.public.capture({ slug: "capture-qr", ...scan, source: "room", location: "101" })
+  await app.anonymous.public.capture({
+    slug: "capture-qr",
+    ...scan,
+    phone: "21 111 222",
+    source: "room",
+    location: "101",
+  })
+  expect(await client.hotel.captureStats()).toEqual([{ source: "qr_room", location: "101", guests: 2 }])
 })

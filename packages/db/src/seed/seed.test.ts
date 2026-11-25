@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { count } from "drizzle-orm"
-import { consentEvents, guests, notes, organization, user } from "../schema"
+import { consentEvents, guests, notes, offerRedemptions, organization, user } from "../schema"
 import { createTestDb, type TestDb } from "../testing"
 import { seedDemo } from "./index"
 
@@ -20,6 +20,7 @@ test("seeding twice leaves the first run's data alone", async () => {
     hotels: (await db.select({ n: count() }).from(organization))[0]?.n,
     guests: (await db.select({ n: count() }).from(guests))[0]?.n,
     events: (await db.select({ n: count() }).from(consentEvents))[0]?.n,
+    redemptions: (await db.select({ n: count() }).from(offerRedemptions))[0]?.n,
   })
 
   expect(await seedDemo(db, OPTS)).toBe(true)
@@ -29,6 +30,7 @@ test("seeding twice leaves the first run's data alone", async () => {
   expect(first.hotels).toBe(4)
   expect(first.guests).toBeGreaterThan(300)
   expect(first.events).toBeGreaterThan(first.guests!)
+  expect(first.redemptions).toBeGreaterThan(50)
 
   expect(await seedDemo(db, OPTS)).toBe(false)
   expect(await totals()).toEqual(first)

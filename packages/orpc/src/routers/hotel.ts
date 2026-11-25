@@ -1,21 +1,28 @@
-import { hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
+import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
+import { captureUrl } from "@le-hoetel/common/qr"
 import {
   adminHotelSchema,
+  CAPTURE_SOURCES,
+  captureStatSchema,
   hotelAdminUpdateSchema,
   hotelCreateSchema,
   hotelSchema,
   hotelUpdateSchema,
   logoUploadInputSchema,
   logoUploadSchema,
+  qrCodeSchema,
+  qrCodesInputSchema,
 } from "@le-hoetel/common/schemas"
 import { guests, hotelSettings, member, organization } from "@le-hoetel/db"
 import { hotelPublicPrefix } from "@le-hoetel/storage"
 import { ORPCError } from "@orpc/server"
-import { and, asc, count, eq, like, max } from "drizzle-orm"
+import { and, asc, count, eq, inArray, like, max, sql } from "drizzle-orm"
+import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
-import { activeOrganizationId } from "../lib/org"
+import { bestRole } from "../lib/hotel"
+import { activeMembership } from "../lib/org"
 import { adminProcedure, can, hotelProcedure, protectedProcedure } from "../procedures"
 
 const hotelColumns = {
@@ -41,7 +48,7 @@ const hotelColumns = {
 const selectHotels = (db: Context["db"]) =>
   db.select(hotelColumns).from(organization).innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
 
-async function loadHotel(db: Context["db"], hotelId: string) {
+export async function loadHotel(db: Context["db"], hotelId: string) {
   const [row] = await selectHotels(db).where(eq(organization.id, hotelId))
   if (!row) throw new ORPCError("NOT_FOUND", { message: "Hotel not found." })
   return row
@@ -53,24 +60,66 @@ export const hotelRouter = {
     .output(
       z.object({
         activeId: z.string().nullable(),
+        role: z.enum(HOTEL_ROLES).nullable(),
         hotels: z.array(z.object({ id: z.string(), name: z.string() })),
       }),
     )
-    .handler(async ({ context }) => ({
-      activeId: await activeOrganizationId(context),
-      hotels: await context.db
-        .select({ id: organization.id, name: hotelSettings.displayName })
-        .from(member)
-        .innerJoin(organization, eq(organization.id, member.organizationId))
-        .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
-        .where(eq(member.userId, context.user.id))
-        .orderBy(asc(organization.name)),
-    })),
+    .handler(async ({ context }) => {
+      const active = await activeMembership(context)
+      return {
+        activeId: active?.organizationId ?? null,
+        role: active ? bestRole(active.role) : null,
+        hotels: await context.db
+          .select({ id: organization.id, name: hotelSettings.displayName })
+          .from(member)
+          .innerJoin(organization, eq(organization.id, member.organizationId))
+          .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
+          .where(eq(member.userId, context.user.id))
+          .orderBy(asc(organization.name)),
+      }
+    }),
 
   get: hotelProcedure
     .route({ method: "GET", path: "/hotel", summary: "The active hotel and its branding", tags: ["hotel"] })
     .output(hotelSchema)
     .handler(({ context }) => loadHotel(context.db, context.hotel.hotelId)),
+
+  qrCodes: hotelProcedure
+    .route({
+      method: "POST",
+      path: "/hotel/qr-codes",
+      summary: "QR codes (svg) for rooms, tables or the front desk of the active hotel",
+      tags: ["hotel"],
+    })
+    .input(qrCodesInputSchema)
+    .output(z.array(qrCodeSchema))
+    .handler(async ({ context, input }) => {
+      const { slug } = await loadHotel(context.db, context.hotel.hotelId)
+      const spots = input.spots.length ? input.spots : [null]
+      return Promise.all(
+        spots.map(async (location) => {
+          const url = captureUrl(context.config.webUrl, slug, input.source, location)
+          return { location, url, svg: await qrSvg(url, { type: "svg", margin: 2, errorCorrectionLevel: "M" }) }
+        }),
+      )
+    }),
+
+  captureStats: hotelProcedure
+    .route({
+      method: "GET",
+      path: "/hotel/capture-stats",
+      summary: "How many guests each QR source and spot captured",
+      tags: ["hotel"],
+    })
+    .output(z.array(captureStatSchema))
+    .handler(({ context }) =>
+      context.db
+        .select({ source: guests.source, location: guests.captureLocation, guests: count() })
+        .from(guests)
+        .where(and(eq(guests.hotelId, context.hotel.hotelId), inArray(guests.source, Object.values(CAPTURE_SOURCES))))
+        .groupBy(guests.source, guests.captureLocation)
+        .orderBy(sql`count(*) desc`, guests.source, guests.captureLocation),
+    ),
 
   update: hotelProcedure
     .use(can({ organization: ["update"] }))

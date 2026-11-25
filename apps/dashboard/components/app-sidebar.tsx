@@ -1,33 +1,30 @@
 "use client"
 
-import { authClient } from "@le-hoetel/auth/client"
-import { Avatar, AvatarFallback, AvatarImage } from "@le-hoetel/ui/components/avatar"
+import { Kbd } from "@le-hoetel/ui/components/kbd"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from "@le-hoetel/ui/components/sidebar"
-import { LogOutIcon } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { CommandPalette } from "@/components/command-palette"
+import { openCommandPalette } from "@/components/command-palette"
 import { type HotelChoice, HotelSwitcher } from "@/components/hotel-switcher"
-import { visibleNav } from "@/lib/nav"
+import { type Me, UserMenu } from "@/components/user-menu"
+import { isActive, visibleNav } from "@/lib/nav"
 
-interface Me {
-  name: string
-  email: string
-  image: string | null
-  role: string | null
-}
+// i18n-used: shell.search
+// i18n-used: shell.mainNav
 
 export function AppSidebar({
   me,
@@ -40,12 +37,14 @@ export function AppSidebar({
 }) {
   const pathname = usePathname()
   const t = useTranslations("nav")
-  const signOut = async () => {
-    await authClient.signOut()
-    window.location.assign("/sign-in")
-  }
+  const tShell = useTranslations("shell")
+  const items = visibleNav(me.role)
+  const groups = [
+    { key: "main", items: items.filter((item) => !item.admin) },
+    { key: "admin", items: items.filter((item) => item.admin) },
+  ].filter((group) => group.items.length)
   return (
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar collapsible="icon" aria-label={tShell("mainNav")}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -57,37 +56,44 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <CommandPalette role={me.role} />
-              {visibleNav(me.role).map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    tooltip={t(item.label)}
-                    isActive={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)}
-                    render={<Link href={item.href} />}
-                  >
-                    <item.icon />
-                    <span>{t(item.label)}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip={tShell("search")} onClick={openCommandPalette}>
+                  <SearchIcon />
+                  <span>{tShell("search")}</span>
+                  <Kbd className="ms-auto" dir="ltr">
+                    ⌘K
+                  </Kbd>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {groups.map((group) => (
+          <SidebarGroup key={group.key}>
+            {group.key === "admin" ? <SidebarGroupLabel>{t("admin")}</SidebarGroupLabel> : null}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      tooltip={t(item.label)}
+                      isActive={isActive(item.href, pathname)}
+                      render={<Link href={item.href} />}
+                    >
+                      <item.icon />
+                      <span>{t(item.label)}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="Sign out" onClick={signOut}>
-              <Avatar className="size-8">
-                {me.image && <AvatarImage src={me.image} alt="" />}
-                <AvatarFallback>{me.name.slice(0, 1).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <span className="grid flex-1 text-start text-sm leading-tight">
-                <span className="truncate font-medium">{me.name}</span>
-                <span className="truncate text-muted-foreground text-xs">{me.email}</span>
-              </span>
-              <LogOutIcon className="ms-auto" />
-            </SidebarMenuButton>
+            <UserMenu me={me} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

@@ -8,7 +8,6 @@ import { cn } from "@le-hoetel/ui/lib/utils"
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
 import { getLocale } from "next-intl/server"
-import { FeedbackButton } from "@/components/feedback-button"
 import { ThemeProvider } from "@/components/theme-provider"
 import { dashboardUrl, SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
@@ -32,12 +31,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={lang} dir={dir} suppressHydrationWarning className={cn("antialiased", fontVariables, "font-sans")}>
       <body className="bg-background text-foreground">
         <ThemeProvider>
-          <NextIntlClientProvider>
-            <QueryProvider>
+          <QueryProvider>
+            <NextIntlClientProvider>
               <TooltipProvider>{children}</TooltipProvider>
-              <FeedbackButton />
-            </QueryProvider>
-          </NextIntlClientProvider>
+            </NextIntlClientProvider>
+          </QueryProvider>
           <Toaster position="top-center" />
           <ConsentBanner />
         </ThemeProvider>

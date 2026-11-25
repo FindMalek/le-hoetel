@@ -5,6 +5,7 @@ import { defaultStatements } from "better-auth/plugins/organization/access"
 export const statements = {
   ...defaultStatements,
   guest: ["create", "read", "update", "delete", "export", "import"],
+  offer: ["create", "read", "update", "delete", "redeem"],
 } as const
 
 export const ac = createAccessControl(statements)
@@ -18,12 +19,14 @@ export const hotelRoles = {
     team: ["create", "update", "delete"],
     ac: ["create", "read", "update", "delete"],
     guest: ["create", "read", "update", "delete", "export", "import"],
+    offer: ["create", "read", "update", "delete", "redeem"],
   }),
   manager: ac.newRole({
     organization: ["update"],
     member: ["create", "update", "delete"],
     invitation: ["create", "cancel"],
     guest: ["create", "read", "update", "delete", "export", "import"],
+    offer: ["create", "read", "update", "delete", "redeem"],
     team: [],
     ac: ["read"],
   }),
@@ -32,6 +35,7 @@ export const hotelRoles = {
     member: [],
     invitation: [],
     guest: ["create", "read", "update"],
+    offer: ["read", "redeem"],
     team: [],
     ac: ["read"],
   }),
