@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: tag to deploy to production (rollback: an older tag)
+        description: "tag to deploy to production (rollback: an older tag)"
         required: true
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
     outputs:
       release_created: ${{ steps.rp.outputs.release_created }}
       tag_name: ${{ steps.rp.outputs.tag_name }}
-      pr_branch: ${{ fromJSON(steps.rp.outputs.pr || '{}').headBranchName }}
+      pr_json: ${{ steps.rp.outputs.pr }}
     steps:
       - id: rp
         uses: googleapis/release-please-action@v4
@@ -37,12 +37,16 @@ jobs:
 
   notes:
     needs: release-please
-    if: needs.release-please.outputs.pr_branch != ''
+    if: needs.release-please.outputs.pr_json != ''
     runs-on: ubuntu-latest
     steps:
+      - id: pr
+        env:
+          PR_JSON: ${{ needs.release-please.outputs.pr_json }}
+        run: echo "branch=$(echo "$PR_JSON" | jq -r .headBranchName)" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v7
         with:
-          ref: ${{ needs.release-please.outputs.pr_branch }}
+          ref: ${{ steps.pr.outputs.branch }}
           fetch-depth: 0
       - run: git fetch origin main --tags
       - run: node .github/scripts/release-notes.mjs
