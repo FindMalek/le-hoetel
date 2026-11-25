@@ -9,7 +9,7 @@ Every message to a guest goes through one function, `sendToGuest` in `packages/o
 
 1. Loads the guest in the given hotel (never across hotels).
 2. Reads the guest's **current** consent for the channel (`guest_consents`). No consent: nothing is sent and the row is `skipped_no_consent`.
-3. Ends the message with the unsubscribe or STOP line from `@le-hoetel/common/unsubscribe` (a signed link for email, `Reply STOP` for WhatsApp).
+3. Renders the message. Email uses the branded hotel templates (see [Hotel emails](/docs/hotel-emails)), sent as `"<hotel display name>" <EMAIL_FROM address>` with the hotel's reply-to from `hotel_settings`, and carries `List-Unsubscribe` and `List-Unsubscribe-Post` headers (one tap unsubscribe, RFC 8058, answered by `POST /unsubscribe/<token>`). The template footer holds the one unsubscribe link, the dispatcher adds none, so an email never shows two.
 4. Sends through the notification package. Providers only send for real when `NODE_ENV=production` and `MESSAGING_LIVE=true`. Previews, tests, local and staging only log: the row says `sent` with provider id `log-only`.
 5. Updates the row.
 
@@ -32,6 +32,10 @@ There is no body and no recipient column, and nothing logs the phone, email or n
 ## Status webhooks
 
 `applyDeliveryUpdate` moves a row forward by provider id: `queued → sent → delivered`. A late `sent` never undoes `delivered`. `failed` is accepted from any earlier state.
+
+### Resend events
+
+`POST /resend/webhook` takes Resend's events, verified with the Svix signature (`RESEND_WEBHOOK_SECRET`, answers 404 without it). `email.delivered` and `email.bounced` / `email.failed` go through `applyDeliveryUpdate` (a bounce stores `error_code = bounced`). `email.complained` (the guest hit "spam") withdraws their email consent with a consent event, source `guest_request`, so nothing more goes out. Set the webhook in Resend to the api's `/resend/webhook` with those events.
 
 ## Dashboard
 

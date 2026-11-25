@@ -53,6 +53,7 @@ const schema = z.object({
 
   MESSAGING_LIVE: z.enum(["true", "false"]).default("false"),
   RESEND_API_KEY: optional,
+  RESEND_WEBHOOK_SECRET: optional,
   EMAIL_FROM: z.string().default("Le Hoetel <onboarding@resend.dev>"),
   TELEGRAM_BOT_TOKEN: optional,
   TELEGRAM_CHAT_ID: optional,

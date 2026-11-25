@@ -6,8 +6,8 @@ import { Toaster } from "@le-hoetel/ui/components/sonner"
 import { TooltipProvider } from "@le-hoetel/ui/components/tooltip"
 import { cn } from "@le-hoetel/ui/lib/utils"
 import type { Metadata } from "next"
+import { NextIntlClientProvider } from "next-intl"
 import { getLocale } from "next-intl/server"
-import { FeedbackButton } from "@/components/feedback-button"
 import { ThemeProvider } from "@/components/theme-provider"
 import { dashboardUrl, SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
@@ -32,8 +32,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="bg-background text-foreground">
         <ThemeProvider>
           <QueryProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-            <FeedbackButton />
+            <NextIntlClientProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </NextIntlClientProvider>
           </QueryProvider>
           <Toaster position="top-center" />
           <ConsentBanner />

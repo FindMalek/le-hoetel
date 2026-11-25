@@ -1,0 +1,78 @@
+"use client"
+
+import { authClient } from "@le-hoetel/auth/client"
+import { Avatar, AvatarFallback, AvatarImage } from "@le-hoetel/ui/components/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@le-hoetel/ui/components/dropdown-menu"
+import { SidebarMenuButton } from "@le-hoetel/ui/components/sidebar"
+import { ChevronsUpDownIcon, LogOutIcon, SettingsIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { PreferencesMenu } from "@/components/preferences-menu"
+
+export interface Me {
+  name: string
+  email: string
+  image: string | null
+  role: string | null
+}
+
+export const signOut = async () => {
+  await authClient.signOut()
+  window.location.assign("/sign-in")
+}
+
+export function UserAvatar({ me, className }: { me: Me; className?: string }) {
+  return (
+    <Avatar className={className}>
+      {me.image ? <AvatarImage src={me.image} alt="" /> : null}
+      <AvatarFallback>{me.name.trim().slice(0, 1).toUpperCase()}</AvatarFallback>
+    </Avatar>
+  )
+}
+
+/** The sidebar footer: who you are, with settings, theme, language and sign out. */
+export function UserMenu({ me }: { me: Me }) {
+  const t = useTranslations("shell")
+  const tNav = useTranslations("nav")
+  const router = useRouter()
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<SidebarMenuButton size="lg" aria-label={t("account")} />}>
+        <UserAvatar me={me} className="size-8" />
+        <span className="grid flex-1 text-start text-sm leading-tight">
+          <span className="truncate font-medium">{me.name}</span>
+          <span className="truncate text-muted-foreground text-xs" dir="ltr">
+            {me.email}
+          </span>
+        </span>
+        <ChevronsUpDownIcon className="ms-auto" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="top" align="start" className="min-w-60">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="truncate" dir="ltr">
+            {me.email}
+          </DropdownMenuLabel>
+          <DropdownMenuItem className="min-h-11" onClick={() => router.push("/settings")}>
+            <SettingsIcon />
+            {tNav("settings")}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <PreferencesMenu />
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="min-h-11" onClick={signOut}>
+          <LogOutIcon />
+          {t("signOut")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}

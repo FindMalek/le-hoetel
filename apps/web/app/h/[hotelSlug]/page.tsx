@@ -38,9 +38,9 @@ export default async function CapturePage({ params, searchParams }: Props) {
         <GiftIcon aria-hidden className="size-5" />
       </span>
       <div className="grid gap-1 text-start">
-        <h2 className="font-semibold">{t("perkTitle")}</h2>
+        <h2 className="font-semibold">{hotel.welcomeOffer?.title ?? t("perkTitle")}</h2>
         <p className="text-muted-foreground text-sm leading-relaxed rtl:leading-7">
-          {t("perkBody", { hotel: hotel.displayName })}
+          {hotel.welcomeOffer?.text || t("perkBody", { hotel: hotel.displayName })}
         </p>
       </div>
     </section>

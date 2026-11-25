@@ -60,6 +60,7 @@ const fetch = createServer(
       dashboardUrl: env.DASHBOARD_URL,
       apiUrl: env.API_PUBLIC_URL,
       tokenSecret: env.BETTER_AUTH_SECRET,
+      webhookSecrets: { resend: env.RESEND_WEBHOOK_SECRET },
     },
     jobs,
     rateLimiter: createRateLimiter({

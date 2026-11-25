@@ -1,5 +1,5 @@
 import { HOTEL_ROLES, type HotelRole } from "@le-hoetel/common/hotel"
-import { organization } from "@le-hoetel/db"
+import { hotelSettings, organization } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { eq } from "drizzle-orm"
 import type { Context } from "../context"
@@ -14,7 +14,7 @@ export interface ActiveHotel {
 
 export const HOTEL_HEADER = "x-hotel-id"
 
-const bestRole = (stored: string): HotelRole | null =>
+export const bestRole = (stored: string): HotelRole | null =>
   HOTEL_ROLES.find((role) => stored.split(",").includes(role)) ?? null
 
 /**
@@ -40,4 +40,26 @@ export async function resolveHotel(context: Pick<Context, "db" | "session" | "he
   const role = bestRole(membership.role)
   if (!role) throw new ORPCError("FORBIDDEN", { message: "Your role has no access to this hotel." })
   return { hotelId: membership.organizationId, role, superAdmin: false }
+}
+
+/** What a page for a guest shows of a hotel: its look, nothing else. */
+export async function hotelBranding(context: Pick<Context, "db" | "config">, hotelId: string) {
+  const [hotel] = await context.db
+    .select({
+      name: organization.name,
+      displayName: hotelSettings.displayName,
+      logoKey: hotelSettings.logoKey,
+      primaryColor: hotelSettings.primaryColor,
+      accentColor: hotelSettings.accentColor,
+    })
+    .from(organization)
+    .leftJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
+    .where(eq(organization.id, hotelId))
+  if (!hotel) throw new ORPCError("NOT_FOUND", { message: "This link is not valid." })
+  return {
+    displayName: hotel.displayName ?? hotel.name,
+    logoUrl: hotel.logoKey ? `${context.config.apiUrl}/files/${hotel.logoKey}` : null,
+    primaryColor: hotel.primaryColor,
+    accentColor: hotel.accentColor,
+  }
 }
