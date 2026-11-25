@@ -24,19 +24,6 @@
     "appearance": "Appearance and language",
     "loading": "Loading…"
   },
-  "nav": {
-    "overview": "Home",
-    "guests": "Guests",
-    "inbox": "Inbox",
-    "hotel": "Hotel",
-    "team": "Team",
-    "data": "Guest data",
-    "hotels": "Hotels",
-    "users": "Users",
-    "auditLog": "Audit log",
-    "settings": "Settings",
-    "admin": "Platform"
-  },
   "home": {
     "greeting": "Hello {name}",
     "hotelDescription": "Here is how {hotel} is doing.",
@@ -157,6 +144,76 @@
     "badge": "early access",
     "getStarted": "Get started",
     "apiDocs": "API docs"
+  },
+  "nav": {
+    "hotelNav": "Hotel",
+    "messages": "Messages",
+    "data": "Guest data",
+    "hotels": "Hotels",
+    "overview": "Overview",
+    "guests": "Guests",
+    "inbox": "Inbox",
+    "team": "Team",
+    "users": "Users",
+    "auditLog": "Audit log",
+    "settings": "Settings",
+    "admin": "Platform"
+  },
+  "hotel": {
+    "switch": "Switch hotel",
+    "yours": "Your hotels",
+    "switchError": "Could not switch hotel. Try again."
+  },
+  "guests": {
+    "title": "Guests",
+    "description": "Everyone who shared their details with your hotel.",
+    "search": "Search by name, phone or email",
+    "apply": "Search",
+    "reset": "Clear filters",
+    "filter": {
+      "consent": "Consent",
+      "source": "Source",
+      "language": "Language",
+      "any": "Any"
+    },
+    "consent": {
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "profile": "Profile",
+      "none": "No marketing consent"
+    },
+    "source": {
+      "qr_room": "Room QR",
+      "qr_table": "Table QR",
+      "qr_front_desk": "Front desk QR",
+      "staff": "Staff",
+      "csv": "CSV import"
+    },
+    "total": "{count, plural, one {# guest} other {# guests}}",
+    "columns": {
+      "guest": "Guest",
+      "phone": "Phone",
+      "language": "Language",
+      "source": "Source",
+      "consent": "Consent",
+      "added": "Added"
+    },
+    "empty": {
+      "title": "No guests yet",
+      "description": "Guests show up here once they scan your QR code or you add them."
+    },
+    "noMatch": {
+      "title": "No guest matches",
+      "description": "Try another search or clear the filters."
+    },
+    "noHotel": {
+      "title": "No hotel yet",
+      "description": "Ask the Le Hoetel team to add you to your hotel."
+    },
+    "loading": "Loading guests",
+    "page": "Page {page} of {pages}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "guestData": {
     "title": "Guest data",
@@ -283,9 +340,26 @@
     "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
     "contrastDark": "This color is hard to see in dark mode. Pick a lighter one."
   },
-  "hotel": {
-    "switch": "Switch hotel",
-    "yours": "Your hotels",
-    "switchError": "Could not switch hotel. Try again."
+  "messages": {
+    "title": "Messages",
+    "description": "Every message sent to your guests and how it ended. Never the text or the contact.",
+    "empty": "No message yet.",
+    "guest": "Guest",
+    "channel": "Channel",
+    "template": "Message",
+    "language": "Language",
+    "status": "Status",
+    "date": "Date",
+    "channels": {
+      "email": "Email",
+      "whatsapp": "WhatsApp"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "skipped_no_consent": "No consent"
+    }
   }
 }

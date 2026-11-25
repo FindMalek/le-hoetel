@@ -19,14 +19,22 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { openCommandPalette } from "@/components/command-palette"
-import { HotelSwitcher } from "@/components/hotel-switcher"
+import { type HotelChoice, HotelSwitcher } from "@/components/hotel-switcher"
 import { type Me, UserMenu } from "@/components/user-menu"
 import { isActive, visibleNav } from "@/lib/nav"
 
 // i18n-used: shell.search
 // i18n-used: shell.mainNav
 
-export function AppSidebar({ me, hotelName }: { me: Me; hotelName: string | null }) {
+export function AppSidebar({
+  me,
+  hotels,
+  activeHotelId,
+}: {
+  me: Me
+  hotels: HotelChoice[]
+  activeHotelId: string | null
+}) {
   const pathname = usePathname()
   const t = useTranslations("nav")
   const tShell = useTranslations("shell")
@@ -40,7 +48,7 @@ export function AppSidebar({ me, hotelName }: { me: Me; hotelName: string | null
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <HotelSwitcher activeName={hotelName} />
+            <HotelSwitcher hotels={hotels} activeId={activeHotelId} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

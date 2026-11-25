@@ -6,9 +6,11 @@ import {
   HotelIcon,
   InboxIcon,
   LayoutDashboardIcon,
+  MessageSquareIcon,
   SettingsIcon,
   UserCogIcon,
   UsersIcon,
+  UsersRoundIcon,
 } from "lucide-react"
 import type { Route } from "next"
 
@@ -25,8 +27,10 @@ export interface NavItem {
 // i18n-used: nav
 export const NAV: NavItem[] = [
   { href: "/", label: "overview", icon: LayoutDashboardIcon, tab: true },
-  { href: "/inbox", label: "inbox", icon: InboxIcon, tab: true },
-  { href: "/hotel", label: "hotel", icon: HotelIcon, tab: true },
+  { href: "/guests", label: "guests", icon: UsersRoundIcon, tab: true },
+  { href: "/messages", label: "messages", icon: MessageSquareIcon, tab: true },
+  { href: "/inbox", label: "inbox", icon: InboxIcon },
+  { href: "/hotel", label: "hotelNav", icon: HotelIcon },
   { href: "/team", label: "team", icon: UsersIcon },
   { href: "/data", label: "data", icon: DatabaseIcon },
   { href: "/admin/hotels", label: "hotels", icon: BuildingIcon, admin: true },

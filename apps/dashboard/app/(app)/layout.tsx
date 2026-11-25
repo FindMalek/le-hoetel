@@ -12,12 +12,15 @@ import { call } from "@/lib/api"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("shell")
-  const me = await call((api) => api.me.get())
-  const { unread } = await call((api) => api.inbox.list())
-  const hotel = await call((api) => api.hotel.get()).catch((error) => {
-    if (isForbidden(error)) return null
-    throw error
-  })
+  const [me, { unread }, { hotels, activeId }, hotel] = await Promise.all([
+    call((api) => api.me.get()),
+    call((api) => api.inbox.list()),
+    call((api) => api.hotel.mine()),
+    call((api) => api.hotel.get()).catch((error) => {
+      if (isForbidden(error)) return null
+      throw error
+    }),
+  ])
   return (
     <SidebarProvider
       className="[--bottom-nav-height:calc(3.5rem+env(safe-area-inset-bottom))] md:[--bottom-nav-height:0px]"
@@ -31,7 +34,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       >
         {t("skip")}
       </a>
-      <AppSidebar me={me} hotelName={hotel?.displayName ?? null} />
+      <AppSidebar me={me} hotels={hotels} activeHotelId={activeId} />
       <SidebarInset id="main" className="min-w-0">
         <TopBar bell={<InboxBell unread={unread} />} />
         <div className="mx-auto w-full max-w-6xl flex-1 pb-nav">{children}</div>

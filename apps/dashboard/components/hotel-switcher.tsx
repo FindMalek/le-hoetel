@@ -24,13 +24,17 @@ const Initial = ({ name }: { name: string }) => (
 )
 
 /** The active hotel as the sidebar header. With more than one hotel it opens the list to switch. */
-export function HotelSwitcher({ activeName }: { activeName: string | null }) {
+export interface HotelChoice {
+  id: string
+  name: string
+}
+
+export function HotelSwitcher({ hotels, activeId }: { hotels: HotelChoice[]; activeId: string | null }) {
   const t = useTranslations("hotel")
   const router = useRouter()
-  const { data: hotels } = orgClient.useListOrganizations()
-  const { data: active } = orgClient.useActiveOrganization()
+  const active = hotels.find((hotel) => hotel.id === activeId)
 
-  if (!activeName)
+  if (!active)
     return (
       <SidebarMenuButton size="lg" render={<Link href="/" />}>
         <BrandMark />
@@ -39,11 +43,11 @@ export function HotelSwitcher({ activeName }: { activeName: string | null }) {
 
   const label = (
     <>
-      <Initial name={activeName} />
-      <span className="truncate font-heading font-semibold">{activeName}</span>
+      <Initial name={active.name} />
+      <span className="truncate font-heading font-semibold">{active.name}</span>
     </>
   )
-  if (!hotels || hotels.length < 2)
+  if (hotels.length < 2)
     return (
       <SidebarMenuButton size="lg" render={<Link href="/" />}>
         {label}
@@ -51,7 +55,7 @@ export function HotelSwitcher({ activeName }: { activeName: string | null }) {
     )
 
   async function pick(organizationId: string) {
-    if (organizationId === active?.id) return
+    if (organizationId === activeId) return
     const { error } = await orgClient.organization.setActive({ organizationId })
     if (error) return void toast.error(error.message ?? t("switchError"))
     router.push("/")
@@ -70,7 +74,7 @@ export function HotelSwitcher({ activeName }: { activeName: string | null }) {
           {hotels.map((hotel) => (
             <DropdownMenuItem key={hotel.id} className="min-h-11" onClick={() => pick(hotel.id)}>
               <span className="truncate">{hotel.name}</span>
-              {hotel.id === active?.id ? <CheckIcon className="ms-auto" /> : null}
+              {hotel.id === activeId ? <CheckIcon className="ms-auto" /> : null}
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
