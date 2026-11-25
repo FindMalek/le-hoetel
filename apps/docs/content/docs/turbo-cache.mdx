@@ -26,10 +26,10 @@ Without the variables nothing changes, turbo only uses its local cache.
 
 ## Measured CI time
 
-Wall time of the `ci` workflow, same PR size (no cache hit on the code that changed).
+Wall time of the `ci` job. The before row is full runs on main, the other rows are a pull request with `--affected`, so only the warm against cold rows compare directly. Install, lint and the migration check are not cached by turbo and are the floor.
 
 | Setup | Runs | Wall time |
 |---|---|---|
 | GitHub Actions cache only (main, before) | 8 recent runs | 2m21s to 3m07s, about 2m50s |
-| Remote cache, first run (cold, fills it) | RUN_COLD | COLD_TIME |
-| Remote cache, second run (warm) | RUN_WARM | WARM_TIME |
+| Remote cache, first run on PR 185 (cold, fills it, `--affected`) | 1 run | 1m21s |
+| Remote cache, rerun of the same commit (warm) | 1 run | 59s |
