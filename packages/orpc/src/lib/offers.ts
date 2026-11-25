@@ -1,8 +1,10 @@
 import { newGuestCode, verifyOfferToken } from "@le-hoetel/common/offer-tokens"
-import { offerState } from "@le-hoetel/common/offers"
-import { type Db, guests, offerCodes, offerRedemptions, offers } from "@le-hoetel/db"
+import { normalizeCode, offerState } from "@le-hoetel/common/offers"
+import type { offerLookupSchema } from "@le-hoetel/common/schemas"
+import { type Db, guests, offerCodes, offerRedemptions, offers, user } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { and, count, desc, eq, gt, isNull, lte, or } from "drizzle-orm"
+import type { z } from "zod"
 import type { Context } from "../context"
 import { hotelGuest } from "./guests"
 import { hotelBranding } from "./hotel"
@@ -75,4 +77,113 @@ export async function welcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
     .orderBy(desc(offers.createdAt))
     .limit(1)
   return row ?? null
+}
+
+type Lookup = z.infer<typeof offerLookupSchema>
+
+const empty = (status: Lookup["status"]): Lookup => ({
+  status,
+  offer: null,
+  guestFirstName: null,
+  redeemed: null,
+  justNow: false,
+})
+
+const GUEST_CODE = /^[A-Z0-9]{4}-?[A-Z0-9]{4}$/
+
+export const firstName = (name: string): string => name.trim().split(/\s+/)[0] ?? ""
+
+interface Resolved {
+  offer: typeof offers.$inferSelect
+  guest: { id: string; name: string } | null
+}
+
+/** A code typed or scanned by the staff of `hotelId`. Another hotel's guest code is told apart from an unknown one, and its offer is never shown. */
+async function resolve(db: Db | Tx, hotelId: string, raw: string): Promise<Resolved | Lookup["status"]> {
+  const code = normalizeCode(raw)
+  if (GUEST_CODE.test(code)) {
+    const key = code.includes("-") ? code : `${code.slice(0, 4)}-${code.slice(4)}`
+    const [row] = await db
+      .select({ offer: offers, guest: { id: guests.id, name: guests.name }, codeHotel: offerCodes.hotelId })
+      .from(offerCodes)
+      .innerJoin(offers, eq(offers.id, offerCodes.offerId))
+      .innerJoin(guests, eq(guests.id, offerCodes.guestId))
+      .where(eq(offerCodes.code, key))
+    if (row) return row.codeHotel === hotelId ? { offer: row.offer, guest: row.guest } : "wrongHotel"
+  }
+  const [offer] = await db
+    .select()
+    .from(offers)
+    .where(and(eq(offers.hotelId, hotelId), eq(offers.promoCode, code)))
+  return offer ? { offer, guest: null } : "unknown"
+}
+
+async function describe(db: Db | Tx, found: Resolved, now: Date, rowId?: string): Promise<Lookup> {
+  const { offer, guest } = found
+  const whose = rowId
+    ? eq(offerRedemptions.id, rowId)
+    : guest
+      ? and(eq(offerRedemptions.offerId, offer.id), eq(offerRedemptions.guestId, guest.id))
+      : undefined
+  const [past] = whose
+    ? await db
+        .select({ at: offerRedemptions.redeemedAt, by: user.name })
+        .from(offerRedemptions)
+        .leftJoin(user, eq(user.id, offerRedemptions.redeemedBy))
+        .where(whose)
+    : []
+  const status = past ? "redeemed" : offerState(offer, await redeemedCount(db, offer.id), now)
+  const { id, title, text, validFrom, validUntil } = offer
+  return {
+    status,
+    offer: { id, title, text, validFrom, validUntil },
+    guestFirstName: guest ? firstName(guest.name) : null,
+    redeemed: past ? { at: past.at, by: past.by } : null,
+    justNow: false,
+  }
+}
+
+export async function lookupCode(context: Pick<Context, "db" | "now">, hotelId: string, raw: string): Promise<Lookup> {
+  const found = await resolve(context.db, hotelId, raw)
+  return typeof found === "string" ? empty(found) : describe(context.db, found, context.now())
+}
+
+const isUniqueViolation = (error: unknown): boolean =>
+  [error, (error as { cause?: unknown } | null)?.cause].some((e) => (e as { code?: string } | null)?.code === "23505")
+
+/**
+ * Marks a code redeemed, once. The offer row is locked while the limit is counted, and a guest's second redemption
+ * hits the unique `(offer_id, guest_id)`, so two phones scanning together cannot both succeed.
+ */
+export async function redeemCode(
+  context: Pick<Context, "db" | "now">,
+  hotelId: string,
+  userId: string,
+  raw: string,
+): Promise<Lookup & { redemptionId: string | null }> {
+  const found = await resolve(context.db, hotelId, raw)
+  if (typeof found === "string") return { ...empty(found), redemptionId: null }
+  return context.db.transaction(async (tx) => {
+    await tx.select({ id: offers.id }).from(offers).where(eq(offers.id, found.offer.id)).for("update")
+    const before = await describe(tx, found, context.now())
+    if (before.status !== "ready") return { ...before, redemptionId: null }
+    try {
+      const [row] = await tx.transaction((inner) =>
+        inner
+          .insert(offerRedemptions)
+          .values({
+            offerId: found.offer.id,
+            hotelId,
+            guestId: found.guest?.id ?? null,
+            redeemedBy: userId,
+            redeemedAt: context.now(),
+          })
+          .returning({ id: offerRedemptions.id }),
+      )
+      return { ...(await describe(tx, found, context.now(), row?.id)), justNow: true, redemptionId: row?.id ?? null }
+    } catch (error) {
+      if (!isUniqueViolation(error)) throw error
+      return { ...(await describe(tx, found, context.now())), redemptionId: null }
+    }
+  })
 }

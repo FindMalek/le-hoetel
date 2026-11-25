@@ -27,6 +27,7 @@ export const NAV: NavItem[] = [
   { href: "/guests", label: "guests", icon: UsersIcon },
   { href: "/inbox", label: "inbox", icon: NotebookPenIcon },
   { href: "/notes", label: "notes", icon: NotebookPenIcon },
+  { href: "/redeem", label: "redeem", icon: QrCodeIcon },
   { href: "/offers", label: "offers", icon: GiftIcon },
   { href: "/hotel", label: "hotelNav", icon: BuildingIcon },
   { href: "/emails", label: "emails", icon: MailIcon },
