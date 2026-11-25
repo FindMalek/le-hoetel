@@ -48,7 +48,7 @@ const TITLES = [
 /**
  * Demo data relative to `now`: a dozen users (a couple of admins, some unverified, signed up over three months) and
  * notes for each of them and for the seeded admin, pinned and not, short and long, old and fresh.
- * When a feature adds a state, add it here and to scenario.test.ts so every preview shows it.
+ * When a feature adds a state, add it here and to tests/scenario.test.ts so every preview shows it.
  */
 export function buildScenario(now: Date, opts: { ownerId?: string } = {}, seed = 20261017) {
   const rand = random(seed)
