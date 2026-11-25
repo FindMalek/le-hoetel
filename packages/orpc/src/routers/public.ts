@@ -32,6 +32,7 @@ async function findPublicHotel(db: Context["db"], slug: string) {
       primaryColor: hotelSettings.primaryColor,
       accentColor: hotelSettings.accentColor,
       defaultLanguage: hotelSettings.defaultLanguage,
+      logoKey: hotelSettings.logoKey,
     })
     .from(organization)
     .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
@@ -153,8 +154,12 @@ export const publicRouter = {
     .input(z.object({ slug: z.string().min(1).max(100) }))
     .output(publicHotelSchema)
     .handler(async ({ context, input }) => {
-      const { id, ...hotel } = await findPublicHotel(context.db, input.slug)
-      return { ...hotel, welcomeOffer: await welcomeOffer(context.db, id, context.now()) }
+      const { id, logoKey, ...hotel } = await findPublicHotel(context.db, input.slug)
+      return {
+        ...hotel,
+        logoUrl: logoKey ? `${context.config.apiUrl}/files/${logoKey}` : null,
+        welcomeOffer: await welcomeOffer(context.db, id, context.now()),
+      }
     }),
 
   capture: publicProcedure

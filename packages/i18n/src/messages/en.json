@@ -317,36 +317,87 @@
     "consentVersion": "Wording version",
     "privacy": {
       "title": "Privacy policy",
-      "intro": "This is a placeholder for the privacy policy of le-hoetel. Hotels collect a guest's name, phone and language with their consent. Optional details are kept only if the guest agrees. We never collect continuous location, ID numbers or payment cards. A guest can ask a hotel to export or delete their data at any time."
+      "intro": "What a hotel and le-hoetel keep about you, why, and how to take it back.",
+      "sections": {
+        "collect": {
+          "title": "What is collected",
+          "body": "Your name, phone number and language, because the hotel needs them to welcome you. Your birthday and email only if you add them. Nothing else without a clear yes: never your location, ID or passport number, or payment card."
+        },
+        "use": {
+          "title": "Why",
+          "body": "So the hotel can welcome you, send a birthday wish, ask how your stay went, and answer you if something was wrong."
+        },
+        "consent": {
+          "title": "Messages and your yes",
+          "body": "Offers and news come by WhatsApp or email only if you switched that channel on. We record when, where and with which wording you said yes. Every message has a link to stop, and replying STOP on WhatsApp works too."
+        },
+        "rights": {
+          "title": "Your rights",
+          "body": "Ask the hotel for a copy of your data or for its deletion at any time. Deletion is complete. You can also take your yes back with the link in any message. Tunisian law on personal data protection applies (Organic Law 2004-63)."
+        },
+        "keep": {
+          "title": "Who sees it and for how long",
+          "body": "Only the staff of the hotel you signed up at. Hotels never see each other's guests. Data is kept while the hotel uses le-hoetel and is deleted when you ask or when the hotel leaves."
+        }
+      }
     },
     "terms": {
       "title": "Terms of service",
-      "intro": "This is a placeholder for the terms of service of le-hoetel. The text will be written for the product, the hotels and the law of Tunisia before the first pilot."
+      "intro": "The simple rules for hotels using le-hoetel.",
+      "sections": {
+        "service": {
+          "title": "The service",
+          "body": "le-hoetel helps a hotel collect guests with their consent, send messages they agreed to, and hear from unhappy guests early. It is in pilot: features and prices can change."
+        },
+        "duties": {
+          "title": "What a hotel promises",
+          "body": "To collect only guests who said yes, to honour every stop request, never to send spam, and to answer export and delete requests."
+        },
+        "pilot": {
+          "title": "Pilot and price",
+          "body": "The pilot is free for 60 to 90 days. Nothing is charged without a written agreement. Prices shown during the pilot are not final."
+        },
+        "data": {
+          "title": "Your data",
+          "body": "The hotel owns its guest list and can export or delete it at any time. We do not sell or share it."
+        },
+        "end": {
+          "title": "Ending",
+          "body": "Either side can stop at any time. When it ends the hotel can take its data and we delete the rest."
+        }
+      }
     },
     "hotel": "the hotel"
   },
   "capture": {
-    "welcome": "Welcome to {hotel}",
-    "intro": "Leave your details and we will take care of you during your stay.",
-    "perkTitle": "Your welcome perk",
-    "perkBody": "A small gift from {hotel} is waiting for you. Ask at the front desk after you sign up.",
+    "welcome": "Welcome. Join in ten seconds and we will take care of you.",
+    "perkTitle": "Welcome gift",
+    "perkBody": "A small gift from {hotel} is waiting for you at the front desk.",
     "name": "Your name",
     "phone": "Phone number",
     "dialCode": "Country code",
-    "language": "Your language",
-    "birthday": "Birthday (optional)",
-    "email": "Email (optional)",
+    "language": "Language for our messages",
+    "birthday": "Birthday",
+    "email": "Email",
     "consentTitle": "Stay in touch",
-    "consentHint": "Both are optional and unticked. You can change your mind at any time.",
-    "emailNeeded": "Add your email to get offers by email.",
-    "submit": "Sign up",
-    "sending": "Sending...",
-    "thanksTitle": "Thank you",
-    "thanksBody": "You are all set. Enjoy your stay at {hotel}.",
+    "consentHint": "Optional and off by default. Every message has a link to stop.",
+    "emailNeeded": "Add your email above to get offers by email.",
+    "submit": "Join",
+    "thanksTitle": "You are in, {name}",
+    "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
     "errorInvalid": "Please check your name and phone number.",
     "errorTooMany": "Too many tries. Please wait a moment and try again.",
-    "privacy": "Privacy policy",
-    "languageLabel": "Language"
+    "privacy": "Privacy",
+    "languageLabel": "Language",
+    "nameError": "Add your name.",
+    "phoneError": "Check your phone number.",
+    "optionalTitle": "More about you",
+    "optionalHint": "Optional: birthday and email.",
+    "whatsappTitle": "WhatsApp",
+    "emailTitle": "Email",
+    "submitHint": "No message is sent unless you switch one on.",
+    "thanksPerk": "Show this screen at the front desk to get it.",
+    "terms": "Terms"
   },
   "adminHotels": {
     "title": "Hotels",
@@ -579,5 +630,10 @@
       "wrongHotel": "This code belongs to another hotel",
       "unknown": "Code not found"
     }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link may be wrong, or the page has moved.",
+    "home": "Back to home"
   }
 }
