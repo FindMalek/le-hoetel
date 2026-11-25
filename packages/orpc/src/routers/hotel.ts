@@ -1,4 +1,4 @@
-import { hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
+import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@le-hoetel/common/hotel"
 import { captureUrl } from "@le-hoetel/common/qr"
 import {
   adminHotelSchema,
@@ -21,7 +21,9 @@ import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
-import { adminProcedure, can, hotelProcedure } from "../procedures"
+import { bestRole } from "../lib/hotel"
+import { activeMembership } from "../lib/org"
+import { adminProcedure, can, hotelProcedure, protectedProcedure } from "../procedures"
 
 const hotelColumns = {
   id: organization.id,
@@ -53,6 +55,30 @@ async function loadHotel(db: Context["db"], hotelId: string) {
 }
 
 export const hotelRouter = {
+  mine: protectedProcedure
+    .route({ method: "GET", path: "/hotels/mine", summary: "The hotels you belong to", tags: ["hotel"] })
+    .output(
+      z.object({
+        activeId: z.string().nullable(),
+        role: z.enum(HOTEL_ROLES).nullable(),
+        hotels: z.array(z.object({ id: z.string(), name: z.string() })),
+      }),
+    )
+    .handler(async ({ context }) => {
+      const active = await activeMembership(context)
+      return {
+        activeId: active?.organizationId ?? null,
+        role: active ? bestRole(active.role) : null,
+        hotels: await context.db
+          .select({ id: organization.id, name: hotelSettings.displayName })
+          .from(member)
+          .innerJoin(organization, eq(organization.id, member.organizationId))
+          .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
+          .where(eq(member.userId, context.user.id))
+          .orderBy(asc(organization.name)),
+      }
+    }),
+
   get: hotelProcedure
     .route({ method: "GET", path: "/hotel", summary: "The active hotel and its branding", tags: ["hotel"] })
     .output(hotelSchema)

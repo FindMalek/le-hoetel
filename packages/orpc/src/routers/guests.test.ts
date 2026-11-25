@@ -141,6 +141,41 @@ test("the database refuses a consent event that points at another hotel's guest"
   ).rejects.toThrow()
 })
 
+test("list filters by consent, source and language inside one hotel", async () => {
+  const { client } = await hotelAs("filters")
+  const other = await hotelAs("filters-other")
+  const base = { ...newGuest, consents: { email: false, whatsapp: false, profile: false } }
+  await client.guests.create({
+    ...base,
+    name: "Mail",
+    phone: "+21620000001",
+    consents: { ...base.consents, email: true },
+  })
+  await client.guests.create({
+    ...base,
+    name: "Wa",
+    phone: "+21620000002",
+    consents: { ...base.consents, whatsapp: true },
+    language: "ar",
+    source: "csv",
+  })
+  await client.guests.create({ ...base, name: "Silent", phone: "+21620000003", email: null })
+  await other.client.guests.create({
+    ...base,
+    name: "Other hotel",
+    phone: "+21620000004",
+    consents: { ...base.consents, email: true },
+  })
+
+  const names = async (filter: Parameters<typeof client.guests.list>[0]) =>
+    (await client.guests.list(filter)).items.map((guest) => guest.name).sort()
+  expect(await names({ consent: "email" })).toEqual(["Mail"])
+  expect(await names({ consent: "none" })).toEqual(["Silent"])
+  expect(await names({ source: "csv" })).toEqual(["Wa"])
+  expect(await names({ language: "ar" })).toEqual(["Wa"])
+  expect(await names({ consent: "whatsapp", language: "fr" })).toEqual([])
+})
+
 test("deleting a guest removes their consent log too and leaves an audit row without personal data", async () => {
   const { client } = await hotelAs("erase")
   const guest = await client.guests.create(newGuest)
@@ -155,4 +190,47 @@ test("deleting a guest removes their consent log too and leaves an audit row wit
     .where(eq(auditLog.targetId, hashGuestId(guest.id)))
   expect(entry?.action).toBe("guest.delete")
   expect(JSON.stringify(entry)).not.toContain("20123456")
+})
+
+test("import: rows fail one by one, a phone merges, consent needs an explicit yes and the hotel's confirmation", async () => {
+  const { client } = await hotelAs("import")
+  const staff = await app.signUp("import-staff@le-hoetel.test")
+  const hotel = await client.hotel.get()
+  const asStaff = await app.joinHotel(staff, hotel.id, "staff")
+  await expect(
+    asStaff.client.guests.import({
+      rows: [{ line: 2, name: "A", phone: "20 111 111" }],
+      defaultLanguage: "fr",
+      confirmConsent: true,
+    }),
+  ).rejects.toMatchObject({ code: "FORBIDDEN" })
+
+  const rows = [
+    { line: 2, name: "Yes", phone: "20 111 111", email: "yes@example.test", consent: "oui" },
+    { line: 3, name: "Blank", phone: "+216 20 222 222", consent: "" },
+    { line: 4, name: "No phone", phone: "abc" },
+    { line: 5, name: "Yes again", phone: "20111111", birthday: "31/12/1990" },
+    { line: 6, name: "Landline", phone: "71 000 000", consent: "true" },
+  ]
+  const confirmed = await client.guests.import({ rows, defaultLanguage: "ar", confirmConsent: true })
+  expect(confirmed).toMatchObject({ created: 3, merged: 1 })
+  expect(confirmed.errors.map((error) => error.line)).toEqual([4])
+
+  const { items } = await client.guests.list({})
+  const by = (name: string) => items.find((guest) => guest.name === name)!
+  expect(by("Yes")).toMatchObject({ source: "csv", language: "ar", birthday: "1990-12-31" })
+  expect(by("Yes").consents).toEqual({ email: true, whatsapp: true, profile: false })
+  expect(by("Blank").consents).toEqual({ email: false, whatsapp: false, profile: false })
+  expect(by("Landline").consents.whatsapp).toBe(false)
+
+  await client.guests.import({
+    rows: [{ line: 2, name: "Other", phone: "20 333 333", consent: "true" }],
+    defaultLanguage: "fr",
+    confirmConsent: false,
+  })
+  expect((await client.guests.list({ q: "Other" })).items[0]?.consents).toEqual({
+    email: false,
+    whatsapp: false,
+    profile: false,
+  })
 })
