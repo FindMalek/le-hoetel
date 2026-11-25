@@ -19,6 +19,7 @@ const PROPS: { [Key in HotelEmailKey]: EmailProps[Key] } = {
   birthday: { offer, ctaUrl },
   survey: { ctaUrl },
   reminder: { offer, ctaUrl },
+  message: { subject: "News from {hotel}", title: "Hello {name}", body: "One.\n\nTwo.", offer, ctaUrl },
 }
 
 for (const key of Object.keys(PROPS) as HotelEmailKey[]) {
