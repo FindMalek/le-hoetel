@@ -10,6 +10,7 @@ import { getTranslations } from "next-intl/server"
 import { GuestFilters } from "@/components/guest-filters"
 import { GuestList } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
+import { TopBarAction } from "@/components/top-bar"
 import { call } from "@/lib/api"
 
 const PAGE_SIZE = 25
@@ -36,21 +37,21 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
   const t = await getTranslations("guests")
   const { activeId, role } = await call((api) => api.hotel.mine())
   const canImport = role ? hotelRoles[role].authorize({ guest: ["import"] }).success : false
-  const actions = activeId && (
-    <>
-      {canImport && (
-        <Button variant="outline" className="h-11" render={<Link href="/guests/import" />} nativeButton={false}>
-          <UploadIcon />
-          {t("importButton")}
-        </Button>
-      )}
-      <Button className="h-11" render={<Link href="/guests/new" />} nativeButton={false}>
-        <PlusIcon />
-        {t("addButton")}
-      </Button>
-    </>
+  const header = (
+    <PageHeader
+      title={t("title")}
+      description={t("description")}
+      actions={
+        activeId &&
+        canImport && (
+          <Button variant="outline" render={<Link href="/guests/import" />} nativeButton={false}>
+            <UploadIcon data-icon="inline-start" />
+            {t("importButton")}
+          </Button>
+        )
+      }
+    />
   )
-  const header = <PageHeader title={t("title")} description={t("description")} actions={actions} />
   if (!activeId) {
     return (
       <>
@@ -77,43 +78,59 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
   return (
     <>
       {header}
-      <div className="grid gap-4 p-4 md:p-6">
+      <TopBarAction href="/guests/new" label={t("addButton")} icon={<PlusIcon />} />
+      <div className="flex flex-col gap-4 p-4 md:p-6">
         <GuestFilters values={{ q, ...filters }} />
         {items.length ? (
           <>
-            <p className="text-muted-foreground text-sm">{t("total", { count: total })}</p>
-            <GuestList guests={items} />
+            <GuestList guests={items} total={total} />
             {pages > 1 && (
-              <nav className="flex items-center justify-between gap-3">
+              <nav className="flex items-center justify-between gap-3" aria-label={t("pagination")}>
                 <Button
                   variant="outline"
-                  className="h-11"
                   disabled={page <= 1}
                   render={<Link href={link(page - 1)} />}
                   nativeButton={false}
                 >
-                  <ChevronLeftIcon className="rtl:rotate-180" />
+                  <ChevronLeftIcon data-icon="inline-start" className="rtl:rotate-180" />
                   {t("previous")}
                 </Button>
-                <span className="text-muted-foreground text-sm">{t("page", { page, pages })}</span>
+                <span className="text-muted-foreground text-sm tabular-nums">{t("page", { page, pages })}</span>
                 <Button
                   variant="outline"
-                  className="h-11"
                   disabled={page >= pages}
                   render={<Link href={link(page + 1)} />}
                   nativeButton={false}
                 >
                   {t("next")}
-                  <ChevronRightIcon className="rtl:rotate-180" />
+                  <ChevronRightIcon data-icon="inline-end" className="rtl:rotate-180" />
                 </Button>
               </nav>
             )}
           </>
-        ) : (
+        ) : filtered ? (
           <EmptyState
             icon={<UsersIcon />}
-            title={filtered ? t("noMatch.title") : t("empty.title")}
-            description={filtered ? t("noMatch.description") : t("empty.description")}
+            title={t("noMatch.title")}
+            description={t("noMatch.description")}
+            action={
+              <Button variant="outline" render={<Link href="/guests" />} nativeButton={false}>
+                {t("reset")}
+              </Button>
+            }
+          />
+        ) : (
+          <EmptyState
+            decorated
+            icon={<UsersIcon />}
+            title={t("empty.title")}
+            description={t("empty.description")}
+            action={
+              <Button render={<Link href="/guests/new" />} nativeButton={false}>
+                <PlusIcon data-icon="inline-start" />
+                {t("addButton")}
+              </Button>
+            }
           />
         )}
       </div>

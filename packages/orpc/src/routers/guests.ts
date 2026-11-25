@@ -1,5 +1,6 @@
 import { type ConsentChannel, MESSAGE_CHANNELS } from "@le-hoetel/common/consent"
 import { guestsToCsv } from "@le-hoetel/common/guest-export"
+import { MESSAGE_STATUSES } from "@le-hoetel/common/message"
 import {
   consentEventSchema,
   consentSetSchema,
@@ -16,7 +17,7 @@ import {
   guestUpsertResultSchema,
   hotelGuestsExportSchema,
 } from "@le-hoetel/common/schemas"
-import { consentEvents, guestConsents, guests } from "@le-hoetel/db"
+import { consentEvents, guestConsents, guests, messages } from "@le-hoetel/db"
 import { ORPCError } from "@orpc/server"
 import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
@@ -24,6 +25,14 @@ import type { Context } from "../context"
 import { audit } from "../lib/audit"
 import { clearExtras, hashGuestId, hotelGuest, recordConsent, upsertGuest, withConsents } from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
+
+const guestMessageSchema = z.object({
+  id: z.uuid(),
+  channel: z.enum(MESSAGE_CHANNELS),
+  templateKey: z.string(),
+  status: z.enum(MESSAGE_STATUSES),
+  createdAt: z.date(),
+})
 
 const notFound = () => new ORPCError("NOT_FOUND", { message: "Guest not found." })
 
@@ -331,5 +340,32 @@ export const guestsRouter = {
       const { hotelId } = context.hotel
       await loadGuest(context.db, hotelId, input.id)
       return eventsOf(context.db, hotelId, [input.id])
+    }),
+
+  messages: hotelProcedure
+    .use(can({ guest: ["read"] }))
+    .route({
+      method: "GET",
+      path: "/guests/{id}/messages",
+      summary: "Messages sent to one guest, newest first. Never the text.",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(z.array(guestMessageSchema))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      await loadGuest(context.db, hotelId, input.id)
+      return context.db
+        .select({
+          id: messages.id,
+          channel: messages.channel,
+          templateKey: messages.templateKey,
+          status: messages.status,
+          createdAt: messages.createdAt,
+        })
+        .from(messages)
+        .where(and(eq(messages.hotelId, hotelId), eq(messages.guestId, input.id)))
+        .orderBy(desc(messages.createdAt), messages.id)
+        .limit(20)
     }),
 }
