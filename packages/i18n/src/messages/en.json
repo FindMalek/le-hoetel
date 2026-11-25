@@ -680,6 +680,25 @@
       "unsubscribe": "Unsubscribe"
     }
   },
+  "managerAlerts": {
+    "title": "Manager alerts on Telegram",
+    "description": "Get an alert on your phone when something needs you, like an unhappy guest. Takes 30 seconds.",
+    "linked": "Connected. Alerts arrive in your Telegram chat.",
+    "notLinked": "Not connected yet.",
+    "notConfigured": "Telegram alerts are not set up on this platform yet. We email your alerts for now.",
+    "connect": "Connect Telegram",
+    "reconnect": "Connect another chat",
+    "step": "Open the link and press Start in Telegram. The code works once, for 15 minutes.",
+    "open": "Open Telegram",
+    "code": "Code: {code}",
+    "testButton": "Send a test alert",
+    "testTelegram": "Test sent to Telegram.",
+    "testEmail": "Test sent by email, Telegram is not connected.",
+    "testNone": "No Telegram chat or email to send to.",
+    "disconnect": "Disconnect",
+    "disconnected": "Telegram disconnected.",
+    "refresh": "I pressed Start"
+  },
   "qrCodes": {
     "title": "QR codes",
     "description": "Print one code per room, table or front desk and see which one captures guests.",

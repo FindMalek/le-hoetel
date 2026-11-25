@@ -10,6 +10,7 @@ import { adminHotelsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
 import { inboxAdminRouter, inboxRouter } from "./inbox"
 import { jobsRouter } from "./jobs"
 import { leadsRouter } from "./leads"
+import { managerAlertsRouter } from "./manager-alerts"
 import { messagesRouter } from "./messages"
 import { notesRouter } from "./notes"
 import { notificationRouter } from "./notification"
@@ -38,7 +39,7 @@ export const appRouter = {
   campaigns: campaignsRouter,
   holidays: holidaysRouter,
   leads: leadsRouter,
-  hotel: { ...hotelRouter, logo: hotelLogoRouter },
+  hotel: { ...hotelRouter, logo: hotelLogoRouter, alerts: managerAlertsRouter },
   emails: emailsRouter,
   guests: guestsRouter,
   messages: messagesRouter,

@@ -64,6 +64,7 @@ const schema = z.object({
   TELEGRAM_BOT_TOKEN: optional,
   TELEGRAM_CHAT_ID: optional,
   TELEGRAM_WEBHOOK_SECRET: optional,
+  TELEGRAM_BOT_USERNAME: optional,
   KAPSO_API_KEY: optional,
   KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,

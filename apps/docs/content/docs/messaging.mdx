@@ -76,3 +76,9 @@ pg-boss cron runs in UTC, hotels do not, so the job runs hourly and each hotel i
 The list lives in `packages/common/src/holidays.ts`: Ramadan start, Eid al-Fitr, Eid al-Adha, Mawlid, Independence Day (20 March), Republic Day (25 July) and New Year, each with its name and greeting in en, fr and ar. Fixed dates are `MM-DD`; the Islamic ones come from a static table (Umm al-Qura calendar, 2026 to 2035), no network. Tunisia sights the moon locally, so a date can be a day off. A test fails when the table no longer covers the next five years.
 
 A hotel switches each holiday on or off and picks the channel (both, email, WhatsApp) in the dashboard under Holidays (owners and managers). Everything is off by default: no row means no message. The greeting is sent with the `message` hotel email template, a text the hotel or the product wrote, already in the guest's language, with the unsubscribe or STOP line like every other message.
+
+## Manager alerts
+
+A hotel manager links a Telegram chat in **Hotel** settings: the dashboard shows a one-time code (valid 15 minutes) and the bot link `https://t.me/<TELEGRAM_BOT_USERNAME>?start=<code>`. When the bot receives `/start <code>` on `/telegram/webhook` (secret header `TELEGRAM_WEBHOOK_SECRET` checked), the chat id is stored in `hotel_settings.telegram_chat_id` and the code is cleared, so it works once and only for the hotel that issued it. Without a code, `/start` still answers with the chat id, for the operator's own `TELEGRAM_CHAT_ID`.
+
+`notifyManager(context, hotelId, text)` (`@le-hoetel/orpc/manager-alerts`) sends to the hotel's linked chat and falls back to email (the hotel reply-to, else the owners) when there is no chat or Telegram fails. Like every provider it only logs outside live messaging. The low-score alert will call it. The **Send a test alert** button calls `hotel.alerts.test`.
