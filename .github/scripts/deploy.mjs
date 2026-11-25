@@ -57,16 +57,18 @@ const computed = {
 // the env sets neither key, until a dump and restore moves them (see the deploy-runbook docs page).
 const legacyDb = { POSTGRES_USER: "le_hoetel", POSTGRES_DB: "le_hoetel" }
 
-// Infisical wins over what Dokploy already holds, computed values win over both. Without INFISICAL_* the env is left
-// alone, apart from the legacy database names.
-const update = { composeId, customGitBranch: ref }
+// Infisical wins over what Dokploy already holds, computed values win over both. Without INFISICAL_* the Dokploy env
+// is kept and only the computed values are refreshed.
 const current = parseDotenv((await dokploy("compose.one", { composeId }, "GET")).env)
+let secrets = {}
 if (infisicalConfigured(env)) {
-  const secrets = await pullSecrets(prod ? "prod" : "staging", env)
-  update.env = formatDotenv({ ...legacyDb, ...current, ...secrets, ...computed })
+  secrets = await pullSecrets(prod ? "prod" : "staging", env)
   summary(`${target} env from infisical (${Object.keys(secrets).length} keys)`)
-} else if (!current.POSTGRES_USER || !current.POSTGRES_DB) {
-  update.env = formatDotenv({ ...legacyDb, ...current })
+}
+const update = {
+  composeId,
+  customGitBranch: ref,
+  env: formatDotenv({ ...legacyDb, ...current, ...secrets, ...computed }),
 }
 await dokploy("compose.update", update)
 await dokploy("compose.deploy", { composeId, title: `${target} ${ref}` })
