@@ -10,6 +10,7 @@
   },
   "nav": {
     "hotelNav": "Hôtel",
+    "emails": "E-mails",
     "qrCodes": "Codes QR",
     "messages": "Messages",
     "data": "Données clients",
@@ -302,6 +303,37 @@
       "delivered": "Délivré",
       "failed": "Échec",
       "skipped_no_consent": "Sans consentement"
+    }
+  },
+  "emails": {
+    "title": "E-mails",
+    "description": "Voyez chaque e-mail comme un client le reçoit, puis envoyez-vous un test.",
+    "template": "E-mail",
+    "language": "Langue",
+    "appearance": "Apparence",
+    "width": "Largeur",
+    "light": "Clair",
+    "dark": "Sombre",
+    "desktop": "Ordinateur",
+    "mobile": "Mobile",
+    "sendTest": "M'envoyer un test",
+    "sending": "Envoi…",
+    "sentTo": "Test envoyé à {email}.",
+    "notSent": "Non envoyé : cet environnement ne fait qu'enregistrer les messages.",
+    "loading": "Chargement de l'aperçu…",
+    "subject": "Objet",
+    "frameTitle": "Aperçu de l'e-mail",
+    "noHotel": "Choisissez d'abord un hôtel.",
+    "templates": {
+      "welcome": "Bienvenue",
+      "birthday": "Offre d'anniversaire",
+      "survey": "Invitation au sondage",
+      "reminder": "Rappel d'offre"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
     }
   }
 }

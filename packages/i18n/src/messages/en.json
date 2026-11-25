@@ -10,6 +10,7 @@
   },
   "nav": {
     "hotelNav": "Hotel",
+    "emails": "Emails",
     "qrCodes": "QR codes",
     "messages": "Messages",
     "data": "Guest data",
@@ -302,6 +303,37 @@
       "delivered": "Delivered",
       "failed": "Failed",
       "skipped_no_consent": "No consent"
+    }
+  },
+  "emails": {
+    "title": "Emails",
+    "description": "See each email as a guest sees it, then send a test to yourself.",
+    "template": "Email",
+    "language": "Language",
+    "appearance": "Appearance",
+    "width": "Width",
+    "light": "Light",
+    "dark": "Dark",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "sendTest": "Send test to me",
+    "sending": "Sending…",
+    "sentTo": "Test sent to {email}.",
+    "notSent": "Not sent: this environment only logs messages.",
+    "loading": "Loading preview…",
+    "subject": "Subject",
+    "frameTitle": "Email preview",
+    "noHotel": "Pick a hotel first.",
+    "templates": {
+      "welcome": "Welcome",
+      "birthday": "Birthday offer",
+      "survey": "Survey invite",
+      "reminder": "Offer reminder"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "ar": "العربية"
     }
   }
 }
