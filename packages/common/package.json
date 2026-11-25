@@ -23,7 +23,8 @@
     "./demo": "./src/demo.ts",
     "./csv": "./src/csv.ts",
     "./offers": "./src/offers.ts",
-    "./offer-tokens": "./src/offer-tokens.ts"
+    "./offer-tokens": "./src/offer-tokens.ts",
+    "./survey": "./src/survey.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
