@@ -15,17 +15,15 @@ export const leadsRouter = {
     .input(leadInputSchema)
     .output(z.object({ ok: z.literal(true) }))
     .handler(async ({ context, input }) => {
-      await enforceRateLimit(context, "leads.request", RATE_LIMITS.lead)
+      await enforceRateLimit(context, "leads.demo", RATE_LIMITS.lead)
       if (input.website) return { ok: true as const }
-      await context.db
-        .insert(leads)
-        .values({
-          name: input.name,
-          hotelName: input.hotel,
-          phone: input.phone,
-          city: input.city,
-          language: input.language,
-        })
+      await context.db.insert(leads).values({
+        name: input.name,
+        hotelName: input.hotel,
+        phone: input.phone,
+        city: input.city,
+        language: input.language,
+      })
       const to = context.config.leadsEmail
       if (to) {
         await context.notification

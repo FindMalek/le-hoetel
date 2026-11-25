@@ -43,3 +43,9 @@ Use the [price-test sheet](/docs/pitch#price-test-sheet) to record the answers.
 - Stripe may not work for Tunisia (to verify). Local options are D17 and e-DINAR.
 
 See also [free pilot then paid](/docs/decisions/free-pilot-then-paid).
+
+## On the landing page
+
+The landing page (`apps/web`, `/`, `/fr`, `/ar`) shows these three plans marked "pilot pricing" next to "free for 60 to 90 days". The numbers live in `landing.pricing` in `packages/i18n/src/messages`; change them there when this page changes.
+
+Its demo request form writes a row to the `leads` table through `leads.request` (name, hotel, phone, city, language; no hotel scoping, because a lead is not a hotel yet). The api rate limits it (5 per ip per 10 minutes), ignores a filled honeypot, and emails `LEADS_NOTIFY_EMAIL` (default `ADMIN_EMAIL`) through the notification package, which only logs outside production. The WhatsApp button appears when `WHATSAPP_CONTACT_NUMBER` is set on the web app.
