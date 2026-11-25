@@ -29,3 +29,13 @@ test("a guest signs up from the QR page and sees the welcome at once", async ({ 
   await page.getByRole("button", { name: "Join" }).click()
   await expect(page.getByRole("status").getByRole("heading", { name: "You are in, Amira" })).toBeVisible()
 })
+
+test("a hotel requests a demo from the landing page", async ({ page }) => {
+  await page.goto(webUrl("en"))
+  await page.getByLabel("Your name").fill("Sami Trabelsi")
+  await page.getByLabel("Hotel name").fill("Hotel Test")
+  await page.locator("#demo-phone").fill("98 123 456")
+  await page.getByLabel("City").fill("Hammamet")
+  await page.locator("form").getByRole("button", { name: "Request a demo" }).click()
+  await expect(page.getByRole("status").getByText("Thank you, Sami")).toBeVisible()
+})
