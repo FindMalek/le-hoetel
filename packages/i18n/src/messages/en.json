@@ -158,7 +158,8 @@
     "auditLog": "Audit log",
     "settings": "Settings",
     "admin": "Platform",
-    "holidays": "Holidays"
+    "holidays": "Holidays",
+    "adminOverview": "Platform overview"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -398,24 +399,19 @@
   },
   "adminHotels": {
     "title": "Hotels",
-    "description": "Every hotel on the platform, with its guests and health.",
-    "createTitle": "New hotel",
-    "name": "Hotel name",
-    "slug": "Slug",
-    "ownerEmail": "Owner email",
-    "ownerHint": "The owner gets an invitation by email.",
-    "primaryColor": "Primary color",
-    "accentColor": "Accent color",
-    "language": "Default language",
-    "submit": "Create hotel and invite owner",
-    "created": "Hotel created, invitation sent.",
-    "empty": "No hotel yet.",
+    "description": "Every hotel on the platform, its numbers and what needs attention.",
+    "empty": {
+      "title": "No hotel yet",
+      "description": "Create the first hotel, invite its owner and print its QR codes. It takes about two minutes."
+    },
     "columns": {
       "hotel": "Hotel",
       "guests": "Guests",
-      "owners": "Owners",
       "health": "Health",
-      "created": "Created"
+      "consent": "Consent rate",
+      "lastCapture": "Last capture",
+      "pilotEnd": "Pilot ends",
+      "plan": "Plan"
     },
     "health": {
       "healthy": "Healthy",
@@ -423,6 +419,34 @@
       "no-guests": "No guests yet",
       "no-owner": "Owner not joined",
       "suspended": "Suspended"
+    },
+    "new": "New hotel",
+    "loading": "Loading hotels",
+    "search": "Search by name or slug",
+    "reset": "Clear filters",
+    "count": "{count, plural, one {# hotel} other {# hotels}}",
+    "filters": {
+      "status": "Status",
+      "health": "Health",
+      "any": "All"
+    },
+    "status": {
+      "pilot": "Pilot",
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "plan": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "noCapture": "No capture yet",
+    "noPilotEnd": "Not set",
+    "pilotEnded": "Ended",
+    "pilotLeft": "{days, plural, one {# day left} other {# days left}}",
+    "noMatch": {
+      "title": "No hotel matches",
+      "description": "Try another name or clear the filters."
     }
   },
   "hotelSettings": {
@@ -832,6 +856,319 @@
       "terms": "Terms",
       "status": "Status",
       "rights": "Made in Tunisia"
+    }
+  },
+  "adminHotel": {
+    "breadcrumb": "Hotels",
+    "statuses": {
+      "pilot": "Pilot",
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "plans": {
+      "starter": "Starter",
+      "growth": "Growth",
+      "pro": "Pro"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "ar": "Arabic"
+    },
+    "capturePage": "Capture page",
+    "openAs": "Open as this hotel",
+    "viewingAs": "You are acting as {hotel}. Everything you change is real.",
+    "leave": "Back to admin",
+    "overview": "Overview",
+    "stats": {
+      "guests": "Guests",
+      "consent": "Consent rate",
+      "consentHint": "{count} agreed to at least one channel",
+      "messages": "Messages",
+      "lastCapture": "Last capture"
+    },
+    "createdOn": "Created on",
+    "branding": "Branding",
+    "brandingHint": "What guests see after scanning a QR code: the hotel's name, colors and language.",
+    "displayName": "Display name",
+    "displayNameHint": "Shown to guests and in emails.",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "replyTo": "Reply-to email",
+    "replyToHint": "Guests who answer an email write here.",
+    "language": "Default language",
+    "timezone": "Timezone",
+    "save": "Save changes",
+    "brandingSaved": "Branding saved.",
+    "previewTitle": "Capture page preview",
+    "previewName": "Your hotel",
+    "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
+    "contrastDark": "This color is hard to see on a dark background. Pick a lighter one.",
+    "errors": {
+      "displayName": "Enter the name guests will see.",
+      "color": "Use a hex color like #0a7c66.",
+      "email": "Enter a valid email address."
+    },
+    "logoHint": "The logo is uploaded from the hotel's own settings.",
+    "logoOpen": "Open branding as this hotel",
+    "people": "Owners and members",
+    "peopleHint": "Who can sign in to this hotel, and invitations still waiting.",
+    "noPeople": "Nobody yet. Invite the owner from the hotel's team page once you open it.",
+    "invited": "Invited",
+    "inviteExpires": "Expires",
+    "pilotPlan": "Pilot and plan",
+    "pilotPlanHint": "Where the hotel is in the pilot and what it pays after.",
+    "plan": "Plan",
+    "status": "Status",
+    "pilotEnd": "Pilot end date",
+    "pilotEndHint": "Leave empty for no end date.",
+    "planSaved": "Plan saved.",
+    "capture": "Capture page and QR codes",
+    "captureHint": "The public page guests land on, and the printable codes for rooms and tables.",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied.",
+    "qrCodes": "QR codes",
+    "danger": "Danger zone",
+    "dangerHint": "Suspending stops the hotel's access. Deleting cannot be undone.",
+    "suspend": "Suspend hotel",
+    "suspendHint": "The team can no longer use the dashboard and no message is sent. Data is kept.",
+    "suspendedDone": "Hotel suspended.",
+    "reactivate": "Reactivate hotel",
+    "reactivateHint": "Gives the team back its access.",
+    "reactivated": "Hotel reactivated.",
+    "delete": "Delete hotel",
+    "deleteHint": "Removes the hotel, its guests, offers and team for good.",
+    "deleted": "Hotel deleted.",
+    "deleteTitle": "Delete {hotel}?",
+    "deleteConsequence": "Every guest, consent record, offer and message of this hotel is erased. This cannot be undone.",
+    "deleteType": "Type {slug} to confirm",
+    "cancel": "Cancel",
+    "deleteConfirm": "Delete for good",
+    "mailTo": "To",
+    "mailToEmpty": "owner@hotel.com",
+    "mailSubject": "Subject",
+    "preview": {
+      "en": {
+        "welcome": "Welcome to {hotel}",
+        "intro": "Leave your details and we will take care of you during your stay.",
+        "name": "Your name",
+        "phone": "Phone number",
+        "consent": "Send me offers by email or WhatsApp",
+        "submit": "Sign up"
+      },
+      "fr": {
+        "welcome": "Bienvenue à {hotel}",
+        "intro": "Laissez-nous vos coordonnées et nous prendrons soin de vous pendant votre séjour.",
+        "name": "Votre nom",
+        "phone": "Numéro de téléphone",
+        "consent": "Je souhaite recevoir des offres par e-mail ou WhatsApp",
+        "submit": "S'inscrire"
+      },
+      "ar": {
+        "welcome": "أهلًا بكم في {hotel}",
+        "intro": "اتركوا بياناتكم وسنعتني بكم طوال إقامتكم.",
+        "name": "اسمكم",
+        "phone": "رقم الهاتف",
+        "consent": "أرغب في تلقي العروض عبر البريد الإلكتروني أو واتساب",
+        "submit": "تسجيل"
+      }
+    },
+    "invite": {
+      "en": {
+        "subject": "You are invited to run {hotel} on le-hoetel",
+        "title": "Welcome to {hotel}",
+        "body": "Your hotel is ready. Accept the invitation to set a password and see your guests, offers and QR codes.",
+        "button": "Accept the invitation",
+        "footer": "If you did not expect this email, you can ignore it."
+      },
+      "fr": {
+        "subject": "Vous êtes invité à gérer {hotel} sur le-hoetel",
+        "title": "Bienvenue à {hotel}",
+        "body": "Votre hôtel est prêt. Acceptez l'invitation pour choisir un mot de passe et retrouver vos clients, vos offres et vos QR codes.",
+        "button": "Accepter l'invitation",
+        "footer": "Si vous n'attendiez pas cet e-mail, vous pouvez l'ignorer."
+      },
+      "ar": {
+        "subject": "دعوة لإدارة {hotel} على le-hoetel",
+        "title": "أهلًا بكم في {hotel}",
+        "body": "فندقكم جاهز. اقبلوا الدعوة لاختيار كلمة مرور والاطّلاع على نزلائكم وعروضكم ورموز QR.",
+        "button": "قبول الدعوة",
+        "footer": "إذا لم تكونوا تنتظرون هذه الرسالة فيمكنكم تجاهلها."
+      }
+    }
+  },
+  "adminWizard": {
+    "title": "New hotel",
+    "description": "Four short steps. The owner gets an invitation by email at the end.",
+    "steps": "Steps",
+    "stepOf": "Step {current} of {total}",
+    "step": {
+      "basics": {
+        "title": "The basics",
+        "description": "The name and the address of the hotel's guest page."
+      },
+      "branding": {
+        "title": "Branding",
+        "description": "Colors and name guests see. Watch the preview change."
+      },
+      "languages": {
+        "title": "Language and time",
+        "description": "Used for the capture page, messages and dates."
+      },
+      "owner": {
+        "title": "Owner",
+        "description": "Who runs this hotel. They get an invitation to set a password."
+      }
+    },
+    "name": "Hotel name",
+    "nameHint": "The official name, as on the door.",
+    "slug": "Page address",
+    "slugHint": "Lowercase letters, digits and dashes. It becomes part of the QR code links.",
+    "slugChecking": "Checking availability...",
+    "slugFree": "{slug} is available.",
+    "displayName": "Name shown to guests",
+    "displayNameHint": "Leave empty to use the hotel name.",
+    "primaryColor": "Primary color",
+    "accentColor": "Accent color",
+    "logoLater": "The logo is added once the hotel exists, from its branding section.",
+    "language": "Default language",
+    "languageHint": "The capture page opens in this language. Guests can change it.",
+    "timezone": "Timezone",
+    "timezoneHint": "Birthday messages and reports follow it.",
+    "ownerEmail": "Owner email",
+    "ownerHint": "We send the invitation here.",
+    "afterCreate": "After you create the hotel, the owner receives the email on the right. You can invite more people later.",
+    "create": "Create hotel and invite owner",
+    "next": "Continue",
+    "back": "Back",
+    "preview": "Preview",
+    "previewCapture": "What guests see",
+    "previewInvite": "What the owner receives",
+    "created": "Hotel created, invitation sent.",
+    "errors": {
+      "name": "Enter the hotel name.",
+      "slug": "Enter an address for the page.",
+      "slugFormat": "Use lowercase letters, digits and single dashes.",
+      "slugTaken": "That address is already used. Try another.",
+      "color": "Use a hex color like #0a7c66.",
+      "email": "Enter a valid email address."
+    }
+  },
+  "adminOverview": {
+    "title": "Platform overview",
+    "description": "The pilot at a glance: hotels, guests captured, consent and messages.",
+    "empty": {
+      "title": "No hotel on the platform yet",
+      "description": "The numbers appear as soon as the first hotel is created and its guests start to sign up.",
+      "action": "Create the first hotel"
+    },
+    "stats": {
+      "hotels": "Hotels",
+      "hotelsHint": "{pilot} in pilot, {active} active",
+      "guests": "Guests captured",
+      "guestsHint": "{count} in the last 7 days",
+      "consent": "Consent rate",
+      "consentHint": "{count} guests said yes to at least one channel",
+      "messages": "Messages",
+      "messagesHint": "{delivered} delivered, {failed} failed"
+    },
+    "funnel": {
+      "title": "Pilot funnel",
+      "description": "How far hotels get, from creation to their first guest.",
+      "created": "Hotels created",
+      "owner": "Owner joined",
+      "guests": "First guest captured"
+    },
+    "attention": {
+      "title": "Needs attention",
+      "all": "All hotels",
+      "pilots": "Pilots ending in 14 days",
+      "suspended": "Suspended hotels"
+    }
+  },
+  "adminUsers": {
+    "title": "Users",
+    "description": "{count, plural, one {# account} other {# accounts}} on the platform.",
+    "search": "Search by name or email",
+    "reset": "Clear search",
+    "roleAdmin": "App admin",
+    "roleUser": "Member",
+    "noHotel": "No hotel",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "hotels": "Hotels",
+      "joined": "Joined"
+    },
+    "noMatch": {
+      "title": "No user matches",
+      "description": "Try another name or email."
+    }
+  },
+  "adminAudit": {
+    "title": "Audit log",
+    "description": "Who did what, newest first. Admins only.",
+    "system": "System",
+    "newer": "Newer",
+    "older": "Older",
+    "columns": {
+      "action": "Action",
+      "who": "Who",
+      "hotel": "Hotel",
+      "ip": "IP",
+      "when": "When"
+    },
+    "filters": {
+      "action": "Action",
+      "actor": "Person",
+      "hotel": "Hotel",
+      "from": "From",
+      "to": "To",
+      "any": "Any",
+      "apply": "Apply",
+      "reset": "Clear"
+    },
+    "empty": {
+      "title": "Nothing recorded yet",
+      "description": "Sensitive actions such as exports, deletions and plan changes appear here."
+    },
+    "noMatch": {
+      "title": "No entry matches",
+      "description": "Widen the dates or clear a filter."
+    },
+    "actions": {
+      "admin": {
+        "impersonate": "Signed in as a user"
+      },
+      "guest": {
+        "consent": "Changed a guest's consent",
+        "delete-all": "Deleted all guests of a hotel",
+        "delete": "Deleted a guest",
+        "export-all": "Exported all guests",
+        "export": "Exported a guest",
+        "import": "Imported guests"
+      },
+      "hotel": {
+        "admin-update": "Updated plan, status or pilot",
+        "create": "Created a hotel",
+        "delete": "Deleted a hotel",
+        "logo-remove": "Removed a logo",
+        "logo-set": "Changed a logo",
+        "update": "Updated hotel branding"
+      },
+      "offer": {
+        "create": "Created an offer",
+        "delete": "Deleted an offer",
+        "redeem": "Redeemed an offer",
+        "update": "Updated an offer"
+      },
+      "privacy": {
+        "delete-account": "Deleted an account",
+        "export": "Exported account data"
+      },
+      "profile": {
+        "update": "Updated a profile"
+      }
     }
   }
 }

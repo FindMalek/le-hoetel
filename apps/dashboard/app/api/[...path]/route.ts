@@ -1,7 +1,13 @@
-import { proxyToApi } from "@le-hoetel/orpc/proxy"
+import { forwardToApi } from "@le-hoetel/orpc/proxy"
+import { viewedHotelId } from "@/lib/view-hotel"
 
-export const GET = proxyToApi
-export const POST = proxyToApi
-export const PUT = proxyToApi
-export const PATCH = proxyToApi
-export const DELETE = proxyToApi
+const forward = async (request: Request) => {
+  const hotelId = await viewedHotelId()
+  return forwardToApi(request, hotelId ? { "x-hotel-id": hotelId } : {})
+}
+
+export const GET = forward
+export const POST = forward
+export const PUT = forward
+export const PATCH = forward
+export const DELETE = forward

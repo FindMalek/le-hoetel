@@ -106,3 +106,65 @@ test("a hotel user lands in their hotel at sign in and lists only their hotels",
   const again = app.clientFor(new Headers({ cookie, "x-csrf-token": "orpc" }))
   expect(await again.hotel.mine()).toMatchObject({ activeId: hotelId, role: "owner" })
 })
+
+test("admin hotel detail has the numbers and people, the slug check and the funnel follow, delete needs the slug", async () => {
+  const admin = await app.signUp("detail-admin@le-hoetel.test", { role: "admin" })
+  const owner = await app.signUp("detail-owner@le-hoetel.test")
+  const hotel = await admin.client.admin.hotels.create({
+    name: "Dar Detail",
+    slug: "dar-detail",
+    ownerEmail: "detail-owner@le-hoetel.test",
+  })
+  expect(await admin.client.admin.hotels.slugAvailable({ slug: "dar-detail" })).toEqual({ available: false })
+  expect(await admin.client.admin.hotels.slugAvailable({ slug: "dar-free" })).toEqual({ available: true })
+
+  const pending = await admin.client.admin.hotels.get({ id: hotel.id })
+  expect(pending.invitations).toMatchObject([{ email: "detail-owner@le-hoetel.test", role: "owner" }])
+  expect(pending.members).toEqual([])
+  expect(pending.capturePageUrl).toContain("/h/dar-detail")
+
+  const [invite] = await app.services.db.select().from(invitation).where(eq(invitation.organizationId, hotel.id))
+  await app.services.auth.api.acceptInvitation({ body: { invitationId: invite!.id }, headers: owner.headers })
+  const acting = await app.joinHotel(owner, hotel.id, "owner")
+  await acting.client.guests.create({
+    name: "Sami Trabelsi",
+    phone: "+21620111222",
+    language: "fr",
+    email: null,
+    source: "qr_room",
+    consents: { email: false, whatsapp: true, profile: false },
+  })
+
+  const detail = await admin.client.admin.hotels.get({ id: hotel.id })
+  expect(detail).toMatchObject({ guestCount: 1, consentedCount: 1, invitations: [] })
+  expect(detail.members.map((m) => m.email)).toContain("detail-owner@le-hoetel.test")
+  expect((await admin.client.admin.hotels.overview()).guests.total).toBeGreaterThanOrEqual(1)
+  await expect(owner.client.admin.hotels.overview()).rejects.toMatchObject({ code: "FORBIDDEN" })
+
+  await expect(admin.client.admin.hotels.remove({ id: hotel.id, confirmSlug: "nope" })).rejects.toMatchObject({
+    code: "UNPROCESSABLE_CONTENT",
+  })
+  await admin.client.admin.hotels.remove({ id: hotel.id, confirmSlug: "dar-detail" })
+  await expect(admin.client.admin.hotels.get({ id: hotel.id })).rejects.toMatchObject({ code: "NOT_FOUND" })
+})
+
+test("the audit log filters by hotel, actor and dates, and pages", async () => {
+  const admin = await app.signUp("audit-admin@le-hoetel.test", { role: "admin" })
+  const hotel = await admin.client.admin.hotels.create({
+    name: "Dar Audit",
+    slug: "dar-audit",
+    ownerEmail: "audit-owner@le-hoetel.test",
+  })
+  await admin.client.admin.hotels.update({ id: hotel.id, plan: "growth" })
+  const me = await admin.client.me.get()
+
+  const forHotel = await admin.client.admin.audit.list({ hotelId: hotel.id })
+  expect(forHotel.entries.map((e) => e.action).sort()).toEqual(["hotel.admin-update", "hotel.create"])
+  expect(forHotel.entries[0]).toMatchObject({ hotelName: "Dar Audit", actorEmail: "audit-admin@le-hoetel.test" })
+
+  const byActor = await admin.client.admin.audit.list({ actorId: me.id, action: "hotel.create" })
+  expect(byActor.entries.every((e) => e.action === "hotel.create")).toBe(true)
+  const future = new Date(Date.now() + 60_000)
+  expect((await admin.client.admin.audit.list({ hotelId: hotel.id, from: future })).entries).toEqual([])
+  expect(await admin.client.admin.audit.actions()).toContain("hotel.create")
+})
