@@ -477,7 +477,8 @@
       "grantBody": "Lisez ce texte au client. Confirmez seulement s'il accepte. Le changement est ajouté au journal du consentement.",
       "grantConfirm": "Le client accepte",
       "grantedToast": "Accord enregistré.",
-      "deleteType": "Tapez {name} pour confirmer"
+      "deleteType": "Tapez {name} pour confirmer",
+      "checkOut": "Départ"
     },
     "finder": {
       "label": "Trouver un client",
@@ -513,7 +514,10 @@
       "submit": "Enregistrer",
       "cancel": "Annuler",
       "saved": "Client mis à jour.",
-      "error": "Les changements n'ont pas été enregistrés. Réessayez."
+      "error": "Les changements n'ont pas été enregistrés. Réessayez.",
+      "checkOut": "Date de départ",
+      "checkOutHint": "Le questionnaire part le lendemain.",
+      "checkOutNeedsConsent": "Nécessite le consentement aux détails du séjour. Activez-le depuis la fiche client, si le client est d'accord."
     }
   },
   "guestData": {
@@ -649,6 +653,14 @@
     "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
     "whatsappButton": "Continuer sur WhatsApp",
     "whatsappHint": "Cela ouvre une discussion avec le numéro de Ritorno, qui envoie un seul accueil automatique pour {hotel}. L'équipe de l'hôtel voit votre numéro et peut vous écrire, mais pas ce que vous écrivez : pour une demande, adressez-vous à la réception. Cela ne vous inscrit à aucun message.",
+    "departure": "Quand partez-vous ?",
+    "departureOptional": "Facultatif",
+    "departureTomorrow": "Demain",
+    "departureNights": "Dans {count} nuits",
+    "departurePick": "Choisir une date",
+    "departureDate": "Date de départ",
+    "departureDateError": "Choisissez une date à partir d'aujourd'hui, dans les 90 jours.",
+    "departureKeep": "Retenir ma date de départ",
     "previewTitle": "Aperçu",
     "previewBody": "Voici ce que voit un client. Rien n’est enregistré ni compté."
   },
