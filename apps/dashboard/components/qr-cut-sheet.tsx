@@ -1,6 +1,6 @@
 import { brandStyle } from "@ritorno/common/color"
 import type { HotelLanguage } from "@ritorno/common/hotel"
-import { staffLabel } from "@ritorno/common/qr"
+import { printedUrl, staffLabel } from "@ritorno/common/qr"
 import type { SpotSource } from "@ritorno/common/schemas"
 import { getDirection } from "@ritorno/i18n"
 import { cn } from "@ritorno/ui/lib/utils"
@@ -77,6 +77,7 @@ export async function QrCutSheet({
         const x = LEFT + (index % COLUMNS) * CELL.width
         const y = TOP + Math.floor(index / COLUMNS) * CELL.height
         const label = staffLabel(code.source, code.location) ?? ""
+        const address = printedUrl(code.url)
         return (
           <g key={code.url}>
             <QrMark
@@ -90,7 +91,7 @@ export async function QrCutSheet({
             />
             <text
               x={x + CELL.width / 2}
-              y={y + CODE + 5}
+              y={y + CODE + 4.5}
               textAnchor="middle"
               fontSize="3.2"
               lang={language}
@@ -101,7 +102,21 @@ export async function QrCutSheet({
             </text>
             <text
               x={x + CELL.width / 2}
-              y={y + CODE + 9.5}
+              y={y + CODE + 8}
+              textAnchor="middle"
+              fontSize="2.4"
+              direction="ltr"
+              className="fill-foreground font-mono"
+              // a monospace letter is 0.6 em: a long host is squeezed to the sticker
+              {...(address.length * 1.44 > CELL.width - 4
+                ? { textLength: CELL.width - 4, lengthAdjust: "spacingAndGlyphs" }
+                : {})}
+            >
+              {address}
+            </text>
+            <text
+              x={x + CELL.width / 2}
+              y={y + CODE + 11}
               textAnchor="middle"
               fontSize="2.2"
               direction="ltr"

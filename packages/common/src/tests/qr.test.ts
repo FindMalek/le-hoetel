@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { captureUrl, parseSpots, QR_SPOTS_MAX, qrFileName, staffLabel } from "../qr"
+import { captureUrl, newShortCode, normalizeShortCode, parseSpots, QR_SPOTS_MAX, qrFileName, staffLabel } from "../qr"
 
 test("spots: ranges expand, lists split, repeats and blanks go", () => {
   expect(parseSpots("101-103, T1\nT1,, Pool")).toEqual({ spots: ["101", "102", "103", "T1", "Pool"], cut: false })
@@ -33,4 +33,10 @@ test("the capture url carries the source and the spot", () => {
 test("the staff label marks table numbers with a T and leaves rooms and names alone", () => {
   expect([staffLabel("table", "4"), staffLabel("table", "T4"), staffLabel("room", "383")]).toEqual(["T4", "T4", "383"])
   expect(staffLabel("desk", null)).toBeNull()
+})
+
+test("short codes avoid look-alike characters and can be typed in lower case", () => {
+  const codes = Array.from({ length: 200 }, newShortCode).join("")
+  expect(codes).toMatch(/^[2-9A-HJKMNP-Z]{1200}$/)
+  expect(normalizeShortCode(" ab3k7m ")).toBe("AB3K7M")
 })

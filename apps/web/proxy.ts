@@ -2,7 +2,7 @@ import { PATHNAME_HEADER } from "@ritorno/i18n"
 import { localeProxy } from "@ritorno/i18n/proxy"
 import { type NextRequest, NextResponse } from "next/server"
 
-const GUEST_PATHS = ["/h/", "/u/", "/s/", "/o/", "/r/"]
+const GUEST_PATHS = ["/h/", "/q/", "/u/", "/s/", "/o/", "/r/"]
 
 export function proxy(request: NextRequest) {
   // Guest pages pick their language from the hotel, the guest and `?lang=`, never from the site's locale cookie.

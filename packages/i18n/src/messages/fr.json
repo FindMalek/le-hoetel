@@ -637,7 +637,9 @@
     "hotelMissingTitle": "Cette page d'hôtel n'existe pas",
     "hotelMissing": "Le QR code est peut-être ancien. Demandez le code actuel à la réception.",
     "reviewInvalidTitle": "Ce lien d'avis n'est pas valide",
-    "reviewInvalid": "Ouvrez à nouveau le lien de votre message, ou demandez à la réception."
+    "reviewInvalid": "Ouvrez à nouveau le lien de votre message, ou demandez à la réception.",
+    "codeMissingTitle": "Ce code ne fonctionne pas",
+    "codeMissing": "Vérifiez les lettres sous le code QR, ou demandez à la réception."
   },
   "adminHotels": {
     "title": "Hôtels",
@@ -1466,7 +1468,7 @@
     "renameHint": "Le nom officiel et l'adresse de la page client.",
     "renameSave": "Enregistrer le nom et le slug",
     "slugTitle": "Changer le slug de {hotel} ?",
-    "slugConsequence": "Tous les QR codes imprimés avec {old} cessent de fonctionner. Imprimez de nouveaux codes depuis la page QR codes juste après.",
+    "slugConsequence": "Les codes avec une adresse courte /q/ continuent de fonctionner. Les liens et les anciens codes imprimés qui contiennent {old} ne fonctionneront plus.",
     "slugConfirm": "Changer le slug",
     "renamed": "Nom et slug enregistrés.",
     "deleteConfirm": "Supprimer définitivement",
@@ -1546,8 +1548,8 @@
       "suspended": "L'équipe ne peut plus se connecter à cet hôtel et aucun message n'est envoyé à ses clients. Les données sont gardées et vous pourrez le réactiver."
     },
     "statusConfirm": "Passer en {status}",
-    "slugHint": "Minuscules, chiffres et tirets. Elle fait partie de chaque lien de QR code.",
-    "slugWarningTitle": "Les QR codes imprimés ne marcheront plus"
+    "slugHint": "Minuscules, chiffres et tirets. C’est l’adresse de la page des clients.",
+    "slugWarningTitle": "Les liens avec l’ancien identifiant ne fonctionneront plus"
   },
   "adminWizard": {
     "title": "Nouvel hôtel",

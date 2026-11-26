@@ -637,7 +637,9 @@
     "hotelMissingTitle": "This hotel page does not exist",
     "hotelMissing": "The QR code may be old. Ask the front desk for the current one.",
     "reviewInvalidTitle": "This review link is not valid",
-    "reviewInvalid": "Open the link from your message again, or ask the front desk."
+    "reviewInvalid": "Open the link from your message again, or ask the front desk.",
+    "codeMissingTitle": "This code does not work",
+    "codeMissing": "Check the letters under the QR code, or ask the front desk."
   },
   "adminHotels": {
     "title": "Hotels",
@@ -1466,7 +1468,7 @@
     "renameHint": "The official name and the address of the guest page.",
     "renameSave": "Save name and slug",
     "slugTitle": "Change the slug of {hotel}?",
-    "slugConsequence": "Every QR code printed with {old} stops working. Print new codes from the QR codes page right after.",
+    "slugConsequence": "Codes with a short /q/ address keep working. Links and older printed codes that contain {old} stop working.",
     "slugConfirm": "Change the slug",
     "renamed": "Name and slug saved.",
     "deleteConfirm": "Delete for good",
@@ -1546,8 +1548,8 @@
       "suspended": "The team can no longer sign in to this hotel and no message is sent to its guests. Data is kept and you can reactivate it later."
     },
     "statusConfirm": "Set to {status}",
-    "slugHint": "Lowercase letters, digits and dashes. It is part of every QR code link.",
-    "slugWarningTitle": "Printed QR codes will stop working"
+    "slugHint": "Lowercase letters, digits and dashes. It is the address of the guest page.",
+    "slugWarningTitle": "Links with the old slug will stop working"
   },
   "adminWizard": {
     "title": "New hotel",

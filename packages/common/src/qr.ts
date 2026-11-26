@@ -45,3 +45,38 @@ export function captureUrl(webUrl: string, slug: string, source: CaptureSource, 
   if (location) query.set("loc", location)
   return `${webUrl.replace(/\/$/, "")}/h/${encodeURIComponent(slug)}?${query}`
 }
+
+/** No `0 O 1 I L`: the code is also read off paper and typed by hand. */
+const SHORT_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
+const SHORT_LENGTH = 6
+
+export const newShortCode = (): string =>
+  Array.from(
+    crypto.getRandomValues(new Uint32Array(SHORT_LENGTH)),
+    (n) => SHORT_ALPHABET[n % SHORT_ALPHABET.length],
+  ).join("")
+
+/** Someone typing the address by hand need not use capitals. */
+export const normalizeShortCode = (code: string): string => code.trim().toUpperCase()
+
+export const shortUrl = (webUrl: string, code: string): string => `${webUrl.replace(/\/$/, "")}/q/${code}`
+
+/** The address as printed under a code: what someone types when the camera fails. */
+export const printedUrl = (url: string): string => url.replace(/^https?:\/\//, "")
+
+/** A downloaded code: the same svg made taller, with the address written under it. */
+export function captionedSvg(svg: string, caption: string): string {
+  const size = Number(/viewBox="0 0 (\d+) \d+"/.exec(svg)?.[1])
+  // a monospace letter is 0.6 em wide: a long host shrinks the line instead of leaving the code
+  const font = Math.min(size * 0.08, (size * 0.94) / (caption.length * 0.6))
+  const height = size + font * 1.6
+  return svg
+    .replace(
+      /viewBox="[^"]*"([^>]*)>/,
+      `viewBox="0 0 ${size} ${height}" width="1024" height="${Math.round((1024 * height) / size)}"$1><rect width="${size}" height="${height}" fill="#fff"/>`,
+    )
+    .replace(
+      "</svg>",
+      `<text x="${size / 2}" y="${size + font * 0.8}" font-family="monospace" font-size="${font}" text-anchor="middle" shape-rendering="auto">${caption}</text></svg>`,
+    )
+}
