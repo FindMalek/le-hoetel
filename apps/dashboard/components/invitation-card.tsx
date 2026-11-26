@@ -2,6 +2,7 @@
 
 import { authClient } from "@ritorno/auth/client"
 import { orgClient } from "@ritorno/auth/orgs"
+import { browserClient } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Skeleton } from "@ritorno/ui/components/skeleton"
@@ -29,11 +30,10 @@ export function InvitationCard({ id }: { id: string }) {
 
   useEffect(() => {
     let live = true
-    orgClient.organization.getInvitation({ query: { id } }).then(({ data, error }) => {
-      if (!live) return
-      if (data) setState({ kind: "ready", invitation: data })
-      else setState({ kind: error?.status === 403 ? "wrong" : "invalid" })
-    })
+    browserClient.me
+      .invitation({ id })
+      .then((invitation) => live && setState({ kind: "ready", invitation }))
+      .catch((error: { code?: string }) => live && setState({ kind: error.code === "FORBIDDEN" ? "wrong" : "invalid" }))
     return () => {
       live = false
     }
@@ -42,11 +42,13 @@ export function InvitationCard({ id }: { id: string }) {
   const accept = async () => {
     setBusy(true)
     setFailed(false)
-    const { error } = await orgClient.organization.acceptInvitation({ invitationId: id })
+    const { data, error } = await orgClient.organization.acceptInvitation({ invitationId: id })
     if (error) {
       setFailed(true)
       return setBusy(false)
     }
+    // Accepting only updates the session row: set-active also rewrites the cached session cookie, else no hotel for minutes.
+    await orgClient.organization.setActive({ organizationId: data.invitation.organizationId })
     window.location.assign("/")
   }
 

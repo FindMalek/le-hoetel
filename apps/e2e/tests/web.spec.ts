@@ -35,7 +35,10 @@ test("a guest signs up from the QR page and sees the welcome at once", async ({ 
   await page.goto(`${URLS.web}/h/dar-zitouna?lang=en&src=room&loc=e2e`)
   await page.getByLabel("Your name").fill("Amira Ben Salah")
   await page.locator("#capture-phone").fill("98 765 432")
-  await page.waitForTimeout(3100)
+  // The api drops forms sent within seconds of being rendered, as bots do: age the stamp instead of waiting.
+  await page.locator("input[name=renderedAt]").evaluate((input: HTMLInputElement) => {
+    input.value = String(Number(input.value) - 60_000)
+  })
   await page.getByRole("button", { name: "Join" }).click()
   await expect(page.getByRole("status").getByRole("heading", { name: "You are in, Amira" })).toBeVisible()
 })
