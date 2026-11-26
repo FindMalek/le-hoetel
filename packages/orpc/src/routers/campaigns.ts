@@ -188,6 +188,7 @@ export const campaignsRouter = {
         logoUrl: hotel.logoKey ? `${context.config.apiUrl}/files/${hotel.logoKey}` : null,
         primaryColor: hotel.primaryColor,
         accentColor: hotel.accentColor,
+        address: hotel.address,
       }
       const text = pickContent(campaign.content, input.language, hotel.defaultLanguage)
       const email = await renderEmail("message", {

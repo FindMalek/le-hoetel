@@ -8,7 +8,7 @@ export const ar: Copy = {
     footerReason: "وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع {hotel}.",
     unsubscribe: "إلغاء الاشتراك",
     offerValidUntil: "صالح حتى {date}",
-    offerCode: "رمزك",
+    offerCode: "رمزك:",
     dateFormat: "{day} {month} {year}",
     months: ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"],
   },
