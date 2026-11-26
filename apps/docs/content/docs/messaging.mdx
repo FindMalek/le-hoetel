@@ -68,7 +68,7 @@ Setup: set `WHATSAPP_BUSINESS_NUMBER` to the number behind `WHATSAPP_PHONE_NUMBE
 
 ## Dashboard
 
-`/messages` in the dashboard lists the hotel's messages in en, fr and ar, 25 a page, newest first. Owners, managers and staff can read it. Filters live in the url: channel, status, template and the last 7, 30 or 90 days (`messages.list` takes `channel`, `status`, `template`, `days`, `limit` and `offset` and returns a `total`). Each row shows the guest, the channel, the template by its readable name, the language and the status, plus the provider error code on a failure. Never the recipient: the log does not hold it. Dates use the hotel's timezone.
+`/messages` in the dashboard lists the hotel's messages in en, fr and ar, newest first, loading more as you scroll. Owners, managers and staff can read it. Filters live in the url: channel, status, template and the last 7, 30 or 90 days (`messages.list` takes `channel`, `status`, `template`, `days`, `limit` and `cursor` and returns a `total` and a `nextCursor`). Each row shows the guest, the channel, the template by its readable name, the language and the status, plus the provider error code on a failure. Never the recipient: the log does not hold it. Dates use the hotel's timezone.
 
 ### Messages that were not sent
 

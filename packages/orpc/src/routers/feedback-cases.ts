@@ -1,11 +1,13 @@
 import { ORPCError } from "@orpc/server"
 import { FEEDBACK_CASE_STATUSES, FEEDBACK_NOTES_MAX } from "@ritorno/common/feedback-case"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
+import { cursorSchema } from "@ritorno/common/schemas"
 import { feedbackCases, guests, surveyResponses, user } from "@ritorno/db"
 import { and, count, desc, eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
+import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
 import { can, hotelProcedure } from "../procedures"
 
 const status = z.enum(FEEDBACK_CASE_STATUSES)
@@ -89,7 +91,7 @@ export const feedbackCasesRouter = {
         .object({
           status: status.optional(),
           limit: z.coerce.number().int().min(1).max(100).default(25),
-          offset: z.coerce.number().int().min(0).default(0),
+          cursor: cursorSchema.optional(),
         })
         .prefault({}),
     )
@@ -97,6 +99,7 @@ export const feedbackCasesRouter = {
       z.object({
         items: z.array(caseRow),
         total: z.number(),
+        nextCursor: z.string().nullable(),
         counts: z.record(status, z.number()),
       }),
     )
@@ -112,19 +115,22 @@ export const feedbackCasesRouter = {
         .groupBy(feedbackCases.status)
       const counts = { new: 0, contacted: 0, resolved: 0 }
       for (const row of grouped) counts[row.status] = row.n
-      const items = await context.db
-        .select(columns)
+      const rows = await context.db
+        .select({ ...columns, cursorAt: cursorAt(feedbackCases.createdAt) })
         .from(feedbackCases)
         .innerJoin(surveyResponses, on.response)
         .innerJoin(guests, on.guest)
         .where(
-          and(eq(feedbackCases.hotelId, hotelId), input.status ? eq(feedbackCases.status, input.status) : undefined),
+          and(
+            eq(feedbackCases.hotelId, hotelId),
+            input.status ? eq(feedbackCases.status, input.status) : undefined,
+            afterCursor(feedbackCases.createdAt, feedbackCases.id, input.cursor),
+          ),
         )
         .orderBy(desc(feedbackCases.createdAt), feedbackCases.id)
-        .limit(input.limit)
-        .offset(input.offset)
+        .limit(input.limit + 1)
       const total = input.status ? counts[input.status] : counts.new + counts.contacted + counts.resolved
-      return { items, total, counts }
+      return { ...cursorPage(rows, input.limit), total, counts }
     }),
 
   get: hotelProcedure

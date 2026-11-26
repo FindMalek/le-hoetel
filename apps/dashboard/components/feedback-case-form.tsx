@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 export function FeedbackCaseForm(props: {
   id: string
@@ -23,16 +24,19 @@ export function FeedbackCaseForm(props: {
   const router = useRouter()
   const [status, setStatus] = useState(props.status)
   const [notes, setNotes] = useState(props.notes ?? "")
+  const refreshLists = useRefreshLists()
   const save = useMutation(
     orpc.feedbackCases.update.mutationOptions({
       onSuccess: () => {
         toast.success(t("saved"))
+        void refreshLists()
         router.refresh()
       },
       onError: (error) => {
         if (!isConflict(error)) return void toast.error(errorMessage(error))
         // The refresh remounts the form with what the colleague saved.
         toast.error(t("conflict"))
+        void refreshLists()
         router.refresh()
       },
     }),

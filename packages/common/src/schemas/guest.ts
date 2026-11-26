@@ -3,6 +3,7 @@ import { CONSENT_CHANNELS, CONSENT_SOURCES, GUEST_SOURCES } from "../consent"
 import { FEEDBACK_CASE_STATUSES } from "../feedback-case"
 import { HOTEL_LANGUAGES } from "../hotel"
 import { isWhatsappCapable, parsePhone } from "../phone"
+import { cursorSchema } from "./cursor"
 
 export const GUEST_LIST_MAX = 200
 
@@ -137,7 +138,7 @@ export const guestListInputSchema = z.object({
   /** Guests with at least two recorded visits. */
   returning: z.boolean().optional(),
   limit: z.number().int().min(1).max(GUEST_LIST_MAX).default(50),
-  offset: z.number().int().min(0).default(0),
+  cursor: cursorSchema.optional(),
 })
 
 export const guestUpsertResultSchema = guestSchema.extend({ merged: z.boolean() })
@@ -145,6 +146,7 @@ export const guestUpsertResultSchema = guestSchema.extend({ merged: z.boolean() 
 export const guestListSchema = z.object({
   items: z.array(guestSchema.extend({ visits: z.number().int() })),
   total: z.number(),
+  nextCursor: z.string().nullable(),
 })
 
 /** What happened with one guest at the hotel, newest first: stays, offers used and survey answers. */
