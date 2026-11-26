@@ -9,6 +9,8 @@ import { GuestState } from "@/components/guest-state"
 
 export const metadata: Metadata = { robots: { index: false, follow: false } }
 
+// i18n-used: guest.codeMissingTitle
+// i18n-used: guest.codeMissing
 /** Where `/q/<code>` lands when it cannot go on: an unknown code, or with `?retry=<code>` one that did not load. */
 export default async function Page({ searchParams }: PageProps<"/q/invalid">) {
   const { lang, retry } = await searchParams
