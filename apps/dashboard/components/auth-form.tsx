@@ -82,7 +82,7 @@ export function AuthForm({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-balance font-heading font-semibold text-3xl tracking-tight">{t(`${copy}.title`)}</h1>
+        <h1 className="text-balance text-h1">{t(`${copy}.title`)}</h1>
         <p className="text-muted-foreground">{t(`${copy}.description`)}</p>
       </div>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
@@ -93,7 +93,8 @@ export function AuthForm({
             <>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
+                size="lg"
                 onClick={() =>
                   authClient.signIn.social({
                     provider: "github",
@@ -132,27 +133,27 @@ export function AuthForm({
             onBlur={onBlur}
             required
           />
-          <AuthField
-            name="password"
-            type="password"
-            label={t("password")}
-            autoComplete={signUp ? "new-password" : "current-password"}
-            enterKeyHint="go"
-            hint={signUp ? t("signUp.hint") : undefined}
-            error={errors.password}
-            onBlur={onBlur}
-            required
-            labelAction={
-              signUp ? null : (
-                <Link
-                  href="/forgot-password"
-                  className="inline-flex min-h-touch items-center text-muted-foreground text-sm underline-offset-4 hover:text-foreground hover:underline"
-                >
-                  {t("signIn.forgot")}
-                </Link>
-              )
-            }
-          />
+          <div className="flex flex-col gap-1">
+            <AuthField
+              name="password"
+              type="password"
+              label={t("password")}
+              autoComplete={signUp ? "new-password" : "current-password"}
+              enterKeyHint="go"
+              hint={signUp ? t("signUp.hint") : undefined}
+              error={errors.password}
+              onBlur={onBlur}
+              required
+            />
+            {signUp ? null : (
+              <Link
+                href="/forgot-password"
+                className="inline-flex min-h-touch items-center self-end text-blue-700 text-sm underline-offset-4 hover:underline"
+              >
+                {t("signIn.forgot")}
+              </Link>
+            )}
+          </div>
         </FieldGroup>
         <Button type="submit" size="lg" loading={busy}>
           {t(`${copy}.submit`)}
@@ -162,7 +163,7 @@ export function AuthForm({
         {signUp ? t("signUp.have") : t("signIn.noAccount")}
         <Link
           href={withNext(signUp ? "/sign-in" : "/sign-up") as "/sign-in"}
-          className="ms-1 inline-flex min-h-touch items-center font-medium text-foreground underline-offset-4 hover:underline"
+          className="ms-1 inline-flex min-h-touch items-center font-medium text-blue-700 underline-offset-4 hover:underline"
         >
           {signUp ? t("signUp.signIn") : t("signIn.create")}
         </Link>
