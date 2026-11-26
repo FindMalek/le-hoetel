@@ -1,4 +1,5 @@
 import type { Job } from "@ritorno/jobs"
+import { SEND_PACING, type SendPacing } from "../lib/automations"
 import { birthdayJob } from "./birthday"
 import { campaignJob } from "./campaigns"
 import { holidayJob } from "./holidays"
@@ -10,11 +11,14 @@ export { enqueueWelcome, type JobServices } from "./welcome"
 /** The jobs that send to guests. They need the dispatcher's services, so the api builds them and hands them to the runner next to `JOBS`. */
 export const createMessageJobs = (
   services: JobServices,
-  options: { campaignPauseMs?: number; campaignBatchSize?: number } = {},
-): readonly Job[] => [
-  welcomeJob(services),
-  birthdayJob(services),
-  holidayJob(services),
-  surveyJob(services),
-  campaignJob(services, { pauseMs: options.campaignPauseMs, batchSize: options.campaignBatchSize }),
-]
+  options: Partial<SendPacing> & { campaignBatchSize?: number } = {},
+): readonly Job[] => {
+  const pacing = { ...SEND_PACING, ...options }
+  return [
+    welcomeJob(services, pacing),
+    birthdayJob(services, pacing),
+    holidayJob(services, pacing),
+    surveyJob(services, pacing),
+    campaignJob(services, { pauseMs: pacing.pauseMs, batchSize: options.campaignBatchSize }),
+  ]
+}

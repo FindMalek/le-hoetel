@@ -6,6 +6,7 @@ import { automationSends, type Db, guestConsents, offers } from "@ritorno/db"
 import type { EmailOffer } from "@ritorno/notification"
 import { and, desc, eq } from "drizzle-orm"
 import type { Context } from "../context"
+import { type GuestMessage, sendToGuest } from "./messages"
 import { guestCode, redeemedCount } from "./offers"
 
 /** Returns true for the one caller that may send: the first to write the row. Everyone after gets false. */
@@ -19,6 +20,41 @@ export async function claimSend(
     .onConflictDoNothing()
     .returning({ id: automationSends.id })
   return Boolean(claimed)
+}
+
+export interface SendPacing {
+  /** Between two sends, so a provider never sees a burst. */
+  pauseMs: number
+  /** Before the first retry, doubled for the next one. */
+  retryDelayMs: number
+}
+
+export const SEND_PACING: SendPacing = { pauseMs: 250, retryDelayMs: 2000 }
+const SEND_ATTEMPTS = 3
+
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Claims the send, then sends with up to `SEND_ATTEMPTS` tries on a retryable provider error (5xx, 429, network) and
+ * pauses after it. The claim is held through the retries so no other worker can send it too, which is also why the
+ * retries live here and not in pg-boss: a rerun of the job finds the claim and sends nothing. A permanent failure is
+ * not retried, and a send still failing after the last try stays failed. Returns false when someone else had the claim.
+ */
+export async function claimAndSend(
+  context: Parameters<typeof sendToGuest>[0],
+  claim: { kind: string; period?: string },
+  message: GuestMessage,
+  pacing: SendPacing = SEND_PACING,
+): Promise<boolean> {
+  const { hotelId, guestId, channel } = message
+  if (!(await claimSend(context.db, { hotelId, guestId, channel, ...claim }))) return false
+  for (let attempt = 1; ; attempt++) {
+    const outcome = await sendToGuest(context, message)
+    if (!outcome.retryable || attempt >= SEND_ATTEMPTS) break
+    await sleep(pacing.retryDelayMs * 2 ** (attempt - 1))
+  }
+  await sleep(pacing.pauseMs)
+  return true
 }
 
 export async function consentedChannels(db: Db, hotelId: string, guestId: string): Promise<MessageChannel[]> {

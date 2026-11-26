@@ -29,6 +29,30 @@ export interface GuestMessage<Key extends HotelEmailKey = HotelEmailKey> {
 export interface MessageOutcome {
   messageId: string
   status: MessageStatus
+  /** A failed send the provider may accept on another try: 5xx, 429 or a network error. */
+  retryable?: boolean
+}
+
+const NETWORK_CODES = new Set([
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "ETIMEDOUT",
+  "EAI_AGAIN",
+  "EPIPE",
+  "UND_ERR_SOCKET",
+  "UND_ERR_CONNECT_TIMEOUT",
+  "ConnectionRefused",
+  "ConnectionClosed",
+])
+
+/** Email sdk errors carry `status`, WhatsApp (Graph api) errors `httpStatus`, fetch failures a network `code`. */
+export function isRetryableSendError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false
+  const { status, httpStatus, code, cause } = error as Record<string, unknown>
+  const http = typeof httpStatus === "number" ? httpStatus : typeof status === "number" ? status : null
+  if (http !== null) return http === 429 || http >= 500
+  if (typeof code === "string" && NETWORK_CODES.has(code)) return true
+  return isRetryableSendError(cause)
 }
 
 const LOG_ONLY_ID = "log-only"
@@ -118,11 +142,12 @@ export async function sendToGuest<Key extends HotelEmailKey>(
     return finish({ status: "failed", errorCode: "channel_not_configured", failedAt: context.now() })
   } catch (error) {
     const code = (error as { code?: unknown })?.code
-    return finish({
+    const failed = await finish({
       status: "failed",
       errorCode: typeof code === "string" ? code : "send_failed",
       failedAt: context.now(),
     })
+    return { ...failed, retryable: isRetryableSendError(error) }
   }
 }
 

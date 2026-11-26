@@ -4,18 +4,15 @@ import { campaignRecipients, campaigns, hotelSettings, offers } from "@ritorno/d
 import { defineJob } from "@ritorno/jobs"
 import { and, eq, inArray, lte, ne } from "drizzle-orm"
 import { z } from "zod"
-import { perkFor } from "../lib/automations"
+import { perkFor, SEND_PACING, sleep } from "../lib/automations"
 import { campaignChannels, recipientsQuery } from "../lib/campaigns"
 import { sendToGuest } from "../lib/messages"
 import type { JobServices } from "./welcome"
 
 export const CAMPAIGN_JOB = "campaign-dispatch"
 
-/** Messages per campaign per minute: at most `BATCH_SIZE` sends, `PAUSE_MS` apart, so a provider never sees a burst. */
+/** Messages per campaign per minute: at most `BATCH_SIZE` sends, `SEND_PACING.pauseMs` apart. */
 const BATCH_SIZE = 20
-const PAUSE_MS = 250
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
  * Runs every minute. Takes the campaigns that are due (scheduled, or still sending), skips hotels in quiet hours
@@ -112,7 +109,7 @@ export const campaignJob = (services: JobServices, options: { batchSize?: number
           } catch {
             console.error("[campaigns] a message could not be sent")
           }
-          await sleep(options.pauseMs ?? PAUSE_MS)
+          await sleep(options.pauseMs ?? SEND_PACING.pauseMs)
         }
       }
     },

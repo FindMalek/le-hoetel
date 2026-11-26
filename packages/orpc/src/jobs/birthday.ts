@@ -3,8 +3,7 @@ import { guests, hotelSettings } from "@ritorno/db"
 import { defineJob } from "@ritorno/jobs"
 import { and, eq, inArray, ne, sql } from "drizzle-orm"
 import { z } from "zod"
-import { claimSend, consentedChannels, triggerOffer } from "../lib/automations"
-import { sendToGuest } from "../lib/messages"
+import { claimAndSend, consentedChannels, type SendPacing, triggerOffer } from "../lib/automations"
 import type { JobServices } from "./welcome"
 
 export const BIRTHDAY_JOB = "birthday-guests"
@@ -14,7 +13,7 @@ export const BIRTHDAY_JOB = "birthday-guests"
  * (and before quiet hours), so a late worker still sends the same day. The claim, one per guest, channel and year,
  * keeps it to one message a year however often this runs. A hotel without a birthday offer sends nothing.
  */
-export const birthdayJob = (services: JobServices) =>
+export const birthdayJob = (services: JobServices, pacing?: SendPacing) =>
   defineJob({
     name: BIRTHDAY_JOB,
     description: "Send the birthday offer to guests whose birthday is today",
@@ -52,21 +51,12 @@ export const birthdayJob = (services: JobServices) =>
           })
           if (!perk) continue
           for (const channel of channels) {
-            const claimed = await claimSend(services.db, {
-              hotelId,
-              guestId: guest.id,
-              kind: "birthday",
-              period: String(local.year),
-              channel,
-            })
-            if (!claimed) continue
-            await sendToGuest(services, {
-              hotelId,
-              guestId: guest.id,
-              channel,
-              template: "birthday",
-              props: { offer: perk.offer, ctaUrl: perk.ctaUrl },
-            })
+            await claimAndSend(
+              services,
+              { kind: "birthday", period: String(local.year) },
+              { hotelId, guestId: guest.id, channel, template: "birthday", props: perk },
+              pacing,
+            )
           }
         }
       }

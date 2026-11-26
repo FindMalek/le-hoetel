@@ -4,8 +4,7 @@ import { guests, hotelSettings, surveyInvites } from "@ritorno/db"
 import { defineJob } from "@ritorno/jobs"
 import { and, eq, isNull, ne, sql } from "drizzle-orm"
 import { z } from "zod"
-import { claimSend, consentedChannels } from "../lib/automations"
-import { sendToGuest } from "../lib/messages"
+import { claimAndSend, consentedChannels, type SendPacing } from "../lib/automations"
 import { surveyExpiry } from "../lib/surveys"
 import type { JobServices } from "./welcome"
 
@@ -20,7 +19,7 @@ const dueAt = sql`coalesce((${guests.stayCheckOut} + time '12:00') at time zone 
  * guest (unique) and one claim per channel keep it to one message each however often this runs, and a crash
  * between the invite and the send is picked up by the next run.
  */
-export const surveyJob = (services: JobServices) =>
+export const surveyJob = (services: JobServices, pacing?: SendPacing) =>
   defineJob({
     name: SURVEY_JOB,
     description: "Send the post-stay survey 24 hours after check-out",
@@ -67,8 +66,12 @@ export const surveyJob = (services: JobServices) =>
             signSurveyToken(services.config.tokenSecret, "survey", { hotelId, inviteId: invite.id }),
           )
           for (const channel of channels) {
-            if (!(await claimSend(services.db, { hotelId, guestId: guest.id, kind: "survey", channel }))) continue
-            await sendToGuest(services, { hotelId, guestId: guest.id, channel, template: "survey", props: { ctaUrl } })
+            await claimAndSend(
+              services,
+              { kind: "survey" },
+              { hotelId, guestId: guest.id, channel, template: "survey", props: { ctaUrl } },
+              pacing,
+            )
           }
           await services.db.update(surveyInvites).set({ sentAt: at }).where(eq(surveyInvites.id, invite.id))
         }

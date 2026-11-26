@@ -5,8 +5,7 @@ import { guestConsents, guests, hotelHolidays, hotelSettings } from "@ritorno/db
 import { defineJob } from "@ritorno/jobs"
 import { and, eq, inArray, ne } from "drizzle-orm"
 import { z } from "zod"
-import { claimSend } from "../lib/automations"
-import { sendToGuest } from "../lib/messages"
+import { claimAndSend, type SendPacing } from "../lib/automations"
 import type { JobServices } from "./welcome"
 
 export const HOLIDAY_JOB = "holiday-guests"
@@ -19,7 +18,7 @@ export const holidayChannels = (channel: HolidayChannel): MessageChannel[] =>
  * a holiday it switched on, and sends to guests who agreed to a channel the hotel picked for that holiday. A guest
  * gets one holiday message per channel and day, so two holidays on the same date send only the first.
  */
-export const holidayJob = (services: JobServices) =>
+export const holidayJob = (services: JobServices, pacing?: SendPacing) =>
   defineJob({
     name: HOLIDAY_JOB,
     description: "Send the holiday greetings a hotel switched on",
@@ -53,7 +52,7 @@ export const holidayJob = (services: JobServices) =>
           )
         for (const key of today) {
           const holiday = chosen.find((row) => row.key === key)
-          if (holiday) await greet(services, hotelId, key, holidayChannels(holiday.channel), local.date)
+          if (holiday) await greet(services, hotelId, key, holidayChannels(holiday.channel), local.date, pacing)
         }
       }
     },
@@ -65,6 +64,7 @@ async function greet(
   key: HolidayKey,
   channels: MessageChannel[],
   date: string,
+  pacing?: SendPacing,
 ) {
   const recipients = await services.db
     .select({ guestId: guests.id, language: guests.language, channel: guestConsents.channel })
@@ -79,14 +79,18 @@ async function greet(
     )
   for (const { guestId, language, channel } of recipients) {
     if (channel === "profile") continue
-    if (!(await claimSend(services.db, { hotelId, guestId, kind: "holiday", period: date, channel }))) continue
     const text = HOLIDAYS[key].text[language]
-    await sendToGuest(services, {
-      hotelId,
-      guestId,
-      channel,
-      template: "message",
-      props: { subject: `${text.name} · {hotel}`, title: `${text.name}, {name}`, body: text.body },
-    })
+    await claimAndSend(
+      services,
+      { kind: "holiday", period: date },
+      {
+        hotelId,
+        guestId,
+        channel,
+        template: "message",
+        props: { subject: `${text.name} · {hotel}`, title: `${text.name}, {name}`, body: text.body },
+      },
+      pacing,
+    )
   }
 }
