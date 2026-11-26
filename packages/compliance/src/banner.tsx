@@ -44,7 +44,7 @@ export function ConsentBanner({ labels }: { labels: ConsentBannerLabels }) {
     <section
       ref={ref}
       aria-label={labels.label}
-      className="fixed inset-x-0 bottom-0 z-50 border-t bg-card pb-safe text-card-foreground shadow-lg"
+      className="fixed inset-x-0 bottom-0 z-50 border-t bg-card pb-[env(safe-area-inset-bottom)] text-card-foreground shadow-lg"
     >
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 sm:gap-4 sm:py-3">
         <p className="min-w-0 flex-1 text-muted-foreground text-xs sm:text-sm">{labels.text}</p>
