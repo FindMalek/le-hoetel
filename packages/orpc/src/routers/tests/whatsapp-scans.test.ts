@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { signScanCode } from "@ritorno/common/whatsapp-scan"
-import { consentEvents, guests, hotelSettings, inboxItem, whatsappScans } from "@ritorno/db"
+import { consentEvents, guests, hotelSettings, inboxItem, messages, whatsappScans } from "@ritorno/db"
 import type { Notifier } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { handleInboundWhatsApp } from "../../lib/unsubscribe"
@@ -154,4 +154,58 @@ test("a scan stays in its hotel and goes out with the guest's export and delete"
   await a.client.guests.remove({ id: guest.id })
 
   expect((await scansOf(a.hotelId)).map((scan) => scan.phoneE164)).toEqual(["+21620000007"])
+})
+
+test("STOP after a scan also leaves the scanned hotel, not only the one that messaged last", async () => {
+  const phone = "+21620000008"
+  const [a, b, c] = [await hotel("stop-two-a"), await hotel("stop-two-b"), await hotel("stop-two-c")]
+  const [atA, atB, atC] = await Promise.all(
+    [a, b, c].map(({ client }) =>
+      client.guests.create({
+        name: "Amel Ben Salah",
+        phone,
+        language: "en",
+        source: "staff",
+        consents: { email: false, whatsapp: true, profile: false },
+      }),
+    ),
+  )
+  await app.services.db.insert(messages).values({
+    hotelId: a.hotelId,
+    guestId: atA!.id,
+    channel: "whatsapp",
+    templateKey: "welcome",
+    language: "en",
+    status: "sent",
+  })
+  const { context, replies } = provider()
+  await handleWhatsAppScan(context, message("21620000008", code("stop-two-b")))
+
+  await handleInboundWhatsApp(context, message("21620000008", "STOP"))
+
+  const consent = async (side: typeof a, id: string) => (await side.client.guests.get({ id })).consents.whatsapp
+  expect([await consent(a, atA!.id), await consent(b, atB!.id), await consent(c, atC!.id)]).toEqual([
+    false,
+    false,
+    true,
+  ])
+  expect(replies).toHaveLength(2)
+})
+
+test("a redelivered or stale message does not bring a removed scan back", async () => {
+  const { hotelId, client } = await hotel("scan-redelivery")
+  const { context, replies } = provider()
+  const seconds = (msAgo: number) => String(Math.floor((Date.now() - msAgo) / 1000))
+  const delivery = (id: string, timestamp: string) => ({
+    message: { ...message("21620000009", code("scan-redelivery")).message, id, timestamp },
+  })
+  await handleWhatsAppScan(context, delivery("wamid.1", seconds(0)))
+  const [scan] = await client.whatsappScans.list()
+  await client.whatsappScans.remove({ id: scan!.id })
+
+  await handleWhatsAppScan(context, delivery("wamid.1", seconds(0)))
+  await handleWhatsAppScan(context, delivery("wamid.2", seconds(2 * 60 * 60_000)))
+
+  expect(await scansOf(hotelId)).toHaveLength(0)
+  expect(replies).toHaveLength(1)
 })

@@ -69,19 +69,19 @@ const WELCOMES: Record<HotelLanguage, Welcome> = {
     welcome: "Welcome to {hotel}!",
     perk: "A small gift from {hotel} is waiting for you at the front desk.",
     register: "Join here: {url}",
-    team: "The hotel team can see your message and your number, and may answer from their own WhatsApp. Ritorno sends this reply for {hotel}.",
+    team: "For any request, please ask the front desk. The hotel team does not see what you write here, only your number and the room or table you scanned. They may write to you from their own WhatsApp. Ritorno sends this reply for {hotel}.",
   },
   fr: {
     welcome: "Bienvenue à {hotel} !",
     perk: "Un petit cadeau de {hotel} vous attend à la réception.",
     register: "Inscrivez-vous ici : {url}",
-    team: "L'équipe de l'hôtel voit votre message et votre numéro, et peut vous répondre depuis son propre WhatsApp. Ritorno envoie cette réponse pour {hotel}.",
+    team: "Pour toute demande, adressez-vous à la réception. L'équipe de l'hôtel ne voit pas ce que vous écrivez ici, seulement votre numéro et la chambre ou la table scannée. Elle peut vous écrire depuis son propre WhatsApp. Ritorno envoie cette réponse pour {hotel}.",
   },
   ar: {
     welcome: "مرحبًا بكم في {hotel}!",
     perk: "هدية صغيرة من {hotel} في انتظاركم في الاستقبال.",
     register: "سجّلوا من هنا: {url}",
-    team: "يرى فريق الفندق رسالتكم ورقمكم، وقد يرد عليكم من واتساب الخاص به. ترسل Ritorno هذا الرد نيابة عن {hotel}.",
+    team: "لأي طلب، توجهوا إلى الاستقبال. لا يرى فريق الفندق ما تكتبونه هنا، بل رقمكم والغرفة أو الطاولة التي مسحتم رمزها فقط. وقد يراسلكم من واتساب الخاص به. ترسل Ritorno هذا الرد نيابة عن {hotel}.",
   },
 }
 

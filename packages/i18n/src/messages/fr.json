@@ -620,7 +620,7 @@
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
     "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
     "whatsappButton": "Continuer sur WhatsApp",
-    "whatsappHint": "Votre message arrive au numéro de Ritorno, qui répond pour {hotel}. L'équipe de l'hôtel voit votre numéro et peut vous écrire. Cela ne vous inscrit à aucun message."
+    "whatsappHint": "Cela ouvre une discussion avec le numéro de Ritorno, qui envoie un seul accueil automatique pour {hotel}. L'équipe de l'hôtel voit votre numéro et peut vous écrire, mais pas ce que vous écrivez : pour une demande, adressez-vous à la réception. Cela ne vous inscrit à aucun message."
   },
   "guest": {
     "languageLabel": "Langue",
@@ -2217,10 +2217,10 @@
     "loadingCase": "Chargement du dossier"
   },
   "whatsappScans": {
-    "description": "Les clients qui ont scanné un code et écrit sur WhatsApp.",
-    "notice": "Ils ont écrit au numéro partagé de Ritorno et reçu un seul accueil automatique. Répondez depuis votre propre WhatsApp, uniquement à leur demande : écrire ne vaut pas consentement marketing. Les entrées sont supprimées après 30 jours.",
-    "reply": "Répondre sur WhatsApp",
-    "replyTo": "Répondre sur WhatsApp à {guest}",
+    "description": "Les clients qui ont scanné un code et continué sur WhatsApp.",
+    "notice": "Vous voyez leur numéro et leur emplacement, pas ce qu'ils ont écrit. Leur unique accueil automatique renvoie les demandes à la réception. Si vous écrivez depuis votre propre WhatsApp, proposez seulement votre aide : ce n'est pas un consentement marketing. Les entrées sont supprimées après 30 jours.",
+    "reply": "Écrire sur WhatsApp",
+    "replyTo": "Écrire à {guest} sur WhatsApp",
     "remove": "Retirer",
     "removeFrom": "Retirer {guest}",
     "removeTitle": "Retirer cette entrée ?",

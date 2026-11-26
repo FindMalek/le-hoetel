@@ -16,6 +16,21 @@ const DAY_MS = 24 * 60 * 60_000
 
 const cutoff = (now: Date) => new Date(now.getTime() - WHATSAPP_SCAN_RETENTION_DAYS * DAY_MS)
 
+/** Kapso retries a delivery within minutes: anything older than this is not a guest waiting for an answer. */
+const MAX_AGE_MS = 60 * 60_000
+
+/**
+ * A redelivery must not bring back a scan that a STOP, Remove or guest delete took away. Each message id counts
+ * once, and an old message is dropped even after the limiter forgot it.
+ */
+async function isRedelivery(context: Ctx, message: NonNullable<KapsoPayload["message"]>): Promise<boolean> {
+  const sentAt = Number(message.timestamp) * 1000
+  if (sentAt && context.now().getTime() - sentAt > MAX_AGE_MS) return true
+  if (!message.id) return false
+  const id = createHmac("sha256", context.config.tokenSecret).update(message.id).digest("base64url")
+  return !(await context.rateLimiter.hit(`whatsapp.scan:message:${id}`, RATE_LIMITS.scanMessage)).ok
+}
+
 /** Never the number itself in a key: it can live in a shared Redis. */
 async function underLimits(context: Ctx, hotelId: string, phoneE164: string): Promise<boolean> {
   const who = createHmac("sha256", context.config.tokenSecret).update(phoneE164).digest("base64url")
@@ -67,7 +82,8 @@ export async function handleWhatsAppScan(context: Ctx, payload: KapsoPayload): P
     .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
     .where(and(eq(organization.slug, spot.slug), ne(hotelSettings.status, "suspended")))
   const phoneE164 = `+${digits}`
-  if (!hotel || !(await underLimits(context, hotel.id, phoneE164))) return false
+  if (!hotel || (await isRedelivery(context, payload.message!))) return false
+  if (!(await underLimits(context, hotel.id, phoneE164))) return false
 
   const now = context.now()
   const claimed = await claimReply(context.db, {
@@ -94,7 +110,13 @@ export async function handleWhatsAppScan(context: Ctx, payload: KapsoPayload): P
     registerUrl: guest ? null : page.toString(),
   })
   // Not retried: a lost answer may still have sent it. Staff see the scan either way.
-  await context.notification.replyWhatsApp(phoneE164, reply, "scan_welcome").catch(() => null)
+  await context.notification.replyWhatsApp(phoneE164, reply, "scan_welcome").catch((error: unknown) => {
+    // Never the error itself: a provider's text can carry the number.
+    console.error("[whatsapp-scan] welcome not sent", {
+      hotelId: hotel.id,
+      status: (error as { httpStatus?: number } | null)?.httpStatus,
+    })
+  })
   await notifyStaff(context.db, hotel.id, scanNotice(hotel.language, hotel.name, spot.source, spot.location))
   return true
 }
@@ -155,6 +177,15 @@ export async function eraseGuestScans(db: Pick<Db, "select" | "delete">, hotelId
     .delete(whatsappScans)
     .where(and(eq(whatsappScans.hotelId, hotelId), guestId ? ofGuest(db, hotelId, guestId) : undefined))
 }
+
+/** The hotels that welcomed this number and still keep its scan. */
+export const scanHotels = async (db: Db, phoneE164: string): Promise<string[]> =>
+  (
+    await db
+      .select({ hotelId: whatsappScans.hotelId })
+      .from(whatsappScans)
+      .where(eq(whatsappScans.phoneE164, phoneE164))
+  ).map((scan) => scan.hotelId)
 
 /** A STOP: staff must not be prompted to write to this number again, at any hotel. */
 export const forgetScans = (db: Db, phoneE164: string) =>

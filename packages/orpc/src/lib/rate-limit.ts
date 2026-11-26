@@ -28,6 +28,7 @@ export const RATE_LIMITS = {
   captureHotel: { limit: 200, windowMs: 60 * 60_000 },
   welcomeHotel: { limit: 60, windowMs: 60 * 60_000 },
   scanPhone: { limit: 5, windowMs: 24 * 60 * 60_000 },
+  scanMessage: { limit: 1, windowMs: 24 * 60 * 60_000 },
   scanHotel: { limit: 100, windowMs: 60 * 60_000 },
 } satisfies Record<string, RateLimitRule>
 

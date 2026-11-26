@@ -7,7 +7,7 @@ import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
 import { hotelBranding } from "./hotel"
 import type { KapsoPayload } from "./messages"
-import { forgetScans } from "./whatsapp-scans"
+import { forgetScans, scanHotels } from "./whatsapp-scans"
 
 type Ctx = Pick<Context, "db" | "config" | "now">
 type InboundCtx = Pick<Context, "db" | "now" | "notification">
@@ -108,18 +108,17 @@ export async function applyStopReply(
 }
 
 /**
- * An inbound WhatsApp message from Kapso. Anything but a whole-message STOP keyword is ignored. The hotel is the
- * one whose message this number got last (one business number serves every hotel, so the number alone says
- * nothing); a number we never wrote to is unsubscribed everywhere, the safe side. When a consent really changed
- * the guest gets one confirmation in their language; a repeated delivery changes nothing and says nothing.
- * A STOP also drops the number's QR scans, with the same confirmation when that is all there was.
+ * An inbound WhatsApp message from Kapso. Anything but a whole-message STOP keyword is ignored. One business number
+ * serves every hotel, so the number alone says nothing: the guest leaves the hotel whose message they got last and
+ * every hotel whose QR welcome they still have a scan for (a welcome writes no `messages` row). A number we never
+ * messaged is unsubscribed everywhere, the safe side. The scans are dropped too. One confirmation when a consent
+ * changed or a scan was removed; a repeated delivery changes nothing and says nothing.
  */
 export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoPayload): Promise<boolean> {
   const { from, type, text } = payload.message ?? {}
   const digits = from?.replace(/\D/g, "")
   if (!digits || type !== "text" || !isStopKeyword(text?.body ?? "")) return false
   const phoneE164 = `+${digits}`
-  const scans = await forgetScans(context.db, phoneE164)
 
   const [last] = await context.db
     .select({ hotelId: messages.hotelId })
@@ -134,14 +133,23 @@ export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoP
     )
     .orderBy(desc(messages.createdAt))
     .limit(1)
-  const hotelId = last?.hotelId
+  const scanned = await scanHotels(context.db, phoneE164)
+  const hotelIds = last ? [...new Set([last.hotelId, ...scanned])] : [undefined]
   const [guest] = await context.db
     .select({ language: guests.language })
     .from(guests)
     .where(
-      hotelId ? and(eq(guests.phoneE164, phoneE164), eq(guests.hotelId, hotelId)) : eq(guests.phoneE164, phoneE164),
+      last ? and(eq(guests.phoneE164, phoneE164), eq(guests.hotelId, last.hotelId)) : eq(guests.phoneE164, phoneE164),
     )
-  const changed = guest ? await applyStopReply(context.db, { phoneE164, hotelId, at: context.now() }) : 0
+
+  let changed = 0
+  if (guest) {
+    for (const hotelId of hotelIds) {
+      changed += await applyStopReply(context.db, { phoneE164, hotelId, at: context.now() })
+    }
+  }
+  // After the withdrawals: a failure above leaves the scans for the redelivery to read.
+  const scans = await forgetScans(context.db, phoneE164)
   const language = guest?.language ?? scans[0]?.language
   if (!language || (!changed && !scans.length)) return false
   await context.notification.replyWhatsApp(phoneE164, stopConfirmation(language)).catch(() => null)

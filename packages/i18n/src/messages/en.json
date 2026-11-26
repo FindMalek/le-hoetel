@@ -620,7 +620,7 @@
     "submitHint": "No message is sent unless you switch one on.",
     "thanksPerk": "Show this screen at the front desk to get it.",
     "whatsappButton": "Continue on WhatsApp",
-    "whatsappHint": "Your message goes to Ritorno's number, which answers for {hotel}. The hotel team sees your number and may write to you. It does not sign you up for messages."
+    "whatsappHint": "This opens a chat with Ritorno's number, which sends one automatic welcome for {hotel}. The hotel team sees your number and may write to you, but not what you write: for requests, ask the front desk. It does not sign you up for messages."
   },
   "guest": {
     "languageLabel": "Language",
@@ -2217,10 +2217,10 @@
     "loadingCase": "Loading the case"
   },
   "whatsappScans": {
-    "description": "Guests who scanned a code and wrote on WhatsApp.",
-    "notice": "They wrote to Ritorno's shared number and got one automatic welcome. Reply from your own WhatsApp and only about their request: writing is not consent to marketing. Entries are deleted after 30 days.",
-    "reply": "Reply on WhatsApp",
-    "replyTo": "Reply on WhatsApp to {guest}",
+    "description": "Guests who scanned a code and continued on WhatsApp.",
+    "notice": "You see their number and spot, not what they wrote. Their one automatic welcome sends requests to the front desk. If you write from your own WhatsApp, only offer help: this is not consent to marketing. Entries are deleted after 30 days.",
+    "reply": "Write on WhatsApp",
+    "replyTo": "Write to {guest} on WhatsApp",
     "remove": "Remove",
     "removeFrom": "Remove {guest}",
     "removeTitle": "Remove this entry?",
