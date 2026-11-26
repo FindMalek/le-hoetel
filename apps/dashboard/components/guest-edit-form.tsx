@@ -126,7 +126,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
         <FormField
           label={t("checkOut")}
           optional={t("optional")}
-          hint={t(guest.consents.profile ? "checkOutHint" : "checkOutNeedsConsent")}
+          hint={guest.consents.profile ? t("checkOutHint") : t("checkOutNeedsConsent")}
         >
           {(aria) => (
             <Input
