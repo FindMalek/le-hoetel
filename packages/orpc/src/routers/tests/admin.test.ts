@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
-import { hotelSettings } from "@ritorno/db"
+import { guests, guestVisits, hotelSettings } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { topUp } from "../../lib/balance"
 import { createTestApp, type TestApp } from "../../testing"
@@ -59,4 +59,33 @@ test("the platform overview flags open hotels whose WhatsApp credit ran low", as
   expect(ids).not.toContain(full!)
   expect(ids).not.toContain(never!)
   expect(ids).not.toContain(closed!)
+})
+
+test("pilot success counts current message consent and days with a guest visit per hotel", async () => {
+  const admin = await app.signUp("success-admin@ritorno.test", { role: "admin" })
+  const owner = await app.signUp("success-owner@ritorno.test")
+  const hotelId = await app.createHotel("success-hotel", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const add = (phone: string, whatsapp: boolean, profile: boolean) =>
+    client.guests.create({
+      name: "Amel Ben Salah",
+      phone,
+      language: "fr",
+      email: null,
+      source: "qr_room",
+      consents: { email: false, whatsapp, profile },
+    })
+  const first = await add("+21620333001", true, false)
+  await add("+21620333002", false, true)
+  const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+  await app.services.db
+    .insert(guestVisits)
+    .values([3, 3, 20].map((days) => ({ guestId: first.id, hotelId, source: "qr_room" as const, at: daysAgo(days) })))
+  await app.services.db
+    .update(guests)
+    .set({ createdAt: daysAgo(30) })
+    .where(eq(guests.id, first.id))
+
+  const hotel = (await admin.client.admin.hotels.list()).find((row) => row.id === hotelId)
+  expect(hotel).toMatchObject({ guestCount: 2, guestsLast7Days: 1, consentedCount: 1, activeDays: 2 })
 })
