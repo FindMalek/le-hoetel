@@ -1,9 +1,10 @@
+import { ORPCError } from "@orpc/server"
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
 import { guests, messages } from "@ritorno/db"
 import { HOTEL_EMAIL_KEYS } from "@ritorno/notification"
-import { and, count, desc, eq, gte } from "drizzle-orm"
+import { and, count, desc, eq, gte, isNotNull, sql } from "drizzle-orm"
 import { z } from "zod"
 import { can, hotelProcedure } from "../procedures"
 
@@ -17,7 +18,11 @@ const messageSchema = z.object({
   status: z.enum(MESSAGE_STATUSES),
   errorCode: z.string().nullable(),
   createdAt: z.date(),
+  /** Rendered but never handed to a provider (log-only): `preview` has the text. */
+  notSent: z.boolean(),
 })
+
+const previewSchema = z.union([z.object({ subject: z.string(), html: z.string() }), z.object({ text: z.string() })])
 
 export const messagesRouter = {
   list: hotelProcedure
@@ -55,6 +60,7 @@ export const messagesRouter = {
           status: messages.status,
           errorCode: messages.errorCode,
           createdAt: messages.createdAt,
+          notSent: sql<boolean>`${isNotNull(messages.preview)}`,
         })
         .from(messages)
         .innerJoin(guests, and(eq(guests.id, messages.guestId), eq(guests.hotelId, messages.hotelId)))
@@ -63,5 +69,24 @@ export const messagesRouter = {
         .limit(input.limit)
         .offset(input.offset)
       return { items, total: totals?.n ?? 0 }
+    }),
+
+  preview: hotelProcedure
+    .use(can({ guest: ["read"] }))
+    .route({
+      method: "GET",
+      path: "/messages/{id}/preview",
+      summary: "The text of a message that was not really sent",
+      tags: ["messages"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(previewSchema)
+    .handler(async ({ context, input }) => {
+      const [row] = await context.db
+        .select({ preview: messages.preview })
+        .from(messages)
+        .where(and(eq(messages.hotelId, context.hotel.hotelId), eq(messages.id, input.id)))
+      if (!row?.preview) throw new ORPCError("NOT_FOUND", { message: "No preview for this message." })
+      return row.preview
     }),
 }

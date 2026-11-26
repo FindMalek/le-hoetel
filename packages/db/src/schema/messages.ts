@@ -1,6 +1,6 @@
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
-import { MESSAGE_STATUSES } from "@ritorno/common/message"
-import { foreignKey, index, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { MESSAGE_STATUSES, type MessagePreview } from "@ritorno/common/message"
+import { foreignKey, index, jsonb, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import { guests } from "./guests"
 import { hotelLanguage } from "./hotels"
 
@@ -8,8 +8,9 @@ export const messageChannel = pgEnum("message_channel", MESSAGE_CHANNELS)
 export const messageStatus = pgEnum("message_status", MESSAGE_STATUSES)
 
 /**
- * One row per message to a guest, written by the dispatcher. Never holds the body or the recipient: only which
- * template went out, in which language, and how it ended. Removed with the guest.
+ * One row per message to a guest, written by the dispatcher. Never holds the recipient: which template, in which
+ * language, and how it ended. The rendered text is kept only for a message that was not really sent (log-only
+ * providers), in `preview`. Removed with the guest.
  */
 export const messages = pgTable(
   "messages",
@@ -23,6 +24,7 @@ export const messages = pgTable(
     status: messageStatus("status").notNull(),
     providerId: text("provider_id"),
     errorCode: text("error_code"),
+    preview: jsonb("preview").$type<MessagePreview>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     sentAt: timestamp("sent_at", { withTimezone: true }),
     deliveredAt: timestamp("delivered_at", { withTimezone: true }),

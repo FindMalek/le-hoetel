@@ -141,6 +141,13 @@
       "when": 1795706501753,
       "tag": "0023_flawless_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1795707519612,
+      "tag": "0024_glorious_jack_murdock",
+      "breakpoints": true
     }
   ]
 }

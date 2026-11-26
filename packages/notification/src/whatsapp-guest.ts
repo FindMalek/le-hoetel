@@ -71,6 +71,12 @@ export const GUEST_WHATSAPP_TEMPLATES: Record<HotelEmailKey, GuestWhatsAppTempla
 /** The footer of every template: the STOP line, fixed text because Meta footers take no variables. */
 export const guestTemplateFooter = (language: Locale): string => unsubscribeFooter("whatsapp", language, "")
 
+/** The message as the guest would read it: the approved body with its variables filled in, then the STOP line. */
+export function guestTemplateText(key: HotelEmailKey, language: Locale, params: Record<string, string>): string {
+  const body = GUEST_WHATSAPP_TEMPLATES[key].body[language].replace(/\{\{(\w+)\}\}/g, (_, name) => params[name] ?? "")
+  return `${body}\n\n${guestTemplateFooter(language)}`
+}
+
 /** Meta rejects line breaks, tabs and long runs of spaces inside a variable. */
 const clean = (value: string): string => value.replace(/\s+/g, " ").trim()
 

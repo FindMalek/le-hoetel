@@ -16,6 +16,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { connection } from "next/server"
 import { getLocale, getTranslations } from "next-intl/server"
+import { MessagePreview } from "@/components/message-preview"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
 import { MessageFilterSelect } from "./message-filter-select"
@@ -128,7 +129,11 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
   }
   const status = (row: Row) => (
     <span className="flex flex-col items-start gap-1">
-      <StatusBadge tone={STATUS_TONE[row.status]}>{t(`statuses.${row.status}`)}</StatusBadge>
+      {row.notSent ? (
+        <StatusBadge tone="warning">{t("preview.tag")}</StatusBadge>
+      ) : (
+        <StatusBadge tone={STATUS_TONE[row.status]}>{t(`statuses.${row.status}`)}</StatusBadge>
+      )}
       {row.status === "failed" && row.errorCode ? (
         <bdi dir="ltr" className="font-mono text-muted-foreground text-xs">
           {row.errorCode}
@@ -136,6 +141,8 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
       ) : null}
     </span>
   )
+  const preview = (row: Row) =>
+    row.notSent ? <MessagePreview id={row.id} language={row.language} guestName={row.guestName} /> : null
   const guest = (row: Row) => (
     <Link
       href={`/guests/${row.guestId}`}
@@ -165,14 +172,23 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
       showFrom: "lg",
       cell: (row) => <span className="text-muted-foreground uppercase">{row.language}</span>,
     },
-    { id: "status", header: t("status"), cell: status },
+    {
+      id: "status",
+      header: t("status"),
+      cell: (row) => (
+        <div className="flex flex-wrap items-center gap-2 py-2">
+          {status(row)}
+          {preview(row)}
+        </div>
+      ),
+    },
   ]
 
   const card = (row: Row) => (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-start justify-between gap-3">
         <span className="min-w-0 truncate">{guest(row)}</span>
-        {status(row)}
+        {row.notSent ? null : status(row)}
       </div>
       <span className="flex items-center gap-2 text-sm">
         <ChannelIcon channel={row.channel} />
@@ -180,6 +196,12 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
         <span className="text-muted-foreground">· {t(`channels.${row.channel}`)}</span>
       </span>
       <span className="text-muted-foreground text-xs">{when(row)}</span>
+      {row.notSent ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          {status(row)}
+          {preview(row)}
+        </div>
+      ) : null}
     </div>
   )
 

@@ -10,12 +10,12 @@ Every message to a guest goes through one function, `sendToGuest` in `packages/o
 1. Loads the guest in the given hotel (never across hotels).
 2. Reads the guest's **current** consent for the channel (`guest_consents`). No consent: nothing is sent and the row is `skipped_no_consent`.
 3. Renders the message. Email uses the branded hotel templates (see [Hotel emails](/docs/hotel-emails)), sent as `"<hotel display name>" <EMAIL_FROM address>` with the hotel's reply-to from `hotel_settings`, and carries `List-Unsubscribe` and `List-Unsubscribe-Post` headers (one tap unsubscribe, RFC 8058, answered by `POST /unsubscribe/<token>`). The template footer holds the one unsubscribe link, the dispatcher adds none, so an email never shows two.
-4. Sends through the notification package (WhatsApp: the template named for the message type, in the guest's language, with named variables; the STOP line is the template footer). Providers only send for real when `NODE_ENV=production` and `MESSAGING_LIVE=true`. Previews, tests, local and staging only log: the row says `sent` with provider id `log-only`.
+4. Sends through the notification package (WhatsApp: the template named for the message type, in the guest's language, with named variables; the STOP line is the template footer). Providers only send for real when `NODE_ENV=production` and `MESSAGING_LIVE=true`. Previews, tests, local and staging only log: the row says `sent` with provider id `log-only` and keeps the rendered message in `preview`.
 5. Updates the row.
 
 ## The `messages` table
 
-One row per message, scoped by hotel and removed with the guest (export and delete cover it).
+One row per message, scoped by hotel and removed with the guest (guest and hotel delete cover it).
 
 | Column | Meaning |
 | --- | --- |
@@ -24,10 +24,13 @@ One row per message, scoped by hotel and removed with the guest (export and dele
 | `template_key`, `language` | which template, in which language |
 | `status` | `queued`, `sent`, `delivered`, `failed`, `skipped_no_consent`, `skipped_no_balance` |
 | `provider_id` | the provider's message id, used to match status webhooks |
+| `preview` | only for a message that was not really sent: the email subject and html, or the WhatsApp text with its STOP line. Always empty for a real send |
 | `error_code` | a short code (`no_recipient`, `channel_not_configured`, `send_failed` or the provider's code), never the provider's text |
 | `created_at`, `sent_at`, `delivered_at`, `failed_at` | timestamps |
 
-There is no body and no recipient column, and nothing logs the phone, email or name.
+There is no recipient column, and nothing logs the phone, email or name. A real send keeps no body.
+
+`preview` holds what the guest would have read, so it contains their name and their personal links. It lives as long as the row: deleting the guest removes it. It is not part of the guest export, which does not carry the message log.
 
 ## Status webhooks
 
@@ -51,7 +54,11 @@ The same webhook gets `whatsapp.message.received` (single or batched). `handleIn
 
 ## Dashboard
 
-`/messages` in the dashboard lists the hotel's messages in en, fr and ar, 25 a page, newest first. Owners, managers and staff can read it. Filters live in the url: channel, status, template and the last 7, 30 or 90 days (`messages.list` takes `channel`, `status`, `template`, `days`, `limit` and `offset` and returns a `total`). Each row shows the guest, the channel, the template by its readable name, the language and the status, plus the provider error code on a failure. Never the body or the recipient: the log does not hold them. Dates use the hotel's timezone.
+`/messages` in the dashboard lists the hotel's messages in en, fr and ar, 25 a page, newest first. Owners, managers and staff can read it. Filters live in the url: channel, status, template and the last 7, 30 or 90 days (`messages.list` takes `channel`, `status`, `template`, `days`, `limit` and `offset` and returns a `total`). Each row shows the guest, the channel, the template by its readable name, the language and the status, plus the provider error code on a failure. Never the recipient: the log does not hold it. Dates use the hotel's timezone.
+
+### Messages that were not sent
+
+Where providers are log-only, a row that has a `preview` shows **Development: not sent** (en, fr, ar) instead of its status, with a **Preview** button: the rendered email (in an iframe with an empty `sandbox`, so no scripts, forms or popups) or the WhatsApp text. `messages.list` flags those rows with `notSent`, and `messages.preview` (`GET /messages/{id}/preview`) returns the text, only for the active hotel. Real sends never get the tag. Messages skipped for consent or balance were never rendered, so there is nothing to preview. Test emails and manager alerts are not guest messages and do not show here.
 
 ## Automatic messages
 
