@@ -1,4 +1,4 @@
-import { OG_SIZE, OgCard } from "@ritorno/ui/brand/og-card"
+import { loadOgFonts, OG_SIZE, OgCard } from "@ritorno/ui/brand/og-card"
 import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
 import { SITE } from "@/lib/site"
@@ -16,6 +16,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   if (!page) notFound()
   return new ImageResponse(
     <OgCard suffix="docs" title={page.data.title} description={page.data.description} colors={SITE.og} />,
-    OG_SIZE,
+    { ...OG_SIZE, fonts: await loadOgFonts() },
   )
 }

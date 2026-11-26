@@ -4,11 +4,11 @@ export const SITE = {
   tagline: "Loyalty and guest relationships for hotels in Tunisia",
   /** Colors of the social card (opengraph-image), filled from the preset. Any hex works. */
   og: {
-    background: "#0a0a0a",
-    foreground: "#fafafa",
-    muted: "#a1a1a1",
-    border: "#232323",
-    accent: "#e5e5e5",
+    background: "#ffffff",
+    foreground: "#0b0b0c",
+    muted: "#6b6b70",
+    border: "#e4e4e2",
+    accent: "#0a84ff",
   },
 }
 

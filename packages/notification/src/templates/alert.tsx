@@ -1,3 +1,4 @@
+import type { Locale } from "@ritorno/i18n/config"
 import { defineTemplate } from "./define"
 import { Box, CtaButton, Label, Layout, Paragraph, Rows, Title } from "./primitives"
 
@@ -6,14 +7,18 @@ interface Data {
   intro?: string
   items: { label: string; value: string }[]
   url?: string
+  /** For alerts written in the reader's language, like the hotel manager's low score alert. */
+  locale?: Locale
+  eyebrow?: string
+  cta?: string
 }
 
 export const alert = defineTemplate<Data>({
   subject: ({ title }) => title,
-  summary: ({ title, intro, items, url }) => ({
+  summary: ({ title, intro, items, url, cta }) => ({
     title,
     lines: [...(intro ? [intro] : []), ...items.map((item) => `${item.label}: ${item.value}`)],
-    link: url ? { label: "Open", url } : undefined,
+    link: url ? { label: cta ?? "Open", url } : undefined,
   }),
   preview: {
     title: "Daily digest",
@@ -25,14 +30,14 @@ export const alert = defineTemplate<Data>({
     ],
     url: "https://app.example.com/admin",
   },
-  Email: ({ title, intro, items, url, appUrl }) => (
-    <Layout preview={intro ?? title} appUrl={appUrl}>
+  Email: ({ title, intro, items, url, locale, eyebrow, cta, appUrl }) => (
+    <Layout preview={intro ?? title} appUrl={appUrl} locale={locale}>
       <Box>
-        <Label>Notification</Label>
+        <Label>{eyebrow ?? "Notification"}</Label>
         <Title>{title}</Title>
         {intro ? <Paragraph>{intro}</Paragraph> : null}
-        <Rows rows={items} />
-        {url ? <CtaButton href={url}>Open</CtaButton> : null}
+        {items.length > 0 ? <Rows rows={items} /> : null}
+        {url ? <CtaButton href={url}>{cta ?? "Open"}</CtaButton> : null}
       </Box>
     </Layout>
   ),

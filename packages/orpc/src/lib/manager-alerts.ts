@@ -1,11 +1,12 @@
 import { randomBytes } from "node:crypto"
 import { type Db, hotelSettings, member, user } from "@ritorno/db"
+import { renderTemplate, type TemplateData } from "@ritorno/notification"
 import { and, eq, gt } from "drizzle-orm"
 import type { Context } from "../context"
 
 const LINK_TTL_MS = 15 * 60 * 1000
 
-type Ctx = Pick<Context, "db" | "now" | "notification">
+type Ctx = Pick<Context, "db" | "config" | "now" | "notification">
 
 export async function createTelegramLinkCode(db: Db, hotelId: string, now: Date): Promise<string> {
   const code = randomBytes(12).toString("base64url")
@@ -38,8 +39,16 @@ async function fallbackEmails(db: Db, hotelId: string, replyTo: string | null): 
 
 export type ManagerChannel = "telegram" | "email" | "none"
 
-/** Tells the hotel's manager: their linked Telegram chat first, then email when there is no chat or it fails. */
-export async function notifyManager(context: Ctx, hotelId: string, text: string): Promise<ManagerChannel> {
+/**
+ * Tells the hotel's manager: their linked Telegram chat first, then email when there is no chat or it fails. The email
+ * is the `alert` template; without `email` it carries `text` as its title, in English.
+ */
+export async function notifyManager(
+  context: Ctx,
+  hotelId: string,
+  text: string,
+  email?: TemplateData<"alert">,
+): Promise<ManagerChannel> {
   const [hotel] = await context.db
     .select({
       chatId: hotelSettings.telegramChatId,
@@ -58,7 +67,11 @@ export async function notifyManager(context: Ctx, hotelId: string, text: string)
   }
   const [to] = await fallbackEmails(context.db, hotelId, hotel.replyTo)
   if (!to) return "none"
-  const html = `<p>${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</p>`
-  await context.notification.sendEmail({ to, email: { subject: hotel.name, html, text }, fromName: hotel.name })
+  const rendered = await renderTemplate(
+    "alert",
+    email ?? { title: text, items: [], locale: "en" },
+    context.config.dashboardUrl.replace(/\/$/, ""),
+  )
+  await context.notification.sendEmail({ to, email: rendered, fromName: hotel.name })
   return "email"
 }

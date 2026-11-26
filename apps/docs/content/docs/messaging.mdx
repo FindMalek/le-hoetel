@@ -83,7 +83,7 @@ A hotel switches each holiday on or off and picks the channel (both, email, What
 
 A hotel manager links a Telegram chat in **Hotel** settings: the dashboard shows a one-time code (valid 15 minutes) and the bot link `https://t.me/<TELEGRAM_BOT_USERNAME>?start=<code>`. When the bot receives `/start <code>` on `/telegram/webhook` (secret header `TELEGRAM_WEBHOOK_SECRET` checked), the chat id is stored in `hotel_settings.telegram_chat_id` and the code is cleared, so it works once and only for the hotel that issued it. Without a code, `/start` still answers with the chat id, for the operator's own `TELEGRAM_CHAT_ID`.
 
-`notifyManager(context, hotelId, text)` (`@ritorno/orpc/manager-alerts`) sends to the hotel's linked chat and falls back to email (the hotel reply-to, else the owners) when there is no chat or Telegram fails. Like every provider it only logs outside live messaging. The low-score alert will call it. The **Send a test alert** button calls `hotel.alerts.test`.
+`notifyManager(context, hotelId, text, email?)` (`@ritorno/orpc/manager-alerts`) sends `text` to the hotel's linked chat and falls back to email (the hotel reply-to, else the owners) when there is no chat or Telegram fails. The email is the `alert` template in the hotel's language; the low score alert fills it with the hotel, the score, the comment and the guest's first name, never contact details. Like every provider it only logs outside live messaging. The **Send a test alert** button calls `hotel.alerts.test`.
 
 ## Prepaid WhatsApp balance
 

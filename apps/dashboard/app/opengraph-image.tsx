@@ -1,4 +1,4 @@
-import { OG_SIZE, OgCard } from "@ritorno/ui/brand/og-card"
+import { loadOgFonts, OG_SIZE, OgCard } from "@ritorno/ui/brand/og-card"
 import { ImageResponse } from "next/og"
 import { SITE } from "@/lib/site"
 
@@ -6,6 +6,9 @@ export const alt = `${SITE.name} dashboard`
 export const size = OG_SIZE
 export const contentType = "image/png"
 
-export default function OpengraphImage() {
-  return new ImageResponse(<OgCard title="Dashboard" description={SITE.tagline} colors={SITE.og} />, size)
+export default async function OpengraphImage() {
+  return new ImageResponse(<OgCard title="Dashboard" description={SITE.tagline} colors={SITE.og} />, {
+    ...size,
+    fonts: await loadOgFonts(),
+  })
 }

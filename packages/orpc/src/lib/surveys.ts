@@ -8,6 +8,7 @@ import {
   verifySurveyToken,
 } from "@ritorno/common/survey"
 import { feedbackCases, guests, hotelSettings, surveyInvites, surveyResponses } from "@ritorno/db"
+import type { TemplateData } from "@ritorno/notification"
 import { and, eq, isNull } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelBranding } from "./hotel"
@@ -121,11 +122,63 @@ async function lowScoreThreshold(context: Ctx, hotelId: string): Promise<number>
   return row?.value ?? DEFAULT_LOW_SCORE_THRESHOLD
 }
 
-const ALERT: Record<HotelLanguage, (a: { name: string; nps: number; comment: string; url: string }) => string> = {
-  en: (a) => `${a.name} left ${a.nps}/10.${a.comment} Follow up: ${a.url}`,
-  fr: (a) => `${a.name} a mis ${a.nps}/10.${a.comment} À traiter : ${a.url}`,
-  ar: (a) => `${a.name} قيّم ${a.nps}/10.${a.comment} للمتابعة: ${a.url}`,
+interface AlertInput {
+  hotel: string
+  name: string
+  nps: number
+  comment: string
+  url: string
 }
+
+/** The manager's low score alert, in the hotel's language: first name, score and comment only, never contact details. */
+const ALERT: Record<HotelLanguage, (a: AlertInput) => { text: string; email: Omit<TemplateData<"alert">, "locale"> }> =
+  {
+    en: (a) => ({
+      text: `${a.name} left ${a.nps}/10.${a.comment ? ` "${a.comment}"` : ""} Follow up: ${a.url}`,
+      email: {
+        eyebrow: "Low score alert",
+        title: `Low score from ${a.name}`,
+        intro: `${a.name} left ${a.nps}/10 after their stay.`,
+        items: [
+          { label: "Hotel", value: a.hotel },
+          { label: "Score", value: `${a.nps}/10` },
+          ...(a.comment ? [{ label: "Comment", value: a.comment }] : []),
+        ],
+        url: a.url,
+        cta: "Follow up",
+      },
+    }),
+    fr: (a) => ({
+      text: `${a.name} a mis ${a.nps}/10.${a.comment ? ` "${a.comment}"` : ""} À traiter : ${a.url}`,
+      email: {
+        eyebrow: "Alerte note basse",
+        title: `Note basse de ${a.name}`,
+        intro: `${a.name} a mis ${a.nps}/10 après son séjour.`,
+        items: [
+          { label: "Hôtel", value: a.hotel },
+          { label: "Note", value: `${a.nps}/10` },
+          ...(a.comment ? [{ label: "Commentaire", value: a.comment }] : []),
+        ],
+        url: a.url,
+        cta: "Traiter",
+      },
+    }),
+    ar: (a) => ({
+      text: `${a.name} قيّم ${a.nps}/10.${a.comment ? ` "${a.comment}"` : ""} للمتابعة: ${a.url}`,
+      email: {
+        eyebrow: "تنبيه تقييم منخفض",
+        title: `تقييم منخفض من ${a.name}`,
+        intro: `${a.name} قيّم ${a.nps}/10 بعد الإقامة.`,
+        items: [
+          { label: "الفندق", value: a.hotel },
+          { label: "التقييم", value: `${a.nps}/10` },
+          ...(a.comment ? [{ label: "التعليق", value: a.comment }] : []),
+        ],
+        url: a.url,
+        cta: "للمتابعة",
+      },
+    }),
+  }
 
 /** The unhappy guest lands in the feedback inbox as `new`, then the manager hears about it. Never a phone number or email in the text. */
 async function openFeedbackCase(
@@ -140,16 +193,18 @@ async function openFeedbackCase(
     .returning({ id: feedbackCases.id })
   if (!made) return
   const [row] = await context.db
-    .select({ name: guests.name, language: hotelSettings.defaultLanguage })
+    .select({ name: guests.name, language: hotelSettings.defaultLanguage, hotel: hotelSettings.displayName })
     .from(guests)
     .innerJoin(hotelSettings, eq(hotelSettings.organizationId, guests.hotelId))
     .where(eq(guests.id, invite.guestId))
-  const comment = answer.comment ? ` "${answer.comment.slice(0, 140)}${answer.comment.length > 140 ? "…" : ""}"` : ""
-  const text = ALERT[row?.language ?? "en"]({
+  const comment = answer.comment ? `${answer.comment.slice(0, 140)}${answer.comment.length > 140 ? "…" : ""}` : ""
+  const language = row?.language ?? "en"
+  const { text, email } = ALERT[language]({
+    hotel: row?.hotel ?? "",
     name: row?.name.split(/\s+/)[0] ?? "A guest",
     nps: answer.nps,
     comment,
     url: `${context.config.dashboardUrl.replace(/\/$/, "")}/feedback/${made.id}`,
   })
-  await notifyManager(context, invite.hotelId, text)
+  await notifyManager(context, invite.hotelId, text, { ...email, locale: language })
 }
