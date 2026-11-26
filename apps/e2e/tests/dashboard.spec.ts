@@ -22,4 +22,8 @@ test("demo owner signs in, in Arabic", async ({ page, context }) => {
   await page.locator("button[type=submit]").click()
   await expect(page).not.toHaveURL(/sign-in/)
   await expectLocaleLayout(page, "ar")
+  const tabs = page.locator("[data-bottom-tabs]")
+  if (!(await tabs.isVisible())) return
+  const card = await page.getByRole("region", { name: "ملفات تعريف الارتباط التحليلية" }).boundingBox()
+  expect(card && card.y + card.height).toBeLessThan((await tabs.boundingBox())?.y ?? 0)
 })
