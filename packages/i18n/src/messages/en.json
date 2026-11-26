@@ -831,7 +831,14 @@
     "printSelected": "Print selected ({count})",
     "selectAll": "Select all",
     "clearSelection": "Clear selection",
-    "removeSelected": "Remove selected"
+    "removeSelected": "Remove selected",
+    "willMake": "{count, plural, one {# code will be made.} other {# codes will be made.}}",
+    "spotsCut": "Only the first {max} are made. Generate the rest after.",
+    "spotsRequired": "Type at least one room or table first.",
+    "removeTitle": "{count, plural, one {Remove # saved spot?} other {Remove # saved spots?}}",
+    "removeBody": "They leave this list and the cut sheet. Codes already printed keep working.",
+    "removeConfirm": "Remove",
+    "removeCancel": "Cancel"
   },
   "qrKit": {
     "title": "Printable QR kit",
@@ -856,7 +863,8 @@
     "sheetTitle": "QR cut sheet",
     "sheetNote": "{count, plural, one {# code} other {# codes}}. Print, then cut along the marks.",
     "sheetEmpty": "Nothing to print. Save rooms or tables first.",
-    "sheetScan": "Scan me"
+    "sheetScan": "Scan me",
+    "noSpotNote": "No room or table picked: this prints one card without a number. To get one per spot, generate them on QR codes first."
   },
   "messages": {
     "title": "Messages",

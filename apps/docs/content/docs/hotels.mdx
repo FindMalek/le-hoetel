@@ -45,7 +45,7 @@ Billing is manual: no online payment, and no payment card data anywhere. Everyth
 
 ## Rooms and tables
 
-Every room and table has its own code: the url carries the hotel slug, `src` and the spot in `loc`, so a capture is stored with its spot. On **QR codes**, generating for rooms or tables also saves them (`hotel.spots.add`, table `capture_spots`). The field takes names, lists and number ranges (`101-120`, `1-12`), at most 100 at a time and 500 per hotel. Every role, staff included, can add and remove them. Removing one only takes it off the list: a printed code keeps working.
+Every room and table has its own code: the url carries the hotel slug, `src` and the spot in `loc`, so a capture is stored with its spot. On **QR codes**, generating for rooms or tables also saves them (`hotel.spots.add`, table `capture_spots`). The field takes names, lists and number ranges (`101-120`, `1-12`, a reversed `120-101` reads the same), at most 100 at a time and 500 per hotel. Rooms and tables need at least one spot, only the front desk makes a code without one. The page says how many codes will be made before generating, and says when the list is cut at 100. The cards, file names (`qr-room-301.svg`), guest counts and print kit follow what was generated, even after picking another tab. Every role, staff included, can add and remove spots. Removing asks first and only takes them off the list: a printed code keeps working.
 
 Every printed code has the hotel logo in its middle (the first letter of the hotel's name without a logo) and, next to it, a tiny label for staff: `383` for a room, `T4` for table `4`. Codes are made with error correction level H so the logo does not stop them from scanning. The SVG and PNG downloads on the page are the plain code.
 
@@ -61,7 +61,7 @@ On **QR codes**, **Open print kit** opens `/print/qr-kit` for the codes on scree
 | Table tent | `table` | A5 portrait, folded in half into two A6 faces |
 | Front desk sign | `desk` | A5 portrait |
 
-The page takes `piece`, `lang` (`en`, `fr`, `ar`, default the hotel's guest language) and `spots` (same format as the form). Switching piece drops the spots and gives one code without a spot.
+The page takes `piece`, `lang` (`en`, `fr`, `ar`, default the hotel's guest language) and `spots` (same format as the form). Switching piece drops the spots and gives one code without a spot, and the page says so.
 
 Each page carries the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language, whatever the card's language, so reprint when the welcome offer, the branding or the slug changes. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
 

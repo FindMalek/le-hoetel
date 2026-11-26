@@ -1,6 +1,6 @@
 "use client"
 
-import { parseSpots } from "@ritorno/common/qr"
+import { parseSpots, QR_SPOTS_MAX, qrFileName } from "@ritorno/common/qr"
 import { type CaptureSource, SPOT_SOURCES } from "@ritorno/common/schemas"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
@@ -33,8 +33,6 @@ const SOURCES = [
 type Source = (typeof SOURCES)[number]
 
 const svgUrl = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
-const fileName = (source: string, location: string | null, ext: string) =>
-  `qr-${source}${location ? `-${location.replace(/[^\w-]+/g, "_")}` : ""}.${ext}`
 
 function save(name: string, href: string) {
   const link = document.createElement("a")
@@ -61,6 +59,7 @@ export function QrCodesBoard() {
   const [source, setSource] = useState<CaptureSource>("desk")
   const [spots, setSpots] = useState("")
   const [copied, setCopied] = useState<string | null>(null)
+  const [missing, setMissing] = useState(false)
   const generate = useMutation(
     orpc.hotel.qrCodes.mutationOptions({ onError: (error: Error) => toast.error(errorMessage(error)) }),
   )
@@ -71,9 +70,14 @@ export function QrCodesBoard() {
       onError: (error: Error) => toast.error(errorMessage(error)),
     }),
   )
-  const current: Source = SOURCES.find((item) => item.value === source) ?? SOURCES[2]
+  const sourceOf = (value: CaptureSource): Source => SOURCES.find((item) => item.value === value) ?? SOURCES[2]
+  const current = sourceOf(source)
+  const typed = parseSpots(spots)
+  // results, files, counts and the kit follow what was generated, not the tab picked since
+  const made = generate.variables ?? { source: "desk" as const, spots: [] }
+  const shown = sourceOf(made.source)
   const guestsAt = (location: string | null) =>
-    stats.find((row) => row.source === current.stored && row.location === location)?.guests ?? 0
+    stats.find((row) => row.source === shown.stored && row.location === location)?.guests ?? 0
 
   const first = useRef(true)
   useEffect(() => {
@@ -82,12 +86,17 @@ export function QrCodesBoard() {
     generate.mutate({ source: "desk", spots: [] })
   }, [generate])
 
-  const run = (event?: React.FormEvent) => {
-    event?.preventDefault()
-    const names = parseSpots(spots)
-    generate.mutate({ source, spots: names })
+  const run = (event: React.FormEvent) => {
+    event.preventDefault()
     const kept = SPOT_SOURCES.find((item) => item === source)
-    if (kept && names.length) saveSpots.mutate({ source: kept, names })
+    // only the front desk can have a code without a spot
+    if (kept && !typed.spots.length) {
+      setMissing(true)
+      document.getElementById("spots")?.focus()
+      return
+    }
+    generate.mutate({ source, spots: typed.spots })
+    if (kept) saveSpots.mutate({ source: kept, names: typed.spots })
   }
 
   async function copy(url: string) {
@@ -101,8 +110,6 @@ export function QrCodesBoard() {
     const found = SOURCES.find((item) => item.stored === stored)
     return found ? t(found.one) : stored
   }
-  // the kit prints what is on screen, not the tab picked since
-  const made = generate.variables ?? { source: "desk", spots: [] }
   const kitQuery = new URLSearchParams({ piece: made.source })
   if (made.spots.length) kitQuery.set("spots", made.spots.join(","))
 
@@ -121,7 +128,13 @@ export function QrCodesBoard() {
         </div>
         <div className="flex flex-col gap-2">
           <span className="font-medium text-sm">{t("where")}</span>
-          <Tabs value={source} onValueChange={(next) => setSource(next as CaptureSource)}>
+          <Tabs
+            value={source}
+            onValueChange={(next) => {
+              setSource(next as CaptureSource)
+              setMissing(false)
+            }}
+          >
             <TabsList className="grid w-full grid-cols-3">
               {SOURCES.map((item) => (
                 <TabsTrigger key={item.value} value={item.value}>
@@ -135,6 +148,7 @@ export function QrCodesBoard() {
           id="spots"
           label={t("spots")}
           hint={t("spotsHint")}
+          error={missing ? t("spotsRequired") : null}
           optional={source === "desk" ? ` (${t("optional")})` : undefined}
         >
           {(aria) => (
@@ -142,13 +156,22 @@ export function QrCodesBoard() {
               {...aria}
               rows={4}
               value={spots}
-              onChange={(event) => setSpots(event.target.value)}
+              onChange={(event) => {
+                setSpots(event.target.value)
+                setMissing(false)
+              }}
               placeholder={t(current.hint)}
               dir="auto"
               enterKeyHint="done"
             />
           )}
         </FormField>
+        <div aria-live="polite" className="-mt-2 flex flex-col gap-2 empty:hidden">
+          {typed.spots.length ? (
+            <p className="text-sm tabular-nums">{t("willMake", { count: typed.spots.length })}</p>
+          ) : null}
+          {typed.cut ? <InlineAlert tone="warning" title={t("spotsCut", { max: QR_SPOTS_MAX })} /> : null}
+        </div>
         <StickyFormActions className="md:justify-start">
           <Button type="submit" loading={generate.isPending}>
             <QrCodeIcon data-icon="inline-start" />
@@ -183,7 +206,7 @@ export function QrCodesBoard() {
               tone="error"
               title={t("failed")}
               action={
-                <Button size="sm" variant="outline" onClick={() => run()}>
+                <Button size="sm" variant="outline" onClick={() => generate.mutate(made)}>
                   <RotateCwIcon data-icon="inline-start" />
                   {t("retry")}
                 </Button>
@@ -192,9 +215,9 @@ export function QrCodesBoard() {
               {t("failedHint")}
             </InlineAlert>
           ) : (
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
               {generate.data?.map((code) => {
-                const name = code.location ?? t(current.one)
+                const name = code.location ?? t(shown.one)
                 return (
                   <li key={code.url} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
                     {/* biome-ignore lint/performance/noImgElement: a generated data url, nothing to optimize */}
@@ -213,14 +236,14 @@ export function QrCodesBoard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => save(fileName(source, code.location, "svg"), svgUrl(code.svg))}
+                        onClick={() => save(qrFileName(made.source, code.location, "svg"), svgUrl(code.svg))}
                       >
                         <DownloadIcon data-icon="inline-start" /> SVG
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => savePng(fileName(source, code.location, "png"), code.svg)}
+                        onClick={() => savePng(qrFileName(made.source, code.location, "png"), code.svg)}
                       >
                         <DownloadIcon data-icon="inline-start" /> PNG
                       </Button>

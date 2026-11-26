@@ -12,21 +12,32 @@ export const staffLabel = (source: CaptureSource, location: string | null): stri
 
 /**
  * What a manager types for one kind of spot: names or numbers split by commas or lines, and number ranges
- * (`101-120`). Blank entries and repeats are dropped, and at most `QR_SPOTS_MAX` are kept.
+ * (`101-120`, `120-101` reads the same). Blank entries and repeats are dropped, and at most `QR_SPOTS_MAX` are kept:
+ * `cut` says some were left out.
  */
-export function parseSpots(input: string): string[] {
+export function parseSpots(input: string): { spots: string[]; cut: boolean } {
   const spots = new Set<string>()
+  const full = (spot: string) => {
+    if (spots.size >= QR_SPOTS_MAX && !spots.has(spot)) return true
+    spots.add(spot)
+    return false
+  }
   for (const raw of input.split(/[,\n]/)) {
     const entry = raw.trim().slice(0, CAPTURE_LOCATION_MAX)
     const range = /^(\d{1,5})\s*-\s*(\d{1,5})$/.exec(entry)
     if (range) {
-      const [from, to] = [Number(range[1]), Number(range[2])]
-      for (let n = from; n <= to && spots.size < QR_SPOTS_MAX; n++) spots.add(String(n))
-    } else if (entry) spots.add(entry)
-    if (spots.size >= QR_SPOTS_MAX) break
+      const [a, b] = [Number(range[1]), Number(range[2])]
+      for (let n = Math.min(a, b); n <= Math.max(a, b); n++) {
+        if (full(String(n))) return { spots: [...spots], cut: true }
+      }
+    } else if (entry && full(entry)) return { spots: [...spots], cut: true }
   }
-  return [...spots].slice(0, QR_SPOTS_MAX)
+  return { spots: [...spots], cut: false }
 }
+
+/** The download name of one code. Letters of any script stay, so two Arabic spots never share a file. */
+export const qrFileName = (source: CaptureSource, location: string | null, ext: string): string =>
+  `qr-${source}${location ? `-${location.replace(/[^\p{L}\p{M}\p{N}-]+/gu, "_")}` : ""}.${ext}`
 
 /** The page a QR code opens. The spot is optional: a front desk code often has none. */
 export function captureUrl(webUrl: string, slug: string, source: CaptureSource, location?: string | null): string {
