@@ -5,6 +5,7 @@ import {
   ChartColumnIcon,
   CircleUserIcon,
   DatabaseIcon,
+  FrownIcon,
   GaugeIcon,
   GiftIcon,
   HistoryIcon,
@@ -58,6 +59,7 @@ const GROUP_LABELS: Record<NavGroupKey, NavLabel> = {
 export const NAV: NavItem[] = [
   { href: "/", label: "home", icon: HomeIcon, group: "today", shortcut: "h" },
   { href: "/inbox", label: "inbox", icon: InboxIcon, group: "today", shortcut: "i" },
+  { href: "/feedback", label: "unhappyGuests", icon: FrownIcon, group: "today" },
   { href: "/redeem", label: "redeem", icon: ScanLineIcon, group: "today", shortcut: "r" },
   { href: "/guests", label: "guests", icon: UsersRoundIcon, group: "guests", shortcut: "g" },
   { href: "/guests/import", label: "import", icon: UploadIcon, group: "guests" },
