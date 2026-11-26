@@ -14,6 +14,7 @@ import {
 import type { HotelLanguage, HotelPlan, HotelRole, HotelStatus } from "@ritorno/common/hotel"
 import type {
   account,
+  captureSpots,
   consentEvents,
   guestConsents,
   guests,
@@ -147,6 +148,7 @@ export interface HotelScenario {
   guestConsents: NewConsent[]
   consentEvents: NewEvent[]
   guestVisits: NewVisit[]
+  captureSpots: (typeof captureSpots.$inferInsert)[]
 }
 
 export const demoHotelId = (slug: DemoHotelSlug) => `demo-hotel-${slug}`
@@ -179,6 +181,7 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
     guestConsents: [],
     consentEvents: [],
     guestVisits: [],
+    captureSpots: [],
   }
   const addUser = (row: typeof user.$inferInsert) => {
     out.users.push(row)
@@ -229,6 +232,11 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
       })
       return userId
     })
+    // The saved list behind the QR page, so every spot a guest was captured at can be printed again.
+    out.captureSpots.push(
+      ...ROOMS.map((name) => ({ hotelId, source: "room" as const, name, createdAt: hotelCreated })),
+      ...TABLES.map((name) => ({ hotelId, source: "table" as const, name, createdAt: hotelCreated })),
+    )
     out.invitations.push({
       id: `demo-invite-${slug}`,
       organizationId: hotelId,

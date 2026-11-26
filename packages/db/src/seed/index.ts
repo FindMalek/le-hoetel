@@ -10,6 +10,7 @@ import {
   balanceLedger,
   campaignRecipients,
   campaigns,
+  captureSpots,
   consentEvents,
   feedbackCases,
   guestConsents,
@@ -98,6 +99,7 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
     await insertAll(tx, member, hotels.members)
     await insertAll(tx, invitation, [...hotels.invitations, ...activity.invitations])
     await insertAll(tx, hotelSettings, [...hotels.hotelSettings, ...activity.hotelSettings])
+    await insertAll(tx, captureSpots, hotels.captureSpots)
     for (const [hotelId, logoKey] of logoKeys)
       await tx.update(hotelSettings).set({ logoKey }).where(eq(hotelSettings.organizationId, hotelId))
     await insertAll(tx, guests, hotels.guests)

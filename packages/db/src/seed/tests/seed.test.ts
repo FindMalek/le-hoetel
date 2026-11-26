@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { isDemoRecipient } from "@ritorno/common/demo"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
-import { count, sql } from "drizzle-orm"
+import { count, isNotNull, sql } from "drizzle-orm"
 import {
+  captureSpots,
   consentEvents,
   guests,
   messages,
@@ -75,6 +76,17 @@ test("the log has every status, previews for unsent messages, and surveys the jo
     .from(surveyInvites)
     .where(sql`${surveyInvites.sentAt} is null`)
   expect(unsent?.n).toBe(0)
+})
+
+test("every room and table a guest was captured at is a saved spot of that hotel", async () => {
+  const spots = await testDb.db.select().from(captureSpots)
+  const saved = new Set(spots.map((s) => `${s.hotelId} ${s.source} ${s.name}`))
+  const captured = await testDb.db
+    .select({ hotelId: guests.hotelId, source: guests.source, name: guests.captureLocation })
+    .from(guests)
+    .where(isNotNull(guests.captureLocation))
+  expect(captured.length).toBeGreaterThan(0)
+  expect(captured.filter((g) => !saved.has(`${g.hotelId} ${g.source.replace("qr_", "")} ${g.name}`))).toEqual([])
 })
 
 test("production and remote databases are refused", async () => {
