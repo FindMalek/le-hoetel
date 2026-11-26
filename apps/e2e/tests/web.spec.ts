@@ -10,6 +10,16 @@ for (const locale of LOCALES) {
   })
 }
 
+test("the cookie card floats above the bottom edge", async ({ page }) => {
+  await page.goto(webUrl("ar"))
+  const card = await page.getByRole("region", { name: "ملفات تعريف الارتباط التحليلية" }).boundingBox()
+  const { width, height } = page.viewportSize() ?? { width: 0, height: 0 }
+  expect(card?.x).toBeGreaterThan(0)
+  expect(card && card.x + card.width).toBeLessThan(width)
+  expect(card && card.y).toBeGreaterThan(height / 2)
+  expect(card && card.y + card.height).toBeLessThan(height)
+})
+
 for (const locale of LOCALES) {
   test(`QR capture page in ${locale} fits the screen`, async ({ page }) => {
     await page.goto(`${URLS.web}/h/dar-zitouna?lang=${locale}`)

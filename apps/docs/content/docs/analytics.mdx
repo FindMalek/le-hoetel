@@ -7,7 +7,7 @@ Umami runs on the public pages of `apps/web` only: the landing page, privacy, te
 
 Umami sets no cookies and stores no personal data (no ip, no user id). The script honours the browser's do not track setting and drops the query string, and it only loads after the visitor accepted the consent banner.
 
-The banner (`@ritorno/compliance/banner`) is a bar at the bottom of web and dashboard pages, in the page language (`consentBanner` messages). While it shows it sets `--consent-banner-height` on `<html>`: the body is padded by it and bottom-fixed bars (phone tabs, sidebar, feedback button) use `bottom-consent` to sit above it, so it never covers a form button. A new fixed bottom element needs the same.
+The banner (`@ritorno/compliance/banner`) is a rounded card floating just above the bottom edge of web and dashboard pages, in the page language (`consentBanner` messages). Guest pages have none. On a phone it sits above the dashboard tabs (marked `data-bottom-tabs`). While it shows it sets `--consent-banner-height` on `<html>`: the body is padded by it, the sidebar footer uses `pb-consent`, sticky form actions use `bottom-nav` and the feedback button adds it to its offset, so the card never covers them. A new fixed or sticky bottom element needs the same.
 
 | Key | What it is |
 | --- | --- |

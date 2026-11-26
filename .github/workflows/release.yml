@@ -1,12 +1,12 @@
 name: release
 
-# Automatic: when the staging deploy of a main commit succeeds, the next version is tagged on that exact commit (minor
-# when a type:feature PR was merged since the last tag, patch otherwise, nothing when no PR was merged), notes come
-# from the merged PR titles grouped by type:* label, the GitHub release is created and production deploys from the tag.
-# Manual run from the Actions tab: choose the bump (major only this way); dry_run (default) only prints the version and
-# the notes. A release published by hand also deploys.
-# Rollback: set `tag` to an older tag, nothing is released and that tag is redeployed.
+# staging.yml calls this after every healthy staging deploy of main. release-please keeps one release PR open (version
+# and CHANGELOG from the conventional commits on main). Once that PR is merged, the next call tags vX.Y.Z on its merge
+# commit and production deploys that tag. Nothing else reaches production, except a manual run with `tag`: rollback to
+# an older tag or redeploy of the current one.
 # Needs the same Dokploy variables as staging plus DOKPLOY_PRODUCTION_COMPOSE_ID and PRODUCTION_API_URL.
+# Optional secret RELEASE_PLEASE_TOKEN (contents, pull requests and issues write): without it the release PR is opened
+# with the workflow token, which starts no checks, so close and reopen it before merging.
 
 on:
   workflow_call:
@@ -15,88 +15,83 @@ on:
         description: the commit staging proved healthy
         type: string
         required: true
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
-      bump:
-        description: version part to bump
-        type: choice
-        options: [auto, minor, patch, major]
-        default: auto
-      dry_run:
-        description: only print the version and notes
-        type: boolean
-        default: true
       tag:
-        description: "rollback: deploy this existing tag instead of releasing"
-        required: false
-        default: ""
+        description: existing vX.Y.Z tag to deploy to production (rollback or redeploy)
+        required: true
 
 permissions:
   contents: read
 
 jobs:
-  release:
-    if: inputs.sha != '' || (github.event_name == 'workflow_dispatch' && inputs.tag == '')
+  release-please:
+    name: release please
+    if: inputs.tag == ''
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     concurrency:
       group: release
       cancel-in-progress: false
     permissions:
       contents: write
-      pull-requests: read
+      issues: write
+      pull-requests: write
       checks: read
     outputs:
-      tag: ${{ steps.publish.outputs.tag }}
+      tag: ${{ steps.tag.outputs.release_created == 'true' && steps.tag.outputs.tag_name || '' }}
     steps:
-      - name: main only
-        if: github.ref != 'refs/heads/main'
-        run: echo "run the release from main" && exit 1
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          # the commit staging just deployed, not whatever main points to now
-          ref: ${{ inputs.sha || github.sha }}
-      - name: ci passed on this commit
-        if: inputs.sha != ''
+      # release-please tags a merged release PR wherever main is now, which can be ahead of what this run proved.
+      - name: merged release commit passed ci and staging
+        id: gate
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ inputs.sha }}
         run: |
-          state=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/check-runs?check_name=ci" --jq '[.check_runs[].conclusion] | if length == 0 then "none" elif all(. == "success") then "success" else "failed" end')
-          [ "$state" = success ] || { echo "ci is $state on $SHA, no release"; exit 1; }
-      - id: notes
-        run: node .github/scripts/release-notes.mjs
-        env:
-          BUMP: ${{ inputs.bump || 'auto' }}
-          GH_TOKEN: ${{ github.token }}
-      - run: cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
-      - id: publish
-        if: ${{ steps.notes.outputs.skip != 'true' && (inputs.sha != '' || !inputs.dry_run) }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.notes.outputs.tag }}
-          TARGET: ${{ inputs.sha || github.sha }}
-        run: |
-          gh release create "$TAG" --target "$TARGET" --title "$TAG" --notes-file release-notes.md
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          pending=$(gh pr list -R "$GITHUB_REPOSITORY" --state merged --base main --label "autorelease: pending" \
+            --json mergeCommit --jq '.[0].mergeCommit.oid // empty')
+          [ -n "$pending" ] || exit 0
+          position=$(gh api "repos/$GITHUB_REPOSITORY/compare/$pending...$SHA" --jq .status)
+          ci=$(gh api "repos/$GITHUB_REPOSITORY/commits/$pending/check-runs?check_name=ci" \
+            --jq '[.check_runs[].conclusion] | if length == 0 then "none" elif all(. == "success") then "success" else "failed" end')
+          if [[ "$position" =~ ^(ahead|identical)$ ]] && [ "$ci" = success ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning title=release waits::release commit $pending: ci $ci, staging $SHA is $position of it"
+          fi
+      # Tagged with the workflow token on purpose: it fires no `release` event, production deploys once, from here.
+      - id: tag
+        if: steps.gate.outputs.ready == 'true'
+        uses: googleapis/release-please-action@v5
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-pull-request: true
+      - id: pr
+        # never holds up the production deploy of a tag made above
+        continue-on-error: true
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-release: true
+      - if: steps.pr.outcome == 'failure'
+        run: echo "::warning title=release pr::could not open or update the release PR, see the step above"
 
   deploy-production:
-    needs: release
-    # A release made with the workflow token does not fire `release: published`, so it deploys from here once.
-    if: always() && (github.event_name == 'release' || inputs.tag != '' || needs.release.outputs.tag != '')
+    needs: release-please
+    if: ${{ !cancelled() && (inputs.tag != '' || needs.release-please.outputs.tag != '') }}
     runs-on: ubuntu-latest
     env:
       HAS_TAILSCALE: ${{ secrets.TS_OAUTH_CLIENT_ID != '' }}
+      REF: ${{ inputs.tag || needs.release-please.outputs.tag }}
     timeout-minutes: 30
     concurrency:
       group: production
       cancel-in-progress: false
     steps:
       - name: tag only
-        env:
-          REF: ${{ inputs.tag || needs.release.outputs.tag || github.event.release.tag_name }}
         run: '[[ "$REF" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "production deploys a vX.Y.Z tag, got $REF"; exit 1; }'
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -112,7 +107,6 @@ jobs:
       - run: node .github/scripts/deploy.mjs
         env:
           TARGET: production
-          REF: ${{ inputs.tag || needs.release.outputs.tag || github.event.release.tag_name }}
           DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
           GITHUB_TOKEN: ${{ github.token }}
           DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
@@ -122,3 +116,15 @@ jobs:
           INFISICAL_PROJECT_ID: ${{ vars.INFISICAL_PROJECT_ID }}
           INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
           INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+
+  # A release made with the workflow token fires no `release` event, so translations are called from here.
+  translate:
+    needs: release-please
+    if: needs.release-please.outputs.tag != ''
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/languine.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag }}
+    secrets: inherit

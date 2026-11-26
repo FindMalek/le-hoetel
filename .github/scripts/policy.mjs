@@ -39,5 +39,8 @@ const CLOSING = "(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)"
 const ISSUE_REF = "(?:[\\w.-]+/[\\w.-]+)?#\\d+|https://github\\.com/[\\w.-]+/[\\w.-]+/issues/\\d+"
 export const ISSUE_LINK_RE = new RegExp(`\\b${CLOSING}\\s*:?\\s+(?:${ISSUE_REF})`, "i")
 
+/** The release-please PR has no issue or labels, whoever's token opened it. Never trusted from a fork. */
+export const isReleasePr = (headRef, fromFork) => fromFork !== "true" && /^release-please--/.test(headRef ?? "")
+
 /** Bot accounts (dependabot, renovate) write their own commit messages and PR bodies. */
 export const isBot = (login) => /\[bot\]$/i.test(login ?? "")

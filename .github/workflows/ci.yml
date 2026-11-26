@@ -6,7 +6,8 @@ on:
     branches: [main]
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # one group per main commit: the release gate needs ci on the release commit, a later merge must not cancel it
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: true
 
 permissions:
