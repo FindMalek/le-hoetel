@@ -13,6 +13,7 @@ import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
 import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { Select } from "@ritorno/ui/components/select"
+import { Switch } from "@ritorno/ui/components/switch"
 import { useMutation } from "@tanstack/react-query"
 import { CheckIcon, ClockIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -55,6 +56,7 @@ type HotelPatch = Partial<
     | "address"
     | "googleReviewUrl"
     | "lowScoreThreshold"
+    | "weeklyDigest"
   >
 >
 type Errors<V> = Partial<Record<keyof V, string>>
@@ -351,6 +353,38 @@ function AlertsSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean })
   )
 }
 
+function DigestSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean }) {
+  const t = useTranslations("hotelSettings")
+  const { form, state } = useSection(
+    { weeklyDigest: hotel.weeklyDigest },
+    () => ({}),
+    (v) => v,
+  )
+  return (
+    <FormSection
+      id="weekly-digest"
+      className="scroll-mt-20"
+      title={t("sections.digest.title")}
+      description={t("sections.digest.description")}
+    >
+      <SectionForm state={state} readOnly={readOnly}>
+        <label htmlFor="weeklyDigest" className="flex min-h-11 items-center justify-between gap-4">
+          <span className="flex flex-col gap-1">
+            <span className="font-medium text-sm">{t("weeklyDigest")}</span>
+            <span className="text-pretty text-muted-foreground text-sm">{t("weeklyDigestHint")}</span>
+          </span>
+          <Switch
+            id="weeklyDigest"
+            checked={form.values.weeklyDigest}
+            disabled={readOnly}
+            onCheckedChange={(checked) => form.set("weeklyDigest", checked)}
+          />
+        </label>
+      </SectionForm>
+    </FormSection>
+  )
+}
+
 function ReviewSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean }) {
   const t = useTranslations("hotelSettings")
   const { form, state } = useSection(
@@ -405,6 +439,7 @@ export function HotelSettingsForm({
       <div className="flex flex-col border-t pt-6">
         <MessagingSection hotel={hotel} readOnly={readOnly} />
         <AlertsSection hotel={hotel} readOnly={readOnly} />
+        <DigestSection hotel={hotel} readOnly={readOnly} />
         <ReviewSection hotel={hotel} readOnly={readOnly} />
       </div>
     </div>

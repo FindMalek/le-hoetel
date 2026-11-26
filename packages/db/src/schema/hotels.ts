@@ -1,5 +1,5 @@
 import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "@ritorno/common/hotel"
-import { pgEnum, pgTable, smallint, text, timestamp } from "drizzle-orm/pg-core"
+import { boolean, date, pgEnum, pgTable, smallint, text, timestamp } from "drizzle-orm/pg-core"
 import { organization } from "./orgs"
 
 export const hotelLanguage = pgEnum("hotel_language", HOTEL_LANGUAGES)
@@ -23,6 +23,9 @@ export const hotelSettings = pgTable("hotel_settings", {
   /** A survey score at or below this opens a feedback case and alerts the manager. */
   lowScoreThreshold: smallint("low_score_threshold").notNull().default(6),
   managerWhatsapp: text("manager_whatsapp"),
+  weeklyDigest: boolean("weekly_digest").notNull().default(true),
+  /** The Monday (hotel time) the owner digest last went out, claimed before sending. */
+  lastDigestWeek: date("last_digest_week", { mode: "string" }),
   plan: hotelPlan("plan").notNull().default("starter"),
   status: hotelStatus("status").notNull().default("pilot"),
   pilotEndsAt: timestamp("pilot_ends_at", { withTimezone: true }),
