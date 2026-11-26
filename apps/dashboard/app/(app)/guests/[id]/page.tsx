@@ -1,5 +1,6 @@
 import { hotelRoles } from "@ritorno/auth/access"
 import { CONSENT_CHANNELS, type ConsentChannel, type ConsentSource, consentWording } from "@ritorno/common/consent"
+import { isSameLocalDay } from "@ritorno/common/hotel-time"
 import { isWhatsappCapable } from "@ritorno/common/phone"
 import type { GuestActivity } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
@@ -25,6 +26,7 @@ import { GuestActions } from "@/components/guest-actions"
 import { ConsentChange } from "@/components/guest-consent-controls"
 import { ConsentBadges, GuestDate, Phone, ReturningBadge } from "@/components/guest-list"
 import { GuestsBreadcrumb } from "@/components/guests-breadcrumb"
+import { MarkVisitButton } from "@/components/mark-visit-button"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
 
@@ -70,9 +72,11 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
     call((api) => api.guests.activity({ id })),
     call((api) => api.hotel.get()),
   ])
-  const allowed = (guestPermission: "update" | "export" | "delete") =>
+  const allowed = (guestPermission: "create" | "update" | "export" | "delete") =>
     role ? hotelRoles[role].authorize({ guest: [guestPermission] }).success : false
 
+  const [lastStay] = activity.stays
+  const visitedToday = !!lastStay && isSameLocalDay(lastStay.at, new Date(), hotel.timezone)
   const lastChange = (channel: ConsentChannel) => events.find((event) => event.channel === channel)
   const sourceLabel = (source: ConsentSource) =>
     source === "unsubscribe_link" || source === "stop_reply" || source === "guest_request"
@@ -143,6 +147,11 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
             </StatusBadge>
           )}
           <ConsentBadges consents={guest.consents} />
+          {allowed("create") && (
+            <div className="w-full sm:ms-auto sm:w-auto">
+              <MarkVisitButton guestId={guest.id} visitedToday={visitedToday} className="w-full" />
+            </div>
+          )}
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-14">

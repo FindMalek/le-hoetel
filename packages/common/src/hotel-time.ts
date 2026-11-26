@@ -33,6 +33,12 @@ export function localTime(now: Date, timeZone: string): LocalTime {
   return { year, month, day, hour, monthDay: `${pad(month)}-${pad(day)}`, date: `${year}-${pad(month)}-${pad(day)}` }
 }
 
+export const isSameLocalDay = (a: Date, b: Date, timeZone: string): boolean =>
+  localTime(a, timeZone).date === localTime(b, timeZone).date
+
+/** How long a wrong "mark visit" or "redeem" tap can be taken back. */
+export const UNDO_WINDOW_MS = 10 * 60 * 1000
+
 export const isLeapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
 
 /** Marketing is never sent from 21:00 to 08:00 hotel time. */

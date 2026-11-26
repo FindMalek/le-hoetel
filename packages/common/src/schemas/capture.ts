@@ -46,6 +46,12 @@ export const qrCodesInputSchema = z.object({
   spots: z.array(z.string().trim().min(1).max(CAPTURE_LOCATION_MAX)).max(100),
 })
 
+export const shortLinkSchema = z.object({
+  slug: z.string(),
+  source: z.enum(Object.keys(CAPTURE_SOURCES) as [CaptureSource, ...CaptureSource[]]),
+  location: z.string().nullable(),
+})
+
 export const qrCodeSchema = z.object({ location: z.string().nullable(), url: z.string(), svg: z.string() })
 
 /** The places a hotel keeps a list of: each room and table has its own code. The front desk needs none. */

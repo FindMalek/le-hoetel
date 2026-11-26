@@ -1,7 +1,7 @@
 import { SITE } from "./site"
 
 /** Pages that carry a token or a guest's data, or belong to the app: never crawled. */
-export const PRIVATE_PATHS = ["/h/", "/s/", "/u/", "/o/", "/api/"]
+export const PRIVATE_PATHS = ["/h/", "/q/", "/s/", "/u/", "/o/", "/api/"]
 
 /** The public origin, read per request so one build serves every environment. */
 export function siteUrl(): string {

@@ -1,6 +1,7 @@
 import { ORPCError } from "@orpc/server"
 import { type ConsentChannel, MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { guestsToCsv } from "@ritorno/common/guest-export"
+import { UNDO_WINDOW_MS } from "@ritorno/common/hotel-time"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
 import {
   consentEventSchema,
@@ -18,6 +19,7 @@ import {
   guestSchema,
   guestUpdateSchema,
   guestUpsertResultSchema,
+  guestVisitResultSchema,
   hotelGuestsExportSchema,
 } from "@ritorno/common/schemas"
 import {
@@ -30,7 +32,7 @@ import {
   offers,
   surveyResponses,
 } from "@ritorno/db"
-import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
+import { and, count, desc, eq, exists, gt, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { enqueueWelcome } from "../jobs"
@@ -43,6 +45,7 @@ import {
   hotelGuest,
   recognitionOf,
   recordConsent,
+  recordVisit,
   upsertGuest,
   withConsents,
 } from "../lib/guests"
@@ -169,7 +172,7 @@ export const guestsRouter = {
         )
         .orderBy(desc(guests.updatedAt), guests.id)
         .limit(5)
-      return recognitionOf(context.db, hotelId, rows)
+      return recognitionOf(context.db, hotelId, rows, context.now())
     }),
 
   markVisit: hotelProcedure
@@ -177,18 +180,46 @@ export const guestsRouter = {
     .route({
       method: "POST",
       path: "/guests/{id}/visits",
-      summary: "Record that the guest is here again",
+      summary: "Record that the guest is here again, once per hotel day",
       tags: ["guests"],
     })
     .input(z.object({ id: z.uuid() }))
-    .output(guestRecognitionSchema)
+    .output(guestVisitResultSchema)
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       const [row] = await context.db.select().from(guests).where(hotelGuest(hotelId, input.id))
       if (!row) throw notFound()
-      await context.db.insert(guestVisits).values({ guestId: row.id, hotelId, source: "staff", at: context.now() })
-      const [card] = await recognitionOf(context.db, hotelId, [row])
-      return card!
+      const at = context.now()
+      const visitId = await recordVisit(context.db, { hotelId, guestId: row.id, source: "staff", at })
+      const [card] = await recognitionOf(context.db, hotelId, [row], at)
+      return { ...card!, visitId }
+    }),
+
+  undoVisit: hotelProcedure
+    .use(can({ guest: ["create"] }))
+    .route({
+      method: "DELETE",
+      path: "/guests/{id}/visits/{visitId}",
+      summary: "Take back a visit staff just marked by mistake",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid(), visitId: z.uuid() }))
+    .output(z.object({ ok: z.literal(true) }))
+    .handler(async ({ context, input }) => {
+      const deleted = await context.db
+        .delete(guestVisits)
+        .where(
+          and(
+            eq(guestVisits.id, input.visitId),
+            eq(guestVisits.guestId, input.id),
+            eq(guestVisits.hotelId, context.hotel.hotelId),
+            eq(guestVisits.source, "staff"),
+            gt(guestVisits.at, new Date(context.now().getTime() - UNDO_WINDOW_MS)),
+          ),
+        )
+        .returning({ id: guestVisits.id })
+      if (!deleted.length) throw notFound()
+      return { ok: true as const }
     }),
 
   get: hotelProcedure
@@ -210,11 +241,13 @@ export const guestsRouter = {
     .output(guestUpsertResultSchema)
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
-      const { id, merged } = await context.db.transaction((tx) =>
-        upsertGuest(tx, hotelId, input, context.now(), context.user.id),
-      )
+      const {
+        id,
+        consentKept: _,
+        ...outcome
+      } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, input, context.now(), context.user.id))
       await enqueueWelcome(context, hotelId, id, input.consents)
-      return { ...(await loadGuest(context.db, hotelId, id)), merged }
+      return { ...(await loadGuest(context.db, hotelId, id)), ...outcome }
     }),
 
   import: hotelProcedure

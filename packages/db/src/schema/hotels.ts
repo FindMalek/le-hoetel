@@ -1,12 +1,16 @@
 import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "@ritorno/common/hotel"
-import { SPOT_SOURCES } from "@ritorno/common/schemas"
-import { boolean, date, pgEnum, pgTable, primaryKey, smallint, text, timestamp } from "drizzle-orm/pg-core"
+import { CAPTURE_SOURCES, type CaptureSource, SPOT_SOURCES } from "@ritorno/common/schemas"
+import { boolean, date, pgEnum, pgTable, primaryKey, smallint, text, timestamp, unique } from "drizzle-orm/pg-core"
 import { organization } from "./orgs"
 
 export const hotelLanguage = pgEnum("hotel_language", HOTEL_LANGUAGES)
 export const hotelPlan = pgEnum("hotel_plan", HOTEL_PLANS)
 export const hotelStatus = pgEnum("hotel_status", HOTEL_STATUSES)
 export const spotSource = pgEnum("spot_source", SPOT_SOURCES)
+export const captureSource = pgEnum(
+  "capture_source",
+  Object.keys(CAPTURE_SOURCES) as [CaptureSource, ...CaptureSource[]],
+)
 
 /** One row per hotel (organization): branding and operating config, never code per hotel. */
 export const hotelSettings = pgTable("hotel_settings", {
@@ -50,4 +54,23 @@ export const captureSpots = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.hotelId, t.source, t.name] })],
+)
+
+/**
+ * What a printed `/q/<code>` points at. The hotel is kept by id, so a new slug breaks no printed code. Rows are never
+ * deleted on their own (removing a saved spot included): paper outlives the list.
+ */
+export const shortLinks = pgTable(
+  "short_links",
+  {
+    code: text("code").primaryKey(),
+    hotelId: text("hotel_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    source: captureSource("source").notNull(),
+    /** Empty for a code without a spot: a null would let the same code be made twice. */
+    location: text("location").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("short_links_spot_unique").on(t.hotelId, t.source, t.location)],
 )

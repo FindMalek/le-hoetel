@@ -1,6 +1,6 @@
 "use client"
 
-import { parseSpots, QR_SPOTS_MAX, qrFileName } from "@ritorno/common/qr"
+import { captionedSvg, parseSpots, printedUrl, QR_SPOTS_MAX, qrFileName } from "@ritorno/common/qr"
 import { type CaptureSource, SPOT_SOURCES } from "@ritorno/common/schemas"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
@@ -46,8 +46,9 @@ async function savePng(name: string, svg: string) {
   image.src = svgUrl(svg)
   await image.decode()
   const canvas = document.createElement("canvas")
-  canvas.width = canvas.height = 1024
-  canvas.getContext("2d")?.drawImage(image, 0, 0, 1024, 1024)
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  canvas.getContext("2d")?.drawImage(image, 0, 0)
   save(name, canvas.toDataURL("image/png"))
 }
 
@@ -218,6 +219,7 @@ export function QrCodesBoard() {
             <ul className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
               {generate.data?.map((code) => {
                 const name = code.location ?? t(shown.one)
+                const printed = captionedSvg(code.svg, printedUrl(code.url))
                 return (
                   <li key={code.url} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
                     {/* biome-ignore lint/performance/noImgElement: a generated data url, nothing to optimize */}
@@ -228,6 +230,9 @@ export function QrCodesBoard() {
                     />
                     <div className="flex flex-col gap-0.5">
                       <p className="truncate font-medium">{name}</p>
+                      <p dir="ltr" className="select-all break-all font-mono text-xs rtl:text-end">
+                        {printedUrl(code.url)}
+                      </p>
                       <p className="text-muted-foreground text-sm tabular-nums">
                         {t("guestsSoFar", { count: guestsAt(code.location) })}
                       </p>
@@ -236,14 +241,14 @@ export function QrCodesBoard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => save(qrFileName(made.source, code.location, "svg"), svgUrl(code.svg))}
+                        onClick={() => save(qrFileName(made.source, code.location, "svg"), svgUrl(printed))}
                       >
                         <DownloadIcon data-icon="inline-start" /> SVG
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => savePng(qrFileName(made.source, code.location, "png"), code.svg)}
+                        onClick={() => savePng(qrFileName(made.source, code.location, "png"), printed)}
                       >
                         <DownloadIcon data-icon="inline-start" /> PNG
                       </Button>

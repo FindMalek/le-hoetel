@@ -311,13 +311,33 @@
       "needEmail": "Add an email to ask for email consent.",
       "submit": "Add guest",
       "added": "Guest added",
-      "merged": "This guest was already here: details updated",
+      "merged": "This guest was already here",
       "nameRequired": "Enter the guest's name.",
       "phoneInvalid": "Enter a valid phone number, like 20 123 456.",
       "emailInvalid": "Enter a valid email, like name@example.com.",
       "done": "Done",
       "view": "View guest",
-      "error": "The guest could not be saved. Check the details and try again."
+      "error": "The guest could not be saved. Check the details and try again.",
+      "known": "This number is already here",
+      "changed": "Updated: {fields}.",
+      "unchanged": "Nothing in the record changed.",
+      "kept": "Kept as before, what you typed was not saved: {fields}.",
+      "visitSaved": "Visit saved.",
+      "visitCounted": "Today's visit was already counted.",
+      "fields": {
+        "name": "name",
+        "language": "language",
+        "email": "email",
+        "birthday": "birthday",
+        "country": "country",
+        "city": "city",
+        "stayCheckIn": "arrival date",
+        "stayCheckOut": "departure date",
+        "nextDestination": "next destination",
+        "emailConsent": "email consent",
+        "whatsappConsent": "WhatsApp consent",
+        "profileConsent": "profile consent"
+      }
     },
     "import": {
       "title": "Import guests",
@@ -475,7 +495,12 @@
       "lastVisit": "Last visit",
       "language": "Language",
       "lastOffer": "Last offer used",
-      "consents": "Can contact"
+      "consents": "Can contact",
+      "markedToday": "Visit saved today",
+      "alreadyCounted": "Today's visit was already counted",
+      "undo": "Undo",
+      "undone": "Visit removed",
+      "markError": "The visit could not be saved. Try again."
     },
     "returning": "{count, plural, one {Returning, # stay} other {Returning, # stays}}",
     "edit": {
@@ -649,7 +674,9 @@
     "hotelMissingTitle": "This hotel page does not exist",
     "hotelMissing": "The QR code may be old. Ask the front desk for the current one.",
     "reviewInvalidTitle": "This review link is not valid",
-    "reviewInvalid": "Open the link from your message again, or ask the front desk."
+    "reviewInvalid": "Open the link from your message again, or ask the front desk.",
+    "codeMissingTitle": "This code does not work",
+    "codeMissing": "Check the letters under the QR code, or ask the front desk."
   },
   "adminHotels": {
     "title": "Hotels",
@@ -1120,7 +1147,10 @@
       "exhausted": "Every redemption of this code is used up.",
       "wrongHotel": "Ask the guest for the code this hotel sent them.",
       "unknown": "Check the code with the guest and try again."
-    }
+    },
+    "viewGuest": "View guest",
+    "undo": "Undo, tapped by mistake",
+    "undone": "Redemption undone"
   },
   "notFound": {
     "title": "Page not found",
@@ -1478,7 +1508,7 @@
     "renameHint": "The official name and the address of the guest page.",
     "renameSave": "Save name and slug",
     "slugTitle": "Change the slug of {hotel}?",
-    "slugConsequence": "Every QR code printed with {old} stops working. Print new codes from the QR codes page right after.",
+    "slugConsequence": "Codes with a short /q/ address keep working. Links and older printed codes that contain {old} stop working.",
     "slugConfirm": "Change the slug",
     "renamed": "Name and slug saved.",
     "deleteConfirm": "Delete for good",
@@ -1558,8 +1588,8 @@
       "suspended": "The team can no longer sign in to this hotel and no message is sent to its guests. Data is kept and you can reactivate it later."
     },
     "statusConfirm": "Set to {status}",
-    "slugHint": "Lowercase letters, digits and dashes. It is part of every QR code link.",
-    "slugWarningTitle": "Printed QR codes will stop working"
+    "slugHint": "Lowercase letters, digits and dashes. It is the address of the guest page.",
+    "slugWarningTitle": "Links with the old slug will stop working"
   },
   "adminWizard": {
     "title": "New hotel",
@@ -1770,7 +1800,8 @@
         "create": "Created an offer",
         "delete": "Deleted an offer",
         "redeem": "Redeemed an offer",
-        "update": "Updated an offer"
+        "update": "Updated an offer",
+        "unredeem": "Undid a redemption"
       },
       "privacy": {
         "delete-account": "Deleted an account",

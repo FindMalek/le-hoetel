@@ -37,6 +37,7 @@ export const AUDIT_ACTIONS = [
   "offer.create",
   "offer.delete",
   "offer.redeem",
+  "offer.unredeem",
   "offer.update",
   "privacy.delete-account",
   "privacy.export",
