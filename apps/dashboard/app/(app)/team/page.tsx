@@ -1,9 +1,11 @@
 import { Button } from "@ritorno/ui/components/button"
+import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { PageState } from "@ritorno/ui/components/page-state"
 import { UsersIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
+import { HotelPeople } from "@/components/hotel-people"
 import { PageHeader } from "@/components/page-header"
 import { TeamBoard } from "@/components/team-board"
 import { call } from "@/lib/api"
@@ -27,21 +29,32 @@ export default async function TeamPage() {
         {hotel && member ? (
           <TeamBoard hotelId={hotel.id} meId={me.id} canManage={canManage} timeZone={hotel.timezone} />
         ) : hotel ? (
-          <PageState
-            kind="forbidden"
-            icon={<UsersIcon />}
-            title={t("notMember", { hotel: hotel.displayName })}
-            description={t("notMemberHint")}
-            action={
-              <Button render={<Link href={`/admin/hotels/${hotel.id}`} />} nativeButton={false}>
-                {t("notMemberAction")}
-              </Button>
-            }
-          />
+          <ViewedTeam hotelId={hotel.id} />
         ) : (
           <PageState kind="empty" icon={<UsersIcon />} title={tHotel("noHotel")} description={tHotel("noHotelHint")} />
         )}
       </div>
     </>
+  )
+}
+
+/** The app admin acting as a hotel they do not belong to: its people to read, changes stay with its members. */
+async function ViewedTeam({ hotelId }: { hotelId: string }) {
+  const [t, hotel] = await Promise.all([getTranslations("team"), call((api) => api.admin.hotels.get({ id: hotelId }))])
+  return (
+    <div className="flex max-w-3xl flex-col gap-4">
+      <InlineAlert
+        tone="info"
+        title={t("notMember", { hotel: hotel.displayName })}
+        action={
+          <Button size="sm" variant="outline" render={<Link href={`/admin/hotels/${hotelId}`} />} nativeButton={false}>
+            {t("notMemberAction")}
+          </Button>
+        }
+      >
+        {t("notMemberHint")}
+      </InlineAlert>
+      <HotelPeople hotel={hotel} />
+    </div>
   )
 }

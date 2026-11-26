@@ -25,6 +25,7 @@ import { AdminBrandingForm, AdminDangerZone, AdminPlanForm, AdminRename } from "
 import { InvoiceExport, InvoiceList } from "@/components/admin-invoices"
 import { AdminTopUp } from "@/components/admin-top-up"
 import { HotelAvatar } from "@/components/hotel-avatar"
+import { HotelPeople } from "@/components/hotel-people"
 import { PageHeader } from "@/components/page-header"
 import { relativeTime } from "@/components/relative-day"
 import { consentRate, HEALTH_TONE, STATUS_TONE } from "@/lib/admin"
@@ -154,41 +155,7 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
           </FormSection>
 
           <FormSection title={t("people")} description={t("peopleHint")}>
-            {hotel.members.length === 0 && hotel.invitations.length === 0 ? (
-              <p className="text-muted-foreground text-small">{t("noPeople")}</p>
-            ) : (
-              <ul className="flex flex-col divide-y rounded-card border">
-                {hotel.members.map((person) => {
-                  const role = person.role.split(",")[0] ?? "staff"
-                  return (
-                    <li key={person.userId} className="flex items-center justify-between gap-3 p-4">
-                      <span className="flex min-w-0 flex-col">
-                        <span className="truncate font-medium">{person.name}</span>
-                        <span className="truncate text-caption text-muted-foreground" dir="ltr">
-                          {person.email}
-                        </span>
-                      </span>
-                      <StatusBadge tone={role === "owner" ? "info" : "neutral"}>
-                        {t.has(`roles.${role}` as never) ? t(`roles.${role}` as never) : role}
-                      </StatusBadge>
-                    </li>
-                  )
-                })}
-                {hotel.invitations.map((invite) => (
-                  <li key={invite.id} className="flex items-center justify-between gap-3 p-4">
-                    <span className="flex min-w-0 flex-col">
-                      <span className="truncate" dir="ltr">
-                        {invite.email}
-                      </span>
-                      <span className="text-caption text-muted-foreground">
-                        {t("inviteExpires", { date: date(invite.expiresAt) })}
-                      </span>
-                    </span>
-                    <StatusBadge tone="warning">{t("invited")}</StatusBadge>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <HotelPeople hotel={hotel} />
           </FormSection>
 
           <FormSection title={t("capture")} description={t("captureHint")}>

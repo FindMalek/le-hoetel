@@ -1432,7 +1432,7 @@
     "logoOpen": "Open branding as this hotel",
     "people": "Owners and members",
     "peopleHint": "Who can sign in to this hotel, and invitations still waiting.",
-    "noPeople": "Nobody yet. Invite the owner from the hotel's team page once you open it.",
+    "noPeople": "Nobody yet.",
     "invited": "Invited",
     "inviteExpires": "Expires on {date}",
     "pilotPlan": "Pilot and plan",
@@ -2112,7 +2112,7 @@
     "revokeTitle": "Revoke the invitation for {email}?",
     "revokeBody": "The link stops working right away. You can invite them again later.",
     "notMember": "You are not a member of {hotel}",
-    "notMemberHint": "Only its members can invite or change people here. Its admin page lists them.",
+    "notMemberHint": "Only its members can invite or change people here.",
     "notMemberAction": "Open the admin page"
   },
   "usage": {
