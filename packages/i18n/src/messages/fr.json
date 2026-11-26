@@ -821,7 +821,7 @@
   },
   "messages": {
     "title": "Messages",
-    "description": "Chaque message envoyé à vos clients et son issue. Jamais le texte ni le contact.",
+    "description": "Chaque message envoyé à vos clients et son résultat. Jamais le contact.",
     "guest": "Client",
     "channel": "Canal",
     "template": "Message",
@@ -860,6 +860,17 @@
       "anyTemplate": "Tous les messages",
       "days": "{count} jours",
       "reset": "Effacer les filtres"
+    },
+    "preview": {
+      "tag": "Développement : non envoyé",
+      "view": "Aperçu",
+      "viewFor": "Aperçu du message pour {name}",
+      "title": "Aperçu du message",
+      "hint": "Ce message n’a pas été envoyé. Voici ce que le client aurait reçu.",
+      "subject": "Objet",
+      "close": "Fermer",
+      "loading": "Chargement de l’aperçu",
+      "error": "Impossible de charger l’aperçu."
     },
     "range": "<from></from>–<to></to> sur <total></total>",
     "previous": "Précédent",

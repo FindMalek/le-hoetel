@@ -238,3 +238,33 @@ test("the log filters by channel, template and period, pages with a total, and s
   expect(second.total).toBe(4)
   expect(second.items).toHaveLength(1)
 })
+
+test("only a message that was not sent keeps its text, readable in its own hotel", async () => {
+  const { hotelId, guestId, client } = await hotelWithGuest("msg-preview", { email: true, whatsapp: true })
+  await topUp(app.services.db, hotelId, 1000)
+  const base = { hotelId, guestId, template: "welcome", props: {} } as const
+  const logOnly = {
+    live: false,
+    sendEmail: async () => ({ channel: "email", sent: false }),
+    sendWhatsApp: async () => ({ channel: "whatsapp", sent: false }),
+  } as unknown as typeof app.services.notification
+
+  const email = await sendToGuest({ ...app.services, notification: logOnly }, { ...base, channel: "email" })
+  const chat = await sendToGuest({ ...app.services, notification: logOnly }, { ...base, channel: "whatsapp" })
+  // The shared double answers WhatsApp as really sent.
+  const real = await sendToGuest(ctx(), { ...base, channel: "whatsapp" })
+
+  const { items } = await client.messages.list({})
+  expect(Object.fromEntries(items.map((item) => [item.id, item.notSent]))).toEqual({
+    [email.messageId]: true,
+    [chat.messageId]: true,
+    [real.messageId]: false,
+  })
+  const mail = await client.messages.preview({ id: email.messageId })
+  expect("html" in mail && mail.html).toContain("Amel Ben Salah")
+  const text = await client.messages.preview({ id: chat.messageId })
+  expect("text" in text && text.text).toMatch(/^Bonjour Amel Ben Salah, bienvenue à .+STOP/s)
+  await expect(client.messages.preview({ id: real.messageId })).rejects.toMatchObject({ code: "NOT_FOUND" })
+  const other = await hotelWithGuest("msg-preview-other", { email: true, whatsapp: true })
+  await expect(other.client.messages.preview({ id: email.messageId })).rejects.toMatchObject({ code: "NOT_FOUND" })
+})

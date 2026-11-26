@@ -14,6 +14,7 @@ export {
   type GuestWhatsAppTemplate,
   guestTemplateFooter,
   guestTemplateParams,
+  guestTemplateText,
 } from "./whatsapp-guest"
 
 export const CHANNELS = ["email", "telegram", "whatsapp"] as const
