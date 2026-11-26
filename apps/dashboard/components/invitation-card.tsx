@@ -69,9 +69,7 @@ export function InvitationCard({ id }: { id: string }) {
     return (
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-balance font-heading font-semibold text-3xl tracking-tight">
-            {t("invitation.title", { hotel: invitation.organizationName })}
-          </h1>
+          <h1 className="text-balance text-h1">{t("invitation.title", { hotel: invitation.organizationName })}</h1>
           <p className="text-pretty text-muted-foreground">
             {t("invitation.description", {
               inviter: `\u2068${invitation.inviterEmail}\u2069`,
@@ -90,19 +88,17 @@ export function InvitationCard({ id }: { id: string }) {
   const wrong = state.kind === "wrong"
   return (
     <div className="flex flex-col gap-6">
-      <span className="grid size-12 place-items-center rounded-lg bg-muted">
+      <span className="grid size-12 place-items-center rounded-full bg-surface">
         <MailXIcon aria-hidden />
       </span>
       <div className="flex flex-col gap-2">
-        <h1 className="text-balance font-heading font-semibold text-3xl tracking-tight">
-          {t("invitation.invalidTitle")}
-        </h1>
+        <h1 className="text-balance text-h1">{t("invitation.invalidTitle")}</h1>
         <p className="text-pretty text-muted-foreground">
           {wrong ? t("invitation.wrongAccount") : t("invitation.invalid")}
         </p>
       </div>
       {wrong ? (
-        <Button variant="outline" size="lg" onClick={switchAccount}>
+        <Button variant="secondary" size="lg" onClick={switchAccount}>
           {t("invitation.switchAccount")}
         </Button>
       ) : null}

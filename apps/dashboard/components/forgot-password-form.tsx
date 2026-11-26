@@ -39,14 +39,14 @@ export function ForgotPasswordForm() {
   if (sentTo)
     return (
       <div className="flex flex-col gap-6" role="status">
-        <span className="grid size-12 place-items-center rounded-lg bg-muted">
+        <span className="grid size-12 place-items-center rounded-full bg-surface">
           <MailCheckIcon aria-hidden />
         </span>
         <div className="flex flex-col gap-2">
-          <h1 className="font-heading font-semibold text-3xl tracking-tight">{t("forgot.sentTitle")}</h1>
+          <h1 className="text-balance text-h1">{t("forgot.sentTitle")}</h1>
           <p className="text-pretty text-muted-foreground">{t("forgot.sent", { email: sentTo })}</p>
         </div>
-        <Button variant="outline" size="lg" render={<Link href="/sign-in" />} nativeButton={false}>
+        <Button variant="secondary" size="lg" render={<Link href="/sign-in" />} nativeButton={false}>
           {t("back")}
         </Button>
       </div>
@@ -55,7 +55,7 @@ export function ForgotPasswordForm() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-balance font-heading font-semibold text-3xl tracking-tight">{t("forgot.title")}</h1>
+        <h1 className="text-balance text-h1">{t("forgot.title")}</h1>
         <p className="text-muted-foreground">{t("forgot.description")}</p>
       </div>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
@@ -80,7 +80,7 @@ export function ForgotPasswordForm() {
       </form>
       <Link
         href="/sign-in"
-        className="inline-flex min-h-touch items-center justify-center text-muted-foreground text-sm underline-offset-4 hover:text-foreground hover:underline"
+        className="inline-flex min-h-touch items-center justify-center text-blue-700 text-sm underline-offset-4 hover:underline"
       >
         {t("back")}
       </Link>

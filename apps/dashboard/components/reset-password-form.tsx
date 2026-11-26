@@ -17,11 +17,11 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
   if (invalid)
     return (
       <div className="flex flex-col gap-6">
-        <span className="grid size-12 place-items-center rounded-lg bg-muted">
+        <span className="grid size-12 place-items-center rounded-full bg-surface">
           <LinkIcon aria-hidden />
         </span>
         <div className="flex flex-col gap-2">
-          <h1 className="font-heading font-semibold text-3xl tracking-tight">{t("reset.invalidTitle")}</h1>
+          <h1 className="text-balance text-h1">{t("reset.invalidTitle")}</h1>
           <p className="text-pretty text-muted-foreground">{t("reset.invalid")}</p>
         </div>
         <Button size="lg" render={<Link href="/forgot-password" />} nativeButton={false}>
@@ -53,7 +53,7 @@ export function ResetPasswordForm({ token }: { token: string | null }) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-balance font-heading font-semibold text-3xl tracking-tight">{t("reset.title")}</h1>
+        <h1 className="text-balance text-h1">{t("reset.title")}</h1>
         <p className="text-muted-foreground">{t("reset.description")}</p>
       </div>
       <form onSubmit={submit} noValidate className="flex flex-col gap-6">
