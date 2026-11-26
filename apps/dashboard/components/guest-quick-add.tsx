@@ -1,6 +1,7 @@
 "use client"
 
 import { consentWording } from "@ritorno/common/consent"
+import { invalidField } from "@ritorno/common/field-errors"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { parsePhone } from "@ritorno/common/phone"
 import { guestCreateSchema } from "@ritorno/common/schemas"
@@ -12,11 +13,11 @@ import { FormField } from "@ritorno/ui/components/form-field"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
-import { PhoneInput } from "@ritorno/ui/components/phone-input"
+import { PhoneInput, usePhoneNumber } from "@ritorno/ui/components/phone-input"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation } from "@tanstack/react-query"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { type FormEvent, useRef, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
@@ -26,10 +27,12 @@ type Touched = Partial<Record<"name" | "phone" | "email", boolean>>
 
 export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage: HotelLanguage; hotelName: string }) {
   const t = useTranslations("guests.add")
+  const tPicker = useTranslations("countryPicker")
+  const locale = useLocale()
   const phoneBox = useRef<HTMLDivElement>(null)
   const [name, setName] = useState("")
-  const [dialCode, setDialCode] = useState("+216")
-  const [phone, setPhone] = useState("")
+  // staff type the guest's number, so their own browser's country says nothing
+  const phone = usePhoneNumber({ detect: false })
   const [language, setLanguage] = useState<HotelLanguage>(defaultLanguage)
   const [email, setEmail] = useState("")
   const [whatsapp, setWhatsapp] = useState(false)
@@ -37,7 +40,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const [touched, setTouched] = useState<Touched>({})
   const [last, setLast] = useState<{ id: string; merged: boolean } | null>(null)
 
-  const number = `${dialCode} ${phone}`
+  const { number } = phone
   const parsed = parsePhone(number)
   const canWhatsapp = parsed?.whatsappCapable ?? true
   const hasEmail = email.trim() !== ""
@@ -58,14 +61,20 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
         toast.success(guest.merged ? t("merged") : t("added"))
         setLast({ id: guest.id, merged: guest.merged })
         setName("")
-        setPhone("")
+        phone.setValue((current) => ({ ...current, national: "" }))
         setEmail("")
         setWhatsapp(false)
         setEmailConsent(false)
         setTouched({})
         phoneBox.current?.querySelector("input")?.focus()
       },
-      onError: () => toast.error(t("error")),
+      onError: (error) => {
+        const field = invalidField(error)
+        const message = { name: "nameRequired", phone: "phoneInvalid", email: "emailInvalid" } as const
+        const whatsappRefused = field === "consents.whatsapp"
+        const key = message[field as keyof typeof message]
+        toast.error(t(whatsappRefused ? "noWhatsapp" : (key ?? "error")))
+      },
     }),
   )
 
@@ -104,11 +113,15 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
             <div ref={phoneBox}>
               <PhoneInput
                 {...aria}
-                value={phone}
-                onValueChange={setPhone}
-                dialCode={dialCode}
-                onDialCodeChange={setDialCode}
-                dialCodeLabel={t("dialCode")}
+                value={phone.value}
+                onValueChange={phone.setValue}
+                locale={locale}
+                copy={{
+                  label: tPicker("label"),
+                  search: tPicker("search"),
+                  empty: tPicker("empty"),
+                  close: tPicker("close"),
+                }}
                 enterKeyHint="next"
                 onBlur={() => touch("phone")}
                 autoFocus

@@ -23,7 +23,10 @@ export default async function CapturePage({ params, searchParams }: Props) {
   const language = guestLanguage(query.lang, hotel.defaultLanguage)
   const source = (query.src && query.src in CAPTURE_SOURCES ? query.src : "desk") as CaptureSource
   const location = (query.loc ?? "").slice(0, 40)
-  const t = await getTranslations({ locale: language, namespace: "capture" })
+  const [t, tPicker] = await Promise.all([
+    getTranslations({ locale: language, namespace: "capture" }),
+    getTranslations({ locale: language, namespace: "countryPicker" }),
+  ])
   const whatsappUrl = await getWhatsAppLink({ slug: hotel.slug, source, language, location: location || null })
   const switchTo = (to: HotelLanguage) => {
     const next = new URLSearchParams({ src: source, lang: to })
@@ -78,12 +81,20 @@ export default async function CapturePage({ params, searchParams }: Props) {
           nameError: t("nameError"),
           phone: t("phone"),
           phoneError: t("phoneError"),
-          dialCode: t("dialCode"),
+          countryPicker: {
+            label: tPicker("label"),
+            search: tPicker("search"),
+            empty: tPicker("empty"),
+            close: tPicker("close"),
+          },
           language: t("language"),
           optionalTitle: t("optionalTitle"),
           optionalHint: t("optionalHint"),
           birthday: t("birthday"),
           email: t("email"),
+          emailError: t("emailError"),
+          birthdayError: t("birthdayError"),
+          whatsappError: t("whatsappError"),
           consentTitle: t("consentTitle"),
           consentHint: t("consentHint"),
           whatsappTitle: t("whatsappTitle"),

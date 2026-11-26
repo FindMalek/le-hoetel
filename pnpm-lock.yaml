@@ -892,6 +892,9 @@ importers:
       '@base-ui/react':
         specifier: 'catalog:'
         version: 1.9.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@ritorno/common':
+        specifier: workspace:*
+        version: link:../common
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

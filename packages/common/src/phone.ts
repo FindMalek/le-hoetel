@@ -1,4 +1,5 @@
 import { parsePhoneNumberFromString } from "libphonenumber-js/min"
+import { toLatinDigits } from "./dial"
 
 export const DEFAULT_PHONE_COUNTRY = "TN"
 
@@ -9,9 +10,6 @@ export interface ParsedPhone {
   /** False for numbers that can't take WhatsApp, like a Tunisian landline. */
   whatsappCapable: boolean
 }
-
-const ARABIC_DIGITS = /[٠-٩۰-۹]/g
-const toLatinDigit = (digit: string) => String("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹".indexOf(digit) % 10)
 
 /** Tunisian mobiles start with 2, 4, 5 or 9. 3 and 7 are landlines, 8 is toll free. */
 const TN_MOBILE = /^\+216[2459]\d{7}$/
@@ -25,7 +23,7 @@ export function isWhatsappCapable(e164: string): boolean {
  * any other international number, spaces, dots, dashes, brackets and Arabic-Indic digits. Null when it isn't a valid number.
  */
 export function parsePhone(input: string, defaultCountry: string = DEFAULT_PHONE_COUNTRY): ParsedPhone | null {
-  let value = input.replace(ARABIC_DIGITS, toLatinDigit).trim()
+  let value = toLatinDigits(input).trim()
   if (value.startsWith("00")) value = `+${value.slice(2).trimStart()}`
   const parsed = parsePhoneNumberFromString(value, defaultCountry as "TN")
   if (!parsed?.isValid()) return null

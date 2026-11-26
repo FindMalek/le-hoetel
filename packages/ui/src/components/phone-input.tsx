@@ -1,73 +1,97 @@
 "use client"
 
-import * as React from "react"
+import { countryFromLocales, dialCodeOf, type PhoneValue, readPhone, toInternational } from "@ritorno/common/dial"
+import type { CountryPickerProps } from "@ritorno/ui/components/country-picker"
 import { cn } from "@ritorno/ui/lib/utils"
+import { ChevronDownIcon } from "lucide-react"
+import * as React from "react"
 
-type DialCode = { value: string; label: string }
+type CountryPickerCopy = { label: string; search: string; empty: string; close: string }
 
-const DIAL_CODES: DialCode[] = [
-  { value: "+216", label: "TN +216" },
-  { value: "+33", label: "FR +33" },
-  { value: "+213", label: "DZ +213" },
-  { value: "+218", label: "LY +218" },
-  { value: "+212", label: "MA +212" },
-  { value: "+49", label: "DE +49" },
-  { value: "+44", label: "GB +44" },
-  { value: "+39", label: "IT +39" },
-]
-
-type PhoneInputProps = Omit<React.ComponentProps<"input">, "value" | "onChange" | "type"> & {
-  value: string
-  onValueChange: (value: string) => void
-  dialCode: string
-  onDialCodeChange: (dialCode: string) => void
-  dialCodes?: DialCode[]
-  dialCodeLabel: string
+/** State of a phone field. `detect` preselects the country of the browser, for forms people fill about themselves. */
+function usePhoneNumber({ detect }: { detect: boolean }) {
+  const [value, setValue] = React.useState<PhoneValue>({ country: "TN", national: "" })
+  React.useEffect(() => {
+    if (!detect) return
+    const country = countryFromLocales(navigator.languages)
+    if (country) setValue((current) => (current.national ? current : { ...current, country }))
+  }, [detect])
+  return { value, setValue, number: toInternational(value) }
 }
 
-function PhoneInput({
-  className,
-  value,
-  onValueChange,
-  dialCode,
-  onDialCodeChange,
-  dialCodes = DIAL_CODES,
-  dialCodeLabel,
-  ...props
-}: PhoneInputProps) {
+type PhoneInputProps = Omit<React.ComponentProps<"input">, "value" | "onChange" | "type"> & {
+  value: PhoneValue
+  onValueChange: (value: PhoneValue) => void
+  /** Language of the country names. */
+  locale: string
+  copy: CountryPickerCopy
+}
+
+// The list of 245 countries is only fetched when someone opens it: the capture page has a script budget.
+const loadPicker = () => import("@ritorno/ui/components/country-picker")
+
+function PhoneInput({ className, value, onValueChange, locale, copy, ...props }: PhoneInputProps) {
+  const box = React.useRef<HTMLDivElement>(null)
+  const [open, setOpen] = React.useState(false)
+  const [Picker, setPicker] = React.useState<React.ComponentType<CountryPickerProps> | null>(null)
+
+  function openPicker() {
+    setOpen(true)
+    // offline the list stays closed, typing `+` and the code still switches the country
+    loadPicker().then(
+      (module) => setPicker(() => module.CountryPicker),
+      () => setOpen(false),
+    )
+  }
+
   return (
     <div
+      ref={box}
       data-slot="phone-input"
       dir="ltr"
       className={cn(
         "flex h-11 w-full min-w-0 items-center rounded-lg border border-input transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-surface has-[input[aria-invalid=true]]:border-destructive",
-        className
+        className,
       )}
     >
-      <select
-        aria-label={dialCodeLabel}
-        value={dialCode}
-        onChange={(event) => onDialCodeChange(event.target.value)}
+      <button
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label={`${copy.label}: ${value.country} +${dialCodeOf(value.country)}`}
         disabled={props.disabled}
-        className="h-full shrink-0 rounded-s-lg border-0 border-e border-input bg-transparent ps-3 pe-2 text-base outline-none md:text-sm"
+        onPointerEnter={() => void loadPicker().catch(() => {})}
+        onClick={openPicker}
+        className="flex h-full min-w-11 shrink-0 items-center gap-1 rounded-s-lg border-e border-input ps-3 pe-2 text-base tabular-nums outline-none focus-visible:bg-muted disabled:opacity-50 md:text-sm"
       >
-        {dialCodes.map((code) => (
-          <option key={code.value} value={code.value}>
-            {code.label}
-          </option>
-        ))}
-      </select>
+        {value.country} +{dialCodeOf(value.country)}
+        <ChevronDownIcon aria-hidden className="size-4 text-muted-foreground" />
+      </button>
       <input
         type="tel"
         inputMode="tel"
-        autoComplete="tel-national"
-        value={value}
-        onChange={(event) => onValueChange(event.target.value.replace(/[^\d\s]/g, ""))}
+        autoComplete="tel"
+        value={value.national}
+        onChange={(event) => onValueChange(readPhone(event.target.value, value.country))}
         className="h-full min-w-0 flex-1 rounded-e-lg bg-transparent px-3 text-base outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
         {...props}
       />
+      {Picker ? (
+        <Picker
+          open={open}
+          onOpenChange={setOpen}
+          country={value.country}
+          onSelect={(country) => {
+            onValueChange({ ...value, country })
+            setOpen(false)
+          }}
+          locale={locale}
+          copy={copy}
+          finalFocus={() => box.current?.querySelector("input") ?? null}
+        />
+      ) : null}
     </div>
   )
 }
 
-export { DIAL_CODES, PhoneInput, type DialCode, type PhoneInputProps }
+export { type CountryPickerCopy, PhoneInput, type PhoneInputProps, usePhoneNumber }

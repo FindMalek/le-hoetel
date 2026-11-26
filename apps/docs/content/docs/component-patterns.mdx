@@ -59,11 +59,11 @@ Sign in, sign up, forgot password, reset password and accept invitation share on
 
 - `FieldGroup` of fields, one column on mobile, two on `md` only when fields are short
 - every field is a `FormField` (`@ritorno/ui/components/form-field`): label, `required` marker or `optional` text, the control, then the `hint` or the inline `error` with its icon. It hands the control `id`, `aria-invalid` and `aria-describedby`, so errors are announced and look the same everywhere
-- one `Select` (`@ritorno/ui/components/select`) for every choice from a list: pass `options`, then `value` and `onValueChange`, or `name` and `defaultValue` in a plain server form (it posts a hidden input). No hand rolled `<select>`. The only native select left is the dial code inside `PhoneInput`, where the picker sits inside the input and the native wheel is the expected phone control
+- one `Select` (`@ritorno/ui/components/select`) for every choice from a list: pass `options`, then `value` and `onValueChange`, or `name` and `defaultValue` in a plain server form (it posts a hidden input). No hand rolled `<select>`.
 - `Input` with `type` or `inputMode` `email`, `tel` or `url` is `dir="ltr"` by default. Slugs, promo codes and other codes set `dir="ltr"` themselves
 - `SegmentedControl` for two to five options that should stay visible (period, language, a preference). Native radios underneath, so it works in a plain form. Give every option an `href` (and `linkComponent={Link}`) when the choice lives in the url, like the metrics period. Past five options, use `Select`
 - the submit button is `<Button loading={pending}>`, disabled while pending so a double tap cannot send twice
-- phone: `PhoneInput` with the dial code select. Default `+216`. Normalize and validate in the api
+- phone: `PhoneInput` with `usePhoneNumber` and its searchable country picker (loaded on open). Default `+216`; `detect: true` takes the browser region, for forms people fill about themselves. A typed or pasted `+` or `00` switches the country. Validate in the api and show the refused field on the field
 - consent: separate unchecked `Checkbox` per channel (email, whatsapp), each with its own wording, never pre checked
 - success and failure use a toast (`toast.success`, `toast.error`) unless the user must act, then an `InlineAlert`
 - while the analytics consent card is open on a phone, `StickyFormActions` stops sticking: the actions, the card and the tabs stacked would cover the form

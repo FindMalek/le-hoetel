@@ -15,6 +15,8 @@
     "./consent": "./src/consent.ts",
     "./feedback-case": "./src/feedback-case.ts",
     "./phone": "./src/phone.ts",
+    "./dial": "./src/dial.ts",
+    "./field-errors": "./src/field-errors.ts",
     "./guest-export": "./src/guest-export.ts",
     "./message": "./src/message.ts",
     "./pricing": "./src/pricing.ts",

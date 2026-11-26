@@ -9,7 +9,11 @@ import { CONTAINER, SECTION_Y } from "./section"
 
 /** The closing call to action: one centered display line, the demo form and the WhatsApp shortcut. */
 export async function DemoSection({ whatsappUrl }: { whatsappUrl: string | null }) {
-  const [t, locale] = await Promise.all([getTranslations("landing.demo"), getLocale()])
+  const [t, tPicker, locale] = await Promise.all([
+    getTranslations("landing.demo"),
+    getTranslations("countryPicker"),
+    getLocale(),
+  ])
   const language = HOTEL_LANGUAGES.find((l) => l === locale) ?? "fr"
   return (
     <section
@@ -26,6 +30,7 @@ export async function DemoSection({ whatsappUrl }: { whatsappUrl: string | null 
         <div className="mt-10 w-full max-w-xl text-start md:mt-12">
           <DemoForm
             language={language}
+            locale={locale}
             copy={{
               name: t("name"),
               nameError: t("nameError"),
@@ -33,7 +38,12 @@ export async function DemoSection({ whatsappUrl }: { whatsappUrl: string | null 
               hotelError: t("hotelError"),
               phone: t("phone"),
               phoneError: t("phoneError"),
-              dialCode: t("dialCode"),
+              countryPicker: {
+                label: tPicker("label"),
+                search: tPicker("search"),
+                empty: tPicker("empty"),
+                close: tPicker("close"),
+              },
               city: t("city"),
               cityError: t("cityError"),
               language: t("language"),
