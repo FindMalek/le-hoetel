@@ -1,11 +1,14 @@
 "use client"
 
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { buttonVariants } from "@ritorno/ui/components/button"
+import { FormField } from "@ritorno/ui/components/form-field"
+import { Input } from "@ritorno/ui/components/input"
 import { PhoneInput } from "@ritorno/ui/components/phone-input"
 import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
-import { captureAction } from "@/app/h/[hotelSlug]/actions"
+import { captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
 import { ConsentToggle } from "./consent-toggle"
 
 export interface CaptureCopy {
@@ -38,8 +41,8 @@ export interface CaptureCopy {
 type Status = "idle" | "done" | "invalid" | "tooMany"
 
 const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
-const CONTROL =
-  "h-12 w-full min-w-0 rounded-xl border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface aria-invalid:border-destructive"
+/** Guest inputs are 48 px and stay 16 px on every width, so iOS never zooms. */
+const CONTROL = "h-12 rounded-input bg-background text-base md:text-base"
 
 const nationalDigits = (national: string) => national.replace(/\D/g, "").replace(/^0+/, "")
 
@@ -162,47 +165,39 @@ export function CaptureForm(props: {
           </label>
         </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="capture-name" className="font-medium text-sm">
-            {copy.name}
-          </label>
-          <input
-            ref={nameRef}
-            id="capture-name"
-            name="name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            onBlur={() => setTouched((current) => ({ ...current, name: true }))}
-            maxLength={120}
-            autoComplete="name"
-            enterKeyHint="next"
-            aria-invalid={showName}
-            aria-describedby="capture-name-error"
-            className={CONTROL}
-          />
-          <FieldError id="capture-name-error">{showName ? copy.nameError : null}</FieldError>
-        </div>
+        <FormField id="capture-name" label={copy.name} error={showName ? copy.nameError : null}>
+          {(aria) => (
+            <Input
+              {...aria}
+              ref={nameRef}
+              name="name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              onBlur={() => setTouched((current) => ({ ...current, name: true }))}
+              maxLength={120}
+              autoComplete="name"
+              enterKeyHint="next"
+              className={CONTROL}
+            />
+          )}
+        </FormField>
 
-        <div className="grid gap-2">
-          <label htmlFor="capture-phone" className="font-medium text-sm">
-            {copy.phone}
-          </label>
-          <PhoneInput
-            ref={phoneRef}
-            id="capture-phone"
-            value={national}
-            onValueChange={setNational}
-            onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
-            dialCode={dialCode}
-            onDialCodeChange={setDialCode}
-            dialCodeLabel={copy.dialCode}
-            enterKeyHint="done"
-            aria-invalid={showPhone}
-            aria-describedby="capture-phone-error"
-            className="h-12 rounded-xl bg-background"
-          />
-          <FieldError id="capture-phone-error">{showPhone ? copy.phoneError : null}</FieldError>
-        </div>
+        <FormField id="capture-phone" label={copy.phone} error={showPhone ? copy.phoneError : null}>
+          {(aria) => (
+            <PhoneInput
+              {...aria}
+              ref={phoneRef}
+              value={national}
+              onValueChange={setNational}
+              onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
+              dialCode={dialCode}
+              onDialCodeChange={setDialCode}
+              dialCodeLabel={copy.dialCode}
+              enterKeyHint="done"
+              className={CONTROL}
+            />
+          )}
+        </FormField>
 
         <fieldset className="grid gap-2">
           <legend className="mb-2 font-medium text-sm">{copy.language}</legend>
@@ -218,7 +213,7 @@ export function CaptureForm(props: {
                 />
                 <span
                   lang={language}
-                  className="flex h-11 items-center justify-center rounded-xl border font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
+                  className="flex h-11 items-center justify-center rounded-full border bg-background font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
                 >
                   {LANGUAGE_NAMES[language]}
                 </span>
@@ -247,7 +242,7 @@ export function CaptureForm(props: {
         <details
           open={optionalOpen}
           onToggle={(event) => setOptionalOpen(event.currentTarget.open)}
-          className="group rounded-xl border"
+          className="group rounded-card border"
         >
           <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
             <span className="grid gap-0.5">
@@ -260,33 +255,28 @@ export function CaptureForm(props: {
             />
           </summary>
           <div className="grid gap-6 border-t p-4">
-            <div className="grid gap-2">
-              <label htmlFor="capture-birthday" className="font-medium text-sm">
-                {copy.birthday}
-              </label>
-              <input id="capture-birthday" type="date" name="birthday" autoComplete="bday" className={CONTROL} />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="capture-email" className="font-medium text-sm">
-                {copy.email}
-              </label>
-              <input
-                ref={emailRef}
-                id="capture-email"
-                type="email"
-                name="email"
-                dir="ltr"
-                maxLength={200}
-                autoComplete="email"
-                inputMode="email"
-                enterKeyHint="done"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                aria-invalid={tried && emailMissing}
-                aria-describedby="capture-email-needed"
-                className={CONTROL}
-              />
-            </div>
+            <FormField id="capture-birthday" label={copy.birthday}>
+              {(aria) => <Input {...aria} type="date" name="birthday" autoComplete="bday" className={CONTROL} />}
+            </FormField>
+            <FormField id="capture-email" label={copy.email}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  ref={emailRef}
+                  type="email"
+                  name="email"
+                  maxLength={200}
+                  autoComplete="email"
+                  inputMode="email"
+                  enterKeyHint="done"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  aria-invalid={tried && emailMissing}
+                  aria-describedby="capture-email-needed"
+                  className={CONTROL}
+                />
+              )}
+            </FormField>
           </div>
         </details>
 
@@ -300,10 +290,7 @@ export function CaptureForm(props: {
               {status === "invalid" ? copy.errorInvalid : copy.errorTooMany}
             </p>
           ) : null}
-          <button
-            type="submit"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 font-medium text-base text-primary-foreground transition-opacity duration-150 active:opacity-90"
-          >
+          <button type="submit" className={buttonVariants({ size: "lg", className: "w-full" })}>
             {copy.submit}
           </button>
           <p className="text-center text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.submitHint}</p>

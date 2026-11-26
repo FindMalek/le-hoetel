@@ -10,7 +10,7 @@ export function ConsentToggle({
   return (
     <label
       className={cn(
-        "flex min-h-14 cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors duration-150 has-checked:border-primary/60 has-checked:bg-primary/5",
+        "flex min-h-14 cursor-pointer items-start gap-4 rounded-card border p-4 transition-colors duration-150 has-checked:border-primary/60 has-checked:bg-primary/5",
         className,
       )}
     >

@@ -568,8 +568,6 @@
     "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
     "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
     "errorTooMany": "Trop d'essais. Patientez un instant puis réessayez.",
-    "privacy": "Confidentialité",
-    "languageLabel": "Langue",
     "nameError": "Ajoutez votre nom.",
     "phoneError": "Vérifiez votre numéro.",
     "optionalTitle": "Un peu plus sur vous",
@@ -577,8 +575,21 @@
     "whatsappTitle": "WhatsApp",
     "emailTitle": "E-mail",
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
-    "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
-    "terms": "Conditions"
+    "thanksPerk": "Montrez cet écran à la réception pour le recevoir."
+  },
+  "guest": {
+    "languageLabel": "Langue",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "poweredBy": "Propulsé par {brand}",
+    "loading": "Chargement",
+    "errorTitle": "Un problème est survenu",
+    "errorBody": "La page ne s'est pas chargée. Vérifiez votre connexion et réessayez.",
+    "retry": "Réessayer",
+    "hotelMissingTitle": "Cette page d'hôtel n'existe pas",
+    "hotelMissing": "Le QR code est peut-être ancien. Demandez le code actuel à la réception.",
+    "reviewInvalidTitle": "Ce lien d'avis n'est pas valide",
+    "reviewInvalid": "Ouvrez à nouveau le lien de votre message, ou demandez à la réception."
   },
   "adminHotels": {
     "title": "Hôtels",

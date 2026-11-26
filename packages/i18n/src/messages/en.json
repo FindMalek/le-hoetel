@@ -568,8 +568,6 @@
     "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
     "errorInvalid": "Please check your name and phone number.",
     "errorTooMany": "Too many tries. Please wait a moment and try again.",
-    "privacy": "Privacy",
-    "languageLabel": "Language",
     "nameError": "Add your name.",
     "phoneError": "Check your phone number.",
     "optionalTitle": "More about you",
@@ -577,8 +575,21 @@
     "whatsappTitle": "WhatsApp",
     "emailTitle": "Email",
     "submitHint": "No message is sent unless you switch one on.",
-    "thanksPerk": "Show this screen at the front desk to get it.",
-    "terms": "Terms"
+    "thanksPerk": "Show this screen at the front desk to get it."
+  },
+  "guest": {
+    "languageLabel": "Language",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "poweredBy": "Powered by {brand}",
+    "loading": "Loading",
+    "errorTitle": "Something went wrong",
+    "errorBody": "This page did not load. Check your connection and try again.",
+    "retry": "Try again",
+    "hotelMissingTitle": "This hotel page does not exist",
+    "hotelMissing": "The QR code may be old. Ask the front desk for the current one.",
+    "reviewInvalidTitle": "This review link is not valid",
+    "reviewInvalid": "Open the link from your message again, or ask the front desk."
   },
   "adminHotels": {
     "title": "Hotels",

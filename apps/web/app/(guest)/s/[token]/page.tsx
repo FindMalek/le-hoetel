@@ -1,13 +1,14 @@
-import { getDirection } from "@ritorno/i18n"
-import { Button, buttonVariants } from "@ritorno/ui/components/button"
+import { DEFAULT_LOCALE } from "@ritorno/i18n"
+import { buttonVariants } from "@ritorno/ui/components/button"
 import { Textarea } from "@ritorno/ui/components/textarea"
-import { CircleAlertIcon, ExternalLinkIcon } from "lucide-react"
+import { CheckIcon, CircleAlertIcon, ClockIcon, ExternalLinkIcon, LinkIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { connection } from "next/server"
-import { getTranslations } from "next-intl/server"
-import { GuestHero } from "@/components/guest-hero"
+import { getLocale, getTranslations } from "next-intl/server"
+import { GuestShell, guestLanguage } from "@/components/guest-shell"
+import { GuestState } from "@/components/guest-state"
+import { SubmitButton } from "@/components/submit-button"
 import { getSurveyPage } from "@/lib/api"
-import { guestBrand } from "@/lib/branding"
 import { sendSurvey } from "./actions"
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ const NPS = Array.from({ length: 11 }, (_, score) => score)
 const STARS = [1, 2, 3, 4, 5]
 
 const PILL =
-  "flex min-h-12 items-center justify-center rounded-lg border bg-background font-medium tabular-nums transition-colors hover:bg-accent peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
+  "flex min-h-12 items-center justify-center rounded-full border bg-background font-medium tabular-nums transition-colors hover:bg-accent peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
 
 function Choice({ name, value, required }: { name: string; value: number; required?: boolean }) {
   return (
@@ -34,20 +35,21 @@ function Choice({ name, value, required }: { name: string; value: number; requir
 export default async function Page({ params, searchParams }: PageProps<"/s/[token]">) {
   await connection()
   const { token } = await params
-  const { error } = await searchParams
+  const { error, lang } = await searchParams
   const page = await getSurveyPage(token)
 
   if (!page) {
-    const t = await getTranslations("survey")
+    const language = guestLanguage(lang, guestLanguage(await getLocale(), DEFAULT_LOCALE))
+    const t = await getTranslations({ locale: language, namespace: "survey" })
     return (
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-2 px-5 py-10">
-        <h1 className="font-semibold text-h2 tracking-tight">{t("invalidTitle")}</h1>
-        <p className="text-muted-foreground leading-relaxed">{t("invalid")}</p>
-      </main>
+      <GuestShell hotel={null} language={language}>
+        <GuestState heading="h1" icon={<LinkIcon />} title={t("invalidTitle")} body={t("invalid")} />
+      </GuestShell>
     )
   }
 
-  const t = await getTranslations({ locale: page.language, namespace: "survey" })
+  const language = guestLanguage(lang, page.language)
+  const t = await getTranslations({ locale: language, namespace: "survey" })
   const hotel = page.hotel.displayName
   const closed = page.state !== "open"
   const ratings = [
@@ -57,39 +59,30 @@ export default async function Page({ params, searchParams }: PageProps<"/s/[toke
   ]
   const answered = page.state === "answered"
   return (
-    <div
-      lang={page.language}
-      dir={getDirection(page.language)}
-      // oxlint-disable-next-line shadcn/no-inline-styles
-      style={guestBrand(page.hotel)}
-      className="min-h-dvh"
-    >
-      <GuestHero hotel={page.hotel} />
-      <main className="mx-auto grid w-full max-w-md gap-6 px-5 py-8">
+    <GuestShell hotel={page.hotel} language={language}>
+      <div className="grid gap-6 pb-6">
         {closed ? (
-          <div role="status" className="grid gap-2">
-            <h2 className="text-balance font-semibold text-h3 tracking-tight">
-              {answered ? t("thanksTitle") : t("expiredTitle")}
-            </h2>
-            <p className="text-muted-foreground leading-relaxed">
-              {answered ? t("thanks", { hotel }) : t("expired", { hotel })}
-            </p>
+          <GuestState
+            icon={answered ? <CheckIcon /> : <ClockIcon />}
+            title={answered ? t("thanksTitle") : t("expiredTitle")}
+            body={answered ? t("thanks", { hotel }) : t("expired", { hotel })}
+          >
             {page.reviewToken ? (
-              <div className="mt-4 grid gap-3 border-t pt-6">
-                <p className="text-muted-foreground leading-relaxed">{t("reviewPrompt")}</p>
+              <div className="mt-2 grid w-full gap-3 border-t pt-6">
+                <p className="text-muted-foreground">{t("reviewPrompt")}</p>
                 <a
                   href={`/r/${page.reviewToken}`}
                   rel="noreferrer"
-                  className={buttonVariants({ variant: "outline", size: "lg", className: "min-h-12 w-full text-base" })}
+                  className={buttonVariants({ variant: "secondary", size: "lg", className: "w-full" })}
                 >
                   {t("shareOnGoogle")}
                   <ExternalLinkIcon aria-hidden className="rtl:-scale-x-100" />
                 </a>
               </div>
             ) : null}
-          </div>
+          </GuestState>
         ) : (
-          <form action={sendSurvey.bind(null, token)} className="grid gap-8">
+          <form action={sendSurvey.bind(null, token, lang ? language : undefined)} className="grid gap-8">
             <div className="grid gap-2">
               <h2 className="text-balance font-semibold text-h3 tracking-tight">{t("title")}</h2>
               <p className="text-muted-foreground leading-relaxed">{t("intro", { hotel })}</p>
@@ -130,12 +123,10 @@ export default async function Page({ params, searchParams }: PageProps<"/s/[toke
               </label>
               <Textarea id="comment" name="comment" maxLength={1000} rows={4} />
             </div>
-            <Button type="submit" size="lg" className="min-h-12 w-full text-base">
-              {t("send")}
-            </Button>
+            <SubmitButton>{t("send")}</SubmitButton>
           </form>
         )}
-      </main>
-    </div>
+      </div>
+    </GuestShell>
   )
 }
