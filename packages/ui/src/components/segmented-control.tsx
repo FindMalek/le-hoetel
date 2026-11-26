@@ -25,9 +25,9 @@ type SegmentedControlProps<V extends string> = {
   className?: string
 }
 
-const GROUP = "inline-flex gap-1 rounded-full bg-surface p-1"
+const GROUP = "relative inline-flex max-w-full gap-1 overflow-x-auto rounded-full bg-surface p-1"
 const SEGMENT =
-  "inline-flex h-9 min-w-0 flex-1 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-4 font-medium text-muted-foreground text-sm transition-colors duration-150 hover:text-foreground coarse:h-11"
+  "inline-flex h-9 flex-1 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 font-medium sm:px-4 text-muted-foreground text-sm transition-colors duration-150 hover:text-foreground coarse:h-11"
 const SELECTED = "bg-background text-foreground shadow-xs"
 
 /**

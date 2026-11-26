@@ -46,9 +46,10 @@ export function ConsentBanner({ labels }: { labels: ConsentBannerLabels }) {
     <section
       ref={ref}
       aria-label={labels.label}
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto mb-(--consent-banner-offset,env(safe-area-inset-bottom)) flex max-w-xl flex-col gap-3 rounded-2xl border bg-card p-4 text-card-foreground shadow-md sm:flex-row sm:items-center sm:gap-4"
+      data-consent-banner=""
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto mb-(--consent-banner-offset,env(safe-area-inset-bottom)) flex max-w-xl flex-col gap-2 rounded-2xl border bg-card p-3 text-card-foreground shadow-md sm:flex-row sm:items-center sm:gap-4 sm:p-4"
     >
-      <p className="min-w-0 flex-1 text-muted-foreground text-sm">{labels.text}</p>
+      <p className="min-w-0 flex-1 text-caption text-muted-foreground sm:text-sm">{labels.text}</p>
       <div className="grid shrink-0 grid-cols-2 gap-2">
         <Button variant="outline" onClick={() => choose("denied")}>
           {labels.decline}

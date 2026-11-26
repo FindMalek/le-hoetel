@@ -1105,6 +1105,8 @@
     "home": "Retour à l'accueil"
   },
   "holidays": {
+    "forbiddenTitle": "Non disponible pour votre rôle",
+    "forbiddenBody": "Seuls les propriétaires et les managers peuvent régler les messages de fête.",
     "title": "Messages de fête",
     "description": "Un petit mot les jours qui comptent pour vos clients. Désactivé tant que vous n'activez pas une fête.",
     "noDate": "Date pas encore connue",
@@ -1693,6 +1695,7 @@
       "target": "Cible"
     },
     "filters": {
+      "toggle": "Filtres",
       "action": "Action",
       "actor": "Personne",
       "hotel": "Hôtel",
@@ -1790,6 +1793,8 @@
     }
   },
   "campaigns": {
+    "forbiddenTitle": "Non disponible pour votre rôle",
+    "forbiddenBody": "Seuls les propriétaires et les managers peuvent voir et envoyer des campagnes.",
     "title": "Campagnes",
     "description": "Envoyez un message aux clients qui ont accepté de vous lire.",
     "new": "Nouvelle campagne",

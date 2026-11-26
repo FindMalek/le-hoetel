@@ -203,8 +203,8 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
                   const change = lastChange(channel)
                   const Icon = CHANNEL_ICON[channel]
                   return (
-                    <li key={channel} className="flex min-h-16 items-center justify-between gap-3 px-4 py-3">
-                      <div className="flex min-w-0 flex-col gap-1">
+                    <li key={channel} className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-4 py-3">
+                      <div className="flex min-w-32 flex-1 flex-col gap-1">
                         <span className="flex items-center gap-2 font-medium text-sm">
                           <Icon className="size-4 text-muted-foreground" aria-hidden />
                           {tGuests(`consent.${channel}`)}
@@ -219,7 +219,7 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
                           )}
                         </span>
                       </div>
-                      <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+                      <div className="ms-auto flex shrink-0 flex-wrap items-center justify-end gap-2">
                         <StatusBadge tone={granted ? "success" : "neutral"}>
                           {t(granted ? "granted" : "notGranted")}
                         </StatusBadge>

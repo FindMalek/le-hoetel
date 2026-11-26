@@ -224,6 +224,10 @@
   :root:has([data-bottom-tabs]) {
     --consent-banner-offset: calc(3.5rem + env(safe-area-inset-bottom));
   }
+  /* Actions, the card and the tabs stacked would leave no room for the form: the actions wait at its end. */
+  :root:has([data-consent-banner]) [data-slot="sticky-form-actions"] {
+    position: static;
+  }
 }
 
 @utility pb-nav {

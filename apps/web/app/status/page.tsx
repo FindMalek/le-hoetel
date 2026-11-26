@@ -10,7 +10,7 @@ export default async function StatusPage() {
   const services = await getServices()
   const allUp = services?.every((s) => s.ok)
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-12">
+    <main lang="en" dir="ltr" className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-12">
       <h1 className="font-heading font-semibold text-3xl tracking-tight">Status</h1>
       <p className="text-muted-foreground">
         {!services ? "The status check is unreachable." : allUp ? "All systems operational." : "Something is down."}

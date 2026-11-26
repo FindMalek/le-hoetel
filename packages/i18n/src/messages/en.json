@@ -1105,6 +1105,8 @@
     "home": "Back to home"
   },
   "holidays": {
+    "forbiddenTitle": "Not available for your role",
+    "forbiddenBody": "Only owners and managers can set holiday messages.",
     "title": "Holiday messages",
     "description": "A short greeting on the days that matter to your guests. Off until you switch a holiday on.",
     "noDate": "No date known yet",
@@ -1693,6 +1695,7 @@
       "target": "Target"
     },
     "filters": {
+      "toggle": "Filters",
       "action": "Action",
       "actor": "Person",
       "hotel": "Hotel",
@@ -1790,6 +1793,8 @@
     }
   },
   "campaigns": {
+    "forbiddenTitle": "Not available for your role",
+    "forbiddenBody": "Only owners and managers can see and send campaigns.",
     "title": "Campaigns",
     "description": "Send one message to the guests who agreed to hear from you.",
     "new": "New campaign",
