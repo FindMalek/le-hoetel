@@ -49,7 +49,7 @@ async function NoHotelHome({ name }: { name: string }) {
 }
 
 // i18n-used: home.languages
-async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: string; slug: string } }) {
+async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: string; slug: string; timezone: string } }) {
   const t = await getTranslations("home")
   const tLang = await getTranslations("home.languages")
   const locale = await getLocale()
@@ -98,7 +98,7 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
     {
       id: "added",
       header: t("added"),
-      cell: (guest) => formatDate(guest.createdAt, locale),
+      cell: (guest) => formatDate(guest.createdAt, locale, hotel.timezone),
       align: "end",
     },
   ]
@@ -116,7 +116,7 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
       />
       <div className="flex flex-col gap-8 p-4 md:gap-10 md:p-6">
         <Section title={t("attention.title")}>
-          <HomeAttention alerts={overview.alerts} unread={inbox.unread} />
+          <HomeAttention alerts={overview.alerts} unread={inbox.unread} timeZone={hotel.timezone} />
         </Section>
 
         {manager && <FirstRunChecklist state={overview.checklist} />}
@@ -197,7 +197,7 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-1 text-caption text-muted-foreground">
                   <StatusBadge icon={null}>{tLang(guest.language)}</StatusBadge>
-                  {formatDate(guest.createdAt, locale)}
+                  {formatDate(guest.createdAt, locale, hotel.timezone)}
                 </span>
               </Link>
             )}

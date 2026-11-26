@@ -21,12 +21,14 @@ type Alert = {
 type HomeAttentionProps = {
   alerts: { open: number; items: Alert[] }
   unread: number
+  /** The hotel's timezone, so a date never shifts by a day near midnight. */
+  timeZone: string
 }
 
 const ROW = "flex flex-col gap-3 p-4 md:flex-row md:items-center md:gap-4 md:px-5"
 
 /** What needs a person today: unhappy guests to call first, then unread notifications. A calm line when nothing does. */
-export async function HomeAttention({ alerts, unread }: HomeAttentionProps) {
+export async function HomeAttention({ alerts, unread, timeZone }: HomeAttentionProps) {
   const [t, locale] = await Promise.all([getTranslations("home.attention"), getLocale()])
   const n = (chunks: ReactNode) => <bdi dir="ltr">{chunks}</bdi>
   const more = alerts.open - alerts.items.length
@@ -62,7 +64,7 @@ export async function HomeAttention({ alerts, unread }: HomeAttentionProps) {
               </Link>
               <p className="line-clamp-2 text-muted-foreground text-small">{alert.comment ?? t("noComment")}</p>
               <p className="text-caption text-muted-foreground">
-                {t("answered")} {formatDate(alert.createdAt, locale)}
+                {t("answered")} {formatDate(alert.createdAt, locale, timeZone)}
               </p>
             </div>
           </div>

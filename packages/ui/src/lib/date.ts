@@ -3,6 +3,7 @@
  * in every language. Not `dateStyle: "medium"`: in Arabic that is all digits.
  */
 export function formatDate(value: Date, locale: string, timeZone?: string): string {
+  if (Number.isNaN(value.getTime())) return ""
   return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
