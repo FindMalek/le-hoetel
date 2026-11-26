@@ -6,7 +6,7 @@ import { type Db, guests, hotelSettings, member, organization, whatsappScans } f
 import { and, desc, eq, gte, inArray, lt, lte, ne } from "drizzle-orm"
 import type { Context } from "../context"
 import { notifyInbox } from "./inbox"
-import type { KapsoPayload } from "./messages"
+import { type KapsoPayload, kapsoSender } from "./messages"
 import { welcomeOffer } from "./offers"
 import { RATE_LIMITS } from "./rate-limit"
 
@@ -31,13 +31,25 @@ async function isRedelivery(context: Ctx, message: NonNullable<KapsoPayload["mes
   return !(await context.rateLimiter.hit(`whatsapp.scan:message:${id}`, RATE_LIMITS.scanMessage)).ok
 }
 
-/** Never the number itself in a key: it can live in a shared Redis. */
-async function underLimits(context: Ctx, hotelId: string, phoneE164: string): Promise<boolean> {
-  const who = createHmac("sha256", context.config.tokenSecret).update(phoneE164).digest("base64url")
+/** Never the number or user id itself in a key: it can live in a shared Redis. */
+const senderKey = (context: Ctx, sender: string) =>
+  createHmac("sha256", context.config.tokenSecret).update(sender).digest("base64url")
+
+async function underLimits(context: Ctx, hotelId: string, sender: string): Promise<boolean> {
+  const who = senderKey(context, sender)
   const phone = await context.rateLimiter.hit(`whatsapp.scan:phone:${who}`, RATE_LIMITS.scanPhone)
   if (!phone.ok) return false
   return (await context.rateLimiter.hit(`whatsapp.scan:hotel:${hotelId}`, RATE_LIMITS.scanHotel)).ok
 }
+
+/** Without a phone there is no scan row to claim, so the limiter holds the one welcome per day. */
+const claimUnlisted = async (context: Ctx, hotelId: string, userId: string): Promise<boolean> =>
+  (
+    await context.rateLimiter.hit(
+      `whatsapp.scan:reply:${hotelId}:${senderKey(context, userId)}`,
+      RATE_LIMITS.scanMessage,
+    )
+  ).ok
 
 /** Records the scan and says whether this one gets the welcome: at most one per hotel and number in 24 hours. */
 async function claimReply(db: Db, scan: typeof whatsappScans.$inferInsert): Promise<boolean> {
@@ -68,12 +80,14 @@ async function notifyStaff(db: Db, hotelId: string, notice: { title: string; bod
  * An inbound WhatsApp message carrying a QR code's reference. Answers once with the hotel's scripted welcome (free
  * form, inside the 24 hour window the guest just opened) and tells the staff. Writing to us is not a consent: no
  * guest and no consent is created or changed. A message without a code this server signed, or for a suspended
- * hotel, is ignored. Returns whether a reply was claimed.
+ * hotel, is ignored. A sender without a phone (WhatsApp username) gets the welcome, but nothing is stored and staff
+ * are not told: they would have no number to write to. Returns whether a reply was claimed.
  */
 export async function handleWhatsAppScan(context: Ctx, payload: KapsoPayload): Promise<boolean> {
-  const { from, type, text } = payload.message ?? {}
-  const digits = from?.replace(/\D/g, "")
-  if (!digits || digits.length > 15 || type !== "text") return false
+  const { type, text } = payload.message ?? {}
+  const { phoneE164, userId } = kapsoSender(payload)
+  const sender = phoneE164 ?? userId
+  if (!sender || type !== "text") return false
   const spot = readScanCode(context.config.tokenSecret, text?.body ?? "")
   if (!spot) return false
   const [hotel] = await context.db
@@ -81,26 +95,29 @@ export async function handleWhatsAppScan(context: Ctx, payload: KapsoPayload): P
     .from(organization)
     .innerJoin(hotelSettings, eq(hotelSettings.organizationId, organization.id))
     .where(and(eq(organization.slug, spot.slug), ne(hotelSettings.status, "suspended")))
-  const phoneE164 = `+${digits}`
   if (!hotel || (await isRedelivery(context, payload.message!))) return false
-  if (!(await underLimits(context, hotel.id, phoneE164))) return false
+  if (!(await underLimits(context, hotel.id, sender))) return false
 
   const now = context.now()
-  const claimed = await claimReply(context.db, {
-    hotelId: hotel.id,
-    phoneE164,
-    source: CAPTURE_SOURCES[spot.source],
-    location: spot.location,
-    language: spot.language,
-    lastScanAt: now,
-    repliedAt: now,
-  })
+  const claimed = phoneE164
+    ? await claimReply(context.db, {
+        hotelId: hotel.id,
+        phoneE164,
+        source: CAPTURE_SOURCES[spot.source],
+        location: spot.location,
+        language: spot.language,
+        lastScanAt: now,
+        repliedAt: now,
+      })
+    : await claimUnlisted(context, hotel.id, sender)
   if (!claimed) return false
 
-  const [guest] = await context.db
-    .select({ id: guests.id })
-    .from(guests)
-    .where(and(eq(guests.hotelId, hotel.id), eq(guests.phoneE164, phoneE164)))
+  const [guest] = phoneE164
+    ? await context.db
+        .select({ id: guests.id })
+        .from(guests)
+        .where(and(eq(guests.hotelId, hotel.id), eq(guests.phoneE164, phoneE164)))
+    : []
   const page = new URL(captureUrl(context.config.webUrl, spot.slug, spot.source, spot.location))
   page.searchParams.set("lang", spot.language)
   const reply = scanWelcome({
@@ -108,16 +125,21 @@ export async function handleWhatsAppScan(context: Ctx, payload: KapsoPayload): P
     hotelName: hotel.name,
     offer: await welcomeOffer(context.db, hotel.id, now),
     registerUrl: guest ? null : page.toString(),
+    numberHidden: !phoneE164,
   })
   // Not retried: a lost answer may still have sent it. Staff see the scan either way.
-  await context.notification.replyWhatsApp(phoneE164, reply, "scan_welcome").catch((error: unknown) => {
-    // Never the error itself: a provider's text can carry the number.
-    console.error("[whatsapp-scan] welcome not sent", {
-      hotelId: hotel.id,
-      status: (error as { httpStatus?: number } | null)?.httpStatus,
+  await context.notification
+    .replyWhatsApp(phoneE164 ?? { userId: sender }, reply, "scan_welcome")
+    .catch((error: unknown) => {
+      // Never the error itself: a provider's text can carry the number.
+      console.error("[whatsapp-scan] welcome not sent", {
+        hotelId: hotel.id,
+        status: (error as { httpStatus?: number } | null)?.httpStatus,
+      })
     })
-  })
-  await notifyStaff(context.db, hotel.id, scanNotice(hotel.language, hotel.name, spot.source, spot.location))
+  if (phoneE164) {
+    await notifyStaff(context.db, hotel.id, scanNotice(hotel.language, hotel.name, spot.source, spot.location))
+  }
   return true
 }
 

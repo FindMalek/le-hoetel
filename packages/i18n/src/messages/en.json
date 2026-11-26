@@ -636,7 +636,7 @@
     "thanksTitle": "You are in, {name}",
     "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
     "errorInvalid": "Please check your name and phone number.",
-    "errorTooMany": "Too many tries. Please wait a moment and try again.",
+    "errorTooMany": "Too many sign-ups right now. Try again later, or ask at the front desk.",
     "errorFailed": "Your sign-up was not sent. Check your connection and try again.",
     "nameError": "Add your name.",
     "phoneError": "Check your phone number.",
