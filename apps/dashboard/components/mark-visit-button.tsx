@@ -38,7 +38,11 @@ export function MarkVisitButton({
     orpc.guests.markVisit.mutationOptions({
       onSuccess: ({ visitId }) => {
         if (visitId) {
-          toast.success(t("marked"), { duration: 10_000, action: { label: t("undo"), onClick: () => undo(visitId) } })
+          toast.success(t("marked"), {
+            duration: 10_000,
+            action: { label: t("undo"), onClick: () => undo(visitId) },
+            classNames: { actionButton: "h-11! px-4!" },
+          })
         } else toast.info(t("alreadyCounted"))
         refresh()
       },
