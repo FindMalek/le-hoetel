@@ -1,10 +1,11 @@
+import { Button } from "@ritorno/ui/components/button"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import { PlusIcon } from "lucide-react"
 import type { Metadata } from "next"
+import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { OffersBoard } from "@/components/offers-board"
 import { PageHeader } from "@/components/page-header"
-import { TopBarAction } from "@/components/top-bar"
 import { call, getQueryClient, serverOrpc } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Offers" }
@@ -20,8 +21,18 @@ export default async function OffersPage() {
   const canEdit = mine.role !== "staff"
   return (
     <>
-      {canEdit ? <TopBarAction href="/offers/new" label={t("add")} icon={<PlusIcon />} /> : null}
-      <PageHeader title={t("title")} description={t("description")} />
+      <PageHeader
+        title={t("title")}
+        description={t("description")}
+        action={
+          canEdit ? (
+            <Button render={<Link href="/offers/new" />} nativeButton={false}>
+              <PlusIcon data-icon="inline-start" />
+              {t("add")}
+            </Button>
+          ) : null
+        }
+      />
       <div className="p-4 md:p-6">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <OffersBoard canEdit={canEdit} />

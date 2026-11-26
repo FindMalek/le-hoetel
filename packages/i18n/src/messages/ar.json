@@ -18,7 +18,18 @@
     "mainNav": "التنقل الرئيسي",
     "tabs": "التنقل السريع",
     "appearance": "اللغة والحساب",
-    "loading": "جارٍ التحميل…"
+    "loading": "جارٍ التحميل…",
+    "toggleSidebar": "طي الشريط الجانبي أو توسيعه",
+    "shortcuts": "اضغط G ثم حرفًا للانتقال",
+    "feedback": "ملاحظات",
+    "feedbackTitle": "إرسال ملاحظة",
+    "feedbackDescription": "أخبرنا بما أبطأك أو بما ينقصك. تصل مباشرة إلى الفريق.",
+    "feedbackPlaceholder": "ما الذي يمكن تحسينه؟",
+    "feedbackEmail": "البريد الإلكتروني (اختياري)",
+    "feedbackSend": "إرسال",
+    "feedbackCancel": "إلغاء",
+    "feedbackThanks": "شكرًا، وصلتنا ملاحظتك.",
+    "breadcrumb": "مسار التنقل"
   },
   "home": {
     "greeting": "مرحبًا {name}",
@@ -203,7 +214,6 @@
     "messages": "الرسائل",
     "data": "بيانات النزلاء",
     "hotels": "الفنادق",
-    "overview": "نظرة عامة",
     "guests": "النزلاء",
     "inbox": "صندوق الوارد",
     "team": "الفريق",
@@ -214,7 +224,17 @@
     "holidays": "الأعياد",
     "adminOverview": "نظرة عامة",
     "campaigns": "الحملات",
-    "metrics": "الإحصاءات"
+    "metrics": "الإحصاءات",
+    "home": "الرئيسية",
+    "import": "استيراد",
+    "usage": "الاستهلاك",
+    "account": "الحساب",
+    "addGuest": "إضافة نزيل",
+    "groupToday": "اليوم",
+    "groupGuests": "النزلاء",
+    "groupGrow": "النمو",
+    "groupInsights": "التحليلات",
+    "groupSettings": "الإعدادات"
   },
   "hotel": {
     "switch": "تبديل الفندق",

@@ -89,7 +89,7 @@ export async function DashboardMockup() {
     getTranslations("home"),
   ])
   const links = [
-    { icon: HomeIcon, label: nav("overview"), active: true },
+    { icon: HomeIcon, label: nav("home"), active: true },
     { icon: UsersIcon, label: nav("guests") },
     { icon: MegaphoneIcon, label: nav("campaigns") },
     { icon: GiftIcon, label: nav("offers") },

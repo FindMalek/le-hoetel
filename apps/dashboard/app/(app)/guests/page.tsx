@@ -11,7 +11,6 @@ import { GuestFilters } from "@/components/guest-filters"
 import { GuestFinder } from "@/components/guest-finder"
 import { GuestList } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
-import { TopBarAction } from "@/components/top-bar"
 import { call } from "@/lib/api"
 
 const PAGE_SIZE = 25
@@ -42,6 +41,14 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
     <PageHeader
       title={t("title")}
       description={t("description")}
+      action={
+        activeId ? (
+          <Button render={<Link href="/guests/new" />} nativeButton={false}>
+            <PlusIcon data-icon="inline-start" />
+            {t("addButton")}
+          </Button>
+        ) : null
+      }
       secondaryActions={
         activeId &&
         canImport && (
@@ -79,7 +86,6 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
   return (
     <>
       {header}
-      <TopBarAction href="/guests/new" label={t("addButton")} icon={<PlusIcon />} />
       <div className="flex flex-col gap-4 p-4 md:p-6">
         {total > 0 || filtered ? <GuestFinder /> : null}
         <GuestFilters values={{ q, ...filters }} />
