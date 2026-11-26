@@ -823,10 +823,10 @@
     "pieceTable": "مجسم الطاولة",
     "pieceDesk": "لافتة الاستقبال",
     "pieceSticker": "ملصقات",
-    "paperRoom": "A6",
-    "paperTable": "A5 مطوية",
-    "paperDesk": "A5",
-    "paperSticker": "ورقة A4 بها 20",
+    "paperRoom": "4 في ورقة A4",
+    "paperTable": "2 في A4، مطوية",
+    "paperDesk": "2 في ورقة A4",
+    "paperSticker": "20 أو 6 في A4",
     "stepSpots": "لأي أماكن؟",
     "deskOnly": "رمز واحد للاستقبال، بدون رقم غرفة أو طاولة.",
     "selectionLabel": "الأماكن المراد طباعتها",
@@ -853,7 +853,6 @@
     "nothingTitle": "لم يتم تحديد شيء",
     "nothing": "حدد مكانًا أو وسّع النطاق.",
     "print": "{count, plural, =0 {طباعة} one {طباعة (صفحة واحدة)} two {طباعة (صفحتان)} few {طباعة (# صفحات)} other {طباعة (# صفحة)}}",
-    "printHint": "في نافذة الطباعة: بدون هوامش وبمقياس 100%. اختر حفظ بصيغة PDF للتنزيل.",
     "saveImages": "صور {format}",
     "saveFailed": "تعذر حفظ الصور. حاول مرة أخرى.",
     "openPage": "فتح صفحة الضيف",
@@ -893,7 +892,15 @@
     "colSpot": "المكان",
     "colGuests": "الضيوف",
     "noSpot": "الفندق كله",
-    "beforePrint": "قبل الطباعة"
+    "beforePrint": "قبل الطباعة",
+    "paperLabel": "أين ستطبع",
+    "paperOffice": "طابعتي (A4)",
+    "paperShop": "المطبعة",
+    "stickerSize": "حجم الملصقات",
+    "stickerSmall": "صغيرة، 20 في A4",
+    "stickerLarge": "كبيرة، 6 في A4",
+    "printHintOffice": "ورق A4 بمقياس 100% وبدون هوامش. قص عند العلامات. احفظ بصيغة PDF للتنزيل.",
+    "printHintShop": "قطعة في كل صفحة بقياس {size}، مع 3 مم زيادة للقص وعلامات القص. احفظ بصيغة PDF وأرسل الملف."
   },
   "qrKit": {
     "headlineRoom": "أهلًا بكم في غرفتكم",
@@ -904,7 +911,8 @@
     "perkTitle": "هدية الترحيب",
     "perkBody": "هدية صغيرة من {hotel} في انتظاركم في الاستقبال.",
     "alt": "رمز QR للتسجيل",
-    "sheetScan": "امسحوا الرمز"
+    "sheetScan": "امسحوا الرمز",
+    "sheetBenefit": "هدية ترحيب في انتظاركم"
   },
   "messages": {
     "title": "الرسائل",

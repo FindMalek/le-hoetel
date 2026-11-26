@@ -75,19 +75,27 @@ Every printed piece and download opens `<web url>/q/<code>` and shows that addre
 
 1. **What to print**, picked from thumbnails of the real art:
 
-| Piece | Source | Paper |
-|---|---|---|
-| Room card | `room` | A6 portrait, one per room |
-| Table tent | `table` | A5 portrait folded into two A6 faces, one per table |
-| Desk sign | `desk` | A5 portrait |
-| Stickers | rooms and tables | A4 sheet of 20 (45 x 52 mm, 39 mm code) with crop marks |
+| Piece | Source | Final size | On the hotel's A4 printer |
+|---|---|---|---|
+| Room card | `room` | A6 portrait (105 x 148 mm) | 4 per sheet |
+| Table tent | `table` | A5 portrait, folded into two A6 faces | 2 per sheet (landscape) |
+| Desk sign | `desk` | A5 portrait | 2 copies per sheet (landscape) |
+| Stickers, small | rooms and tables | 45 x 52 mm | 20 per sheet |
+| Stickers, large | rooms and tables | 78.75 x 91 mm | 6 per sheet (2 x 3) |
 
 2. **Which spots**, from the saved list: all, a range (`From` and `To`, numbers in number order, an empty end is open) or ticked ones. With no saved spot the piece prints one code without a number.
-3. **Wording**: the language on the paper (`en`, `fr`, `ar`, default the hotel's guest language), the headline (empty keeps the default) and whether the welcome gift is shown. Headline and gift apply to cards, not stickers.
+3. **Wording**: the language on the paper (`en`, `fr`, `ar`, default the hotel's guest language), the headline (empty keeps the default) and whether the welcome gift is shown. Stickers have no headline, and the gift is their one line benefit (the offer's title, else a default line).
 
-**The preview is the print.** One component (`components/qr/art.tsx`) draws the thumbnails, the preview, the printed pages and the saved images. **Print or save PDF** puts every page of the selection under `body` and opens the browser's print dialog: choose **Save as PDF** to download one file. No PDF library: the browser already shapes Arabic and lays out right to left with the app's fonts, and the QR stays vector. `@page` sets the paper size and everything sits inside a white margin, so no bleed is needed.
+**Where it prints.** Next to the preview:
 
-**PNG images** and **SVG images** save the sticker art (code with logo, "scan me", short address, staff label) of the selected spots, one file, or a zip when there are several. The logo is inside the file. Fonts are the viewing device's.
+- **My printer (A4)**: several pieces per sheet with crop marks in the margins. Cards come out a little under A6 and A5 (90 mm and 131 mm wide) so the marks and the white edge no office printer can reach fit around them.
+- **Print shop**: one piece per page at its final size, 3 mm of bleed and crop marks outside it. The page is the piece plus 8.5 mm on every side (`125 x 165 mm` for a room card).
+
+The geometry is in `components/qr/layout.ts`. Cards have a band of the hotel's color that runs into the bleed. Words and codes stay inside a safe margin, and sticker edges are white. Every card and sticker shows its spot in a bordered tag or in bold (`383`, `T4`) so staff can sort a stack of them.
+
+**The preview is the print.** One component (`components/qr/art.tsx`) draws the thumbnails, the preview pages, the printed pages and the saved images. **Print or save PDF** puts every page of the selection under `body` and opens the browser's print dialog: choose **Save as PDF** to download one file with all pages. No PDF library: the browser already shapes Arabic and lays out right to left with the app's fonts, and the QR stays vector. `@page` sets the paper size; print at 100% scale. The preview stays short enough to be seen whole above the analytics consent card.
+
+**PNG images** and **SVG images** save the sticker art (hotel name, code with logo, benefit, "scan me", short address, staff label) of the selected spots, one file, or a zip when there are several. The logo is inside the file. Fonts are the viewing device's.
 
 Cards carry the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
 

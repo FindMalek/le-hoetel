@@ -20,6 +20,7 @@ async function kitWords(language: HotelLanguage, hotel: string): Promise<KitWord
     perkBody: t("perkBody", { hotel }),
     alt: t("alt"),
     sheetScan: t("sheetScan"),
+    sheetBenefit: t("sheetBenefit"),
   }
 }
 
