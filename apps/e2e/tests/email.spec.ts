@@ -29,8 +29,11 @@ for (const colorScheme of ["light", "dark"] as const) {
       if (kind === "hotel") {
         await expect(page.locator("h1")).toHaveCSS("text-align", locale === "ar" ? "right" : "left")
         const unsubscribe = page.locator('a[href*="/u/"]')
-        await unsubscribe.scrollIntoViewIfNeeded()
-        await expect(unsubscribe).toBeInViewport({ ratio: 1 })
+        await expect(unsubscribe).toBeVisible()
+        // Not `toBeInViewport`: sub-pixel rounding of a text link differs per OS font.
+        const box = await unsubscribe.boundingBox()
+        expect(box?.x).toBeGreaterThanOrEqual(0)
+        expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(WIDTH)
       }
 
       // Catches a missing dark mode class or a brand color nobody can read.
