@@ -85,6 +85,7 @@ const current = parseDotenv(compose.env)
 // Dokploy puts every service with a domain on the shared dokploy-network, where staging's and production's `api` both
 // answer the name `api`. The container name (Dokploy runs compose with the appName as project) is unique per stack.
 if (compose.appName) computed.API_URL = `http://${compose.appName}-api-1:3001`
+else summary(`${target}: no appName from Dokploy, API_URL stays on the shared \`api\` name`)
 let secrets = {}
 if (infisicalConfigured(env)) {
   secrets = await pullSecrets(prod ? "prod" : "staging", env)
