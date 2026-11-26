@@ -11,8 +11,6 @@ import type { JobServices } from "./welcome"
 
 export const CAMPAIGN_JOB = "campaign-dispatch"
 
-/** Messages per campaign per minute: at most `SEND_PACING.batchSize` sends, `SEND_PACING.pauseMs` apart. */
-
 /**
  * Runs every minute. Takes the campaigns that are due (scheduled, or still sending), skips hotels in quiet hours
  * (21:00 to 08:00 local), and sends the next batch to guests the campaign has not reached yet. A campaign is done
