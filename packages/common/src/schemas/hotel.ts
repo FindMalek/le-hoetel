@@ -129,6 +129,8 @@ export const adminOverviewSchema = z.object({
   }),
   guests: z.object({ total: z.number().int(), last7Days: z.number().int(), consented: z.number().int() }),
   messages: z.object({ total: z.number().int(), delivered: z.number().int(), failed: z.number().int() }),
+  /** Hotels that topped up WhatsApp credit before and are now under the low balance line, lowest first. */
+  lowBalance: z.array(z.object({ id: z.string(), displayName: z.string(), balanceMillimes: z.number().int() })),
 })
 
 export type Hotel = z.infer<typeof hotelSchema>

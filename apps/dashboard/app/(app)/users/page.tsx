@@ -7,12 +7,16 @@ import { call } from "@/lib/api"
 export const metadata: Metadata = { title: "Users" }
 
 export default async function UsersPage() {
-  const [t, { total, users }] = await Promise.all([getTranslations("adminUsers"), call((api) => api.admin.users())])
+  const [t, { total, users }, me] = await Promise.all([
+    getTranslations("adminUsers"),
+    call((api) => api.admin.users()),
+    call((api) => api.me.get()),
+  ])
   return (
     <>
       <PageHeader title={t("title")} description={t("description", { count: total })} />
       <div className="p-4 md:p-6">
-        <AdminUsersBoard users={users} />
+        <AdminUsersBoard users={users} meId={me.id} />
       </div>
     </>
   )

@@ -10,17 +10,10 @@ import {
 } from "@ritorno/common/hotel"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@ritorno/ui/components/alert-dialog"
 import { Button } from "@ritorno/ui/components/button"
 import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
+import { InlineAlert } from "@ritorno/ui/components/inline-alert"
+import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
@@ -184,28 +177,49 @@ const toDateInput = (date: Date | null) => (date ? date.toISOString().slice(0, 1
 export function AdminPlanForm({
   hotel,
 }: {
-  hotel: { id: string; plan: HotelPlan; status: HotelStatus; pilotEndsAt: Date | null }
+  hotel: { id: string; displayName: string; plan: HotelPlan; status: HotelStatus; pilotEndsAt: Date | null }
 }) {
   const t = useTranslations("adminHotel")
   const router = useRouter()
   const [plan, setPlan] = useState(hotel.plan)
   const [status, setStatus] = useState(hotel.status)
   const [pilotEnd, setPilotEnd] = useState(toDateInput(hotel.pilotEndsAt))
+  const [confirming, setConfirming] = useState(false)
   const update = useMutation(
     orpc.admin.hotels.update.mutationOptions({
       onSuccess: () => {
+        setConfirming(false)
         toast.success(t("planSaved"))
         router.refresh()
       },
       onError: (error) => toast.error(errorMessage(error)),
     }),
   )
+  const save = () =>
+    update.mutate({ id: hotel.id, plan, status, pilotEndsAt: pilotEnd ? new Date(`${pilotEnd}T23:59:59Z`) : null })
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    update.mutate({ id: hotel.id, plan, status, pilotEndsAt: pilotEnd ? new Date(`${pilotEnd}T23:59:59Z`) : null })
+    if (status !== hotel.status) setConfirming(true)
+    else save()
   }
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <span aria-hidden className="font-medium text-sm">
+          {t("status")}
+        </span>
+        <SegmentedControl
+          label={t("status")}
+          value={status}
+          onValueChange={setStatus}
+          block
+          className="sm:w-fit"
+          options={HOTEL_STATUSES.map((value) => ({ value, label: t(`statuses.${value}`) }))}
+        />
+        <p className="text-muted-foreground text-small" aria-live="polite">
+          {t(`statusHints.${status}`)}
+        </p>
+      </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <AdminSelect
           label={t("plan")}
@@ -213,35 +227,39 @@ export function AdminPlanForm({
           onValueChange={setPlan}
           options={HOTEL_PLANS.map((value) => ({ value, label: t(`plans.${value}`) }))}
         />
-        <AdminSelect
-          label={t("status")}
-          value={status}
-          onValueChange={setStatus}
-          options={HOTEL_STATUSES.map((value) => ({ value, label: t(`statuses.${value}`) }))}
+        <AdminInput
+          label={t("pilotEnd")}
+          hint={t("pilotEndHint")}
+          type="date"
+          dir="ltr"
+          value={pilotEnd}
+          onChange={(event) => setPilotEnd(event.target.value)}
         />
       </div>
-      <AdminInput
-        label={t("pilotEnd")}
-        hint={t("pilotEndHint")}
-        type="date"
-        dir="ltr"
-        className="sm:max-w-xs"
-        value={pilotEnd}
-        onChange={(event) => setPilotEnd(event.target.value)}
-      />
       <StickyFormActions className="md:justify-start">
-        <Button type="submit" loading={update.isPending}>
+        <Button type="submit" loading={update.isPending && !confirming}>
           {t("save")}
         </Button>
       </StickyFormActions>
+      <ConfirmDialog
+        open={confirming}
+        onOpenChange={setConfirming}
+        destructive={status === "suspended"}
+        pending={update.isPending}
+        title={t("statusTitle", { hotel: hotel.displayName, status: t(`statuses.${status}`) })}
+        description={t(`statusConsequence.${status}`)}
+        confirmLabel={t("statusConfirm", { status: t(`statuses.${status}`) })}
+        cancelLabel={t("cancel")}
+        onConfirm={save}
+      />
     </form>
   )
 }
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
-/** Only the app admin renames a hotel. A new slug breaks printed QR codes, so it asks first. */
-function AdminRename({ hotel }: { hotel: { id: string; name: string; slug: string; displayName: string } }) {
+/** Only the app admin renames a hotel. A new slug breaks printed QR codes, so it warns inline and asks first. */
+export function AdminRename({ hotel }: { hotel: { id: string; name: string; slug: string; displayName: string } }) {
   const t = useTranslations("adminHotel")
   const tWizard = useTranslations("adminWizard")
   const router = useRouter()
@@ -260,56 +278,65 @@ function AdminRename({ hotel }: { hotel: { id: string; name: string; slug: strin
   )
   const nameError = name.trim() ? undefined : tWizard("errors.name")
   const slugError = SLUG.test(slug) ? undefined : tWizard("errors.slugFormat")
+  const slugChanged = slug !== hotel.slug
   const save = () => rename.mutate({ id: hotel.id, name: name.trim(), slug })
   const submit = (event: FormEvent) => {
     event.preventDefault()
     if (nameError || slugError) return
-    if (slug !== hotel.slug) setConfirming(true)
+    if (slugChanged) setConfirming(true)
     else save()
   }
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-3 p-4">
-      <div className="flex max-w-prose flex-col gap-1">
-        <h3 className="font-medium text-sm">{t("rename")}</h3>
-        <p className="text-muted-foreground text-sm">{t("renameHint")}</p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <AdminInput label={tWizard("name")} value={name} error={nameError} onChange={(e) => setName(e.target.value)} />
+    <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <AdminInput
+          label={tWizard("name")}
+          value={name}
+          error={nameError}
+          maxLength={80}
+          autoComplete="off"
+          onChange={(event) => setName(event.target.value)}
+        />
         <AdminInput
           label={tWizard("slug")}
+          hint={t("slugHint")}
           value={slug}
           error={slugError}
+          maxLength={60}
           dir="ltr"
           autoComplete="off"
           autoCapitalize="none"
           spellCheck={false}
-          onChange={(e) => setSlug(e.target.value.trim().toLowerCase())}
+          onChange={(event) => setSlug(event.target.value.trim().toLowerCase())}
         />
       </div>
-      <Button
-        type="submit"
-        variant="outline"
-        className="self-start"
-        loading={rename.isPending && !confirming}
-        disabled={name === hotel.name && slug === hotel.slug}
-      >
-        {t("renameSave")}
-      </Button>
-      <AlertDialog open={confirming} onOpenChange={setConfirming}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("slugTitle", { hotel: hotel.displayName })}</AlertDialogTitle>
-            <AlertDialogDescription>{t("slugConsequence", { old: hotel.slug })}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={rename.isPending}>{t("cancel")}</AlertDialogCancel>
-            <Button variant="destructive" loading={rename.isPending} onClick={save}>
-              {t("slugConfirm")}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {slugChanged && !slugError ? (
+        <InlineAlert tone="warning" title={t("slugWarningTitle")}>
+          {t("slugConsequence", { old: hotel.slug })}
+        </InlineAlert>
+      ) : null}
+      <StickyFormActions className="md:justify-start">
+        <Button
+          type="submit"
+          variant="outline"
+          loading={rename.isPending && !confirming}
+          disabled={name === hotel.name && !slugChanged}
+        >
+          {t("renameSave")}
+        </Button>
+      </StickyFormActions>
+      <ConfirmDialog
+        open={confirming}
+        onOpenChange={setConfirming}
+        destructive
+        pending={rename.isPending}
+        title={t("slugTitle", { hotel: hotel.displayName })}
+        description={t("slugConsequence", { old: hotel.slug })}
+        confirmLabel={t("slugConfirm")}
+        cancelLabel={t("cancel")}
+        onConfirm={save}
+      />
     </form>
   )
 }
@@ -317,15 +344,17 @@ function AdminRename({ hotel }: { hotel: { id: string; name: string; slug: strin
 export function AdminDangerZone({
   hotel,
 }: {
-  hotel: { id: string; name: string; slug: string; displayName: string; status: HotelStatus; hasPilotEnd: boolean }
+  hotel: { id: string; slug: string; displayName: string; status: HotelStatus; hasPilotEnd: boolean }
 }) {
   const t = useTranslations("adminHotel")
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const [confirming, setConfirming] = useState<"status" | "delete" | null>(null)
   const suspended = hotel.status === "suspended"
+  const next: HotelStatus = suspended ? (hotel.hasPilotEnd ? "pilot" : "active") : "suspended"
   const setStatus = useMutation(
     orpc.admin.hotels.update.mutationOptions({
       onSuccess: () => {
+        setConfirming(null)
         toast.success(suspended ? t("reactivated") : t("suspendedDone"))
         router.refresh()
       },
@@ -342,40 +371,44 @@ export function AdminDangerZone({
       onError: (error) => toast.error(errorMessage(error)),
     }),
   )
+  const close = (open: boolean) => {
+    if (!open) setConfirming(null)
+  }
 
   return (
-    <div className="flex flex-col divide-y rounded-lg border border-destructive/30">
-      <AdminRename hotel={hotel} />
+    <div className="flex flex-col divide-y rounded-card border border-destructive/30">
       <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex max-w-prose flex-col gap-1">
-          <h3 className="font-medium text-sm">{suspended ? t("reactivate") : t("suspend")}</h3>
-          <p className="text-muted-foreground text-sm">{suspended ? t("reactivateHint") : t("suspendHint")}</p>
+          <h3 className="font-medium">{suspended ? t("reactivate") : t("suspend")}</h3>
+          <p className="text-muted-foreground text-small">{suspended ? t("reactivateHint") : t("suspendHint")}</p>
         </div>
-        <Button
-          variant="outline"
-          loading={setStatus.isPending}
-          onClick={() =>
-            setStatus.mutate({
-              id: hotel.id,
-              status: suspended ? (hotel.hasPilotEnd ? "pilot" : "active") : "suspended",
-            })
-          }
-        >
+        <Button variant="outline" className="shrink-0" onClick={() => setConfirming("status")}>
           {suspended ? t("reactivate") : t("suspend")}
         </Button>
       </div>
       <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex max-w-prose flex-col gap-1">
-          <h3 className="font-medium text-sm">{t("delete")}</h3>
-          <p className="text-muted-foreground text-sm">{t("deleteHint")}</p>
+          <h3 className="font-medium">{t("delete")}</h3>
+          <p className="text-muted-foreground text-small">{t("deleteHint")}</p>
         </div>
-        <Button variant="destructive" onClick={() => setOpen(true)}>
+        <Button variant="destructive" className="shrink-0" onClick={() => setConfirming("delete")}>
           {t("delete")}
         </Button>
       </div>
       <ConfirmDialog
-        open={open}
-        onOpenChange={setOpen}
+        open={confirming === "status"}
+        onOpenChange={close}
+        destructive={!suspended}
+        pending={setStatus.isPending}
+        title={t("statusTitle", { hotel: hotel.displayName, status: t(`statuses.${next}`) })}
+        description={t(`statusConsequence.${next}`)}
+        confirmLabel={suspended ? t("reactivate") : t("suspend")}
+        cancelLabel={t("cancel")}
+        onConfirm={() => setStatus.mutate({ id: hotel.id, status: next })}
+      />
+      <ConfirmDialog
+        open={confirming === "delete"}
+        onOpenChange={close}
         destructive
         pending={remove.isPending}
         title={t("deleteTitle", { hotel: hotel.displayName })}

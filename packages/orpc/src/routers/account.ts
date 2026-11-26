@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server"
 import { ADMIN_LIST_LIMIT } from "@ritorno/common/constants"
 import { adminUserSchema, meSchema, okSchema, profileInputSchema } from "@ritorno/common/schemas"
-import { hotelSettings, member, user } from "@ritorno/db"
+import { hotelSettings, member, session, user } from "@ritorno/db"
 import { count, desc, eq, inArray } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"
@@ -65,7 +65,14 @@ export const adminRouter = {
     .handler(async ({ context }) => {
       const [total] = await context.db.select({ n: count() }).from(user)
       const users = await context.db
-        .select({ id: user.id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt })
+        .select({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          banned: user.banned,
+          createdAt: user.createdAt,
+        })
         .from(user)
         .orderBy(desc(user.createdAt))
         .limit(ADMIN_LIST_LIMIT)
@@ -90,8 +97,31 @@ export const adminRouter = {
         total: total?.n ?? 0,
         users: users.map((row) => ({
           ...row,
+          banned: row.banned ?? false,
           hotels: memberships.filter((m) => m.userId === row.id).map(({ id, name, role }) => ({ id, name, role })),
         })),
       }
+    }),
+  setBanned: adminProcedure
+    .route({
+      method: "POST",
+      path: "/admin/users/banned",
+      summary: "Ban a user (signs them out everywhere) or lift the ban (admins only)",
+      tags: ["admin"],
+    })
+    .input(z.object({ userId: z.string(), banned: z.boolean() }))
+    .output(okSchema)
+    .handler(async ({ context, input }) => {
+      if (input.userId === context.user.id) throw new ORPCError("BAD_REQUEST", { message: "You can't ban yourself." })
+      const [target] = await context.db.select({ role: user.role }).from(user).where(eq(user.id, input.userId))
+      if (!target) throw new ORPCError("NOT_FOUND", { message: "User not found." })
+      if (target.role === "admin") throw new ORPCError("FORBIDDEN", { message: "An app admin can't be banned." })
+      await context.db
+        .update(user)
+        .set({ banned: input.banned, banReason: null, banExpires: null, updatedAt: context.now() })
+        .where(eq(user.id, input.userId))
+      if (input.banned) await context.db.delete(session).where(eq(session.userId, input.userId))
+      await audit(context, { action: input.banned ? "admin.user-ban" : "admin.user-unban", targetId: input.userId })
+      return { ok: true as const }
     }),
 }

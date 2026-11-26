@@ -16,6 +16,7 @@ export const adminUserSchema = z.object({
   name: z.string(),
   email: z.string(),
   role: z.string().nullable(),
+  banned: z.boolean(),
   createdAt: z.date(),
   hotels: z.array(z.object({ id: z.string(), name: z.string(), role: z.string() })),
 })
