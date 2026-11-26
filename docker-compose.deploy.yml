@@ -121,5 +121,26 @@ services:
     expose:
       - "3003"
 
+  # Daily pg_dump to s3://$S3_BUCKET/backups/$DEPLOY_ENV/, 14 days kept. Restore: docs page deploy-runbook.
+  backup:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/backup/Dockerfile
+    environment:
+      DEPLOY_ENV: ${DEPLOY_ENV:?}
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-ritorno}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?}
+      PGDATABASE: ${POSTGRES_DB:-ritorno}
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_REGION: ${S3_REGION:-}
+      S3_BUCKET: ${S3_BUCKET:-}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pg:
