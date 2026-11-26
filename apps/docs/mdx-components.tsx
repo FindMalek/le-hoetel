@@ -14,16 +14,16 @@ const CALLOUT_TONE: Record<CalloutType, string> = {
   success: "bg-success-soft",
 }
 
+function ToneCallout({ type = "info", className, ...props }: ComponentProps<typeof Callout>) {
+  return (
+    <Callout type={type} className={cn("rounded-card border-transparent", CALLOUT_TONE[type], className)} {...props} />
+  )
+}
+
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
-    Callout: ({ type = "info", className, ...props }: ComponentProps<typeof Callout>) => (
-      <Callout
-        type={type}
-        className={cn("rounded-card border-transparent", CALLOUT_TONE[type], className)}
-        {...props}
-      />
-    ),
+    Callout: ToneCallout,
     // Every code block is an unnamed scroll region; the title names it so several blocks on a page stay unique landmarks for axe.
     pre: ({ ref: _ref, title, children, className, ...props }) => (
       <CodeBlock
