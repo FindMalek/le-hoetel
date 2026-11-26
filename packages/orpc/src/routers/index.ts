@@ -5,6 +5,7 @@ import { adminBalanceRouter, balanceRouter } from "./balance"
 import { campaignsRouter } from "./campaigns"
 import { emailsRouter } from "./emails"
 import { feedbackRouter } from "./feedback"
+import { feedbackCasesRouter } from "./feedback-cases"
 import { guestsRouter } from "./guests"
 import { holidaysRouter } from "./holidays"
 import { adminHotelsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
@@ -38,6 +39,7 @@ const admin = {
 export const appRouter = {
   public: publicRouter,
   feedback: feedbackRouter,
+  feedbackCases: feedbackCasesRouter,
   campaigns: campaignsRouter,
   holidays: holidaysRouter,
   leads: leadsRouter,

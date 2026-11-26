@@ -24,6 +24,7 @@ const COLUMNS = [
   "consent_whatsapp",
   "consent_profile",
   "created_at",
+  "feedback_follow_up",
   "consent_log",
 ] as const
 
@@ -37,9 +38,28 @@ export function csvCell(value: string | number | boolean | Date | null | undefin
 const logLine = (event: ExportedConsentEvent): string =>
   `${event.at.toISOString()} ${event.channel} ${event.granted ? "granted" : "withdrawn"} ${event.source} ${event.wordingVersion}`
 
-/** One row per guest, with the consent log folded into the last column. The json export has the log as proper rows. */
-export function guestsToCsv(rows: { guest: Guest; consentEvents: ExportedConsentEvent[] }[]): string {
-  const lines = rows.map(({ guest, consentEvents }) =>
+export interface ExportedFeedback {
+  status: string
+  notes: string | null
+  nps: number
+  comment: string | null
+  submittedAt: Date
+}
+
+const feedbackLine = (item: ExportedFeedback): string =>
+  [
+    `${item.submittedAt.toISOString()} ${item.nps}/10 ${item.status}`,
+    item.comment && `comment: ${item.comment}`,
+    item.notes && `notes: ${item.notes}`,
+  ]
+    .filter(Boolean)
+    .join(" ")
+
+/** One row per guest, with the feedback follow-up and the consent log (last column) folded into one cell each. The json export has them as proper rows. */
+export function guestsToCsv(
+  rows: { guest: Guest; consentEvents: ExportedConsentEvent[]; feedback?: ExportedFeedback[] }[],
+): string {
+  const lines = rows.map(({ guest, consentEvents, feedback = [] }) =>
     [
       guest.name,
       guest.phoneE164,
@@ -56,6 +76,7 @@ export function guestsToCsv(rows: { guest: Guest; consentEvents: ExportedConsent
       guest.consents.whatsapp,
       guest.consents.profile,
       guest.createdAt,
+      feedback.map(feedbackLine).join(" | "),
       consentEvents.map(logLine).join(" | "),
     ]
       .map(csvCell)

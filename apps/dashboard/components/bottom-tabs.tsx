@@ -23,9 +23,10 @@ export function BottomTabs({ unread }: { unread: number }) {
   const pathname = usePathname()
   const t = useTranslations("nav")
   const tShell = useTranslations("shell")
+  // Unhappy guests are the other half of the Inbox, so they keep its tab lit.
   const active = activeHref(
     TABS.map((tab) => tab.href),
-    pathname,
+    pathname.startsWith("/feedback") ? "/inbox" : pathname,
   )
   return (
     <nav
