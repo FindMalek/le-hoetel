@@ -18,7 +18,7 @@ export interface RateLimiter {
 /** Sensible defaults: every route is capped per caller, and the abusable ones get a tighter rule. */
 export const RATE_LIMITS = {
   default: { limit: 120, windowMs: 60_000 },
-  auth: { limit: 10, windowMs: 60_000 },
+  auth: { limit: 30, windowMs: 60_000 },
   waitlist: { limit: 5, windowMs: 10 * 60_000 },
   lead: { limit: 5, windowMs: 10 * 60_000 },
   feedback: { limit: 3, windowMs: 10 * 60_000 },
