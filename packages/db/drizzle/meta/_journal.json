@@ -176,6 +176,13 @@
       "when": 1795717044247,
       "tag": "0028_oval_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1795724375316,
+      "tag": "0029_daffy_bastion",
+      "breakpoints": true
     }
   ]
 }

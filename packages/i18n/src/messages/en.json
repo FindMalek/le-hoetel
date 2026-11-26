@@ -241,7 +241,8 @@
     "groupSettings": "Settings",
     "unhappyGuests": "Unhappy guests",
     "whatsappScans": "WhatsApp",
-    "activityLog": "Activity log"
+    "activityLog": "Activity log",
+    "billing": "Billing"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -1773,6 +1774,12 @@
       },
       "whatsapp-scan": {
         "delete": "Deleted a WhatsApp scan"
+      },
+      "billing": {
+        "export": "Exported invoices",
+        "invoice-create": "Created an invoice",
+        "invoice-status": "Changed an invoice's status",
+        "plan-update": "Updated a plan's name or price"
       }
     },
     "loading": "Loading entries",
@@ -2265,5 +2272,42 @@
     "failed": "Could not load more.",
     "loadFailed": "Could not load this list.",
     "shown": "{shown} of {total} shown"
+  },
+  "adminBilling": {
+    "title": "Billing",
+    "description": "Plans and invoices, handled by hand. Nothing is charged online.",
+    "invoices": "Invoices",
+    "plans": "Plans",
+    "hotelHint": "One invoice per month. Collect the money outside the app, then mark it paid.",
+    "planName": "Plan name",
+    "monthlyPrice": "Monthly price (TND)",
+    "monthlyPriceHint": "Leave empty while the price is not decided.",
+    "savePlan": "Save plan",
+    "planSaved": "Plan saved.",
+    "month": "Month",
+    "amount": "Invoice amount (TND)",
+    "amountHint": "Leave empty to use the plan price.",
+    "amountNoPrice": "The plan has no price yet, so enter an amount.",
+    "amountError": "Enter an amount like 120 or 120.500.",
+    "note": "Invoice note (optional)",
+    "noteHint": "For example the transfer reference. Never card details.",
+    "create": "Create invoice",
+    "invoiceCreated": "Invoice created.",
+    "invoiceUpdated": "Invoice updated.",
+    "export": "Export CSV",
+    "empty": "No invoice yet.",
+    "statuses": {
+      "issued": "Unpaid",
+      "paid": "Paid",
+      "void": "Void"
+    },
+    "issuedOn": "Issued on {date}",
+    "paidOn": "Paid on {date}",
+    "markPaid": "Mark paid",
+    "markUnpaid": "Mark unpaid",
+    "void": "Void invoice",
+    "voidTitle": "Void invoice {number}?",
+    "voidConsequence": "It stays in the list and the export as void, and cannot be changed again. You can then create another invoice for that month.",
+    "cancel": "Cancel"
   }
 }

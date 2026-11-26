@@ -23,6 +23,7 @@ import {
   UserCogIcon,
   UsersIcon,
   UsersRoundIcon,
+  WalletIcon,
 } from "lucide-react"
 import type { Route } from "next"
 
@@ -80,6 +81,7 @@ export const NAV: NavItem[] = [
   { href: "/settings", label: "account", icon: CircleUserIcon, group: "settings", shortcut: "s" },
   { href: "/admin/overview", label: "adminOverview", icon: GaugeIcon, group: "admin" },
   { href: "/admin/hotels", label: "hotels", icon: BuildingIcon, group: "admin" },
+  { href: "/admin/billing", label: "billing", icon: WalletIcon, group: "admin" },
   { href: "/users", label: "users", icon: UserCogIcon, group: "admin" },
   { href: "/audit-log", label: "auditLog", icon: HistoryIcon, group: "admin" },
 ]
