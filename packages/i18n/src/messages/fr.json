@@ -2103,6 +2103,12 @@
       "reviewsEmpty": "Les clients satisfaits sont invités à laisser un avis Google. Ajoutez votre lien dans les réglages de l'hôtel."
     }
   },
+  "consentBanner": {
+    "label": "Cookies d'analyse",
+    "text": "Nous utilisons des cookies d'analyse pour voir ce qui fonctionne. Seulement si vous êtes d'accord.",
+    "decline": "Refuser",
+    "accept": "Accepter"
+  },
   "inbox": {
     "title": "Boîte de réception",
     "unread": "{count, plural, one {# non lu} other {# non lus}}",

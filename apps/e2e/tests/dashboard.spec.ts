@@ -15,6 +15,8 @@ for (const locale of LOCALES) {
 test("demo owner signs in, in Arabic", async ({ page, context }) => {
   await context.addCookies([{ name: "NEXT_LOCALE", value: "ar", url: URLS.dashboard }])
   await page.goto(`${URLS.dashboard}/sign-in`)
+  // The analytics banner is open, in Arabic: a plain click below fails if it covers the button, as it did on phones.
+  await expect(page.getByRole("region", { name: "ملفات تعريف الارتباط التحليلية" })).toBeVisible()
   await page.locator("input[type=email]").fill(demoOwnerEmail("dar-zitouna"))
   await page.locator("input[type=password]").fill(DEFAULT_DEMO_PASSWORD)
   await page.locator("button[type=submit]").click()

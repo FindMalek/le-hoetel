@@ -2103,6 +2103,12 @@
       "reviewsEmpty": "Happy survey guests are asked for a Google review. Add your link in Hotel settings."
     }
   },
+  "consentBanner": {
+    "label": "Analytics cookies",
+    "text": "We use analytics cookies to see what works. Only if you agree.",
+    "decline": "Decline",
+    "accept": "Accept"
+  },
   "inbox": {
     "title": "Inbox",
     "unread": "{count, plural, one {# unread} other {# unread}}",
