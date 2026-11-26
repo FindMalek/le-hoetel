@@ -1,6 +1,6 @@
 import { brandStyle } from "@ritorno/common/color"
 import type { HotelLanguage } from "@ritorno/common/hotel"
-import { staffLabel } from "@ritorno/common/qr"
+import { printedUrl, staffLabel } from "@ritorno/common/qr"
 import type { CaptureSource } from "@ritorno/common/schemas"
 import { getDirection } from "@ritorno/i18n"
 import { cn } from "@ritorno/ui/lib/utils"
@@ -37,7 +37,7 @@ type Face = {
   perk: { title: string; text: string }
   /** The staff-only label of the spot, printed tiny under the code. */
   spot: string | null
-  qr: { svg: string; alt: string }
+  qr: { svg: string; alt: string; url: string }
 }
 
 function Brand({ hotel, className }: { hotel: KitHotel; className?: string }) {
@@ -82,6 +82,15 @@ function StaffLabel({ spot, className }: { spot: string | null; className: strin
   ) : null
 }
 
+/** For a camera that will not scan: the address to type, always left to right. */
+function ShortUrl({ url, className }: { url: string; className: string }) {
+  return (
+    <p dir="ltr" className={cn("max-w-full break-all text-center font-mono leading-tight", className)}>
+      {printedUrl(url)}
+    </p>
+  )
+}
+
 function Perk({ perk, className }: { perk: Face["perk"]; className?: string }) {
   return (
     <div className={cn("w-full rounded-[3cqw] border border-brand-accent p-[2.5cqw]", className)}>
@@ -107,6 +116,7 @@ function Portrait({ face }: { face: Face }) {
       {/* the code takes the height the words leave, so a long translation or offer never runs off the paper */}
       <div className="flex min-h-[36cqw] w-full flex-1 flex-col items-center justify-center gap-[0.8cqw]">
         <Code face={face} className="min-h-0 w-auto max-h-[52cqw] flex-1" />
+        <ShortUrl url={face.qr.url} className="text-[3cqw]" />
         <StaffLabel spot={face.spot} className="text-[2cqw]" />
       </div>
       <div>
@@ -132,6 +142,7 @@ function TentFace({ face, className }: { face: Face; className?: string }) {
       </div>
       <div className="flex w-[36cqw] shrink-0 flex-col items-center gap-[1.5cqw] text-center">
         <Code face={face} className="w-[35cqw] p-[2cqw]" />
+        <ShortUrl url={face.qr.url} className="text-[1.8cqw]" />
         <StaffLabel spot={face.spot} className="text-[1.4cqw]" />
         <p className="font-semibold text-[2.8cqw] leading-tight">{face.scan}</p>
         <p className="text-[2cqw] text-muted-foreground leading-tight">{face.noApp}</p>
@@ -156,7 +167,7 @@ export async function QrKitSheet({
   language: HotelLanguage
   hotel: KitHotel
   perk: { title: string; text: string } | null
-  code: { location: string | null; svg: string }
+  code: { location: string | null; url: string; svg: string }
 }) {
   const t = await getTranslations({ locale: language, namespace: "qrKit" })
   const face: Face = {
@@ -169,7 +180,7 @@ export async function QrKitSheet({
       text: perk?.text || t("perkBody", { hotel: hotel.displayName }),
     },
     spot: staffLabel(piece, code.location),
-    qr: { svg: code.svg, alt: t("alt") },
+    qr: { svg: code.svg, alt: t("alt"), url: code.url },
   }
   const size = KIT_PIECES[piece]
   return (
