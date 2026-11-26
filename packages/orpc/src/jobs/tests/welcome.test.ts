@@ -112,3 +112,57 @@ test("the welcome carries the hotel's active welcome offer with the guest's own 
   expect(sent[0]?.email.html).toContain("Free mint tea")
   expect(sent[0]?.email.html).not.toContain("Old news")
 })
+
+async function publicForm(slug: string, onQueue: (payload: { hotelId: string; guestId: string }) => Promise<void>) {
+  const hotelId = await app.createHotel(slug, await app.signUp(`${slug}@ritorno.test`))
+  const jobs = {
+    enqueue: async (_name: string, payload: unknown) => {
+      await onQueue(payload as { hotelId: string; guestId: string })
+      return { ok: true as const, id: "1" }
+    },
+    list: async () => [],
+  }
+  const { createRouterClient } = await import("@orpc/server")
+  const { createContext } = await import("../../context")
+  const { appRouter } = await import("../../routers")
+  let ip = 0
+  const capture = (input: { phone: string; email?: string; consents: { email: boolean; whatsapp: boolean } }) => {
+    const headers = new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": `10.9.${ip >> 8}.${ip++ & 255}` })
+    const client = createRouterClient(appRouter, { context: () => createContext({ ...app.services, jobs }, headers) })
+    return client.public.capture({
+      slug,
+      renderedAt: Date.now() - 3_600_000,
+      name: "Amel Ben Salah",
+      language: "fr",
+      source: "room",
+      ...input,
+    })
+  }
+  return { hotelId, capture }
+}
+
+test("a second capture of the same phone within 30 days sends no new welcome", async () => {
+  const run = welcome()
+  const { hotelId, capture } = await publicForm("welcome-rescan", (payload) => run(payload.hotelId, payload.guestId))
+  const phone = "+21620666666"
+
+  await capture({ phone, email: "amel@example.test", consents: { email: true, whatsapp: false } })
+  await capture({ phone, email: "amel@example.test", consents: { email: true, whatsapp: true } })
+
+  const rows = await app.services.db.select().from(messages).where(eq(messages.hotelId, hotelId))
+  expect(rows.map((row) => row.channel)).toEqual(["email"])
+})
+
+test("welcomes from the public form stop at the hourly cap per hotel", async () => {
+  let queued = 0
+  const { capture } = await publicForm("welcome-cap", async () => {
+    queued++
+  })
+  const { RATE_LIMITS } = await import("../../lib/rate-limit")
+
+  for (let i = 0; i <= RATE_LIMITS.welcomeHotel.limit; i++) {
+    await capture({ phone: `+2162077${String(i).padStart(4, "0")}`, consents: { email: false, whatsapp: true } })
+  }
+
+  expect(queued).toBe(RATE_LIMITS.welcomeHotel.limit)
+})
