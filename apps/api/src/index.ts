@@ -45,10 +45,27 @@ const auth = createAuth({
 })
 
 const adminId = await ensureAdmin(db, auth, env.ADMIN_EMAIL, env.ADMIN_PASSWORD)
-if (env.SEED === "demo") {
+const storage = createStorage({
+  endpoint: env.S3_ENDPOINT,
+  region: env.S3_REGION,
+  bucket: env.S3_BUCKET,
+  accessKeyId: env.S3_ACCESS_KEY_ID,
+  secretAccessKey: env.S3_SECRET_ACCESS_KEY,
+  prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
+})
+if (env.SEED === "demo" && env.DEPLOY_ENV === "production") console.warn("SEED=demo is ignored in production")
+else if (env.SEED === "demo") {
   const hashPassword = (await auth.$context).password.hash
-  if (await seedDemo(db, { ownerId: adminId, hashPassword, demoPassword: env.DEMO_PASSWORD }))
-    console.info("seeded demo data")
+  const seeded = await seedDemo(db, {
+    ownerId: adminId,
+    hashPassword,
+    demoPassword: env.DEMO_PASSWORD,
+    deployEnv: env.DEPLOY_ENV,
+    storage,
+    webUrl: env.WEB_URL,
+    apiUrl: env.API_PUBLIC_URL,
+  })
+  if (seeded) console.info("seeded demo data")
 }
 
 const fetch = createServer(
@@ -62,14 +79,7 @@ const fetch = createServer(
       upstashUrl: env.UPSTASH_REDIS_REST_URL,
       upstashToken: env.UPSTASH_REDIS_REST_TOKEN,
     }),
-    storage: createStorage({
-      endpoint: env.S3_ENDPOINT,
-      region: env.S3_REGION,
-      bucket: env.S3_BUCKET,
-      accessKeyId: env.S3_ACCESS_KEY_ID,
-      secretAccessKey: env.S3_SECRET_ACCESS_KEY,
-      prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
-    }),
+    storage,
     notification,
     model: resolveModel(env.AI_MODEL, env),
   },

@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@ritorno/common": "workspace:*",
+    "@ritorno/notification": "workspace:*",
+    "@ritorno/storage": "workspace:*",
     "drizzle-orm": "catalog:",
     "better-auth": "catalog:",
     "postgres": "catalog:"

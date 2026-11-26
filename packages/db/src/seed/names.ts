@@ -1,3 +1,4 @@
+import type { DEMO_PHONE_RANGES } from "@ritorno/common/demo"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 
 export type Origin = "tn" | "tn_ar" | "dz" | "fr" | "de" | "gb" | "it"
@@ -8,13 +9,14 @@ interface OriginData {
   language: HotelLanguage
   country: string
   cities: string[]
-  phone: (digits: (n: number) => string, pick: (items: string) => string) => string
+  /** A range no person holds, see `DEMO_PHONE_RANGES`. */
+  phone: keyof typeof DEMO_PHONE_RANGES
 }
 
 export const ORIGINS: Record<Origin, OriginData> = {
   tn: {
     first:
-      "Mohamed Ahmed Youssef Karim Slim Walid Sami Hichem Nizar Anis Ines Sarra Mariem Rim Amel Yasmine Nour Salma Hela Meriem".split(
+      "Mohamed Ahmed Youssef Karim Slim Walid Sami Hichem Nizar Anis Aymen Bassem Chokri Fares Ghazi Mehdi Oussama Rami Seif Wassim Ines Sarra Mariem Rim Amel Yasmine Nour Salma Hela Meriem Asma Dorra Emna Farah Ghada Khaoula Lina Olfa Sirine Wafa".split(
         " ",
       ),
     last: [
@@ -34,11 +36,19 @@ export const ORIGINS: Record<Origin, OriginData> = {
       "Belhaj",
       "Cherif",
       "Bouzid",
+      "Karoui",
+      "Mabrouk",
+      "Ncibi",
+      "Rekik",
+      "Slimane",
+      "Tlili",
+      "Ouertani",
+      "Haddad",
     ],
     language: "fr",
     country: "Tunisia",
     cities: ["Tunis", "Sfax", "Sousse", "Nabeul", "Bizerte", "Gabès"],
-    phone: (d, p) => `+216${p("2459")}${d(7)}`,
+    phone: "tn",
   },
   tn_ar: {
     first: [
@@ -72,11 +82,16 @@ export const ORIGINS: Record<Origin, OriginData> = {
       "الخليفي",
       "المنصوري",
       "الدريدي",
+      "القروي",
+      "الزواري",
+      "بوزيد",
+      "الشريف",
+      "السالمي",
     ],
     language: "ar",
     country: "Tunisia",
     cities: ["Tunis", "Sfax", "Kairouan", "Gafsa", "Sousse"],
-    phone: (d, p) => `+216${p("2459")}${d(7)}`,
+    phone: "tn",
   },
   dz: {
     first: "Amine Lilia Riad Samira Yacine Nadia Bilal Karima".split(" "),
@@ -84,31 +99,36 @@ export const ORIGINS: Record<Origin, OriginData> = {
     language: "fr",
     country: "Algeria",
     cities: ["Algiers", "Oran", "Constantine", "Annaba"],
-    phone: (d, p) => `+213${p("567")}${d(8)}`,
+    phone: "dz",
   },
   fr: {
-    first: "Camille Lucas Léa Hugo Chloé Louis Manon Nathan Emma Julien Claire Thomas Sophie Antoine".split(" "),
-    last: "Martin Bernard Dubois Robert Richard Petit Durand Leroy Moreau Simon Laurent Lefebvre Michel".split(" "),
+    first:
+      "Camille Lucas Léa Hugo Chloé Louis Manon Nathan Emma Julien Claire Thomas Sophie Antoine Élodie Mathieu Pauline Romain Aurélie Nicolas Céline Pierre".split(
+        " ",
+      ),
+    last: "Martin Bernard Dubois Robert Richard Petit Durand Leroy Moreau Simon Laurent Lefebvre Michel Garcia Roux Fournier Girard Lambert Mercier Blanc".split(
+      " ",
+    ),
     language: "fr",
     country: "France",
     cities: ["Paris", "Lyon", "Marseille", "Toulouse", "Lille", "Nantes"],
-    phone: (d, p) => `+33${p("6")}${d(8)}`,
+    phone: "fiction",
   },
   de: {
-    first: "Hans Anna Lukas Katharina Jonas Lena Felix Julia".split(" "),
-    last: "Müller Schmidt Schneider Fischer Weber Becker Wagner".split(" "),
+    first: "Hans Anna Lukas Katharina Jonas Lena Felix Julia Tobias Sabine Markus Nina".split(" "),
+    last: "Müller Schmidt Schneider Fischer Weber Becker Wagner Hoffmann Koch Richter Klein".split(" "),
     language: "en",
     country: "Germany",
     cities: ["Berlin", "Munich", "Hamburg", "Cologne"],
-    phone: (d, p) => `+4915${p("1257")}${d(8)}`,
+    phone: "de",
   },
   gb: {
-    first: "Oliver Emily Harry Charlotte George Amelia Jack Grace".split(" "),
-    last: "Smith Jones Taylor Brown Wilson Evans Clarke".split(" "),
+    first: "Oliver Emily Harry Charlotte George Amelia Jack Grace Thomas Olivia James Sophie".split(" "),
+    last: "Smith Jones Taylor Brown Wilson Evans Clarke Walker Hughes Green".split(" "),
     language: "en",
     country: "United Kingdom",
     cities: ["London", "Manchester", "Bristol", "Leeds"],
-    phone: (d, p) => `+447${p("4579")}${d(8)}`,
+    phone: "fiction",
   },
   it: {
     first: "Marco Giulia Luca Francesca Matteo Chiara Andrea Sara".split(" "),
@@ -116,6 +136,6 @@ export const ORIGINS: Record<Origin, OriginData> = {
     language: "en",
     country: "Italy",
     cities: ["Milan", "Rome", "Turin", "Naples"],
-    phone: (d, p) => `+393${p("2349")}${p("0123456789")}${d(7)}`,
+    phone: "fiction",
   },
 }

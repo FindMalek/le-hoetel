@@ -40,6 +40,23 @@ To move an environment to `ritorno`: dump the database with `pg_dump --no-owner`
 
 The Ritorno hosts are added next to the old ones, nothing is removed. Once DNS for the new hosts points to the server, run the `dokploy-domains` workflow (or `TARGET=staging node .github/scripts/dokploy-domains.mjs` with the Dokploy env) for staging and production. Remove the old domains in Dokploy only after the new ones answer.
 
+## Reseed staging
+
+Staging runs `SEED=demo`, but the api only seeds an empty database, so a deploy never refreshes data that is already there. To get fresh demo data (new seed rows, dates close to today), empty the staging database and restart. This deletes everything in it, including what was typed in by hand. Staging only: check the container belongs to `ritorno-staging` before running anything.
+
+1. Back it up: `docker exec <staging backup container> db-backup now`
+2. Stop the `api` and `worker` services in Dokploy
+3. Drop the app, migration and job schemas (`<POSTGRES_USER>` and `<POSTGRES_DB>` are in the env, see below for their names):
+
+```sh
+docker exec <staging postgres container> psql -U <POSTGRES_USER> -d <POSTGRES_DB> -v ON_ERROR_STOP=1 -c 'drop schema if exists public, drizzle, pgboss cascade; create schema public;'
+```
+
+4. Start `api`, then `worker`. The api migrates, creates the admin from `ADMIN_EMAIL` and seeds, and logs `seeded demo data`
+5. Sign in as `owner.sunset-bay@demo.ritorno.test` with the env's `DEMO_PASSWORD`
+
+Previews get a new database per pull request, so they need nothing.
+
 ## Rollback
 
 Run the `release` workflow by hand with an older tag. It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
