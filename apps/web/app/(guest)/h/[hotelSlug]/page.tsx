@@ -70,7 +70,6 @@ export default async function CapturePage({ params, searchParams }: Props) {
         slug={hotel.slug}
         source={source}
         location={location}
-        renderedAt={Date.now()}
         language={language}
         perk={perk}
         whatsapp={whatsapp}
@@ -91,12 +90,14 @@ export default async function CapturePage({ params, searchParams }: Props) {
           emailTitle: t("emailTitle"),
           emailNeeded: t("emailNeeded"),
           submit: t("submit"),
+          sending: t("sending"),
           submitHint: t("submitHint"),
           thanksTitle: t("thanksTitle", { name: "{name}" }),
           thanksBody: t("thanksBody", { hotel: hotel.displayName }),
           thanksPerk: t("thanksPerk"),
           errorInvalid: t("errorInvalid"),
           errorTooMany: t("errorTooMany"),
+          errorFailed: t("errorFailed"),
           whatsappWording: consentWording("whatsapp", language, hotel.displayName),
           emailWording: consentWording("email", language, hotel.displayName),
         }}

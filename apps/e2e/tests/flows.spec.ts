@@ -125,10 +125,6 @@ test("a welcome offer reaches a new guest and is redeemed once at the desk", asy
   await visitor.getByText("More about you").click()
   await visitor.locator("#capture-email").fill(`nour-${run}@example.com`)
   await visitor.locator("input[name=emailConsent]").check({ force: true })
-  // The api drops forms sent within seconds of being rendered, as bots do: age the stamp instead of waiting.
-  await visitor.locator("input[name=renderedAt]").evaluate((input: HTMLInputElement) => {
-    input.value = String(Number(input.value) - 60_000)
-  })
   await visitor.getByRole("button", { name: "Join" }).click()
   await expect(visitor.getByRole("heading", { name: "You are in, Nour" })).toBeVisible()
 
