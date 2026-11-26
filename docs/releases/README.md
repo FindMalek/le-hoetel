@@ -1,4 +1,3 @@
 # Release notes
 
-One file per version, `docs/releases/<version>.md`, drafted by the `release` workflow into the release PR.
-Edit the draft in the release PR before merging it. `videos:` lists demo clips to link in the email.
+The `release email` workflow writes `docs/releases/<version>.md` from the GitHub release `v<version>` while it runs, nothing is committed here. To change the email text, edit the GitHub release first. The history of every version is in `CHANGELOG.md`.

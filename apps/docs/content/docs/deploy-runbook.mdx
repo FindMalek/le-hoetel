@@ -9,7 +9,7 @@ Each environment is one Dokploy compose service built from `docker-compose.deplo
 
 | | staging | production |
 | --- | --- | --- |
-| trigger | every merge to `main` | published release (tag) |
+| trigger | every merge to `main` | merged release PR (tag) |
 | hosts | `staging-ritorno`, `app-staging-ritorno`, `api-staging-ritorno`, `docs-staging-ritorno` | `ritorno`, `app-ritorno`, `api-ritorno`, `docs-ritorno` |
 | `SEED` | `demo` | `none` |
 | `MESSAGING_LIVE` | `false` | `true` (a channel still needs its provider keys) |
@@ -57,9 +57,13 @@ docker exec <staging postgres container> psql -U <POSTGRES_USER> -d <POSTGRES_DB
 
 Previews get a new database per pull request, so they need nothing.
 
+## Releasing
+
+Merging to `main` deploys staging only. Production deploys when the release PR is merged, see [releases](/docs/releases).
+
 ## Rollback
 
-Run the `release` workflow by hand with an older tag. It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
+Run the `release` workflow by hand with `tag` set to an older tag (or to the current one to only redeploy). It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
 
 ## Backups
 

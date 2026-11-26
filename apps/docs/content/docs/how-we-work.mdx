@@ -42,7 +42,7 @@ Every issue and every PR carries all of these. A CI check fails the PR when labe
 - One issue is one branch is one pull request, in its own worktree.
 - Branch names are never purely numeric. Use `lh-<issue number>`.
 - Commit messages are `type(scope): subject`. Types: `feat`, `fix`, `perf`, `refactor`, `chore`, `test`, `docs`, `ci`. Scope is always present. The subject is at most 5 words, lowercase, imperative, no period. Example: `fix(auth): expired token`.
-- The PR title is a short plain description and the body starts with `closes #<issue number>`.
+- The PR title is `type(scope): subject`, it becomes the commit on `main` that [releases](/docs/releases) are cut from. The body starts with `closes #<issue number>`.
 - Update a branch with merge, never rebase.
 
 ## Pull request rules

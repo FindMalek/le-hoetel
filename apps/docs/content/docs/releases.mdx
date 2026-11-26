@@ -7,16 +7,46 @@ One version for the whole monorepo, tagged `vX.Y.Z`, starting at `0.1.0`.
 
 ## Flow
 
-1. every merge to `main` deploys **staging** (`staging.yml`, after `ci` is green)
-2. once staging proves the new commit live (`/health` reports its sha) and `ci` passed on it, `staging.yml` calls the `release` workflow for that exact commit: it tags `vX.Y.Z` (minor if a `type:feature` PR was merged since the last tag, patch otherwise, no release when nothing was merged), creates the GitHub release and deploys **production** from the tag. Nothing to click
-3. by hand (Actions tab, `release` workflow) only for a `major` bump, a dry run (`dry_run` prints the next version and the notes) or a rollback (`tag`). Edit the release notes on GitHub afterwards if needed. Publishing a release by hand from the GitHub ui deploys too
-4. optional: run the `release email` workflow by hand. It sends the notes of the GitHub release. `dry_run` is `true` by default and only prints the email. Setting it to `false` sends a Resend broadcast to `RESEND_AUDIENCE_ID`. It never runs by itself and only repo admins and maintainers can run it
+1. every merge to `main` deploys **staging** (`staging.yml`, after `ci` is green). It never deploys production by itself
+2. once staging proves the new commit live (`/health` reports its sha), `staging.yml` calls `release.yml`. [release-please](https://github.com/googleapis/release-please) opens or updates one **release PR**, `chore(main): release X.Y.Z`, with the next version in `package.json` and `.release-please-manifest.json` and the notes in `CHANGELOG.md`
+3. to ship, check staging, then squash merge the release PR (subject is the PR title, empty body)
+4. `ci` runs on the merge commit, staging deploys it, then release-please tags `vX.Y.Z` on exactly that commit, creates the GitHub release, deploys **production** from the tag and starts the `languine` translations
+5. optional: run the `release email` workflow by hand. It sends the notes of the GitHub release. `dry_run` is `true` by default and only prints the email. Setting it to `false` sends a Resend broadcast to `RESEND_AUDIENCE_ID`. It never runs by itself and only repo admins and maintainers can run it
 
-The notes list every PR merged since the last tag by title, grouped by its `type:*` label: `type:feature` under what is new, `type:bug` under fixes, then docs, maintenance and other. PR titles stay plain short descriptions, nothing has to be conventional. Below 1.0, bump `minor` for a milestone and `patch` for fixes in between.
+Do not create tags or publish releases by hand: a release published in the GitHub ui deploys nothing and confuses the next version.
+
+## What goes into a release
+
+PR titles become the commit subjects on `main`, so they follow `type(scope): subject` (the `pr hygiene` check fails otherwise).
+
+| Title | Below 1.0 | In the changelog |
+| --- | --- | --- |
+| `feat(scope): ...` | minor | Features |
+| `fix(scope): ...` | patch | Bug Fixes |
+| `perf(scope): ...` | patch | Performance Improvements |
+| `feat(scope)!: ...` | minor | Breaking changes |
+| `chore`, `refactor`, `docs`, `test`, `ci`, `style`, `build` | no release on their own | hidden |
+
+Hidden types still ship, with the next release. If only those are waiting and they must reach production (an infra or dependency change), merge a PR whose squash body is `Release-As: 0.4.2` with the version you want. The same footer cuts `1.0.0`.
+
+To fix the notes of an already merged PR, add a `BEGIN_COMMIT_OVERRIDE` / `END_COMMIT_OVERRIDE` block with the right `type(scope): subject` lines to its description, the next run picks it up.
+
+## Checks on the release PR
+
+The `main` ruleset needs `ci`, `e2e`, `labels` and `pr hygiene` on the release PR too. `labels` and the issue link are skipped for it, and it gets no preview.
+
+GitHub starts no workflow for a PR opened or updated with the workflow token. Either:
+
+- set the repo secret `RELEASE_PLEASE_TOKEN`, a fine grained token for this repo with contents, pull requests and issues write. The checks then run on their own
+- or, without it, close and reopen the release PR right before merging. Reopening starts the checks
+
+The repo setting **Allow GitHub Actions to create and approve pull requests** (Settings, Actions, General) must be on when there is no `RELEASE_PLEASE_TOKEN`.
+
+## When a release does not happen
+
+The tag waits until the release commit passed `ci` and staging runs it or a newer commit. The `release please` job shows a `release waits` warning otherwise. If `ci` failed on the release commit, re-run it from the Actions tab: its success deploys staging and releases. If the production deploy failed after the tag, redeploy the tag (below).
 
 ## Milestones and versions
-
-Cut a release when a milestone is done:
 
 | Version | Milestone |
 | --- | --- |
@@ -25,7 +55,13 @@ Cut a release when a milestone is done:
 | `v0.3.0` | feedback and dashboard |
 | `v1.0.0` | pilot launch |
 
-## Rollback
+## Rollback and redeploy
 
-Run the `release` workflow by hand (Actions tab) with `tag` set to an older tag, for example `v0.1.0`. Nothing is released, it points the production compose service at that tag and redeploys. Database migrations are forward only: restore from a backup if a migration has to be undone.
+Run the `release` workflow by hand (Actions tab) with `tag`:
 
+- an older tag, for example `v0.4.0`, to roll back
+- the tag production already runs, to redeploy it (after changing secrets, or when a deploy failed)
+
+Nothing is released, it points the production compose service at that tag and redeploys. Database migrations are forward only: restore from a backup if a migration has to be undone.
+
+If the GitHub release was created but the job failed before production deployed, run the `release` workflow by hand with that tag.
