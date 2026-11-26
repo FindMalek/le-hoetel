@@ -42,6 +42,8 @@ export function PillNav({
   className,
 }: PillNavProps) {
   const [open, setOpen] = useState(false)
+  // Stays mounted after the first open so the sheet can animate out.
+  const [loaded, setLoaded] = useState(false)
   return (
     <Root
       data-slot="pill-nav"
@@ -72,12 +74,15 @@ export function PillNav({
           className="md:hidden"
           aria-haspopup="dialog"
           aria-expanded={open}
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            setLoaded(true)
+            setOpen(true)
+          }}
         >
           <MenuIcon />
           <span className="sr-only">{menuLabel}</span>
         </Button>
-        {open ? (
+        {loaded ? (
           <Suspense fallback={null}>
             <PillNavSheet
               open={open}
