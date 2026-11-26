@@ -69,7 +69,7 @@ test("a guest without consent gets nothing, not even a skipped row", async () =>
   expect(await app.services.db.select().from(messages).where(eq(messages.guestId, guestId))).toHaveLength(0)
 })
 
-test("adding a guest with consent queues the welcome job, without consent it does not", async () => {
+test("adding a guest with consent queues the welcome job, without consent or by csv import it does not", async () => {
   queued.length = 0
   const jobs = {
     enqueue: async (name: string, payload: unknown) => {
@@ -96,6 +96,11 @@ test("adding a guest with consent queues the welcome job, without consent it doe
     ...base,
     phone: "+21620555555",
     consents: { email: false, whatsapp: true, profile: false },
+  })
+  await client.guests.import({
+    rows: [{ line: 2, name: "Old list", phone: "20 666 666", email: "old@example.test", consent: "yes" }],
+    defaultLanguage: "fr",
+    confirmConsent: true,
   })
 
   expect(queued).toMatchObject([{ name: WELCOME_JOB, payload: { hotelId } }])
