@@ -40,6 +40,28 @@ async function hasPendingInvitation(db: Db, email: string): Promise<boolean> {
   return Boolean(row)
 }
 
+/**
+ * Whether an invitation still stands behind its sender: a hotel member, or an app admin (who leaves a hotel right
+ * after creating it). Without this a removed manager could use an invite they sent to a second address of theirs.
+ */
+export async function inviterMayInvite(
+  db: Db,
+  invite: { inviterId: string; organizationId: string },
+): Promise<boolean> {
+  const [inviter] = await db
+    .select({ role: schema.user.role, banned: schema.user.banned, banExpires: schema.user.banExpires })
+    .from(schema.user)
+    .where(eq(schema.user.id, invite.inviterId))
+  if (!inviter) return false
+  if (inviter.banned && (!inviter.banExpires || inviter.banExpires > new Date())) return false
+  if (inviter.role?.split(",").includes("admin")) return true
+  const [membership] = await db
+    .select({ id: schema.member.id })
+    .from(schema.member)
+    .where(and(eq(schema.member.userId, invite.inviterId), eq(schema.member.organizationId, invite.organizationId)))
+  return Boolean(membership)
+}
+
 const quiet = (task: Promise<unknown>) => task.catch((error) => console.error("[auth] email failed", error))
 
 export function createAuth(config: AuthConfig) {
@@ -107,6 +129,10 @@ export function createAuth(config: AuthConfig) {
         // Deleting a hotel or changing its slug (printed on QR codes) or name only goes through the admin procedures.
         disableOrganizationDeletion: true,
         organizationHooks: {
+          beforeAcceptInvitation: async ({ invitation }) => {
+            if (await inviterMayInvite(config.db, invitation)) return
+            throw new APIError("BAD_REQUEST", { message: "Invitation not found." })
+          },
           beforeUpdateOrganization: async ({ organization: patch }) => {
             if (patch.slug !== undefined || patch.name !== undefined) {
               throw new APIError("FORBIDDEN", { message: "Only the app admin can rename a hotel or change its slug." })

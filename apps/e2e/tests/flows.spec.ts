@@ -20,6 +20,11 @@ let contexts: BrowserContext[]
 let db: postgres.Sql
 let links: { unsubscribe: string; offer: string }
 
+/** Waits for the network to go quiet, so React has hydrated: input given before that is lost. */
+async function open(page: Page, url: string) {
+  await page.goto(url, { waitUntil: "networkidle" })
+}
+
 async function newPage(browser: Browser): Promise<Page> {
   const context = await browser.newContext()
   contexts.push(context)
@@ -27,7 +32,7 @@ async function newPage(browser: Browser): Promise<Page> {
 }
 
 async function signIn(page: Page, email: string, password: string) {
-  await page.goto(`${URLS.dashboard}/sign-in`)
+  await open(page, `${URLS.dashboard}/sign-in`)
   await page.getByLabel("Email").fill(email)
   await page.getByLabel("Password", { exact: true }).fill(password)
   await page.getByRole("button", { name: "Sign in" }).click()
@@ -70,7 +75,7 @@ test("the super admin creates a hotel and its owner accepts the invitation", asy
   const admin = await newPage(browser)
   const email = `owner-${run}@example.com`
   await signIn(admin, DEMO_SUPER_ADMIN_EMAIL, DEFAULT_DEMO_PASSWORD)
-  await admin.goto(`${URLS.dashboard}/admin/hotels/new`)
+  await open(admin, `${URLS.dashboard}/admin/hotels/new`)
   await admin.getByLabel("Hotel name").fill(hotel.name)
   await expect(admin.getByText(`${hotel.slug} is available.`)).toBeVisible()
   for (let step = 0; step < 3; step++) await admin.getByRole("button", { name: "Continue" }).click()
@@ -79,32 +84,34 @@ test("the super admin creates a hotel and its owner accepts the invitation", asy
   await expect(admin).toHaveURL(/\/admin\/hotels\/(?!new)[^/]+$/)
   hotel.id = admin.url().split("/").pop() ?? ""
 
-  await owner.goto(`${URLS.dashboard}/sign-up`)
+  await open(owner, `${URLS.dashboard}/sign-up`)
   await owner.getByLabel("Your name").fill("Olfa")
   await owner.getByLabel("Email").fill(email)
   await owner.getByLabel("Password", { exact: true }).fill(PASSWORD)
   await owner.getByRole("button", { name: "Create account" }).click()
   await expect(owner.getByRole("heading", { name: "Hello Olfa" })).toBeVisible()
   const [invite] = await db`select id from invitation where organization_id = ${hotel.id}`
-  await owner.goto(`${URLS.dashboard}/accept-invitation/${invite?.id}`)
+  await open(owner, `${URLS.dashboard}/accept-invitation/${invite?.id}`)
   await owner.getByRole("button", { name: "Accept invitation" }).click()
   await expect(owner).not.toHaveURL(/accept-invitation/)
 })
 
 test("new branding shows on the guest's capture page", async () => {
-  await owner.goto(`${URLS.dashboard}/hotel`)
+  await open(owner, `${URLS.dashboard}/hotel`)
   await owner.getByLabel("Hotel name").fill(`Maison ${run}`)
   await owner.getByRole("textbox", { name: "Primary color" }).last().fill("#7b2d8e")
   await owner.getByRole("button", { name: "Save", disabled: false }).click()
   await expect(owner.getByText("Saved", { exact: true }).first()).toBeVisible()
 
-  await visitor.goto(`${URLS.web}/h/${hotel.slug}?lang=en`)
+  await open(visitor, `${URLS.web}/h/${hotel.slug}?lang=en`)
   await expect(visitor.getByText(`Maison ${run}`).first()).toBeVisible()
   await expect(visitor.locator('[style*="#7b2d8e"]').first()).toBeAttached()
 })
 
 test("a welcome offer reaches a new guest and is redeemed once at the desk", async () => {
-  await owner.goto(`${URLS.dashboard}/offers/new`)
+  // The welcome message comes from the job queue, polled below: it can take longer than the default test cap.
+  test.slow()
+  await open(owner, `${URLS.dashboard}/offers/new`)
   await owner.getByLabel("Title").fill("Welcome mint tea")
   await owner.getByLabel("Promo code").fill("TEA")
   await owner.getByLabel("Given automatically to").click()
@@ -112,7 +119,7 @@ test("a welcome offer reaches a new guest and is redeemed once at the desk", asy
   await owner.getByRole("button", { name: "Create offer" }).click()
   await expect(owner).toHaveURL(/\/offers$/)
 
-  await visitor.goto(`${URLS.web}/h/${hotel.slug}?lang=en&src=room`)
+  await open(visitor, `${URLS.web}/h/${hotel.slug}?lang=en&src=room`)
   await visitor.getByLabel("Your name").fill(GUEST)
   await visitor.locator("#capture-phone").fill("98 111 222")
   await visitor.getByText("More about you").click()
@@ -141,11 +148,11 @@ test("a welcome offer reaches a new guest and is redeemed once at the desk", asy
   const link = (kind: "o" | "u") => welcome.match(new RegExp(`${URLS.web}(?:/(?:fr|ar))?/${kind}/[\\w.-]+`))?.[0] ?? ""
   links = { offer: link("o"), unsubscribe: link("u") }
 
-  await visitor.goto(links.offer)
+  await open(visitor, links.offer)
   await expect(visitor.getByText("Welcome mint tea")).toBeVisible()
   const [issued] = await db`select code from offer_codes where hotel_id = ${hotel.id}`
 
-  await owner.goto(`${URLS.dashboard}/redeem`)
+  await open(owner, `${URLS.dashboard}/redeem`)
   await owner.locator("#redeem-code").fill(issued?.code)
   await owner.getByRole("button", { name: "Check" }).click()
   await owner.getByRole("button", { name: "Mark as redeemed" }).click()
@@ -158,10 +165,14 @@ test("a welcome offer reaches a new guest and is redeemed once at the desk", asy
 
 test("the unsubscribe link in the welcome email stops every message", async () => {
   expect(await consents(GUEST)).toEqual(["email"])
-  await visitor.goto(links.unsubscribe)
+  await open(visitor, links.unsubscribe)
   await visitor.getByRole("button", { name: "Unsubscribe from everything" }).click()
   await expect(visitor.getByText("You are unsubscribed")).toBeVisible()
   await expect.poll(() => consents(GUEST)).toEqual([])
+  const [logged] = await db`
+    select channel, granted, source from consent_events
+    where guest_id = ${await guestId(GUEST)} order by at desc limit 1`
+  expect(logged).toEqual({ channel: "email", granted: false, source: "unsubscribe_link" })
 })
 
 test("an unhappy survey answer opens a case the hotel can follow up", async () => {
@@ -172,7 +183,7 @@ test("an unhappy survey answer opens a case the hotel can follow up", async () =
     values (${inviteId}, ${hotel.id}, ${await guestId(GUEST)}, now(), now() + interval '1 day')`
   const token = signSurveyToken(E2E_SECRET, "survey", { hotelId: hotel.id, inviteId })
 
-  await visitor.goto(`${URLS.web}/s/${token}?lang=en`)
+  await open(visitor, `${URLS.web}/s/${token}?lang=en`)
   await visitor
     .locator("label")
     .filter({ has: visitor.locator('input[name=nps][value="2"]') })
@@ -181,12 +192,12 @@ test("an unhappy survey answer opens a case the hotel can follow up", async () =
   await visitor.getByRole("button", { name: "Send my answer" }).click()
   await expect(visitor.getByRole("heading", { name: "Thank you" })).toBeVisible()
 
-  await owner.goto(`${URLS.dashboard}/feedback`)
+  await open(owner, `${URLS.dashboard}/feedback`)
   await expect(owner.getByText("The shower was cold").filter({ visible: true })).toBeVisible()
 })
 
 test("a CSV import adds guests and records consent only where the file says yes", async () => {
-  await owner.goto(`${URLS.dashboard}/guests/import`)
+  await open(owner, `${URLS.dashboard}/guests/import`)
   const csv =
     "name,phone,email,language,consent\nSalma Trabelsi,+216 98 333 444,,fr,yes\nKarim Jlassi,+216 98 555 666,,en,no\n"
   await owner
@@ -202,7 +213,7 @@ test("a CSV import adds guests and records consent only where the file says yes"
 
 test("one guest, then every guest, can be exported and deleted", async () => {
   const count = async () => (await db`select count(*)::int as n from guests where hotel_id = ${hotel.id}`)[0]?.n
-  await owner.goto(`${URLS.dashboard}/guests/${await guestId("Karim Jlassi")}`)
+  await open(owner, `${URLS.dashboard}/guests/${await guestId("Karim Jlassi")}`)
   await owner.getByRole("button", { name: "Export" }).click()
   const one = await downloaded(owner, () => owner.getByRole("menuitem", { name: "As CSV" }).click())
   expect(one).toContain("Karim Jlassi")
@@ -212,7 +223,7 @@ test("one guest, then every guest, can be exported and deleted", async () => {
   await owner.getByRole("button", { name: "Delete permanently" }).click()
   await expect.poll(count).toBe(2)
 
-  await owner.goto(`${URLS.dashboard}/data`)
+  await open(owner, `${URLS.dashboard}/data`)
   const all = await downloaded(owner, () => owner.getByRole("button", { name: "Export CSV" }).click())
   expect(all).toContain("Salma Trabelsi")
   expect(all).toContain(GUEST)

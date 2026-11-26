@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server"
+import { inviterMayInvite } from "@ritorno/auth"
 import { ADMIN_LIST_LIMIT } from "@ritorno/common/constants"
 import { adminUserSchema, meSchema, okSchema, profileInputSchema } from "@ritorno/common/schemas"
 import { hotelSettings, invitation, member, organization, session, user } from "@ritorno/db"
@@ -27,6 +28,8 @@ export const meRouter = {
           role: invitation.role,
           status: invitation.status,
           expiresAt: invitation.expiresAt,
+          inviterId: invitation.inviterId,
+          organizationId: invitation.organizationId,
           organizationName: organization.name,
           inviterEmail: user.email,
         })
@@ -34,7 +37,12 @@ export const meRouter = {
         .innerJoin(organization, eq(organization.id, invitation.organizationId))
         .innerJoin(user, eq(user.id, invitation.inviterId))
         .where(eq(invitation.id, input.id))
-      if (!row || row.status !== "pending" || row.expiresAt <= context.now()) {
+      if (
+        !row ||
+        row.status !== "pending" ||
+        row.expiresAt <= context.now() ||
+        !(await inviterMayInvite(context.db, row))
+      ) {
         throw new ORPCError("NOT_FOUND", { message: "Invitation not found." })
       }
       if (row.email.toLowerCase() !== context.user.email.toLowerCase()) {
