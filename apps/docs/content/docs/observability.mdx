@@ -41,6 +41,8 @@ Log lines carry `trace_id` and `span_id`, so a log line links to its trace and b
 
 GlitchTip speaks the sentry protocol, so the sentry sdk is used as is. Errors are tagged with `DEPLOY_ENV`, so staging and previews stay apart from production. See [The Keep](/docs/infrastructure/the-keep) for where both run.
 
+On the public site (`apps/web/instrumentation-client.ts`) the browser sdk is about 150 KB gzipped, so it is imported only when `NEXT_PUBLIC_GLITCHTIP_DSN` is set and only once the page is idle. Errors thrown before that are not reported.
+
 The api and the worker both init sentry with a `beforeSend` (`apps/api/src/sentry.ts`) that drops the `params:` part of query errors, masks phone and email shaped text, redacts `extra` and breadcrumb data and drops request bodies, headers and cookies.
 
 ## Failed jobs
