@@ -14,6 +14,7 @@ import { Section } from "@ritorno/ui/components/section"
 import { Select } from "@ritorno/ui/components/select"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { formatDate } from "@ritorno/ui/lib/date"
+import { useQuery } from "@tanstack/react-query"
 import { CrownIcon, RotateCwIcon, SendIcon, ShieldIcon, UserIcon, UsersIcon, XIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
@@ -64,7 +65,7 @@ function RoleHelp() {
   )
 }
 
-function InviteForm({ onSent }: { onSent: () => void }) {
+function InviteForm({ hotelId, onSent }: { hotelId: string; onSent: () => void }) {
   const t = useTranslations("team")
   const [role, setRole] = useState<Assignable>("staff")
   const [pending, setPending] = useState(false)
@@ -77,7 +78,7 @@ function InviteForm({ onSent }: { onSent: () => void }) {
     if (!form.submit()) return
     setPending(true)
     const email = form.values.email.trim().toLowerCase()
-    const { error } = await orgClient.organization.inviteMember({ email, role })
+    const { error } = await orgClient.organization.inviteMember({ email, role, organizationId: hotelId })
     setPending(false)
     if (error) return void toast.error(error.message ?? t("errors.generic"))
     toast.success(t("invited", { email }))
@@ -121,12 +122,35 @@ function InviteForm({ onSent }: { onSent: () => void }) {
   )
 }
 
-export function TeamBoard({ meId, canManage, timeZone }: { meId: string; canManage: boolean; timeZone?: string }) {
+export function TeamBoard({
+  hotelId,
+  meId,
+  canManage,
+  timeZone,
+}: {
+  hotelId: string
+  meId: string
+  canManage: boolean
+  timeZone?: string
+}) {
   const t = useTranslations("team")
   const locale = useLocale()
   const [revoking, setRevoking] = useState<Invitation | null>(null)
   const router = useRouter()
-  const { data: active, isPending, error, refetch } = orgClient.useActiveOrganization()
+  // By id, not `useActiveOrganization`: that follows the session, which another tab can move to another hotel.
+  const {
+    data: active,
+    isPending,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["team", hotelId],
+    queryFn: async () => {
+      const result = await orgClient.organization.getFullOrganization({ query: { organizationId: hotelId } })
+      if (result.error) throw result.error
+      return result.data
+    },
+  })
   const [removing, setRemoving] = useState<Member | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
 
@@ -176,7 +200,7 @@ export function TeamBoard({ meId, canManage, timeZone }: { meId: string; canMana
         onValueChange={(value) =>
           run(
             member.id,
-            orgClient.organization.updateMemberRole({ memberId: member.id, role: value }),
+            orgClient.organization.updateMemberRole({ memberId: member.id, role: value, organizationId: hotelId }),
             t("roleChanged"),
           )
         }
@@ -275,6 +299,7 @@ export function TeamBoard({ meId, canManage, timeZone }: { meId: string; canMana
                               email: invitation.email,
                               role: topRole(invitation.role ?? "staff") as Assignable,
                               resend: true,
+                              organizationId: hotelId,
                             }),
                             t("resent", { email: invitation.email }),
                           )
@@ -308,7 +333,7 @@ export function TeamBoard({ meId, canManage, timeZone }: { meId: string; canMana
       <aside className="flex flex-col gap-8 lg:sticky lg:top-20">
         {canManage ? (
           <Section title={t("inviteTitle")} description={t("inviteHint")}>
-            <InviteForm onSent={() => void refetch()} />
+            <InviteForm hotelId={hotelId} onSent={() => void refetch()} />
           </Section>
         ) : (
           <InlineAlert tone="info">{t("viewOnly")}</InlineAlert>
@@ -329,7 +354,11 @@ export function TeamBoard({ meId, canManage, timeZone }: { meId: string; canMana
         pending={busy === removing?.id}
         onConfirm={async () => {
           if (!removing) return
-          await run(removing.id, orgClient.organization.removeMember({ memberIdOrEmail: removing.id }), t("removed"))
+          await run(
+            removing.id,
+            orgClient.organization.removeMember({ memberIdOrEmail: removing.id, organizationId: hotelId }),
+            t("removed"),
+          )
           setRemoving(null)
         }}
       />

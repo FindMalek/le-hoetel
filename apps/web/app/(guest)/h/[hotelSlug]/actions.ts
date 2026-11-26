@@ -2,9 +2,9 @@
 
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
-import { type CaptureResult, submitCapture } from "@/lib/capture"
+import { submitCapture } from "@/lib/capture"
 
-export type CaptureState = CaptureResult | "idle"
+export type CaptureState = Awaited<ReturnType<typeof submitCapture>> | "idle"
 
 const field = (form: FormData, key: string) => {
   const value = form.get(key)
@@ -25,7 +25,6 @@ export async function captureAction(_previous: CaptureState, form: FormData): Pr
     source: source in CAPTURE_SOURCES ? (source as CaptureSource) : "desk",
     location: field(form, "location") || null,
     website: field(form, "website") || null,
-    renderedAt: Number(field(form, "renderedAt")) || 0,
     consents: { whatsapp: form.get("whatsapp") === "on", email: form.get("emailConsent") === "on" && !!email },
   })
 }

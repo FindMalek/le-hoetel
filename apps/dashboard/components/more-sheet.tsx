@@ -15,7 +15,7 @@ import { LogOutIcon, MenuIcon, MessageSquareIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { openFeedback } from "@/components/feedback-button"
 import { setLocale } from "@/components/preferences-menu"
 import { type Me, signOut, UserAvatar } from "@/components/user-menu"
@@ -25,12 +25,15 @@ import { activeHref, navGroups } from "@/lib/nav"
 // i18n-used: shell.appearance
 
 /** Every page on a phone, grouped like the sidebar, plus language, feedback and sign out. Opens from the inline start. */
-export function MoreSheet({ me, className }: { me: Me; className?: string }) {
+export function MoreSheet({ me, switcher, className }: { me: Me; switcher: React.ReactNode; className?: string }) {
   const t = useTranslations("nav")
   const tShell = useTranslations("shell")
   const locale = useLocale()
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  // The switcher navigates on its own, so close on any page change.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger
+  useEffect(() => setOpen(false), [pathname])
   const groups = navGroups(me.role)
   const active = activeHref(
     groups.flatMap((group) => group.items.map((item) => item.href)),
@@ -56,6 +59,7 @@ export function MoreSheet({ me, className }: { me: Me; className?: string }) {
           </SheetTitle>
           <SheetDescription className="sr-only">{tShell("appearance")}</SheetDescription>
         </SheetHeader>
+        <div className="px-3 pt-3 empty:hidden">{switcher}</div>
         <nav className="flex flex-col gap-4 p-3" aria-label={tShell("mainNav")}>
           {groups.map((group) => (
             <section key={group.key} className="flex flex-col gap-0.5">

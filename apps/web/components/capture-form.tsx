@@ -1,7 +1,7 @@
 "use client"
 
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
-import { buttonVariants } from "@ritorno/ui/components/button"
+import { Button } from "@ritorno/ui/components/button"
 import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
 import { PhoneInput } from "@ritorno/ui/components/phone-input"
@@ -28,17 +28,19 @@ export interface CaptureCopy {
   emailTitle: string
   emailNeeded: string
   submit: string
+  sending: string
   submitHint: string
   thanksTitle: string
   thanksBody: string
   thanksPerk: string
   errorInvalid: string
   errorTooMany: string
+  errorFailed: string
   whatsappWording: string
   emailWording: string
 }
 
-type Status = "idle" | "done" | "invalid" | "tooMany"
+type Status = "idle" | "sending" | "done" | "invalid" | "tooMany" | "failed"
 
 const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
 /** Guest inputs are 48 px and stay 16 px on every width, so iOS never zooms. */
@@ -85,7 +87,6 @@ export function CaptureForm(props: {
   slug: string
   source: string
   location: string
-  renderedAt: number
   language: HotelLanguage
   perk: ReactNode
   whatsapp: ReactNode
@@ -130,10 +131,20 @@ export function CaptureForm(props: {
       return
     }
     const data = new FormData(event.currentTarget)
-    setStatus("done")
-    const result = await captureAction("idle", data)
-    if (result !== "done") setStatus(result)
+    setStatus("sending")
+    // The action rejects when the request itself is lost (offline, dropped wifi).
+    const result = await captureAction("idle", data).catch(() => "failed" as const)
+    setStatus(result)
   }
+
+  const error = {
+    invalid: copy.errorInvalid,
+    tooMany: copy.errorTooMany,
+    failed: copy.errorFailed,
+    idle: null,
+    sending: null,
+    done: null,
+  }[status]
 
   return (
     <>
@@ -158,7 +169,6 @@ export function CaptureForm(props: {
         <input type="hidden" name="slug" value={props.slug} />
         <input type="hidden" name="source" value={props.source} />
         <input type="hidden" name="location" value={props.location} />
-        <input type="hidden" name="renderedAt" value={props.renderedAt} />
         <input type="hidden" name="phone" value={`${dialCode}${digits}`} />
         <div aria-hidden className="sr-only">
           <label>
@@ -286,15 +296,15 @@ export function CaptureForm(props: {
           aria-live="polite"
           className="sticky bottom-0 z-10 -mx-5 grid sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none gap-2 border-t bg-background/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm"
         >
-          {status === "invalid" || status === "tooMany" ? (
+          {error ? (
             <p role="alert" className="flex items-center gap-1.5 text-destructive text-sm">
               <CircleAlertIcon aria-hidden className="size-4 shrink-0" />
-              {status === "invalid" ? copy.errorInvalid : copy.errorTooMany}
+              {error}
             </p>
           ) : null}
-          <button type="submit" className={buttonVariants({ size: "lg", className: "w-full" })}>
-            {copy.submit}
-          </button>
+          <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
+            {status === "sending" ? copy.sending : copy.submit}
+          </Button>
           <p className="text-center text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.submitHint}</p>
         </div>
       </form>

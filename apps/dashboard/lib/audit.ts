@@ -1,5 +1,6 @@
 import type { AppRouterClient } from "@ritorno/orpc/client"
 import type { orpc } from "@ritorno/orpc/react"
+import { forHotel } from "./lists"
 
 /** The audit filters' "no filter" value: an empty one renders as the Select placeholder, muted. */
 export const AUDIT_ALL = "all"
@@ -16,8 +17,16 @@ const paging = {
 export const adminAuditPages = (utils: typeof orpc, filter: AdminAuditFilter) =>
   utils.admin.audit.list.infiniteOptions({ input: (cursor: string | null) => ({ ...filter, cursor }), ...paging })
 
-export const hotelAuditPages = (utils: typeof orpc, filter: HotelAuditFilter) =>
-  utils.audit.list.infiniteOptions({ input: (cursor: string | null) => ({ ...filter, cursor }), ...paging })
+/** Of the hotel the page was rendered for, like the lists in `lists.ts`. */
+export const hotelAuditPages = (utils: typeof orpc, hotelId: string, filter: HotelAuditFilter) =>
+  forHotel(
+    utils.audit.list.infiniteOptions({
+      input: (cursor: string | null) => ({ ...filter, cursor }),
+      context: { hotelId },
+      ...paging,
+    }),
+    hotelId,
+  )
 
 /** A `YYYY-MM-DD` from the url, or nothing when it is not a real day. */
 export function urlDay(value: string | undefined): string | undefined {

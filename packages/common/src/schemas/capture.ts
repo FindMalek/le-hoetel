@@ -12,9 +12,6 @@ export const CAPTURE_SOURCES = { room: "qr_room", table: "qr_table", desk: "qr_f
 export type CaptureSource = keyof typeof CAPTURE_SOURCES
 export const CAPTURE_LOCATION_MAX = 40
 
-/** A person needs longer than this to type a name and a phone number. */
-export const CAPTURE_MIN_FILL_MS = 3000
-
 /** The only hotel fields a visitor without a session can read. */
 export const publicHotelSchema = z.object({
   slug: z.string(),
@@ -39,8 +36,6 @@ export const captureInputSchema = z.object({
   consents: z.object({ email: z.boolean(), whatsapp: z.boolean() }),
   /** Hidden field no person fills: any value means a bot. */
   website: z.string().max(200).nullish(),
-  /** When the page was rendered (ms since epoch), to refuse forms sent faster than a person can type. */
-  renderedAt: z.number().int(),
 })
 export type CaptureInput = z.input<typeof captureInputSchema>
 

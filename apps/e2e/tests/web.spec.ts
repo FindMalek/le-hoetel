@@ -35,12 +35,37 @@ test("a guest signs up from the QR page and sees the welcome at once", async ({ 
   await page.goto(`${URLS.web}/h/dar-zitouna?lang=en&src=room&loc=e2e`)
   await page.getByLabel("Your name").fill("Amira Ben Salah")
   await page.locator("#capture-phone").fill("98 765 432")
-  // The api drops forms sent within seconds of being rendered, as bots do: age the stamp instead of waiting.
-  await page.locator("input[name=renderedAt]").evaluate((input: HTMLInputElement) => {
-    input.value = String(Number(input.value) - 60_000)
-  })
   await page.getByRole("button", { name: "Join" }).click()
   await expect(page.getByRole("status").getByRole("heading", { name: "You are in, Amira" })).toBeVisible()
+})
+
+test("a sign-up that does not reach the server never says joined and can be retried", async ({ page, context }) => {
+  await page.goto(`${URLS.web}/h/dar-zitouna?lang=en`)
+  await page.getByLabel("Your name").fill("Yassine Gharbi")
+  await page.locator("#capture-phone").fill("98 765 433")
+  const joined = page.getByRole("heading", { name: "You are in, Yassine" })
+
+  await context.setOffline(true)
+  await page.getByRole("button", { name: "Join" }).click()
+  await expect(page.getByRole("alert").filter({ hasText: "was not sent" })).toBeVisible()
+  await expect(joined).toBeHidden()
+  await expect(page.getByLabel("Your name")).toHaveValue("Yassine Gharbi")
+  await expect(page.locator("#capture-phone")).toHaveValue("98 765 433")
+
+  await context.setOffline(false)
+  let release = () => {}
+  const held = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  await page.route("**/h/dar-zitouna**", async (route) => {
+    if (route.request().method() === "POST") await held
+    await route.continue()
+  })
+  await page.getByRole("button", { name: "Join" }).click()
+  await expect(page.getByRole("button", { name: "Sending" })).toBeDisabled()
+  await expect(joined).toBeHidden()
+  release()
+  await expect(joined).toBeVisible()
 })
 
 test("a hotel requests a demo from the landing page", async ({ page }) => {

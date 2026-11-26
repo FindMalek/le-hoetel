@@ -12,12 +12,15 @@ export const getWhatsAppLink = (input: Parameters<typeof api.public.whatsappLink
 
 export type CaptureResult = "done" | "invalid" | "tooMany"
 
-export async function submitCapture(input: CaptureInput): Promise<CaptureResult> {
+/** "failed" is everything that is not the guest's input or the limit: nothing was saved, they can try again. */
+export async function submitCapture(input: CaptureInput): Promise<CaptureResult | "failed"> {
   try {
     await api.public.capture(input)
     return "done"
   } catch (error) {
-    return (error as { code?: string }).code === "TOO_MANY_REQUESTS" ? "tooMany" : "invalid"
+    const { code } = error as { code?: string }
+    if (code === "TOO_MANY_REQUESTS") return "tooMany"
+    return code === "BAD_REQUEST" ? "invalid" : "failed"
   }
 }
 

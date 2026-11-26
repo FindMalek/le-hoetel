@@ -2,7 +2,6 @@ import { ORPCError } from "@orpc/server"
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import {
-  CAPTURE_MIN_FILL_MS,
   CAPTURE_SOURCES,
   captureInputSchema,
   guestCreateSchema,
@@ -13,6 +12,7 @@ import {
 import { surveyAnswerSchema } from "@ritorno/common/survey"
 import { scanLink, signScanCode } from "@ritorno/common/whatsapp-scan"
 import { hotelSettings, organization } from "@ritorno/db"
+import { logger } from "@ritorno/logger"
 import { and, eq, ne, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -149,11 +149,10 @@ const surveyRouter = {
     }),
 }
 
-/** Bots get the same "ok" a guest gets, so they learn nothing: a filled honeypot, a form sent too fast, a link as a name. */
-function looksLikeBot(input: z.output<typeof captureInputSchema>, now: Date): boolean {
-  return (
-    !!input.website || now.getTime() - input.renderedAt < CAPTURE_MIN_FILL_MS || /https?:\/\/|www\./i.test(input.name)
-  )
+/** Bots get the same "ok" a guest gets, so they learn nothing: a filled honeypot or a link as a name. */
+function botReason(input: z.output<typeof captureInputSchema>): "honeypot" | "link-name" | null {
+  if (input.website) return "honeypot"
+  return /https?:\/\/|www\./i.test(input.name) ? "link-name" : null
 }
 
 export const publicRouter = {
@@ -253,7 +252,11 @@ export const publicRouter = {
     .handler(async ({ context, input }) => {
       const hotel = await findPublicHotel(context.db, input.slug)
       await enforceRateLimit(context, `capture.ip:${hotel.id}`, RATE_LIMITS.captureIp)
-      if (looksLikeBot(input, context.now())) return { ok: true as const }
+      const reason = botReason(input)
+      if (reason) {
+        logger.info("capture discarded", { hotelId: hotel.id, reason })
+        return { ok: true as const }
+      }
       await enforceKey(context.rateLimiter, `public.capture:hotel:${hotel.id}`, RATE_LIMITS.captureHotel)
       const guest = guestCreateSchema.safeParse({
         name: input.name,

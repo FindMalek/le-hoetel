@@ -612,12 +612,14 @@
     "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
     "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
     "errorTooMany": "Trop d'inscriptions pour le moment. Réessayez plus tard ou demandez à la réception.",
+    "errorFailed": "Votre inscription n'a pas été envoyée. Vérifiez votre connexion et réessayez.",
     "nameError": "Ajoutez votre nom.",
     "phoneError": "Vérifiez votre numéro.",
     "optionalTitle": "Un peu plus sur vous",
     "optionalHint": "Facultatif : date de naissance et e-mail.",
     "whatsappTitle": "WhatsApp",
     "emailTitle": "E-mail",
+    "sending": "Envoi…",
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
     "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
     "whatsappButton": "Continuer sur WhatsApp",
@@ -2100,7 +2102,10 @@
     "removed": "Membre retiré.",
     "revoke": "Révoquer",
     "revokeTitle": "Révoquer l'invitation de {email} ?",
-    "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard."
+    "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard.",
+    "notMember": "Vous n'êtes pas membre de {hotel}",
+    "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici. Sa page d'administration les liste.",
+    "notMemberAction": "Ouvrir la page d'administration"
   },
   "usage": {
     "title": "Consommation WhatsApp",
