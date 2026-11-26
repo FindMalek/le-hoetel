@@ -1,6 +1,10 @@
 import { brandStyle } from "@ritorno/common/color"
+import type { HotelLanguage } from "@ritorno/common/hotel"
 import { staffLabel } from "@ritorno/common/qr"
 import type { SpotSource } from "@ritorno/common/schemas"
+import { getDirection } from "@ritorno/i18n"
+import { cn } from "@ritorno/ui/lib/utils"
+import { getTranslations } from "next-intl/server"
 import type { KitHotel } from "@/components/qr-kit-sheet"
 import { QrMark } from "@/components/qr-mark"
 
@@ -43,8 +47,23 @@ function CropMarks() {
   )
 }
 
-/** One A4 page of stickers: the hotel's mark inside each code, and under it the staff label saying where it goes. */
-export function QrCutSheet({ hotel, codes, alt }: { hotel: KitHotel; codes: CutCode[]; alt: string }) {
+/**
+ * One A4 page of stickers: the hotel's mark inside each code, a line telling the guest to scan it in `language`, and the
+ * tiny staff label saying where it goes.
+ */
+export async function QrCutSheet({
+  language,
+  hotel,
+  codes,
+  alt,
+}: {
+  language: HotelLanguage
+  hotel: KitHotel
+  codes: CutCode[]
+  alt: string
+}) {
+  const t = await getTranslations({ locale: language, namespace: "qrKit" })
+  const scan = t("sheetScan")
   return (
     <svg
       viewBox={`0 0 ${PAGE.width} ${PAGE.height}`}
@@ -65,15 +84,26 @@ export function QrCutSheet({ hotel, codes, alt }: { hotel: KitHotel; codes: CutC
               hotel={hotel}
               label={label}
               x={x + (CELL.width - CODE) / 2}
-              y={y + 3}
+              y={y + 2}
               width={CODE}
               height={CODE}
             />
             <text
               x={x + CELL.width / 2}
-              y={y + CODE + 8}
+              y={y + CODE + 5}
               textAnchor="middle"
-              fontSize="2.6"
+              fontSize="3.2"
+              lang={language}
+              direction={getDirection(language)}
+              className={cn("fill-foreground font-semibold", language === "ar" ? "font-arabic" : "font-sans")}
+            >
+              {scan}
+            </text>
+            <text
+              x={x + CELL.width / 2}
+              y={y + CODE + 9.5}
+              textAnchor="middle"
+              fontSize="2.2"
               direction="ltr"
               className="fill-muted-foreground font-sans"
               // a long name is squeezed to the sticker instead of running into the next one

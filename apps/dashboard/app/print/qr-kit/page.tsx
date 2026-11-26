@@ -3,10 +3,9 @@ import { parseSpots } from "@ritorno/common/qr"
 import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import type { Metadata } from "next"
-import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { cache } from "react"
-import { PrintShell } from "@/components/print-shell"
+import { Choices, PrintShell } from "@/components/print-shell"
 import { KIT_PIECES, QrKitSheet } from "@/components/qr-kit-sheet"
 import { logoSrc } from "@/lib/admin"
 import { call } from "@/lib/api"
@@ -43,32 +42,6 @@ const href = (piece: CaptureSource, language: string, spots: string) => {
   const query = new URLSearchParams({ piece, lang: language })
   if (spots) query.set("spots", spots)
   return `/print/qr-kit?${query}` as const
-}
-
-function Choices({
-  label,
-  items,
-}: {
-  label: string
-  items: { key: string; label: string; href: ReturnType<typeof href>; current: boolean; lang?: string }[]
-}) {
-  return (
-    <nav aria-label={label} className="flex flex-wrap gap-1 rounded-xl border bg-background p-1">
-      {items.map((item) => (
-        <Link
-          key={item.key}
-          href={item.href}
-          replace
-          prefetch={false}
-          lang={item.lang}
-          aria-current={item.current ? "true" : undefined}
-          className="flex min-h-touch flex-1 items-center justify-center rounded-lg px-3 text-muted-foreground text-sm hover:text-foreground aria-[current=true]:bg-accent aria-[current=true]:font-medium aria-[current=true]:text-foreground"
-        >
-          {item.label}
-        </Link>
-      ))}
-    </nav>
-  )
 }
 
 /** The printable QR kit: browser print makes the PDF, so Arabic is shaped by the browser and the QR stays vector. */

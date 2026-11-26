@@ -851,7 +851,8 @@
     "alt": "QR code to sign up",
     "sheetTitle": "QR cut sheet",
     "sheetNote": "{count, plural, one {# code} other {# codes}}. Print, then cut along the marks.",
-    "sheetEmpty": "Nothing to print. Save rooms or tables first."
+    "sheetEmpty": "Nothing to print. Save rooms or tables first.",
+    "sheetScan": "Scan me"
   },
   "messages": {
     "title": "Messages",

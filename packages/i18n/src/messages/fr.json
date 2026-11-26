@@ -851,7 +851,8 @@
     "alt": "Code QR d’inscription",
     "sheetTitle": "Planche de codes QR",
     "sheetNote": "{count, plural, one {# code} other {# codes}}. Imprimez, puis découpez en suivant les repères.",
-    "sheetEmpty": "Rien à imprimer. Enregistrez d’abord des chambres ou des tables."
+    "sheetEmpty": "Rien à imprimer. Enregistrez d’abord des chambres ou des tables.",
+    "sheetScan": "Scannez-moi"
   },
   "messages": {
     "title": "Messages",

@@ -1,4 +1,5 @@
 import { ArrowLeftIcon } from "lucide-react"
+import type { Route } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { QrKitPrintButton } from "@/components/qr-kit-print-button"
@@ -49,5 +50,32 @@ export async function PrintShell({
       </div>
       <div className="flex flex-col items-center gap-6 px-4 pb-10 print:block print:p-0">{children}</div>
     </main>
+  )
+}
+
+/** A row of links where one is current: the pieces or languages of a print page. */
+export function Choices({
+  label,
+  items,
+}: {
+  label: string
+  items: { key: string; label: string; href: `/print/${string}`; current: boolean; lang?: string }[]
+}) {
+  return (
+    <nav aria-label={label} className="flex flex-wrap gap-1 rounded-xl border bg-background p-1">
+      {items.map((item) => (
+        <Link
+          key={item.key}
+          href={item.href as Route}
+          replace
+          prefetch={false}
+          lang={item.lang}
+          aria-current={item.current ? "true" : undefined}
+          className="flex min-h-touch flex-1 items-center justify-center rounded-lg px-3 text-muted-foreground text-sm hover:text-foreground aria-[current=true]:bg-accent aria-[current=true]:font-medium aria-[current=true]:text-foreground"
+        >
+          {item.label}
+        </Link>
+      ))}
+    </nav>
   )
 }
