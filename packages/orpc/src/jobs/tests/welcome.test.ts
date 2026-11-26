@@ -149,7 +149,6 @@ async function publicForm(slug: string, onQueue: (payload: { hotelId: string; gu
     const client = createRouterClient(appRouter, { context: () => createContext({ ...app.services, jobs }, headers) })
     return client.public.capture({
       slug,
-      renderedAt: Date.now() - 3_600_000,
       name: "Amel Ben Salah",
       language: "fr",
       source: "room",
