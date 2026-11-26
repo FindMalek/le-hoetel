@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto"
 import { appendFileSync } from "node:fs"
-import { parseDotenv, pullSecrets } from "./secrets-lib.mjs"
+import { parseDotenv, pullSecrets, pushSecret } from "./secrets-lib.mjs"
 
 // Before deploys read Infisical: per stack, which keys Infisical would change in the live Dokploy env. Names only,
 // values are compared as sha256 and never printed. Keys deploy.mjs computes are skipped, they win over both anyway.
+// With COPY_TO_INFISICAL=true, keys only Dokploy holds are copied into Infisical, so Infisical becomes the full source.
 const env = process.env
 const COMPUTED = new Set([
   "DEPLOY_ENV",
@@ -23,6 +24,7 @@ const STACKS = [
   { name: "production", environment: "prod", composeId: env.DOKPLOY_PRODUCTION_COMPOSE_ID },
 ]
 const hash = (value) => createHash("sha256").update(String(value)).digest("hex")
+const SKIP = /^TELEGRAM_/
 const list = (keys) => (keys.length ? keys.map((k) => `\`${k}\``).join(", ") : "none")
 
 async function dokployEnv(composeId) {
@@ -44,12 +46,17 @@ for (const stack of STACKS) {
     .sort()
   const shared = keys.filter((k) => k in live)
   const differ = shared.filter((k) => hash(live[k]) !== hash(infisical[k]))
+  const dokployOnly = Object.keys(live)
+    .filter((k) => !COMPUTED.has(k) && !SKIP.test(k) && live[k] !== "" && !(k in infisical))
+    .sort()
+  if (env.COPY_TO_INFISICAL === "true") for (const k of dokployOnly) await pushSecret(stack.environment, k, live[k])
   if (differ.length) differAny = true
   lines.push(
     `#### ${stack.name}`,
     `- differ (Infisical would overwrite): ${list(differ)}`,
     `- match: ${list(shared.filter((k) => !differ.includes(k)))}`,
     `- only in Infisical (would be added): ${list(keys.filter((k) => !(k in live)))}`,
+    `- only in Dokploy${env.COPY_TO_INFISICAL === "true" ? " (copied to Infisical)" : ""}: ${list(dokployOnly)}`,
     "",
   )
 }
