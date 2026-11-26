@@ -93,6 +93,9 @@ const previewUrl = (app) => `${https ? "https" : "http"}://${hostOf(app)}`
 const urlOf = (app) => (deployed.has(app) ? previewUrl(app) : stagingUrl(app, env.STAGING_DOMAIN || undefined))
 const db = apiChanged ? previewDb(pr, env.DOKPLOY_TOKEN, "") : null
 const password = previewSecret(env.DOKPLOY_TOKEN, pr, "demo")
+// The PR comment is public: errors from Dokploy can echo env or connection strings, so secrets are cut out first.
+const secretValues = [password, db?.password, env.DOKPLOY_TOKEN].filter(Boolean)
+const masked = (text) => secretValues.reduce((t, secret) => t.split(secret).join("***"), String(text))
 const fromInfisical = infisicalConfigured(env)
 const infisicalEnv = fromInfisical ? await pullSecrets("preview", env) : {}
 
@@ -267,10 +270,10 @@ async function runApp({ app, dockerfile }) {
     await deployApplication(id, `PR #${pr} ${sha.slice(0, 7)}`)
     const done = await waitForDeployment(id, known)
     row.status = done ? toStatus(done) : "failed"
-    if (row.status === "failed") row.error = done ? failureExcerpt(done) : "timed out waiting for the build"
+    if (row.status === "failed") row.error = done ? masked(failureExcerpt(done)) : "timed out waiting for the build"
   } catch (e) {
     row.status = "failed"
-    row.error = String(e.message ?? e)
+    row.error = masked(e.message ?? e)
   }
   row.updatedAt = now()
   pending.delete(ghDeployment)
