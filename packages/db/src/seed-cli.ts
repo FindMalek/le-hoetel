@@ -3,7 +3,8 @@ import { hashPassword } from "better-auth/crypto"
 import { createDb } from "./index"
 import { assertSeedable, seedDemo } from "./seed/index"
 
-const { DATABASE_URL, DEPLOY_ENV, DEMO_PASSWORD, WEB_URL, API_PUBLIC_URL, S3_PREFIX } = process.env
+const { DATABASE_URL, DEPLOY_ENV, DEMO_PASSWORD, DEMO_VIEWER_PASSWORD, WEB_URL, API_PUBLIC_URL, S3_PREFIX } =
+  process.env
 // Before anything connects, so a production url is never even opened.
 assertSeedable({ deployEnv: DEPLOY_ENV, databaseUrl: DATABASE_URL! })
 const db = createDb(DATABASE_URL!)
@@ -18,6 +19,7 @@ const storage = createStorage({
 const seeded = await seedDemo(db, {
   hashPassword,
   demoPassword: DEMO_PASSWORD,
+  viewerPassword: DEMO_VIEWER_PASSWORD,
   deployEnv: DEPLOY_ENV,
   databaseUrl: DATABASE_URL!,
   storage,

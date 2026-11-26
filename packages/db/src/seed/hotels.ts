@@ -158,7 +158,13 @@ export const demoHotelId = (slug: DemoHotelSlug) => `demo-hotel-${slug}`
  * Four demo hotels with their team, a super admin and some 1400 fake guests with consents, consent events and visits
  * over six months. Same seed, same people; only the dates move with `now`. Stays are columns of `guests`.
  */
-export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261124): HotelScenario {
+export function buildHotelScenario(
+  now: Date,
+  passwordHash: string,
+  /** Null leaves the view only sales account out. */
+  viewerHash: string | null = null,
+  seed = 20261124,
+): HotelScenario {
   const { rand, int, pick, chance, digits, uuid } = dice(seed)
   const weighted = (mix: Partial<Record<Origin, number>>): Origin => {
     const entries = Object.entries(mix) as [Origin, number][]
@@ -184,14 +190,14 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
     guestVisits: [],
     captureSpots: [],
   }
-  const addUser = (row: typeof user.$inferInsert) => {
+  const addUser = (row: typeof user.$inferInsert, password = passwordHash) => {
     out.users.push(row)
     out.accounts.push({
       id: `demo-account-${row.id}`,
       accountId: row.id,
       providerId: "credential",
       userId: row.id,
-      password: passwordHash,
+      password,
       createdAt: row.createdAt,
       updatedAt: row.createdAt,
     })
@@ -205,6 +211,29 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
     createdAt: ago(260),
     updatedAt: now,
   })
+
+  const addSalesViewer = (password: string) => {
+    const joinedAt = ago(30)
+    addUser(
+      {
+        id: "demo-sales-viewer",
+        name: "Sales Demo",
+        email: DEMO_VIEWER_EMAIL,
+        emailVerified: true,
+        createdAt: joinedAt,
+        updatedAt: joinedAt,
+      },
+      password,
+    )
+    // A manager sees every screen of the hotel; `isDemoViewer` is what stops the writes.
+    out.members.push({
+      id: "demo-member-sales-viewer",
+      organizationId: demoHotelId("sunset-bay"),
+      userId: "demo-sales-viewer",
+      role: "manager",
+      createdAt: joinedAt,
+    })
+  }
 
   for (const slug of DEMO_HOTEL_SLUGS) {
     const hotel = DEMO_HOTELS[slug]
@@ -366,23 +395,7 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
       })
     }
   }
-  const joinedAt = ago(30)
-  addUser({
-    id: "demo-sales-viewer",
-    name: "Sales Demo",
-    email: DEMO_VIEWER_EMAIL,
-    emailVerified: true,
-    createdAt: joinedAt,
-    updatedAt: joinedAt,
-  })
-  // A manager sees every screen of the hotel; `isDemoViewer` is what stops the writes.
-  out.members.push({
-    id: "demo-member-sales-viewer",
-    organizationId: demoHotelId("sunset-bay"),
-    userId: "demo-sales-viewer",
-    role: "manager",
-    createdAt: joinedAt,
-  })
+  if (viewerHash) addSalesViewer(viewerHash)
 
   return out
 }

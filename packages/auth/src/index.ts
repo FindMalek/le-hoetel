@@ -1,3 +1,4 @@
+import { isDemoRecipient } from "@ritorno/common/demo"
 import type { Db } from "@ritorno/db"
 import * as schema from "@ritorno/db/schema"
 import { betterAuth } from "better-auth"
@@ -63,7 +64,8 @@ export function createAuth(config: AuthConfig) {
           // link). Server calls (env admin, seed, tests) and the admin plugin's create-user carry no outside request.
           before: async (created, ctx) => {
             if (!ctx?.request || ctx.path === "/admin/create-user") return
-            if (await hasPendingInvitation(config.db, created.email)) return
+            // Never a demo address: the seeded invitations have public emails and ids, so anyone could claim one.
+            if (!isDemoRecipient(created.email) && (await hasPendingInvitation(config.db, created.email))) return
             throw new APIError("FORBIDDEN", { code: "INVITATION_REQUIRED", message: "Sign up is by invitation only." })
           },
         },

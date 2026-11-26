@@ -23,8 +23,14 @@ const logErrors = o.middleware(async (options) => {
 
 export const publicProcedure = o.use(logErrors)
 
-/** POST procedures that only read, which the view only demo account needs to browse (QR codes, campaign reach). */
-const DEMO_VIEWER_READS = new Set(["hotel.qrCodes", "campaigns.preview"])
+/** POST procedures that only read, which the view only demo account needs to browse. */
+const DEMO_VIEWER_READS = new Set(["hotel.qrCodes", "campaigns.preview", "emails.preview", "offers.lookup"])
+
+/** Default deny for the demo viewer: only declared reads, and no export, so no copy of the data leaves on that phone. */
+function demoViewerMay(method: string | undefined, path: readonly string[]): boolean {
+  if (path.at(-1)?.startsWith("export")) return false
+  return method === "GET" || DEMO_VIEWER_READS.has(path.join("."))
+}
 
 /**
  * Sessions are cookies, so signed-in calls also need `x-csrf-token: orpc`, which the oRPC link sends and a
@@ -36,9 +42,7 @@ const requireSession = o.middleware(async ({ context, next, procedure, path }) =
   if (!context.apiKey && context.headers.get("x-csrf-token") !== "orpc") {
     throw new ORPCError("FORBIDDEN", { message: "Missing the x-csrf-token header." })
   }
-  // Default deny: anything not declared GET is a write, including procedures added later.
-  const reads = procedure["~orpc"].route.method === "GET" || DEMO_VIEWER_READS.has(path.join("."))
-  if (!reads && isDemoViewer(context.session.user.email)) {
+  if (isDemoViewer(context.session.user.email) && !demoViewerMay(procedure["~orpc"].route.method, path)) {
     throw new ORPCError("FORBIDDEN", { message: "This demo account is view only." })
   }
   return next({ context: { session: context.session, user: context.session.user } })

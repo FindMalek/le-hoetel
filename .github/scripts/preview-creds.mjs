@@ -9,4 +9,5 @@ if (!Number.isInteger(pr) || pr <= 0 || !token) {
 }
 
 console.log(`demo and super admin password: ${previewSecret(token, pr, "demo")}`)
+console.log(`view only sales@ password: ${previewSecret(token, pr, "viewer")}`)
 console.log(`postgres (database ritorno, user ritorno) password: ${previewDb(pr, token, "").password}`)

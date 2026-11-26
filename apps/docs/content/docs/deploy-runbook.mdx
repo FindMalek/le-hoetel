@@ -53,7 +53,7 @@ docker exec <staging postgres container> psql -U <POSTGRES_USER> -d <POSTGRES_DB
 ```
 
 4. Start `api`, then `worker`. The api migrates, creates the admin from `ADMIN_EMAIL` and seeds, and logs `seeded demo data`
-5. Sign in as `owner.sunset-bay@demo.ritorno.test` with the env's `DEMO_PASSWORD`, and check the [sales viewer](/docs/setup#sales-viewer) `sales@demo.ritorno.test` too. A database seeded before the viewer existed only gets it from this reseed
+5. Sign in as `owner.sunset-bay@demo.ritorno.test` with the env's `DEMO_PASSWORD`, and as the [sales viewer](/docs/setup#sales-viewer) `sales@demo.ritorno.test` with its `DEMO_VIEWER_PASSWORD`. Set that variable in the Dokploy env before step 4: without it, or on a database seeded before the viewer existed, there is no such account
 
 Previews get a new database per pull request, so they need nothing.
 
