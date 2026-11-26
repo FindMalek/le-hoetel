@@ -269,7 +269,8 @@ export const publicRouter = {
         return { ok: true as const }
       }
       await enforceKey(context.rateLimiter, `public.capture:hotel:${hotel.id}`, RATE_LIMITS.captureHotel)
-      // The profile consent on this form is only asked for the departure date, so neither is kept without the other.
+      // The toggle grants the whole `profile` channel (country, city, stay dates, next destination). This form only
+      // shows it with a departure date, so neither is recorded without the other.
       const stayCheckOut = input.consents.profile ? input.stayCheckOut : null
       const guest = guestCreateSchema.safeParse({
         name: input.name,

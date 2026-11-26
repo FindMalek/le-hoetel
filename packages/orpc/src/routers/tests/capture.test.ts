@@ -48,6 +48,53 @@ test("a guest scanning a QR code lands in that hotel only, with source, spot and
   )
 })
 
+const inDays = (days: number) => new Date(Date.now() + days * 864e5).toISOString().slice(0, 10)
+
+test("a departure date in the past or too far ahead is refused", async () => {
+  await app.createHotel("capture-range", await app.signUp("capture-range@ritorno.test"))
+  const send = (stayCheckOut: string) =>
+    app.anonymous.public.capture({
+      slug: "capture-range",
+      ...scan,
+      stayCheckOut,
+      consents: { ...scan.consents, profile: true },
+    })
+
+  await expect(send(inDays(-3))).rejects.toThrow()
+  await expect(send(inDays(120))).rejects.toThrow()
+  await expect(send(inDays(90))).resolves.toEqual({ ok: true })
+})
+
+test("a rescan never moves a check-out still ahead, nor puts one before the arrival", async () => {
+  const owner = await app.signUp("capture-keep@ritorno.test")
+  const hotelId = await app.createHotel("capture-keep", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const rescan = (phone: string) =>
+    app.anonymous.public.capture({
+      slug: "capture-keep",
+      ...scan,
+      phone,
+      stayCheckOut: inDays(2),
+      consents: { ...scan.consents, profile: true },
+    })
+  const staffGuest = async (phone: string, stay: { stayCheckIn?: string; stayCheckOut?: string }) => {
+    const guest = await client.guests.create({
+      name: "Amel",
+      phone,
+      language: "fr",
+      source: "staff",
+      consents: { email: false, whatsapp: false, profile: true },
+      ...stay,
+    })
+    await rescan(phone)
+    return client.guests.get({ id: guest.id })
+  }
+
+  expect(await staffGuest("20 333 333", { stayCheckOut: inDays(5) })).toMatchObject({ stayCheckOut: inDays(5) })
+  expect(await staffGuest("20 444 333", { stayCheckIn: inDays(10) })).toMatchObject({ stayCheckOut: null })
+  expect(await staffGuest("20 555 333", { stayCheckOut: inDays(-30) })).toMatchObject({ stayCheckOut: inDays(2) })
+})
+
 test("the departure date is only kept with the guest's profile consent", async () => {
   const owner = await app.signUp("capture-stay@ritorno.test")
   const hotelId = await app.createHotel("capture-stay", owner)
@@ -57,7 +104,7 @@ test("the departure date is only kept with the guest's profile consent", async (
       slug: "capture-stay",
       ...scan,
       phone,
-      stayCheckOut: "2026-06-17",
+      stayCheckOut: inDays(3),
       consents: { ...scan.consents, profile },
     })
 
@@ -66,7 +113,7 @@ test("the departure date is only kept with the guest's profile consent", async (
 
   const { items } = await client.guests.list({})
   const byPhone = Object.fromEntries(items.map((guest) => [guest.phoneE164, guest]))
-  expect(byPhone["+21620111111"]).toMatchObject({ stayCheckOut: "2026-06-17", consents: { profile: true } })
+  expect(byPhone["+21620111111"]).toMatchObject({ stayCheckOut: inDays(3), consents: { profile: true } })
   expect(byPhone["+21620222222"]).toMatchObject({ stayCheckOut: null, consents: { profile: false } })
 })
 

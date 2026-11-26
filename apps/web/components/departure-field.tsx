@@ -1,5 +1,6 @@
 "use client"
 
+import { STAY_MAX_NIGHTS } from "@ritorno/common/hotel-time"
 import { Input } from "@ritorno/ui/components/input"
 import { useState } from "react"
 import { ConsentToggle } from "./consent-toggle"
@@ -14,9 +15,6 @@ export interface DepartureCopy {
   keep: string
   wording: string
 }
-
-/** Far enough for any real stay, close enough to catch a mistyped year. */
-const MAX_NIGHTS = 90
 
 const PILL =
   "min-h-11 rounded-full border bg-background px-4 font-medium text-sm transition-colors duration-150 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
@@ -34,7 +32,7 @@ export function DepartureField({ copy, className }: { copy: DepartureCopy; class
   const [choice, setChoice] = useState<number | "date" | null>(null)
   const [picked, setPicked] = useState("")
   const toggle = (next: number | "date") => setChoice((current) => (current === next ? null : next))
-  const outOfRange = choice === "date" && !!picked && (picked < dayAfter(0) || picked > dayAfter(MAX_NIGHTS))
+  const outOfRange = choice === "date" && !!picked && (picked < dayAfter(0) || picked > dayAfter(STAY_MAX_NIGHTS))
   const value = typeof choice === "number" ? dayAfter(choice) : choice === "date" && !outOfRange ? picked : ""
 
   return (
@@ -63,7 +61,7 @@ export function DepartureField({ copy, className }: { copy: DepartureCopy; class
           <Input
             type="date"
             min={dayAfter(0)}
-            max={dayAfter(MAX_NIGHTS)}
+            max={dayAfter(STAY_MAX_NIGHTS)}
             aria-label={copy.date}
             aria-invalid={outOfRange}
             value={picked}

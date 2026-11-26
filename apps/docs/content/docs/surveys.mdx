@@ -17,7 +17,7 @@ The `survey-invites` job runs every hour (pg-boss, jobs module). A guest is due 
 
 Where the check-out date comes from:
 
-- The guest, on the capture page: an optional "when do you leave?" (tomorrow, in 2, 3 or 7 nights, or a date up to 90 days away). It is only kept when the guest also switches on the `profile` consent shown under it; otherwise neither is stored.
+- The guest, on the capture page: an optional "when do you leave?" (tomorrow, in 2, 3 or 7 nights, or a date up to 90 days away). It is only kept when the guest also switches on the toggle shown under it, which grants the whole `profile` consent; otherwise neither is stored. Scanning again does not change a check-out that is today or later, staff do that.
 - Staff, on the guest's edit page, once the guest has the `profile` consent.
 
 - Sent through `sendToGuest` on the channels the guest agreed to: the `survey` email and the `guest_survey` WhatsApp template (see `whatsapp-templates`).
