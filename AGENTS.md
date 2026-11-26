@@ -95,7 +95,8 @@ The docs site serves itself to agents: `/llms.txt` (index, start here), `/llms-f
 - Work is tracked as GitHub issues, usually on a GitHub Project board
 - Branch with `gh issue develop <issue-number> --checkout` so the branch and the PR link to the issue
 - Commits are `type(scope): subject`: types `feat` `fix` `perf` `refactor` `chore` `test` `docs` `ci`, scope always, subject at most 5 words, lowercase, imperative, no period (`fix(auth): expired token`)
-- PR title is a short plain description. The PR body starts with `closes #<issue-number>`
+- PR title is `type(scope): subject` like a commit: it is the squash subject release-please reads. The PR body starts with `closes #<issue-number>`
+- Merging to `main` deploys staging only. Production deploys when the release-please PR is merged. Never tag or publish a release by hand
 - Commit and push with the developer's own git identity, never an agent identity
 - Do not commit, push, or reply to PR reviews unless the developer asks in their own message
 
