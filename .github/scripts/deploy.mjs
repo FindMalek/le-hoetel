@@ -80,7 +80,11 @@ const legacyDb = { POSTGRES_USER: "le_hoetel", POSTGRES_DB: "le_hoetel" }
 
 // Infisical wins over what Dokploy already holds, computed values win over both. Without INFISICAL_* the Dokploy env
 // is kept and only the computed values are refreshed.
-const current = parseDotenv((await dokploy("compose.one", { composeId }, "GET")).env)
+const compose = await dokploy("compose.one", { composeId }, "GET")
+const current = parseDotenv(compose.env)
+// Dokploy puts every service with a domain on the shared dokploy-network, where staging's and production's `api` both
+// answer the name `api`. The container name (Dokploy runs compose with the appName as project) is unique per stack.
+if (compose.appName) computed.API_URL = `http://${compose.appName}-api-1:3001`
 let secrets = {}
 if (infisicalConfigured(env)) {
   secrets = await pullSecrets(prod ? "prod" : "staging", env)
