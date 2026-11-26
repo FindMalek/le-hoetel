@@ -87,7 +87,6 @@ test("a rescan counts once per hotel day and answers the public like a new phone
       phone: "+21620555555",
       language: "fr",
       consents: { email: false, whatsapp: true },
-      renderedAt: app.services.now().getTime() - 60_000,
     })
   const visits = async () => (await client.guests.find({ q: "20555555" }))[0]?.visits
 
