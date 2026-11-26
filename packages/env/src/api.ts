@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { parseEnv } from "./parse"
+import { logLevel, parseEnv, phone } from "./parse"
 
 const optional = z.string().optional()
 
@@ -33,7 +33,7 @@ const schema = z.object({
   GITHUB_REPO: optional,
   GITHUB_TOKEN: optional,
 
-  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  LOG_LEVEL: logLevel,
 
   /** Shared by the cache and the rate limits; without them both are kept in memory per process. */
   UPSTASH_REDIS_REST_URL: z.url().optional(),
@@ -66,7 +66,7 @@ const schema = z.object({
   KAPSO_API_KEY: optional,
   KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,
-  WHATSAPP_NOTIFY_TO: optional,
+  WHATSAPP_NOTIFY_TO: phone.optional(),
   WHATSAPP_TEMPLATE_NAME: z.string().default("app_notification"),
   WHATSAPP_TEMPLATE_LANGUAGE: z.string().default("en_US"),
 

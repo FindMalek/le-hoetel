@@ -119,6 +119,7 @@ services:
       dockerfile: apps/web/Dockerfile
       args:
         <<: *next-public
+        GIT_SHA: ${GIT_SHA:-}
     environment:
       <<: *next-env
     expose:
@@ -134,6 +135,7 @@ services:
       dockerfile: apps/dashboard/Dockerfile
       args:
         <<: *next-public
+        GIT_SHA: ${GIT_SHA:-}
     environment:
       <<: *next-env
     expose:
@@ -147,6 +149,8 @@ services:
     build:
       context: .
       dockerfile: apps/docs/Dockerfile
+      args:
+        GIT_SHA: ${GIT_SHA:-}
     environment:
       API_PUBLIC_URL: ${API_PUBLIC_URL:?}
       WEB_URL: ${WEB_URL:?}

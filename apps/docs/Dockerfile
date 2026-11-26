@@ -23,6 +23,8 @@ ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3003
 COPY --from=builder --chown=node:node /app/apps/docs/.next/standalone ./
 COPY --from=builder --chown=node:node /app/apps/docs/.next/static ./apps/docs/.next/static
 
+ARG GIT_SHA=""
+ENV GIT_SHA=$GIT_SHA
 USER node
 EXPOSE 3003
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s CMD wget -qO- http://127.0.0.1:3003/docs >/dev/null || exit 1

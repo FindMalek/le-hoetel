@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process"
 import { appendFileSync } from "node:fs"
+import { waitForHealthy } from "./deploy-health.mjs"
 import { formatDotenv, infisicalConfigured, parseDotenv, pullSecrets } from "./secrets-lib.mjs"
 
 // TARGET=staging|production, REF = branch or tag to build (default: main for staging, required for production).
@@ -8,7 +9,6 @@ const target = env.TARGET
 const summary = (text) => env.GITHUB_STEP_SUMMARY && appendFileSync(env.GITHUB_STEP_SUMMARY, `${text}\n`)
 const upper = String(target).toUpperCase()
 const composeId = env[`DOKPLOY_${upper}_COMPOSE_ID`]
-const apiUrl = env[`${upper}_API_URL`]
 const ref = env.REF || (target === "staging" ? "main" : "")
 
 if (!["staging", "production"].includes(target)) throw new Error("TARGET must be staging or production")
@@ -19,7 +19,7 @@ if (!env.DOKPLOY_URL || !env.DOKPLOY_TOKEN || !composeId) {
 }
 if (!ref) throw new Error("REF is required for production")
 
-// The commit Dokploy will build for `ref`, so the wait below can tell the new api from the old one.
+// The commit Dokploy will build for `ref`, so the wait below can tell the new apps from the old ones.
 async function resolveSha(ref) {
   if (env.GITHUB_REPOSITORY) {
     const res = await fetch(
@@ -100,22 +100,19 @@ await dokploy("compose.update", update)
 await dokploy("compose.deploy", { composeId, title: `${target} ${ref}` })
 summary(`${target} deploy started for \`${ref}\` (${sha.slice(0, 7)})`)
 
-if (!apiUrl) process.exit(0)
-let last = "no answer"
-for (let i = 0; i < 60; i++) {
-  const health = await fetch(`${apiUrl.replace(/\/+$/, "")}/health`).then(
-    async (r) => ({ status: r.status, body: await r.json().catch(() => ({})) }),
-    () => null,
-  )
-  if (health?.status === 200 && health.body.sha === sha) {
-    summary(`${target} api healthy on ${sha.slice(0, 7)}`)
-    // Only a deploy that proved the new sha live reports it, so a release can never tag an unverified commit.
-    if (env.GITHUB_OUTPUT) appendFileSync(env.GITHUB_OUTPUT, `healthy-sha=${sha}\n`)
-    process.exit(0)
-  }
-  if (health) last = `status ${health.status}, sha ${health.body.sha ?? "none"}`
-  await new Promise((r) => setTimeout(r, 20_000))
+const urls = {
+  api: env[`${upper}_API_URL`] || url("api"),
+  web: url("web"),
+  dashboard: url("dashboard"),
+  docs: url("docs"),
 }
-summary(`${target} api did not report ${sha.slice(0, 7)} on /health after 20 minutes (last: ${last})`)
-console.error(`timed out waiting for ${apiUrl}/health to report ${sha} (last: ${last})`)
-process.exit(1)
+const failing = await waitForHealthy(urls, sha)
+if (failing.length > 0) {
+  const report = `${target} not healthy on ${sha.slice(0, 7)} after 20 minutes\n${failing.map((f) => `- ${f}`).join("\n")}`
+  summary(report)
+  console.error(report)
+  process.exit(1)
+}
+summary(`${target} api, web, dashboard and docs healthy on ${sha.slice(0, 7)}`)
+// Only a deploy that proved the new sha live reports it, so a release can never tag an unverified commit.
+if (env.GITHUB_OUTPUT) appendFileSync(env.GITHUB_OUTPUT, `healthy-sha=${sha}\n`)

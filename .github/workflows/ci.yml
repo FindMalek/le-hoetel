@@ -60,6 +60,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm i18n:check
       - run: pnpm env:check
+      - run: node --test .github/scripts/*.test.mjs
       - name: Migrations match the schema
         run: |
           pnpm db:generate
