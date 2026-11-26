@@ -56,7 +56,6 @@ test("consent: the log names the staff member behind a change, never for the gue
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   await app.anonymous.public.capture({
     slug: "consent-staff",
-    renderedAt: Date.now() - 3_600_000,
     name: "Amel",
     phone: newGuest.phone,
     language: "fr",

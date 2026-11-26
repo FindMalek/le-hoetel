@@ -1,7 +1,8 @@
-import { afterAll, beforeAll, expect, test } from "bun:test"
+import { afterAll, beforeAll, expect, spyOn, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
 import { parseSpots, QR_LOGO_RATIO } from "@ritorno/common/qr"
 import { guests, hotelSettings } from "@ritorno/db"
+import { logger } from "@ritorno/logger"
 import { eq } from "drizzle-orm"
 import jsQR from "jsqr"
 import sharp from "sharp"
@@ -14,9 +15,7 @@ beforeAll(async () => {
 })
 afterAll(() => app.close())
 
-const anHourAgo = () => Date.now() - 3_600_000
 const scan = {
-  renderedAt: anHourAgo(),
   name: "Amel Ben Salah",
   phone: "20 123 456",
   language: "ar",
@@ -88,16 +87,33 @@ test("the public hotel only shows branding, an unknown slug is not found, email 
   ).rejects.toThrow("Email consent needs an email.")
 })
 
-test("bots are dropped silently: honeypot, a form sent too fast, a link as a name", async () => {
+test("a guest who submits right after the page loads is saved", async () => {
+  const owner = await app.signUp("capture-quick@ritorno.test")
+  const hotelId = await app.createHotel("capture-quick", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+
+  await app.anonymous.public.capture({ slug: "capture-quick", ...scan })
+
+  expect((await client.guests.list({})).total).toBe(1)
+})
+
+test("bots are dropped silently and counted without their data: honeypot, a link as a name", async () => {
   const owner = await app.signUp("capture-bots@ritorno.test")
   const hotelId = await app.createHotel("capture-bots", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const bot = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.0.1" }))
+  const info = spyOn(logger, "info")
 
-  for (const patch of [{ website: "https://spam.test" }, { renderedAt: Date.now() }, { name: "see www.spam.test" }]) {
+  for (const patch of [{ website: "https://spam.test" }, { name: "see www.spam.test" }]) {
     expect(await bot.public.capture({ slug: "capture-bots", ...scan, ...patch })).toEqual({ ok: true })
   }
+
+  expect(info.mock.calls).toEqual([
+    ["capture discarded", { hotelId, reason: "honeypot" }],
+    ["capture discarded", { hotelId, reason: "link-name" }],
+  ])
   expect((await client.guests.list({})).total).toBe(0)
+  info.mockRestore()
 })
 
 test("capture is limited per ip and per hotel", async () => {

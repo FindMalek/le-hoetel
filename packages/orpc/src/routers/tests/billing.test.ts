@@ -43,3 +43,18 @@ test("admin sets a price, invoices a month once, marks it paid, and the export a
     new Set(["billing.export", "billing.invoice-create", "billing.invoice-status", "billing.plan-update"]),
   )
 })
+
+test("the invoice export is in the admin log, never in the hotel's", async () => {
+  const admin = await app.signUp("quiet-admin@ritorno.test", { role: "admin" })
+  const owner = await app.signUp("quiet-owner@ritorno.test")
+  const hotelId = await app.createHotel("quiet-hotel", owner)
+  const asOwner = await app.joinHotel(owner, hotelId, "owner")
+  await admin.client.admin.billing.exportInvoices({ hotelId })
+
+  expect((await asOwner.client.audit.list()).entries.map((entry) => entry.action)).not.toContain("billing.export")
+  expect((await asOwner.client.audit.list({ action: "billing." })).entries).toEqual([])
+  expect((await asOwner.client.audit.filters()).actions).not.toContain("billing.export")
+  expect((await admin.client.admin.audit.list({ hotelId })).entries.map((entry) => entry.action)).toContain(
+    "billing.export",
+  )
+})

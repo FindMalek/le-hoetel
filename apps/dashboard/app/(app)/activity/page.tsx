@@ -8,7 +8,7 @@ import { getTranslations } from "next-intl/server"
 import { HotelAuditFeed } from "@/components/audit-feed"
 import { AuditFilters } from "@/components/audit-filters"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, currentHotel, getQueryClient, serverOrpc } from "@/lib/api"
 import { actionLabel, hotelAuditPages, picked, urlDay } from "@/lib/audit"
 
 export const metadata: Metadata = { title: "Activity log" }
@@ -30,8 +30,9 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
     to: urlDay(raw.to),
   }
   const filter = { action: values.action, actorId: values.actor, from: values.from, to: values.to }
-  const [t, options] = await Promise.all([
+  const [t, hotel, options] = await Promise.all([
     getTranslations("adminAudit"),
+    currentHotel(),
     call((api) => api.audit.filters()).catch((error) => {
       if (isForbidden(error)) return null
       throw error
@@ -39,7 +40,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
   ])
   const header = <PageHeader title={t("hotel.title")} description={t("hotel.description")} />
 
-  if (!options) {
+  if (!options || !hotel) {
     return (
       <>
         {header}
@@ -51,7 +52,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
   }
 
   const queryClient = getQueryClient()
-  await queryClient.prefetchInfiniteQuery(hotelAuditPages(serverOrpc, filter))
+  await queryClient.prefetchInfiniteQuery(hotelAuditPages(serverOrpc, hotel.id, filter))
   const filtered = Object.values(values).some(Boolean)
 
   return (
@@ -60,6 +61,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
       <div className="p-4 md:p-6">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <HotelAuditFeed
+            hotelId={hotel.id}
             filter={filter}
             timeZone={options.timezone}
             filtered={filtered}

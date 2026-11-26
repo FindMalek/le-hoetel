@@ -23,7 +23,7 @@ import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { openFeedback } from "@/components/feedback-button"
-import { type CurrentHotel, type HotelChoice, HotelSwitcher } from "@/components/hotel-switcher"
+import { HotelSwitcher, type HotelSwitcherProps } from "@/components/hotel-switcher"
 import { type Me, UserMenu } from "@/components/user-menu"
 import { activeHref, type NavGroup, navGroups } from "@/lib/nav"
 
@@ -100,17 +100,7 @@ function NavSection({
   )
 }
 
-export function AppSidebar({
-  me,
-  current,
-  hotels,
-  activeHotelId,
-}: {
-  me: Me
-  current: CurrentHotel | null
-  hotels: HotelChoice[]
-  activeHotelId: string | null
-}) {
+export function AppSidebar({ me, switcher }: { me: Me; switcher: HotelSwitcherProps }) {
   const pathname = usePathname()
   const t = useTranslations("shell")
   const groups = navGroups(me.role)
@@ -130,7 +120,7 @@ export function AppSidebar({
         </Link>
         <SidebarMenu>
           <SidebarMenuItem>
-            <HotelSwitcher current={current} hotels={hotels} activeId={activeHotelId} isAdmin={me.role === "admin"} />
+            <HotelSwitcher {...switcher} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

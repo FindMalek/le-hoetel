@@ -612,12 +612,14 @@
     "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
     "errorInvalid": "Please check your name and phone number.",
     "errorTooMany": "Too many tries. Please wait a moment and try again.",
+    "errorFailed": "Your sign-up was not sent. Check your connection and try again.",
     "nameError": "Add your name.",
     "phoneError": "Check your phone number.",
     "optionalTitle": "More about you",
     "optionalHint": "Optional: birthday and email.",
     "whatsappTitle": "WhatsApp",
     "emailTitle": "Email",
+    "sending": "Sending…",
     "submitHint": "No message is sent unless you switch one on.",
     "thanksPerk": "Show this screen at the front desk to get it.",
     "whatsappButton": "Continue on WhatsApp",
@@ -2108,7 +2110,10 @@
     "removed": "Member removed.",
     "revoke": "Revoke",
     "revokeTitle": "Revoke the invitation for {email}?",
-    "revokeBody": "The link stops working right away. You can invite them again later."
+    "revokeBody": "The link stops working right away. You can invite them again later.",
+    "notMember": "You are not a member of {hotel}",
+    "notMemberHint": "Only its members can invite or change people here. Its admin page lists them.",
+    "notMemberAction": "Open the admin page"
   },
   "usage": {
     "title": "WhatsApp usage",

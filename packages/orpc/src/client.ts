@@ -8,7 +8,7 @@ export type { AppRouterClient }
 export interface ORPCClientOptions {
   /** Full rpc url: `${API_URL}/rpc` on the server, `${origin}/api/rpc` (the Next proxy) in the browser. */
   url: string | (() => string)
-  /** Server side only: forward the visitor's cookie so admin calls carry the session. */
+  /** The server forwards the visitor's cookie here; the browser names the hotel on screen. */
   getHeaders?: () => Promise<Record<string, string>> | Record<string, string>
 }
 

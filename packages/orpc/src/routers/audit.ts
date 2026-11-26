@@ -52,6 +52,9 @@ const hotelFilterSchema = z.object({
 const aboutHotel = sql<string | null>`coalesce(${auditLog.metadata}->>'hotelId', ${auditLog.targetId})`
 const entryHotelId = sql<string | null>`coalesce(${auditLog.metadata}->>'hotelId', ${hotelSettings.organizationId})`
 
+/** The rows a hotel reads: those about it, less our own billing work. The admin log keeps everything. */
+const hotelRows = (hotelId: string) => sql`${aboutHotel} = ${hotelId} and ${auditLog.action} <> 'billing.export'`
+
 /** An action name, or every action of a noun when it ends with a dot (`guest.`). */
 const ofAction = (action: string | undefined): SQL | undefined => {
   if (!action) return undefined
@@ -148,7 +151,7 @@ export const hotelAuditRouter = {
     .output(z.object({ entries: z.array(hotelEntrySchema), nextCursor: z.string().nullable() }))
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
-      const mine = sql`${aboutHotel} = ${hotelId}`
+      const mine = hotelRows(hotelId)
       const timezone = sql`coalesce((select timezone from ${hotelSettings} where organization_id = ${hotelId}), 'UTC')`
       const rows = await context.db
         .select({
@@ -197,7 +200,7 @@ export const hotelAuditRouter = {
     )
     .handler(async ({ context }) => {
       const { hotelId } = context.hotel
-      const mine = sql`${aboutHotel} = ${hotelId}`
+      const mine = hotelRows(hotelId)
       const [[settings], actions, actors] = await Promise.all([
         context.db
           .select({ timezone: hotelSettings.timezone })

@@ -54,7 +54,7 @@ import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
-import { bestRole } from "../lib/hotel"
+import { bestRole, HOTEL_HEADER } from "../lib/hotel"
 import { activeMembership } from "../lib/org"
 import { adminProcedure, can, hotelProcedure, protectedProcedure } from "../procedures"
 
@@ -100,7 +100,9 @@ export const hotelRouter = {
       }),
     )
     .handler(async ({ context }) => {
-      const active = await activeMembership(context)
+      // The app admin's `x-hotel-id` wins here like in `resolveHotel`, so no page mixes two hotels.
+      const named = context.user.role === "admin" ? context.headers.get(HOTEL_HEADER) : null
+      const active = named ? { organizationId: named, role: "owner" } : await activeMembership(context)
       return {
         activeId: active?.organizationId ?? null,
         role: active ? bestRole(active.role) : null,
