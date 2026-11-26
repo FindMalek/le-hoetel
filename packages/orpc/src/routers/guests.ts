@@ -35,6 +35,7 @@ import { z } from "zod"
 import type { Context } from "../context"
 import { enqueueWelcome } from "../jobs"
 import { audit } from "../lib/audit"
+import { eraseFeedbackNotes, feedbackOfGuests } from "../lib/feedback-cases"
 import {
   clearExtras,
   hashGuestId,
@@ -319,7 +320,12 @@ export const guestsRouter = {
       const { hotelId } = context.hotel
       const guest = await loadGuest(context.db, hotelId, input.id)
       await audit(context, { action: "guest.export", targetId: input.id, metadata: { hotelId } })
-      return { exportedAt: context.now(), guest, consentEvents: await eventsOf(context.db, hotelId, [input.id]) }
+      return {
+        exportedAt: context.now(),
+        guest,
+        consentEvents: await eventsOf(context.db, hotelId, [input.id]),
+        feedback: await feedbackOfGuests(context.db, hotelId, input.id),
+      }
     }),
 
   exportAll: hotelExportProcedure
@@ -336,10 +342,15 @@ export const guestsRouter = {
       const rows = await context.db.select().from(guests).where(eq(guests.hotelId, hotelId)).orderBy(guests.createdAt)
       const all = await withConsents(context.db, hotelId, rows)
       const events = await eventsOf(context.db, hotelId, null)
+      const feedback = await feedbackOfGuests(context.db, hotelId, null)
       await audit(context, { action: "guest.export-all", metadata: { hotelId, count: all.length } })
       return {
         exportedAt: context.now(),
-        guests: all.map((guest) => ({ guest, consentEvents: events.filter((event) => event.guestId === guest.id) })),
+        guests: all.map((guest) => ({
+          guest,
+          consentEvents: events.filter((event) => event.guestId === guest.id),
+          feedback: feedback.filter((item) => item.guestId === guest.id),
+        })),
       }
     }),
 
@@ -363,6 +374,7 @@ export const guestsRouter = {
       if (input.id && !rows.length) throw notFound()
       const all = await withConsents(context.db, hotelId, rows)
       const events = await eventsOf(context.db, hotelId, input.id ? [input.id] : null)
+      const feedback = await feedbackOfGuests(context.db, hotelId, input.id ?? null)
       await audit(context, {
         action: input.id ? "guest.export" : "guest.export-all",
         targetId: input.id,
@@ -371,7 +383,13 @@ export const guestsRouter = {
       const day = context.now().toISOString().slice(0, 10)
       return {
         filename: input.id ? `guest-${day}.csv` : `guests-${day}.csv`,
-        csv: guestsToCsv(all.map((guest) => ({ guest, consentEvents: events.filter((e) => e.guestId === guest.id) }))),
+        csv: guestsToCsv(
+          all.map((guest) => ({
+            guest,
+            consentEvents: events.filter((e) => e.guestId === guest.id),
+            feedback: feedback.filter((f) => f.guestId === guest.id),
+          })),
+        ),
       }
     }),
 
@@ -387,7 +405,10 @@ export const guestsRouter = {
     .output(z.object({ ok: z.literal(true) }))
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
-      const removed = await context.db.delete(guests).where(hotelGuest(hotelId, input.id)).returning({ id: guests.id })
+      const removed = await context.db.transaction(async (tx) => {
+        await eraseFeedbackNotes(tx, hotelId, input.id)
+        return tx.delete(guests).where(hotelGuest(hotelId, input.id)).returning({ id: guests.id })
+      })
       if (!removed.length) throw notFound()
       const hash = hashGuestId(input.id)
       await audit(context, { action: "guest.delete", targetId: hash, metadata: { hotelId } })
@@ -411,6 +432,7 @@ export const guestsRouter = {
         if ((total?.n ?? 0) !== input.confirmCount) {
           throw new ORPCError("CONFLICT", { message: "The guest list changed. Reload and confirm again." })
         }
+        await eraseFeedbackNotes(tx, hotelId, null)
         return tx.delete(guests).where(eq(guests.hotelId, hotelId)).returning({ id: guests.id })
       })
       await audit(context, { action: "guest.delete-all", metadata: { hotelId, count: deleted.length } })

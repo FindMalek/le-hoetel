@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { CONSENT_CHANNELS, CONSENT_SOURCES, GUEST_SOURCES } from "../consent"
+import { FEEDBACK_CASE_STATUSES } from "../feedback-case"
 import { HOTEL_LANGUAGES } from "../hotel"
 import { isWhatsappCapable, parsePhone } from "../phone"
 
@@ -247,10 +248,21 @@ export type Guest = z.infer<typeof guestSchema>
 export type GuestListItem = z.infer<typeof guestListSchema>["items"][number]
 export type GuestActivity = z.infer<typeof guestActivitySchema>
 
+/** What the hotel wrote down while following up an unhappy answer. */
+export const exportedFeedbackSchema = z.object({
+  status: z.enum(FEEDBACK_CASE_STATUSES),
+  notes: z.string().nullable(),
+  nps: z.number(),
+  comment: z.string().nullable(),
+  submittedAt: z.date(),
+  updatedAt: z.date(),
+})
+
 export const guestExportSchema = z.object({
   exportedAt: z.date(),
   guest: guestSchema,
   consentEvents: z.array(consentEventSchema),
+  feedback: z.array(exportedFeedbackSchema),
 })
 
 export const hotelGuestsExportSchema = z.object({
