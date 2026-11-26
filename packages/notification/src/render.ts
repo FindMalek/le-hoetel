@@ -38,16 +38,6 @@ function withFooter(email: RenderedEmail, footer: string): RenderedEmail {
   return { ...email, html, text: `${email.text}\n\n${footer}` }
 }
 
-const MARKDOWN_SPECIALS = /([_*`[])/g
-
-/** Telegram's legacy Markdown: bold title, plain lines, one link. */
-export function toTelegram({ title, lines, link }: Summary): string {
-  const esc = (text: string) => text.replace(MARKDOWN_SPECIALS, "\\$1")
-  return [`*${esc(title)}*`, ...lines.map(esc), link ? `[${esc(link.label)}](${link.url.replaceAll(")", "%29")})` : ""]
-    .filter(Boolean)
-    .join("\n")
-}
-
 const WHATSAPP_MAX = 900
 
 /** WhatsApp template variables can't hold line breaks, so this is one short line. */

@@ -1,5 +1,5 @@
 {
-  "id": "21fa059d-846c-4ec8-b4bb-0ed46c07ba4f",
+  "id": "a4308a28-76cd-4e76-be76-831b040cd8e2",
   "prevId": "0bdf4ed9-530a-4864-a3b8-ecfa9cbe9e35",
   "version": "7",
   "dialect": "postgresql",
@@ -1936,30 +1936,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "manager_telegram": {
-          "name": "manager_telegram",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "telegram_chat_id": {
-          "name": "telegram_chat_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "telegram_link_code": {
-          "name": "telegram_link_code",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "telegram_link_expires_at": {
-          "name": "telegram_link_expires_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
         "plan": {
           "name": "plan",
           "type": "hotel_plan",
@@ -2245,12 +2221,6 @@
         "error_code": {
           "name": "error_code",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "preview": {
-          "name": "preview",
-          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },

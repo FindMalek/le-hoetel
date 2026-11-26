@@ -12,25 +12,19 @@ export const metadata: Metadata = { title: "Hotel" }
 
 export default async function HotelPage() {
   const t = await getTranslations("hotelSettings")
-  const [hotel, mine, alerts] = await Promise.all([
+  const [hotel, mine] = await Promise.all([
     call((api) => api.hotel.get()).catch((error) => {
       if (isForbidden(error)) return null
       throw error
     }),
     call((api) => api.hotel.mine()),
-    call((api) => api.hotel.alerts.status()).catch(() => null),
   ])
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
       <div className="p-4 md:p-6">
         {hotel ? (
-          <HotelSettingsForm
-            hotel={hotel}
-            copies={await getPreviewCopies()}
-            alerts={alerts}
-            readOnly={mine.role === "staff"}
-          />
+          <HotelSettingsForm hotel={hotel} copies={await getPreviewCopies()} readOnly={mine.role === "staff"} />
         ) : (
           <PageState kind="empty" icon={<HotelIcon />} title={t("noHotel")} description={t("noHotelHint")} />
         )}

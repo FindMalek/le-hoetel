@@ -14,7 +14,7 @@ export const notificationRouter = {
     .input(
       z.object({
         channel: z.enum(CHANNELS),
-        /** Email address, Telegram chat id or phone number; Telegram and WhatsApp default to the configured one. */
+        /** Email address or phone number; WhatsApp defaults to the configured one. */
         to: z.string().min(1).max(254).optional(),
       }),
     )

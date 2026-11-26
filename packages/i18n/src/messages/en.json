@@ -760,27 +760,11 @@
     "thresholdOption": "{score} or less"
   },
   "managerAlerts": {
-    "title": "Telegram",
-    "linked": "Connected. Alerts arrive in your Telegram chat.",
-    "notLinked": "Not connected yet.",
-    "notConfigured": "Telegram alerts are not set up on this platform yet. We email your alerts for now.",
-    "connect": "Connect Telegram",
-    "reconnect": "Connect another chat",
-    "step": "Open the link and press Start in Telegram. The code works once, for 15 minutes.",
-    "open": "Open Telegram",
-    "code": "Code: {code}",
+    "title": "Email",
+    "description": "Alerts are emailed to your reply-to address, or to an owner when none is set.",
     "testButton": "Send a test alert",
-    "testTelegram": "Test sent to Telegram.",
-    "testEmail": "Test sent by email, Telegram is not connected.",
-    "testNone": "No Telegram chat or email to send to.",
-    "disconnect": "Disconnect",
-    "disconnected": "Telegram disconnected.",
-    "refresh": "I pressed Start",
-    "badge": {
-      "connected": "Connected",
-      "notConnected": "Not connected",
-      "unavailable": "Unavailable"
-    }
+    "testSent": "Test alert sent by email.",
+    "testNone": "No email address to send to."
   },
   "qrCodes": {
     "title": "QR codes",

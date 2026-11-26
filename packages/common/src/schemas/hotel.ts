@@ -41,7 +41,6 @@ export const hotelBrandingInputSchema = z.object({
   address: nullableText(200),
   googleReviewUrl: httpsUrl,
   managerWhatsapp: nullableText(40),
-  managerTelegram: nullableText(80),
 })
 
 /** `logoKey` is not editable here: it is only ever set by `hotel.setLogo`, which checks the key belongs to the hotel. */

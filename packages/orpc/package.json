@@ -14,7 +14,6 @@
     "./testing": "./src/testing.ts",
     "./unsubscribe": "./src/lib/unsubscribe.ts",
     "./balance": "./src/lib/balance.ts",
-    "./manager-alerts": "./src/lib/manager-alerts.ts",
     "./messages": "./src/lib/messages.ts",
     "./jobs": "./src/jobs/index.ts"
   },

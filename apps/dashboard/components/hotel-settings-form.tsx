@@ -22,7 +22,7 @@ import { useForm } from "@/lib/use-form"
 import { BrandPreview, type PreviewCopies } from "./brand-preview"
 import { COLOR_DEFAULTS, ColorField, isHexColor } from "./color-field"
 import { HotelLogo } from "./hotel-logo"
-import { TelegramAlerts } from "./telegram-alerts"
+import { ManagerAlerts } from "./manager-alerts"
 
 const TIMEZONES = [
   "Africa/Tunis",
@@ -59,7 +59,6 @@ type HotelPatch = Partial<
   >
 >
 type Errors<V> = Partial<Record<keyof V, string>>
-type Alerts = { linked: boolean; botConfigured: boolean }
 
 const useHotelUpdate = () => useMutation(orpc.hotel.update.mutationOptions())
 
@@ -324,7 +323,7 @@ function MessagingSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean
   )
 }
 
-function AlertsSection({ hotel, alerts, readOnly }: { hotel: Hotel; alerts: Alerts | null; readOnly: boolean }) {
+function AlertsSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean }) {
   const t = useTranslations("hotelSettings")
   const { form, state } = useSection(
     { lowScoreThreshold: String(hotel.lowScoreThreshold) },
@@ -333,7 +332,7 @@ function AlertsSection({ hotel, alerts, readOnly }: { hotel: Hotel; alerts: Aler
   )
   return (
     <FormSection title={t("sections.alerts.title")} description={t("sections.alerts.description")}>
-      {alerts ? <TelegramAlerts {...alerts} readOnly={readOnly} /> : null}
+      <ManagerAlerts readOnly={readOnly} />
       <SectionForm state={state} readOnly={readOnly}>
         <FormField id="lowScoreThreshold" label={t("threshold")} hint={t("thresholdHint")}>
           {(aria) => (
@@ -390,12 +389,10 @@ function ReviewSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean })
 export function HotelSettingsForm({
   hotel,
   copies,
-  alerts,
   readOnly,
 }: {
   hotel: Hotel
   copies: PreviewCopies
-  alerts: Alerts | null
   readOnly: boolean
 }) {
   const t = useTranslations("hotelSettings")
@@ -405,7 +402,7 @@ export function HotelSettingsForm({
       <BrandSection hotel={hotel} copies={copies} readOnly={readOnly} />
       <div className="flex flex-col border-t pt-6">
         <MessagingSection hotel={hotel} readOnly={readOnly} />
-        <AlertsSection hotel={hotel} alerts={alerts} readOnly={readOnly} />
+        <AlertsSection hotel={hotel} readOnly={readOnly} />
         <ReviewSection hotel={hotel} readOnly={readOnly} />
       </div>
     </div>
