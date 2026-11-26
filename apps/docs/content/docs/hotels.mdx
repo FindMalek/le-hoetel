@@ -17,7 +17,7 @@ The app admin (user role `admin`) sees every hotel: a call can name any hotel wi
 
 Hotels are created by the app admin, never self-served. In the dashboard, admins open **Hotels** (`/admin/hotels`), fill the name, slug, owner email and optional colors and language, and `admin.hotels.create` creates the organization with its `hotel_settings` and emails the owner an invitation (`role: owner`). The owner joins by accepting it. The same page lists every hotel (`admin.hotels.list`) with guest count, owner count and a health badge.
 
-Deleting a hotel and changing its name or slug (printed on its QR codes) only go through the admin procedures (`admin.hotels.remove`, `admin.hotels.update`). better-auth's own `/api/auth/organization/delete` is off and `/api/auth/organization/update` refuses `name` and `slug`.
+Deleting a hotel and changing its name or slug only go through the admin procedures. `admin.hotels.update` takes `name` and `slug` (same format as on create, refused with `CONFLICT` when another hotel has it), and the admin hotel page asks to confirm a new slug, since every QR code already printed with the old one stops working. `admin.hotels.remove` deletes. better-auth's own `/api/auth/organization/delete` is off and `/api/auth/organization/update` refuses `name` and `slug`, so an owner or manager can't do either.
 
 Accounts are never self-served either. Sign up over http only works for an email with a pending, unexpired invitation (password, GitHub and magic link alike, checked in the `user.create.before` hook of `packages/auth`). Accounts made server side (the `ADMIN_EMAIL` admin, the demo seed, `signUp()` in tests) and the admin plugin's create-user skip the check.
 

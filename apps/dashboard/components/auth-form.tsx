@@ -21,16 +21,19 @@ export function AuthForm({
   mode,
   next,
   reset = false,
+  error,
 }: {
   mode: "sign-in" | "sign-up"
   next: string
   reset?: boolean
+  /** The `error` code better-auth puts on the url when a GitHub sign in fails, e.g. `INVITATION_REQUIRED`. */
+  error?: string
 }) {
   const t = useTranslations("auth")
   const signUp = mode === "sign-up"
   const copy = signUp ? "signUp" : "signIn"
   const [errors, setErrors] = useState<Errors>({})
-  const [formError, setFormError] = useState<string | null>(null)
+  const [formError, setFormError] = useState<string | null>(error ? t(`errors.${authErrorKey({ code: error })}`) : null)
   const [busy, setBusy] = useState(false)
   const providers = useQuery(orpc.public.authProviders.queryOptions())
   const withNext = (path: string) => (next === "/" ? path : `${path}?next=${encodeURIComponent(next)}`)
@@ -91,7 +94,13 @@ export function AuthForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => authClient.signIn.social({ provider: "github", callbackURL: next })}
+                onClick={() =>
+                  authClient.signIn.social({
+                    provider: "github",
+                    callbackURL: next,
+                    errorCallbackURL: withNext("/sign-in"),
+                  })
+                }
               >
                 {t("github")}
               </Button>

@@ -189,3 +189,21 @@ test("a suspended hotel is closed to its team, the owner keeps the read-only exp
   await expect(manager.client.hotel.get()).rejects.toMatchObject({ code: "FORBIDDEN" })
   expect((await owner.client.guests.exportAll()).guests).toEqual([])
 })
+
+test("only the app admin renames a hotel or changes its slug, and a taken slug is refused", async () => {
+  const admin = await app.signUp("rename-admin@ritorno.test", { role: "admin" })
+  const ownerAccount = await app.signUp("rename-owner@ritorno.test")
+  const hotelId = await app.createHotel("rename-before", ownerAccount)
+  await app.createHotel("rename-taken", await app.signUp("rename-other@ritorno.test"))
+  const owner = await app.joinHotel(ownerAccount, hotelId, "owner")
+
+  await expect(owner.client.admin.hotels.update({ id: hotelId, slug: "owner-pick" })).rejects.toMatchObject({
+    code: "FORBIDDEN",
+  })
+  await expect(admin.client.admin.hotels.update({ id: hotelId, slug: "rename-taken" })).rejects.toMatchObject({
+    code: "CONFLICT",
+  })
+  expect(
+    await admin.client.admin.hotels.update({ id: hotelId, name: "Dar Renamed", slug: "rename-after" }),
+  ).toMatchObject({ name: "Dar Renamed", slug: "rename-after" })
+})

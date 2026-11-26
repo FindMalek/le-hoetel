@@ -8,6 +8,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SignInPage({ searchParams }: PageProps<"/sign-in">) {
-  const { next, reset } = await searchParams
-  return <AuthForm mode="sign-in" next={safeNext(next)} reset={reset === "1"} />
+  const { next, reset, error } = await searchParams
+  return (
+    <AuthForm
+      mode="sign-in"
+      next={safeNext(next)}
+      reset={reset === "1"}
+      error={typeof error === "string" ? error : undefined}
+    />
+  )
 }

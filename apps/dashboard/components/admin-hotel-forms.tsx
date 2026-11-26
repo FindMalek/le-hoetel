@@ -237,10 +237,86 @@ export function AdminPlanForm({
   )
 }
 
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
+
+/** Only the app admin renames a hotel. A new slug breaks printed QR codes, so it asks first. */
+function AdminRename({ hotel }: { hotel: { id: string; name: string; slug: string; displayName: string } }) {
+  const t = useTranslations("adminHotel")
+  const tWizard = useTranslations("adminWizard")
+  const router = useRouter()
+  const [name, setName] = useState(hotel.name)
+  const [slug, setSlug] = useState(hotel.slug)
+  const [confirming, setConfirming] = useState(false)
+  const rename = useMutation(
+    orpc.admin.hotels.update.mutationOptions({
+      onSuccess: () => {
+        setConfirming(false)
+        toast.success(t("renamed"))
+        router.refresh()
+      },
+      onError: (error) => toast.error(errorMessage(error)),
+    }),
+  )
+  const nameError = name.trim() ? undefined : tWizard("errors.name")
+  const slugError = SLUG.test(slug) ? undefined : tWizard("errors.slugFormat")
+  const save = () => rename.mutate({ id: hotel.id, name: name.trim(), slug })
+  const submit = (event: FormEvent) => {
+    event.preventDefault()
+    if (nameError || slugError) return
+    if (slug !== hotel.slug) setConfirming(true)
+    else save()
+  }
+
+  return (
+    <form onSubmit={submit} noValidate className="flex flex-col gap-3 p-4">
+      <div className="flex max-w-prose flex-col gap-1">
+        <h3 className="font-medium text-sm">{t("rename")}</h3>
+        <p className="text-muted-foreground text-sm">{t("renameHint")}</p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <AdminInput label={tWizard("name")} value={name} error={nameError} onChange={(e) => setName(e.target.value)} />
+        <AdminInput
+          label={tWizard("slug")}
+          value={slug}
+          error={slugError}
+          dir="ltr"
+          autoComplete="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          onChange={(e) => setSlug(e.target.value.trim().toLowerCase())}
+        />
+      </div>
+      <Button
+        type="submit"
+        variant="outline"
+        className="self-start"
+        loading={rename.isPending && !confirming}
+        disabled={name === hotel.name && slug === hotel.slug}
+      >
+        {t("renameSave")}
+      </Button>
+      <AlertDialog open={confirming} onOpenChange={setConfirming}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("slugTitle", { hotel: hotel.displayName })}</AlertDialogTitle>
+            <AlertDialogDescription>{t("slugConsequence", { old: hotel.slug })}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={rename.isPending}>{t("cancel")}</AlertDialogCancel>
+            <Button variant="destructive" loading={rename.isPending} onClick={save}>
+              {t("slugConfirm")}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </form>
+  )
+}
+
 export function AdminDangerZone({
   hotel,
 }: {
-  hotel: { id: string; slug: string; displayName: string; status: HotelStatus; hasPilotEnd: boolean }
+  hotel: { id: string; name: string; slug: string; displayName: string; status: HotelStatus; hasPilotEnd: boolean }
 }) {
   const t = useTranslations("adminHotel")
   const router = useRouter()
@@ -269,6 +345,7 @@ export function AdminDangerZone({
 
   return (
     <div className="flex flex-col divide-y rounded-lg border border-destructive/30">
+      <AdminRename hotel={hotel} />
       <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex max-w-prose flex-col gap-1">
           <h3 className="font-medium text-sm">{suspended ? t("reactivate") : t("suspend")}</h3>
