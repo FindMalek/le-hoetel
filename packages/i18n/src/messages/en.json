@@ -1008,44 +1008,58 @@
       "stop": "Every message has a link to stop."
     },
     "how": {
-      "title": "From a QR code to a guest who comes back",
-      "lead": "Six steps the hotel never has to think about. The first one takes a guest ten seconds.",
+      "title": "One guest, from the QR code to her second stay",
+      "lead": "Amira scans the code in room 12. Everything after that happens on its own, and the manager only steps in when it matters.",
       "link": "Read the docs",
       "stars": "{count} out of 5",
-      "qr": {
-        "chip": "QR code",
-        "title": "Scan in the room",
-        "body": "At the desk, the table or the room. No app, no account.",
-        "place": "Room 12"
+      "inputsLabel": "How guests join",
+      "outcomesLabel": "What the hotel gets",
+      "inputs": {
+        "room": {
+          "title": "QR code in the room",
+          "body": "Room 12"
+        },
+        "table": {
+          "title": "At the desk or the table",
+          "desk": "Front desk",
+          "table": "Table 7"
+        },
+        "staff": {
+          "title": "Staff quick add"
+        }
       },
-      "list": {
-        "chip": "Guest list",
-        "title": "Join your guest list",
-        "body": "Name, phone, language and a clear yes per channel."
+      "hub": {
+        "stay": "Room 12, 12 to 15 March",
+        "nights": "3 nights",
+        "progress": "{done} of {total} steps done",
+        "steps": {
+          "joined": "Joined with the room QR code",
+          "welcome": "Welcome sent on WhatsApp",
+          "birthday": "Birthday offer sent",
+          "checkout": "Checked out",
+          "survey": "Answered the survey: 2 of 5 stars",
+          "alerted": "Manager alerted",
+          "called": "Called back by the manager",
+          "happy": "Says she is happy now",
+          "review": "Google review invite sent"
+        }
       },
-      "welcome": {
-        "chip": "WhatsApp",
-        "title": "A warm welcome",
-        "body": "Sent on the channel the guest chose, in their language.",
-        "message": "Welcome to {hotel}, {name}. Your welcome drink is waiting at the bar."
-      },
-      "survey": {
-        "chip": "Survey",
-        "title": "One question after the stay",
-        "body": "A short survey the day after checkout."
-      },
-      "alert": {
-        "chip": "Low score",
-        "title": "The manager hears first",
-        "body": "A low score reaches the manager the same day.",
-        "room": "Room 204",
-        "quote": "\"The air conditioning did not work.\"",
-        "action": "Call guest"
-      },
-      "review": {
-        "chip": "Happy guest",
-        "title": "A Google review invite",
-        "body": "Happy guests are asked to share it on Google."
+      "outcomes": {
+        "alert": {
+          "title": "Manager alert",
+          "room": "Room 12",
+          "quote": "\"The air conditioning was noisy at night.\"",
+          "action": "Call guest"
+        },
+        "review": {
+          "title": "A Google review"
+        },
+        "return": {
+          "title": "Back for a second stay",
+          "badge": "Returning",
+          "offer": "Offer redeemed",
+          "when": "June, room 12 again"
+        }
       }
     },
     "features": {
