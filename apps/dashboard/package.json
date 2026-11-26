@@ -19,6 +19,7 @@
     "@ritorno/orpc": "workspace:*",
     "@ritorno/ui": "workspace:*",
     "@next/env": "catalog:",
+    "fflate": "catalog:",
     "@sentry/nextjs": "catalog:",
     "@tanstack/react-query": "catalog:",
     "lucide-react": "catalog:",

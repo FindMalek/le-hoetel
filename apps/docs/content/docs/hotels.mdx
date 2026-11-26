@@ -53,11 +53,9 @@ Billing is manual: no online payment, and no payment card data anywhere. Everyth
 
 ## Rooms and tables
 
-Every room and table has its own code, a [short link](#short-links-behind-the-codes) that leads to the capture page with `src` and the spot in `loc`, so a capture is stored with its spot. On **QR codes**, generating for rooms or tables also saves them (`hotel.spots.add`, table `capture_spots`). The field takes names, lists and number ranges (`101-120`, `1-12`, a reversed `120-101` reads the same), at most 100 at a time and 500 per hotel. Rooms and tables need at least one spot, only the front desk makes a code without one. The page says how many codes will be made before generating, and says when the list is cut at 100. The cards, file names (`qr-room-301.svg`), guest counts and print kit follow what was generated, even after picking another tab. Every role, staff included, can add and remove spots. Removing asks first and only takes them off the list: a printed code keeps working.
+Every room and table has its own code, a [short link](#short-links-behind-the-codes) that leads to the capture page with `src` and the spot in `loc`, so a capture is stored with its spot. Rooms and tables are saved per hotel (`hotel.spots.add`, table `capture_spots`) from **Add rooms or tables** on **QR codes**. The field takes names, lists and number ranges (`101-120`, `1-12`, a reversed `120-101` reads the same), at most 100 at a time and 500 per hotel. Every role, staff included, can add and remove spots. Removing (in **Pick**) asks first and only takes them off the list: a printed code keeps working.
 
-Every printed code has the hotel logo in its middle (the first letter of the hotel's name without a logo) and, next to it, a tiny label for staff: `383` for a room, `T4` for table `4`. Codes are made with error correction level H so the logo does not stop them from scanning. The SVG and PNG downloads on the page are the code with its short address written under it, without the logo.
-
-**Cut sheet.** The saved list prints at `/print/qr-sheet`: A4, 20 stickers of 45 x 52 mm per page with a 39 mm code, and crop marks in the margins. Under each code is a short "scan me" line in the language picked on the page (default the hotel's guest language, right to left in Arabic), then the short address, then the staff label. Print all of them or the ticked ones (`?room=101,102&table=4`).
+Every printed code has the hotel logo in its middle (the first letter of the hotel's name without a logo) and, next to it, a tiny label for staff: `383` for a room, `T4` for table `4`. Codes are made with error correction level H so the logo does not stop them from scanning.
 
 ## Short links behind the codes
 
@@ -71,21 +69,31 @@ Every printed piece and download opens `<web url>/q/<code>` and shows that addre
 - `/h/<slug>?src=&loc=` stays as it was, so codes printed before short links work as long as the slug does not change.
 - The web address itself is part of the printed code: moving the guest site to another domain needs the old domain to keep redirecting.
 
-## Printable QR kit
+## Printing QR codes
 
-On **QR codes**, **Open print kit** opens `/print/qr-kit` for the codes on screen: one page per spot.
+**QR codes** (`/qr-codes`, every role) is built around the paper, in three steps next to a live preview:
+
+1. **What to print**, picked from thumbnails of the real art:
 
 | Piece | Source | Paper |
 |---|---|---|
-| Room card | `room` | A6 portrait |
-| Table tent | `table` | A5 portrait, folded in half into two A6 faces |
-| Front desk sign | `desk` | A5 portrait |
+| Room card | `room` | A6 portrait, one per room |
+| Table tent | `table` | A5 portrait folded into two A6 faces, one per table |
+| Desk sign | `desk` | A5 portrait |
+| Stickers | rooms and tables | A4 sheet of 20 (45 x 52 mm, 39 mm code) with crop marks |
 
-The page takes `piece`, `lang` (`en`, `fr`, `ar`, default the hotel's guest language) and `spots` (same format as the form). Switching piece drops the spots and gives one code without a spot, and the page says so.
+2. **Which spots**, from the saved list: all, a range (`From` and `To`, numbers in number order, an empty end is open) or ticked ones. With no saved spot the piece prints one code without a number.
+3. **Wording**: the language on the paper (`en`, `fr`, `ar`, default the hotel's guest language), the headline (empty keeps the default) and whether the welcome gift is shown. Headline and gift apply to cards, not stickers.
 
-Each page carries the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language, whatever the card's language, so reprint when the welcome offer or the branding changes. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
+**The preview is the print.** One component (`components/qr/art.tsx`) draws the thumbnails, the preview, the printed pages and the saved images. **Print or save PDF** puts every page of the selection under `body` and opens the browser's print dialog: choose **Save as PDF** to download one file. No PDF library: the browser already shapes Arabic and lays out right to left with the app's fonts, and the QR stays vector. `@page` sets the paper size and everything sits inside a white margin, so no bleed is needed.
 
-The PDF comes from the browser's own print dialog (**Save as PDF**), not a PDF library: the browser already shapes Arabic and lays out right to left with the app's fonts, the QR stays vector, and nothing is added to the app. `@page` sets the paper size and everything sits inside a white margin of at least 7 mm, so no bleed is needed and a print shop can trim on the page edge. Chrome and Edge follow the page size on their own. In a browser that ignores it, pick the paper by hand.
+**PNG images** and **SVG images** save the sticker art (code with logo, "scan me", short address, staff label) of the selected spots, one file, or a zip when there are several. The logo is inside the file. Fonts are the viewing device's.
+
+Cards carry the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
+
+The page warns before printing when there is no welcome offer, when it ends within 30 days (`OFFER_SOON_DAYS`), and when there is no logo.
+
+**Trying it out.** **Open guest page** and **Test on my phone** (a QR on screen) open `/h/<slug>?src=&loc=&lang=&preview=1` for the first selected spot (`hotel.testLink`). That page says it is a preview, its submit button is off and it has no WhatsApp button, so no guest is created. It makes no short link, logs no scan and guest pages load no analytics.
 
 ## Hotel scoped procedures
 

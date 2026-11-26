@@ -35,6 +35,36 @@ export function parseSpots(input: string): { spots: string[]; cut: boolean } {
   return { spots: [...spots], cut: false }
 }
 
+/** The saved names from `from` to `to`, numbers in number order. An empty end is open, a reversed range reads the same. */
+export function spotsBetween(names: string[], from: string, to: string): string[] {
+  const { compare } = new Intl.Collator("en", { numeric: true, sensitivity: "base" })
+  let [low, high] = [from.trim(), to.trim()]
+  if (low && high && compare(low, high) > 0) [low, high] = [high, low]
+  return names.filter((name) => (!low || compare(name, low) >= 0) && (!high || compare(name, high) <= 0))
+}
+
+/** Cards stay out for months, so an offer ending within this is worth a word before printing. */
+export const OFFER_SOON_DAYS = 30
+
+export type PrintWarning = "noOffer" | "offerExpires" | "noLogo"
+
+export function printWarnings(
+  hotel: { logoKey: string | null },
+  offer: { validUntil: Date | null } | null,
+  now: Date,
+): PrintWarning[] {
+  const soon = now.getTime() + OFFER_SOON_DAYS * 24 * 60 * 60 * 1000
+  const warnings: PrintWarning[] = []
+  if (!offer) warnings.push("noOffer")
+  else if (offer.validUntil && offer.validUntil.getTime() <= soon) warnings.push("offerExpires")
+  if (!hotel.logoKey) warnings.push("noLogo")
+  return warnings
+}
+
+/** The capture page as a try-out: it shows everything and saves nothing. */
+export const previewUrl = (webUrl: string, slug: string, source: CaptureSource, language: string, location?: string) =>
+  `${captureUrl(webUrl, slug, source, location)}&lang=${language}&preview=1`
+
 /** The download name of one code. Letters of any script stay, so two Arabic spots never share a file. */
 export const qrFileName = (source: CaptureSource, location: string | null, ext: string): string =>
   `qr-${source}${location ? `-${location.replace(/[^\p{L}\p{M}\p{N}-]+/gu, "_")}` : ""}.${ext}`

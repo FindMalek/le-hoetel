@@ -3,7 +3,7 @@ import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { isDemoViewer } from "@ritorno/common/demo"
 import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
 import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
-import { captureUrl, HOTEL_SPOTS_MAX, shortUrl } from "@ritorno/common/qr"
+import { captureUrl, HOTEL_SPOTS_MAX, previewUrl, shortUrl } from "@ritorno/common/qr"
 import {
   adminHotelDetailSchema,
   adminHotelSchema,
@@ -16,10 +16,12 @@ import {
   hotelUpdateSchema,
   logoUploadInputSchema,
   logoUploadSchema,
+  printOfferSchema,
   qrCodeSchema,
   qrCodesInputSchema,
   spotSchema,
   spotsAddInputSchema,
+  testLinkInputSchema,
 } from "@ritorno/common/schemas"
 import {
   captureSpots,
@@ -56,6 +58,7 @@ import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
 import { bestRole, HOTEL_HEADER } from "../lib/hotel"
+import { welcomeOffer } from "../lib/offers"
 import { activeMembership } from "../lib/org"
 import { shortCodes } from "../lib/short-links"
 import { adminProcedure, can, hotelProcedure, protectedProcedure } from "../procedures"
@@ -154,6 +157,31 @@ export const hotelRouter = {
         }),
       )
     }),
+
+  testLink: hotelProcedure
+    .route({
+      method: "GET",
+      path: "/hotel/test-link",
+      summary: "A try-out of the capture page that saves nothing, with its QR code",
+      tags: ["hotel"],
+    })
+    .input(testLinkInputSchema)
+    .output(z.object({ url: z.string(), svg: z.string() }))
+    .handler(async ({ context, input }) => {
+      const { slug } = await loadHotel(context.db, context.hotel.hotelId)
+      const url = previewUrl(context.config.webUrl, slug!, input.source, input.language, input.location)
+      return { url, svg: await qrSvg(url, { type: "svg", margin: 2, errorCorrectionLevel: "M" }) }
+    }),
+
+  welcomeOffer: hotelProcedure
+    .route({
+      method: "GET",
+      path: "/hotel/welcome-offer",
+      summary: "The welcome offer printed on the QR cards, and when it ends",
+      tags: ["hotel"],
+    })
+    .output(printOfferSchema)
+    .handler(({ context }) => welcomeOffer(context.db, context.hotel.hotelId, context.now())),
 
   captureStats: hotelProcedure
     .route({

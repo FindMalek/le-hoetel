@@ -64,7 +64,7 @@ export async function offerPage(context: Ctx, token: string) {
 /** The perk a capture page shows: the newest active welcome offer that is open right now. */
 export async function welcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
   const [row] = await db
-    .select({ title: offers.title, text: offers.text })
+    .select({ title: offers.title, text: offers.text, validUntil: offers.validUntil })
     .from(offers)
     .where(
       and(
