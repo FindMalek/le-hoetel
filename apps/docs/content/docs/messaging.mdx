@@ -85,6 +85,16 @@ In the dashboard campaign list, "failed" is a display state, not a campaign stat
 
 Manager alerts go by email only. `notifyManager(context, hotelId, text, email?)` (`packages/orpc/src/lib/manager-alerts.ts`) emails the hotel reply-to, else the first owner, and returns false when there is neither. The email is the `alert` template in the hotel's language; the low score alert fills it with the hotel, the score, the comment and the guest's first name, never contact details. Like every provider it only logs outside live messaging. The **Send a test alert** button in **Hotel** settings calls `hotel.alerts.test`.
 
+## Weekly owner digest
+
+The `owner-digest` job runs every hour. On Monday, from 09:00 until quiet hours in the hotel's timezone, every member with the `owner` role (not the reply-to address) gets one email about the Monday to Sunday that just ended, next to the week before: new and returning guests, messages sent, offers redeemed, survey answers, the average score and the low score cases still open. A week without activity says so and suggests placing the QR codes. It holds counts only, never a guest's name, contact details or comment.
+
+It is written in the hotel's guest language (en, fr or ar), sent by email only with the `ownerDigest` template, and only logged outside live messaging.
+
+- Suspended hotels and hotels without an owner get nothing.
+- `hotel_settings.weekly_digest` is on by default. The footer link and the `List-Unsubscribe` header open **Hotel** settings, **Weekly summary** (`/hotel#weekly-digest`), where an owner or manager turns it off. The switch is per hotel, so it applies to all its owners.
+- `hotel_settings.last_digest_week` is claimed before sending, so a rerun or a second worker never sends a week twice. A retryable provider error (see below the automatic messages) releases the claim for the next hour, with the same Resend `Idempotency-Key` per owner. A week missed for the whole Monday is not sent later.
+
 ## Prepaid WhatsApp balance
 
 WhatsApp is paid per message, so each hotel has a prepaid balance in TND millimes (integers, 1 TND = 1000). `hotel_balance` holds the balance, `balance_ledger` is the append-only history (`top_up` and `refund` positive, `usage` negative, so the balance always equals the ledger sum). The super admin tops a hotel up on the admin hotel page (`admin.hotels.balance.topUp`, audited). The hotel sees balance, this month's usage and the latest movements on **Usage** (`/usage`, owners and managers), and a warning at the top of **Messages** under 5 TND.

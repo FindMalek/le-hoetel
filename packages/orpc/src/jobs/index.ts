@@ -3,12 +3,13 @@ import { SEND_PACING, type SendPacing } from "../lib/automations"
 import { birthdayJob } from "./birthday"
 import { campaignJob } from "./campaigns"
 import { holidayJob } from "./holidays"
+import { ownerDigestJob } from "./owner-digest"
 import { surveyJob } from "./survey"
 import { type JobServices, welcomeJob } from "./welcome"
 
 export { enqueuePublicWelcome, enqueueWelcome, type JobServices } from "./welcome"
 
-/** The jobs that send to guests. They need the dispatcher's services, so the api builds them and hands them to the runner next to `JOBS`. */
+/** The jobs that send to guests and hotel owners. They need the dispatcher's services, so the api builds them and hands them to the runner next to `JOBS`. */
 export const createMessageJobs = (services: JobServices, options: Partial<SendPacing> = {}): readonly Job[] => {
   const pacing = { ...SEND_PACING, ...options }
   return [
@@ -17,5 +18,6 @@ export const createMessageJobs = (services: JobServices, options: Partial<SendPa
     holidayJob(services, pacing),
     surveyJob(services, pacing),
     campaignJob(services, { pauseMs: pacing.pauseMs, batchSize: pacing.batchSize }),
+    ownerDigestJob(services, pacing),
   ]
 }

@@ -3,6 +3,7 @@ import { adminInvite } from "./admin-invite"
 import { alert } from "./alert"
 import type { Summary } from "./define"
 import { magicLink } from "./magic-link"
+import { ownerDigest } from "./owner-digest"
 import { resetPassword } from "./reset-password"
 import { test } from "./test-message"
 import { verifyEmail } from "./verify-email"
@@ -10,6 +11,7 @@ import { waitlistConfirmation } from "./waitlist-confirmation"
 import { welcome } from "./welcome"
 
 export type { Summary, Template } from "./define"
+export type { DigestStat, OwnerDigestData } from "./owner-digest"
 export type { BaseProps } from "./primitives"
 
 /** Add a template here and `notifier.send({ template })` is typed for it and the preview app can show it. */
@@ -21,6 +23,7 @@ export const templates = {
   waitlistConfirmation,
   adminInvite,
   alert,
+  ownerDigest,
   test,
 }
 

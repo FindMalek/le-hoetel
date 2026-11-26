@@ -721,6 +721,10 @@
       "review": {
         "title": "Google review",
         "description": "Happy guests are invited to review you here after the survey."
+      },
+      "digest": {
+        "title": "Weekly summary",
+        "description": "A short email to the owners about the week."
       }
     },
     "displayName": "Hotel name",
@@ -757,7 +761,9 @@
     "quietHoursText": "Automatic messages never go out between <from></from> and <until></until>, hotel time.",
     "threshold": "Low score alert",
     "thresholdHint": "You get an alert when a guest scores this or less out of 10 in the survey.",
-    "thresholdOption": "{score} or less"
+    "thresholdOption": "{score} or less",
+    "weeklyDigest": "Email me the weekly summary",
+    "weeklyDigestHint": "Sent Monday from 09:00, hotel time. Counts only, no guest details."
   },
   "managerAlerts": {
     "title": "Email",

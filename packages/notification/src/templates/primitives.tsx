@@ -38,11 +38,14 @@ export function Layout({
   preview,
   appUrl,
   locale = DEFAULT_LOCALE,
+  footer,
   children,
 }: {
   preview: string
   appUrl?: string
   locale?: Locale
+  /** Replaces the "Sent by" line, for emails that need their own words or an opt-out link. */
+  footer?: ReactNode
   children: ReactNode
 }) {
   const { lang, dir } = htmlAttributes(locale)
@@ -97,8 +100,7 @@ export function Layout({
               {children}
               <Section style={{ padding: "16px 8px 0" }}>
                 <Text className="e-mut" style={{ ...base(sans), color: light.muted, fontSize: 12, lineHeight: "18px" }}>
-                  Sent by {BRAND.name}
-                  {host ? ` · ${host}` : ""}
+                  {footer ?? `Sent by ${BRAND.name}${host ? ` · ${host}` : ""}`}
                 </Text>
               </Section>
             </Container>

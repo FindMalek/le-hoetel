@@ -46,7 +46,7 @@ export const hotelBrandingInputSchema = z.object({
 /** `logoKey` is not editable here: it is only ever set by `hotel.setLogo`, which checks the key belongs to the hotel. */
 export const hotelUpdateSchema = hotelBrandingInputSchema
   .omit({ logoKey: true })
-  .extend({ lowScoreThreshold: z.number().int().min(0).max(10) })
+  .extend({ lowScoreThreshold: z.number().int().min(0).max(10), weeklyDigest: z.boolean() })
   .partial()
 
 export const logoUploadInputSchema = z.object({
@@ -80,6 +80,7 @@ export const hotelSchema = hotelBrandingInputSchema.extend({
   name: z.string(),
   slug: z.string(),
   lowScoreThreshold: z.number().int(),
+  weeklyDigest: z.boolean(),
   plan: z.enum(HOTEL_PLANS),
   status: z.enum(HOTEL_STATUSES),
   pilotEndsAt: z.date().nullable(),

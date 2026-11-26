@@ -721,6 +721,10 @@
       "review": {
         "title": "Avis Google",
         "description": "Les clients satisfaits sont invités à laisser un avis ici après le questionnaire."
+      },
+      "digest": {
+        "title": "Résumé de la semaine",
+        "description": "Un court e-mail aux propriétaires sur la semaine écoulée."
       }
     },
     "displayName": "Nom de l'hôtel",
@@ -757,7 +761,9 @@
     "quietHoursText": "Aucun message automatique ne part entre <from></from> et <until></until>, heure de l'hôtel.",
     "threshold": "Alerte note basse",
     "thresholdHint": "Vous êtes alerté quand un client donne cette note ou moins sur 10 au questionnaire.",
-    "thresholdOption": "{score} ou moins"
+    "thresholdOption": "{score} ou moins",
+    "weeklyDigest": "Recevoir le résumé hebdomadaire",
+    "weeklyDigestHint": "Envoyé le lundi à partir de 09:00, heure de l’hôtel. Des chiffres seulement, aucune donnée client."
   },
   "managerAlerts": {
     "title": "E-mail",
