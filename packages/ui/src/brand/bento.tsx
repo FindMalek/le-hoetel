@@ -41,8 +41,8 @@ export function BentoTile({ title, description, chips, media, span = 2, href, cl
       )}
       {...props}
     >
-      {chips ? <div className="mb-4 flex flex-wrap gap-1.5 pe-12">{chips}</div> : null}
-      <h3 className="pe-12 text-h3 text-foreground">
+      {chips ? <div className={cn("mb-4 flex flex-wrap gap-1.5", href && "pe-12")}>{chips}</div> : null}
+      <h3 className={cn("text-h3 text-foreground", href && "pe-12")}>
         {href ? (
           <a
             href={href}

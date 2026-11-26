@@ -7,6 +7,7 @@ const schema = z.object({
   WEB_URL: z.url().default("http://localhost:3000"),
   API_PUBLIC_URL: z.url().default("http://localhost:3001"),
   DASHBOARD_URL: z.url().default("http://localhost:3002"),
+  DOCS_URL: z.url().default("http://localhost:3003"),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   /** The landing page WhatsApp button, digits only with the country code (21612345678). No number, no button. */
   WHATSAPP_CONTACT_NUMBER: z

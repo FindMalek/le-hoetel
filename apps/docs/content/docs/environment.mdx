@@ -14,7 +14,7 @@ There is one `.env` at the repo root. Every app loads it, and `packages/env` val
 | `WEB_URL` | the landing page |
 | `WHATSAPP_CONTACT_NUMBER` | the landing page WhatsApp button: country code and number, digits only. Empty hides the button |
 | `DASHBOARD_URL` | the dashboard |
-| `DOCS_URL` | this site, read only by `apps/docs` and not part of the `packages/env` schema |
+| `DOCS_URL` | this site; `apps/web` reads it through `packages/env` for the Docs links on the landing page |
 
 ## Database and auth
 

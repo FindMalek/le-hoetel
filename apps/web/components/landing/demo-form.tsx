@@ -27,7 +27,7 @@ export interface DemoCopy {
 
 const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
 const CONTROL =
-  "h-12 w-full min-w-0 rounded-xl border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface aria-invalid:border-destructive"
+  "h-12 w-full min-w-0 rounded-input border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface aria-invalid:border-destructive"
 
 function FieldError({ id, children }: { id: string; children?: string | null }) {
   return (
@@ -71,7 +71,10 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
 
   if (result === "done") {
     return (
-      <div role="status" className="grid content-center justify-items-start gap-3 rounded-xl border bg-card p-8">
+      <div
+        role="status"
+        className="grid content-center justify-items-start gap-3 rounded-card border bg-card p-8 shadow-md"
+      >
         <span className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <CheckIcon aria-hidden className="size-6" />
         </span>
@@ -84,7 +87,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
   }
 
   return (
-    <form onSubmit={submit} noValidate className="grid gap-5 rounded-xl border bg-card p-5 md:p-8">
+    <form onSubmit={submit} noValidate className="grid gap-5 rounded-card border bg-card p-5 shadow-md md:p-8">
       <input type="hidden" name="phone" value={`${dialCode}${digits}`} />
       <div aria-hidden className="sr-only">
         <label>
@@ -142,7 +145,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           enterKeyHint="next"
           aria-invalid={tried && bad.phone}
           aria-describedby="demo-phone-error"
-          className="h-12 rounded-xl bg-background"
+          className="h-12 rounded-input bg-background"
         />
         <FieldError id="demo-phone-error">{tried && bad.phone ? copy.phoneError : null}</FieldError>
       </div>
@@ -178,7 +181,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
               />
               <span
                 lang={option}
-                className="flex h-11 items-center justify-center rounded-xl border font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
+                className="flex h-11 items-center justify-center rounded-full border font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
               >
                 {LANGUAGE_NAMES[option]}
               </span>
@@ -196,7 +199,7 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 font-medium text-base text-primary-foreground transition-opacity duration-150 disabled:opacity-70"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-4 font-medium text-base text-primary-foreground transition-opacity duration-150 disabled:opacity-70"
         >
           {pending ? <LoaderCircleIcon aria-hidden className="size-4 animate-spin" /> : null}
           {copy.submit}
