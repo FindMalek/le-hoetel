@@ -8,6 +8,7 @@ import {
   COMMIT_RE,
   ISSUE_LINK_RE,
   isBot,
+  isBotIdentity,
   isReleasePr,
   MAX_SUBJECT_WORDS,
 } from "./policy.mjs"
@@ -68,7 +69,7 @@ function main() {
     for (const who of [commit.author, commit.committer]) {
       if (AI_IDENTITY.test(who)) fail(`${commit.sha}: author or committer is an ai tool (${who})`)
     }
-    if (isBot(commit.author)) continue
+    if (isBotIdentity(commit.author)) continue
     const problem = subjectProblem(commit.subject)
     if (problem) fail(`${commit.sha}: "${commit.subject}" ${problem}`)
   }

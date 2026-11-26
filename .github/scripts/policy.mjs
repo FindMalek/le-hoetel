@@ -44,3 +44,6 @@ export const isReleasePr = (headRef, fromFork) => fromFork !== "true" && /^relea
 
 /** Bot accounts (dependabot, renovate) write their own commit messages and PR bodies. */
 export const isBot = (login) => /\[bot\]$/i.test(login ?? "")
+
+/** Same for a `name <email>` git identity. */
+export const isBotIdentity = (identity) => isBot(identity.split(" <")[0])
