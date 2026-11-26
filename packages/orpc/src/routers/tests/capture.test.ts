@@ -100,19 +100,41 @@ test("bots are dropped silently: honeypot, a form sent too fast, a link as a nam
   expect((await client.guests.list({})).total).toBe(0)
 })
 
-test("capture is limited per ip and per hotel", async () => {
+test("guests behind one hotel ip can all join, and another hotel on that ip is not blocked", async () => {
+  const owner = await app.signUp("capture-wifi@ritorno.test")
+  const hotelId = await app.createHotel("capture-wifi", owner)
+  await app.createHotel("capture-next-door", await app.signUp("capture-next-door@ritorno.test"))
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const wifi = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.1.1" }))
+
+  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
+    await wifi.public.capture({ slug: "capture-wifi", ...scan, phone: `+2162012${1000 + i}` })
+  }
+
+  expect(RATE_LIMITS.captureIp.limit).toBeGreaterThanOrEqual(50)
+  expect((await client.guests.list({})).total).toBe(RATE_LIMITS.captureIp.limit)
+  await expect(wifi.public.capture({ slug: "capture-wifi", ...scan })).rejects.toThrow("Too many requests")
+  await expect(wifi.public.capture({ slug: "capture-next-door", ...scan })).resolves.toEqual({ ok: true })
+})
+
+test("a survey answer is not blocked by sign-ups from the same ip", async () => {
+  await app.createHotel("capture-survey", await app.signUp("capture-survey@ritorno.test"))
+  const wifi = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.3.1" }))
+  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
+    await wifi.public.capture({ slug: "capture-survey", ...scan, phone: `+2162013${1000 + i}` })
+  }
+
+  // a bad link is refused for being a bad link, not for the sign-ups before it
+  await expect(wifi.public.survey.submit({ token: "not-a-link".repeat(4), nps: 9 })).rejects.toThrow("not valid")
+})
+
+test("capture is limited per hotel whatever the ip", async () => {
   const owner = await app.signUp("capture-limit@ritorno.test")
   const hotelId = await app.createHotel("capture-limit", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const from = (ip: string) => app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": ip }))
 
-  const one = from("10.0.1.1")
-  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
-    await one.public.capture({ slug: "capture-limit", ...scan, phone: `+2162012${1000 + i}` })
-  }
-  await expect(one.public.capture({ slug: "capture-limit", ...scan })).rejects.toThrow("Too many requests")
-
-  for (let i = RATE_LIMITS.captureIp.limit; i < RATE_LIMITS.captureHotel.limit; i++) {
+  for (let i = 0; i < RATE_LIMITS.captureHotel.limit; i++) {
     await from(`10.1.${i >> 8}.${i & 255}`).public.capture({
       slug: "capture-limit",
       ...scan,

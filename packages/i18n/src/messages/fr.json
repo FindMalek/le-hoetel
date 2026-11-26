@@ -611,7 +611,7 @@
     "thanksTitle": "C'est fait, {name}",
     "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
     "errorInvalid": "Vérifiez votre nom et votre numéro de téléphone.",
-    "errorTooMany": "Trop d'essais. Patientez un instant puis réessayez.",
+    "errorTooMany": "Trop d'inscriptions pour le moment. Réessayez plus tard ou demandez à la réception.",
     "nameError": "Ajoutez votre nom.",
     "phoneError": "Vérifiez votre numéro.",
     "optionalTitle": "Un peu plus sur vous",
