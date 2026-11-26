@@ -24,11 +24,41 @@ export interface GuestMessage<Key extends HotelEmailKey = HotelEmailKey> {
   channel: MessageChannel
   template: Key
   props: EmailProps[Key]
+  /** Same key on every try of one send, so the provider drops a repeat. Email only: Kapso has no such key. */
+  idempotencyKey?: string
 }
 
 export interface MessageOutcome {
   messageId: string
   status: MessageStatus
+  /** A failed send that another try cannot turn into a second message. */
+  retryable?: boolean
+}
+
+/** The request never reached the provider, so nothing can have been sent. */
+const CONNECT_CODES = new Set([
+  "ECONNREFUSED",
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "UND_ERR_CONNECT_TIMEOUT",
+  "ConnectionRefused",
+])
+/** The provider may have accepted the message before the answer was lost. */
+const LOST_ANSWER_CODES = new Set(["ETIMEDOUT", "ECONNRESET", "EPIPE", "UND_ERR_SOCKET", "ConnectionClosed"])
+
+/**
+ * Email sdk errors carry `status`, WhatsApp (Graph api) errors `httpStatus`, fetch failures a network `code`. A 429
+ * or a connect error is always safe to retry. A 5xx or a lost answer can mean the message went out, so it is only
+ * retried when the provider dedupes on an idempotency key (`idempotent`), which Resend does and Kapso does not.
+ */
+export function isRetryableSendError(error: unknown, idempotent: boolean): boolean {
+  if (!error || typeof error !== "object") return false
+  const { status, httpStatus, code, cause } = error as Record<string, unknown>
+  const http = typeof httpStatus === "number" ? httpStatus : typeof status === "number" ? status : null
+  if (http !== null) return http === 429 || (idempotent && http >= 500)
+  if (typeof code === "string" && CONNECT_CODES.has(code)) return true
+  if (typeof code === "string" && LOST_ANSWER_CODES.has(code)) return idempotent
+  return isRetryableSendError(cause, idempotent)
 }
 
 const LOG_ONLY_ID = "log-only"
@@ -118,11 +148,13 @@ export async function sendToGuest<Key extends HotelEmailKey>(
     return finish({ status: "failed", errorCode: "channel_not_configured", failedAt: context.now() })
   } catch (error) {
     const code = (error as { code?: unknown })?.code
-    return finish({
+    const failed = await finish({
       status: "failed",
       errorCode: typeof code === "string" ? code : "send_failed",
       failedAt: context.now(),
     })
+    const idempotent = input.channel === "email" && Boolean(input.idempotencyKey)
+    return { ...failed, retryable: isRetryableSendError(error, idempotent) }
   }
 }
 
@@ -133,7 +165,7 @@ interface Recipient {
 
 async function deliver<Key extends HotelEmailKey>(
   context: Ctx,
-  { hotelId, guestId, channel, template, props }: GuestMessage<Key>,
+  { hotelId, guestId, channel, template, props, idempotencyKey }: GuestMessage<Key>,
   { to, guest }: Recipient,
 ): Promise<{ sent: boolean; id?: string }> {
   if (channel === "whatsapp") {
@@ -159,6 +191,7 @@ async function deliver<Key extends HotelEmailKey>(
     fromName: hotel.name,
     replyTo: hotel.replyTo ?? undefined,
     headers: listUnsubscribeHeaders(context.config.apiUrl, token),
+    idempotencyKey,
   })
 }
 

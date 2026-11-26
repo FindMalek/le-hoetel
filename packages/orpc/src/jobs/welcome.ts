@@ -3,9 +3,8 @@ import { defineJob } from "@ritorno/jobs"
 import { and, eq, gt } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
-import { claimSend, consentedChannels, triggerOffer } from "../lib/automations"
+import { claimAndSend, consentedChannels, type SendPacing, triggerOffer } from "../lib/automations"
 import { hotelGuest } from "../lib/guests"
-import { sendToGuest } from "../lib/messages"
 import { RATE_LIMITS } from "../lib/rate-limit"
 
 export type JobServices = Pick<Context, "db" | "config" | "now" | "notification">
@@ -15,7 +14,7 @@ export const WELCOME_JOB = "welcome-guest"
 const payload = z.object({ hotelId: z.string(), guestId: z.uuid() })
 
 /** Welcome message on every channel the guest agreed to, once per guest, hotel and channel. */
-export const welcomeJob = (services: JobServices) =>
+export const welcomeJob = (services: JobServices, pacing?: SendPacing) =>
   defineJob({
     name: WELCOME_JOB,
     description: "Send the welcome message to a new guest",
@@ -30,14 +29,12 @@ export const welcomeJob = (services: JobServices) =>
       if (!guest) return
       const perk = await triggerOffer(services, { hotelId, guestId, language: guest.language, trigger: "welcome" })
       for (const channel of channels) {
-        if (!(await claimSend(services.db, { hotelId, guestId, kind: "welcome", channel }))) continue
-        await sendToGuest(services, {
-          hotelId,
-          guestId,
-          channel,
-          template: "welcome",
-          props: { offer: perk?.offer, ctaUrl: perk?.ctaUrl },
-        })
+        await claimAndSend(
+          services,
+          { kind: "welcome" },
+          { hotelId, guestId, channel, template: "welcome", props: { offer: perk?.offer, ctaUrl: perk?.ctaUrl } },
+          pacing,
+        )
       }
     },
   })

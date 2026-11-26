@@ -4,9 +4,9 @@ import { createNotifier } from "../index"
 const LIVE = { NODE_ENV: "production", MESSAGING_LIVE: "true" }
 
 function recorder() {
-  const calls: { url: string; body: Record<string, unknown> }[] = []
+  const calls: { url: string; body: Record<string, unknown>; headers: Headers }[] = []
   const doFetch = (async (url: string, init: RequestInit) => {
-    calls.push({ url, body: JSON.parse(String(init.body)) })
+    calls.push({ url, body: JSON.parse(String(init.body)), headers: new Headers(init.headers) })
     return Response.json({ ok: true, result: {}, id: "msg_1", messages: [{ id: "wamid_1" }] })
   }) as unknown as typeof fetch
   return { calls, doFetch }
@@ -143,7 +143,7 @@ test("a footer ends the email in both bodies and the whatsapp text", async () =>
   expect(JSON.stringify(calls[1]?.body)).toContain(footer)
 })
 
-test("a rendered hotel email goes out from the hotel's name with reply-to and list headers", async () => {
+test("a rendered hotel email goes out from the hotel's name with reply-to, list headers and its idempotency key", async () => {
   const { calls, doFetch } = recorder()
   const notifier = createNotifier(
     { ...LIVE, RESEND_API_KEY: "re_test", EMAIL_FROM: "Ritorno <hello@example.com>" },
@@ -156,8 +156,10 @@ test("a rendered hotel email goes out from the hotel's name with reply-to and li
     fromName: 'Dar "Amel" <Hotel>',
     replyTo: "desk@dar-amel.test",
     headers: { "List-Unsubscribe": "<https://api.test/unsubscribe/t>" },
+    idempotencyKey: "automation-send:1",
   })
 
+  expect(calls[0]?.headers.get("Idempotency-Key")).toBe("automation-send:1")
   expect(calls[0]?.body).toMatchObject({
     from: '"Dar Amel Hotel" <hello@example.com>',
     reply_to: ["desk@dar-amel.test"],
