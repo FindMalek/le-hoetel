@@ -819,6 +819,9 @@ importers:
       '@ritorno/jobs':
         specifier: workspace:*
         version: link:../jobs
+      '@ritorno/logger':
+        specifier: workspace:*
+        version: link:../logger
       '@ritorno/notification':
         specifier: workspace:*
         version: link:../notification

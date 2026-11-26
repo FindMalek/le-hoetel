@@ -65,3 +65,21 @@ test("an enqueue-only process neither works nor schedules", async () => {
   expect(calls.worked).toEqual([])
   expect(calls.scheduled).toEqual([])
 })
+
+test("a failing run is reported with the job name and id, then rethrown so pg-boss retries it", async () => {
+  const boom = defineJob({
+    name: "boom",
+    description: "always fails",
+    payload: z.object({}),
+    handler: async () => {
+      throw new Error("guest +21620123456 broke it")
+    },
+  })
+  const { boss, run } = fakeBoss()
+  const failures: unknown[] = []
+  const jobs = createJobs({ boss, db: {} as Db, jobs: [boom], onFailure: (failure) => failures.push(failure) })
+  await jobs.start()
+
+  await expect(run({})).rejects.toThrow()
+  expect(failures).toMatchObject([{ name: "boom", id: "job-1" }])
+})

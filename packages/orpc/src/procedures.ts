@@ -1,5 +1,6 @@
 import { ORPCError, os } from "@orpc/server"
 import { hotelRoles } from "@ritorno/auth/access"
+import { logger } from "@ritorno/logger"
 import type { Context } from "./context"
 import { type ActiveHotel, resolveHotel } from "./lib/hotel"
 import { activeMembership } from "./lib/org"
@@ -7,14 +8,14 @@ import { enforceRateLimit, RATE_LIMITS } from "./lib/rate-limit"
 
 export const o = os.$context<Context>()
 
-/** Unexpected errors are logged with the procedure path; ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
+/** Unexpected errors are logged with the procedure path (a database error as its class and code only); ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
 const logErrors = o.middleware(async (options) => {
   const route = options.path.join(".")
   await enforceRateLimit(options.context, route, RATE_LIMITS.default)
   try {
     return await options.next()
   } catch (error) {
-    if (!(error instanceof ORPCError)) console.error(`[${route}]`, error)
+    if (!(error instanceof ORPCError)) logger.error("procedure failed", { route, err: error })
     throw error
   }
 })

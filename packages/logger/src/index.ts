@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 import { redact } from "./redact"
 
-export { REDACTED, redact } from "./redact"
+export { errorSummary, maskText, REDACTED, redact } from "./redact"
 
 export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const
 export type LogLevel = (typeof LOG_LEVELS)[number]
@@ -92,6 +92,7 @@ export function createLogger(options: LoggerOptions = {}): ConfigurableLogger {
       if (next.level) state.level = next.level
       if (next.pretty !== undefined) state.pretty = next.pretty
       if (next.mixin) state.mixin = next.mixin
+      if (next.write) state.write = next.write
     },
   }
 }
