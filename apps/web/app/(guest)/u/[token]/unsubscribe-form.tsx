@@ -1,5 +1,6 @@
 "use client"
 
+import { buttonVariants } from "@ritorno/ui/components/button"
 import { CircleAlertIcon } from "lucide-react"
 import { useState, useTransition } from "react"
 import { ConsentToggle } from "@/components/consent-toggle"
@@ -72,12 +73,12 @@ export function UnsubscribeForm({ token, initial, wording, copy }: Props) {
             setStates(states.map((state) => ({ ...state, granted: false })))
             apply(stopAll(token), previous)
           }}
-          className="h-12 rounded-xl border font-medium text-sm transition-colors duration-150 hover:bg-muted disabled:opacity-60"
+          className={buttonVariants({ variant: "secondary", size: "lg", className: "w-full" })}
         >
           {copy.stopAll}
         </button>
       ) : (
-        <div role="status" className="grid gap-1 rounded-xl border bg-muted/50 p-4">
+        <div role="status" className="grid gap-1 rounded-card border bg-surface p-4">
           <strong className="font-semibold">{copy.stoppedTitle}</strong>
           <span className="text-muted-foreground text-sm">{copy.stopped}</span>
         </div>

@@ -1,11 +1,12 @@
 import { consentWording } from "@ritorno/common/consent"
-import { getDirection } from "@ritorno/i18n"
+import { DEFAULT_LOCALE } from "@ritorno/i18n"
+import { LinkIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { connection } from "next/server"
-import { getTranslations } from "next-intl/server"
-import { GuestHero } from "@/components/guest-hero"
+import { getLocale, getTranslations } from "next-intl/server"
+import { GuestShell, guestLanguage } from "@/components/guest-shell"
+import { GuestState } from "@/components/guest-state"
 import { getUnsubscribePage } from "@/lib/api"
-import { guestBrand } from "@/lib/branding"
 import { UnsubscribeForm } from "./unsubscribe-form"
 
 export const metadata: Metadata = {
@@ -14,33 +15,28 @@ export const metadata: Metadata = {
   referrer: "no-referrer",
 }
 
-export default async function Page({ params }: PageProps<"/u/[token]">) {
+export default async function Page({ params, searchParams }: PageProps<"/u/[token]">) {
   await connection()
-  const { token } = await params
+  const [{ token }, { lang }] = await Promise.all([params, searchParams])
   const page = await getUnsubscribePage(token)
 
   if (!page) {
-    const t = await getTranslations("unsubscribe")
+    const language = guestLanguage(lang, guestLanguage(await getLocale(), DEFAULT_LOCALE))
+    const t = await getTranslations({ locale: language, namespace: "unsubscribe" })
     return (
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center gap-2 px-5 py-10">
-        <h1 className="font-semibold text-h2 tracking-tight">{t("invalidTitle")}</h1>
-        <p className="text-muted-foreground leading-relaxed">{t("invalid")}</p>
-      </main>
+      <GuestShell hotel={null} language={language}>
+        <GuestState heading="h1" icon={<LinkIcon />} title={t("invalidTitle")} body={t("invalid")} />
+      </GuestShell>
     )
   }
 
-  const t = await getTranslations({ locale: page.language, namespace: "unsubscribe" })
+  // The consent log stores the wording in the guest's language, so the page cannot offer another one.
+  const language = page.language
+  const t = await getTranslations({ locale: language, namespace: "unsubscribe" })
   const hotel = page.hotel.displayName
   return (
-    <div
-      lang={page.language}
-      dir={getDirection(page.language)}
-      // oxlint-disable-next-line shadcn/no-inline-styles
-      style={guestBrand(page.hotel)}
-      className="min-h-dvh"
-    >
-      <GuestHero hotel={page.hotel} />
-      <main className="mx-auto grid w-full max-w-md gap-6 px-5 py-8">
+    <GuestShell hotel={page.hotel} language={language} languageHref={null}>
+      <div className="grid gap-6 pb-6">
         <div className="grid gap-2">
           <h2 className="text-balance font-semibold text-h3 tracking-tight">{t("title", { hotel })}</h2>
           <p className="text-muted-foreground leading-relaxed">{t("intro", { hotel })}</p>
@@ -49,7 +45,7 @@ export default async function Page({ params }: PageProps<"/u/[token]">) {
           token={token}
           initial={page.channels}
           wording={Object.fromEntries(
-            page.channels.map(({ channel }) => [channel, consentWording(channel, page.language, hotel)]),
+            page.channels.map(({ channel }) => [channel, consentWording(channel, language, hotel)]),
           )}
           copy={{
             email: t("email"),
@@ -62,7 +58,7 @@ export default async function Page({ params }: PageProps<"/u/[token]">) {
             error: t("error"),
           }}
         />
-      </main>
-    </div>
+      </div>
+    </GuestShell>
   )
 }
