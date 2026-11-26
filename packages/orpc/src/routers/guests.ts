@@ -6,6 +6,7 @@ import {
   consentEventSchema,
   consentSetSchema,
   GUEST_EXTRA_FIELDS,
+  guestActivitySchema,
   guestCreateSchema,
   guestExportSchema,
   guestFromImportRow,
@@ -19,7 +20,16 @@ import {
   guestUpsertResultSchema,
   hotelGuestsExportSchema,
 } from "@ritorno/common/schemas"
-import { consentEvents, guestConsents, guests, guestVisits, messages } from "@ritorno/db"
+import {
+  consentEvents,
+  guestConsents,
+  guests,
+  guestVisits,
+  messages,
+  offerRedemptions,
+  offers,
+  surveyResponses,
+} from "@ritorno/db"
 import { and, count, desc, eq, exists, ilike, inArray, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -95,22 +105,39 @@ export const guestsRouter = {
             ),
         )
       const consent = input.consent
+      const digits = input.q?.replace(/\D/g, "") ?? ""
+      const visits = sql<number>`(select count(*)::int from guest_visits v where v.guest_id = "guests"."id" and v.hotel_id = ${hotelId})`
       const where = and(
         eq(guests.hotelId, hotelId),
         input.source ? eq(guests.source, input.source) : undefined,
         input.language ? eq(guests.language, input.language) : undefined,
         consent === "none" ? not(granted(MESSAGE_CHANNELS.slice())) : consent ? granted([consent]) : undefined,
-        q ? or(ilike(guests.name, q), ilike(guests.phoneE164, q), ilike(guests.email, q)) : undefined,
+        input.returning ? sql`${visits} >= 2` : undefined,
+        q
+          ? or(
+              ilike(guests.name, q),
+              ilike(guests.email, q),
+              digits.length >= 3 ? ilike(guests.phoneE164, `%${digits}%`) : undefined,
+            )
+          : undefined,
       )
       const [totals] = await context.db.select({ n: count() }).from(guests).where(where)
       const rows = await context.db
-        .select()
+        .select({ guest: guests, visits })
         .from(guests)
         .where(where)
         .orderBy(desc(guests.createdAt), guests.id)
         .limit(input.limit)
         .offset(input.offset)
-      return { items: await withConsents(context.db, hotelId, rows), total: totals?.n ?? 0 }
+      const items = await withConsents(
+        context.db,
+        hotelId,
+        rows.map((row) => row.guest),
+      )
+      return {
+        items: items.map((item, index) => ({ ...item, visits: rows[index]?.visits ?? 0 })),
+        total: totals?.n ?? 0,
+      }
     }),
 
   find: hotelProcedure
@@ -402,6 +429,51 @@ export const guestsRouter = {
       const { hotelId } = context.hotel
       await loadGuest(context.db, hotelId, input.id)
       return eventsOf(context.db, hotelId, [input.id])
+    }),
+
+  activity: hotelProcedure
+    .use(can({ guest: ["read"] }))
+    .route({
+      method: "GET",
+      path: "/guests/{id}/activity",
+      summary: "Stays, offers used and survey answers of one guest, newest first",
+      tags: ["guests"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(guestActivitySchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      await loadGuest(context.db, hotelId, input.id)
+      const [stays, offersUsed, surveys] = await Promise.all([
+        context.db
+          .select({ id: guestVisits.id, source: guestVisits.source, at: guestVisits.at })
+          .from(guestVisits)
+          .where(and(eq(guestVisits.hotelId, hotelId), eq(guestVisits.guestId, input.id)))
+          .orderBy(desc(guestVisits.at))
+          .limit(20),
+        context.db
+          .select({ id: offerRedemptions.id, title: offers.title, at: offerRedemptions.redeemedAt })
+          .from(offerRedemptions)
+          .innerJoin(offers, and(eq(offers.id, offerRedemptions.offerId), eq(offers.hotelId, offerRedemptions.hotelId)))
+          .where(and(eq(offerRedemptions.hotelId, hotelId), eq(offerRedemptions.guestId, input.id)))
+          .orderBy(desc(offerRedemptions.redeemedAt))
+          .limit(20),
+        context.db
+          .select({
+            id: surveyResponses.id,
+            nps: surveyResponses.nps,
+            ratingRooms: surveyResponses.ratingRooms,
+            ratingCleanliness: surveyResponses.ratingCleanliness,
+            ratingService: surveyResponses.ratingService,
+            comment: surveyResponses.comment,
+            at: surveyResponses.submittedAt,
+          })
+          .from(surveyResponses)
+          .where(and(eq(surveyResponses.hotelId, hotelId), eq(surveyResponses.guestId, input.id)))
+          .orderBy(desc(surveyResponses.submittedAt))
+          .limit(20),
+      ])
+      return { stays, offers: offersUsed, surveys }
     }),
 
   messages: hotelProcedure

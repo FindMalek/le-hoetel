@@ -32,6 +32,11 @@ export function parsePhone(input: string, defaultCountry: string = DEFAULT_PHONE
   return { e164: parsed.number, country: parsed.country ?? null, whatsappCapable: isWhatsappCapable(parsed.number) }
 }
 
+/** For display: `+21696818091` becomes `+216 96 818 091`. Anything that doesn't parse is shown as stored. */
+export function formatPhone(e164: string): string {
+  return parsePhoneNumberFromString(e164)?.formatInternational() ?? e164
+}
+
 /** Never put a full number in a log or an error: `+216 ** *** 456`. */
 export function maskPhone(e164: string): string {
   return `${e164.slice(0, 4)} ${"*".repeat(Math.max(0, e164.length - 7))} ${e164.slice(-3)}`

@@ -1,154 +1,181 @@
 "use client"
 
-import type { Guest } from "@ritorno/common/schemas"
+import { formatPhone } from "@ritorno/common/phone"
+import type { Guest, GuestListItem } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
-import { Badge } from "@ritorno/ui/components/badge"
-import { Button } from "@ritorno/ui/components/button"
-import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
-import { ChevronRightIcon, MailIcon, MessageCircleIcon, Rows2Icon, Rows3Icon } from "lucide-react"
+import { DataList } from "@ritorno/ui/components/data-list"
+import type { DataColumn } from "@ritorno/ui/components/data-table"
+import { StatusBadge } from "@ritorno/ui/components/status-badge"
+import { formatDate } from "@ritorno/ui/lib/date"
+import { pageWindow } from "@ritorno/ui/lib/pagination"
+import { ChevronRightIcon, MailIcon, MessageCircleIcon, RepeatIcon } from "lucide-react"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
-import { useEffect, useState } from "react"
-import { LocalDate } from "@/components/local-date"
+import { useLocale, useTranslations } from "next-intl"
 
-const DENSITY_KEY = "guests-density"
+/** Two recorded visits or more: the front desk greets them as a returning guest. */
+export const isReturning = (visits: number): boolean => visits >= 2
 
 export function ConsentBadges({ consents }: { consents: Guest["consents"] }) {
   const t = useTranslations("guests.consent")
-  if (!consents.email && !consents.whatsapp) return <Badge variant="outline">{t("none")}</Badge>
+  if (!consents.email && !consents.whatsapp) return <StatusBadge tone="neutral">{t("none")}</StatusBadge>
   return (
     <span className="flex flex-wrap gap-1">
       {consents.whatsapp && (
-        <Badge variant="secondary">
-          <MessageCircleIcon data-icon="inline-start" />
+        <StatusBadge tone="success" icon={<MessageCircleIcon />}>
           {t("whatsapp")}
-        </Badge>
+        </StatusBadge>
       )}
       {consents.email && (
-        <Badge variant="secondary">
-          <MailIcon data-icon="inline-start" />
+        <StatusBadge tone="success" icon={<MailIcon />}>
           {t("email")}
-        </Badge>
+        </StatusBadge>
       )}
     </span>
   )
 }
 
-const Phone = ({ value }: { value: string }) => (
+export function ReturningBadge({ visits }: { visits: number }) {
+  const t = useTranslations("guests")
+  if (!isReturning(visits)) return null
+  return (
+    <StatusBadge tone="info" icon={<RepeatIcon />}>
+      {t("returning", { count: visits })}
+    </StatusBadge>
+  )
+}
+
+export const Phone = ({ value }: { value: string }) => (
   <bdi dir="ltr" className="tabular-nums">
-    {value}
+    {formatPhone(value)}
   </bdi>
 )
 
-export function GuestList({ guests, total }: { guests: Guest[]; total: number }) {
-  const t = useTranslations("guests")
-  const [compact, setCompact] = useState(false)
-  useEffect(() => setCompact(localStorage.getItem(DENSITY_KEY) === "compact"), [])
-  const choose = (value: boolean) => {
-    setCompact(value)
-    localStorage.setItem(DENSITY_KEY, value ? "compact" : "comfortable")
-  }
-  const row = compact ? "h-11" : undefined
+/** A plain `YYYY-MM-DD` day (birthday, stay dates) is read as UTC so it never shifts by a timezone. */
+const toDate = (value: Date | string) => (typeof value === "string" ? new Date(`${value}T00:00:00Z`) : value)
 
-  const columns: DataColumn<Guest>[] = [
+/**
+ * Every date of the guest pages: "Nov 26, 2026", with `time` "Nov 26, 2026, 14:05", with `to` a range
+ * "Nov 15 – 22, 2026". Viewer timezone for moments, UTC for plain days, so the server text may differ.
+ */
+export function GuestDate({ value, to, time = false }: { value: Date | string; to?: Date | string; time?: boolean }) {
+  const locale = useLocale()
+  const day = typeof value === "string" ? "UTC" : undefined
+  const start = toDate(value)
+  let text = formatDate(start, locale, day)
+  if (to) {
+    text = new Intl.DateTimeFormat(locale, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      numberingSystem: "latn",
+      timeZone: day,
+    }).formatRange(start, toDate(to))
+  } else if (time) {
+    const clock = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", numberingSystem: "latn" })
+    text = `${text}, ${clock.format(start)}`
+  }
+  return (
+    <time dateTime={typeof value === "string" ? value : value.toISOString()} suppressHydrationWarning>
+      {text}
+    </time>
+  )
+}
+
+type GuestListProps = {
+  guests: GuestListItem[]
+  total: number
+  page: number
+  pageSize: number
+  previousHref?: string
+  nextHref?: string
+  filters: React.ReactNode
+  empty: React.ReactNode
+}
+
+export function GuestList({ guests, total, page, pageSize, previousHref, nextHref, filters, empty }: GuestListProps) {
+  const t = useTranslations("guests")
+  const locale = useLocale()
+  const pages = pageWindow({ page, pageSize, total })
+
+  const columns: DataColumn<GuestListItem>[] = [
     {
       id: "guest",
       header: t("columns.guest"),
-      className: row,
       cell: (guest) => (
-        <Link
-          href={`/guests/${guest.id}`}
-          className="font-medium underline-offset-4 hover:underline focus-visible:underline"
-        >
-          {guest.name}
-        </Link>
+        <span className="flex flex-wrap items-center gap-2">
+          <Link
+            href={`/guests/${guest.id}`}
+            className="font-medium underline-offset-4 hover:underline focus-visible:underline"
+          >
+            {guest.name}
+          </Link>
+          <ReturningBadge visits={guest.visits} />
+        </span>
       ),
     },
-    { id: "phone", header: t("columns.phone"), className: row, cell: (guest) => <Phone value={guest.phoneE164} /> },
-    {
-      id: "consent",
-      header: t("columns.consent"),
-      className: row,
-      cell: (guest) => <ConsentBadges consents={guest.consents} />,
-    },
+    { id: "phone", header: t("columns.phone"), cell: (guest) => <Phone value={guest.phoneE164} /> },
+    { id: "consent", header: t("columns.consent"), cell: (guest) => <ConsentBadges consents={guest.consents} /> },
     {
       id: "language",
       header: t("columns.language"),
       showFrom: "lg",
-      className: row,
       cell: (guest) => LOCALE_NAMES[guest.language],
     },
     {
       id: "source",
       header: t("columns.source"),
-      showFrom: "lg",
-      className: row,
+      showFrom: "xl",
       cell: (guest) => <span className="text-muted-foreground">{t(`source.${guest.source}`)}</span>,
     },
     {
       id: "added",
       header: t("columns.added"),
       align: "end",
-      className: row,
       cell: (guest) => (
         <span className="text-muted-foreground">
-          <LocalDate value={guest.createdAt} />
+          <GuestDate value={guest.createdAt} />
         </span>
       ),
     },
   ]
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-muted-foreground text-sm" aria-live="polite">
-          {t("total", { count: total })}
-        </p>
-        <fieldset
-          className="m-0 flex min-w-0 items-center gap-1 border-0 p-0 max-md:hidden"
-          aria-label={t("density.label")}
-        >
-          <Button
-            variant={compact ? "ghost" : "secondary"}
-            size="icon-sm"
-            aria-label={t("density.comfortable")}
-            aria-pressed={!compact}
-            onClick={() => choose(false)}
-          >
-            <Rows2Icon />
-          </Button>
-          <Button
-            variant={compact ? "secondary" : "ghost"}
-            size="icon-sm"
-            aria-label={t("density.compact")}
-            aria-pressed={compact}
-            onClick={() => choose(true)}
-          >
-            <Rows3Icon />
-          </Button>
-        </fieldset>
-      </div>
-      <DataTable
-        caption={t("title")}
-        columns={columns}
-        rows={guests}
-        getRowKey={(guest) => guest.id}
-        card={(guest) => (
-          <Link href={`/guests/${guest.id}`} className="-m-4 flex items-center gap-3 p-4">
-            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+    <DataList
+      caption={t("title")}
+      filters={filters ? <div className="w-full">{filters}</div> : undefined}
+      columns={columns}
+      rows={guests}
+      getRowKey={(guest) => guest.id}
+      empty={empty}
+      linkComponent={Link}
+      pagination={{
+        previousLabel: t("previous"),
+        nextLabel: t("next"),
+        previous: previousHref ? { href: previousHref } : undefined,
+        next: nextHref ? { href: nextHref } : undefined,
+        range: {
+          ...pages,
+          total,
+          locale,
+          label: (numbers) =>
+            t.rich("range", { from: () => numbers.from, to: () => numbers.to, total: () => numbers.total }),
+        },
+      }}
+      card={(guest) => (
+        <Link href={`/guests/${guest.id}`} className="-m-4 flex min-h-11 items-center gap-3 p-4">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <div className="flex min-w-0 items-center gap-2">
               <span className="truncate font-medium">{guest.name}</span>
-              <span className="text-muted-foreground text-sm">
-                <Phone value={guest.phoneE164} />
-              </span>
-              <ConsentBadges consents={guest.consents} />
-              <span className="text-muted-foreground text-xs">
-                {LOCALE_NAMES[guest.language]} · {t(`source.${guest.source}`)} · <LocalDate value={guest.createdAt} />
-              </span>
+              <ReturningBadge visits={guest.visits} />
             </div>
-            <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden />
-          </Link>
-        )}
-      />
-    </div>
+            <span className="text-muted-foreground text-sm">
+              <Phone value={guest.phoneE164} /> · {LOCALE_NAMES[guest.language]}
+            </span>
+            <ConsentBadges consents={guest.consents} />
+          </div>
+          <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden />
+        </Link>
+      )}
+    />
   )
 }

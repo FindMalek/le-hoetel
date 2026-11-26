@@ -244,11 +244,12 @@
   "guests": {
     "title": "Guests",
     "description": "Everyone who shared their details with your hotel.",
-    "search": "Search by name, phone or email",
+    "search": "Search by name or phone",
     "reset": "Clear filters",
     "filter": {
       "source": "Source",
-      "any": "Any source"
+      "any": "Any source",
+      "returning": "Returning"
     },
     "consent": {
       "email": "Email",
@@ -263,7 +264,6 @@
       "staff": "Staff",
       "csv": "CSV import"
     },
-    "total": "{count, plural, one {# guest} other {# guests}}",
     "columns": {
       "guest": "Guest",
       "phone": "Phone",
@@ -285,7 +285,6 @@
       "description": "Ask the Ritorno team to add you to your hotel."
     },
     "loading": "Loading guests",
-    "page": "Page {page} of {pages}",
     "previous": "Previous",
     "next": "Next",
     "addButton": "Add guest",
@@ -337,7 +336,6 @@
       "confirmHint": "Consent is only recorded when the consent column says true, yes, oui or 1, and only if you confirm. Everyone else is added without marketing consent.",
       "needColumns": "Choose the name and phone columns to continue.",
       "submit": "Import {count, plural, one {# guest} other {# guests}}",
-      "result": "{created} added, {merged} updated, {failed} failed",
       "consentKept": "{count, plural, one {# guest had opted out earlier, so their consent stayed withdrawn.} other {# guests had opted out earlier, so their consent stayed withdrawn.}}",
       "download": "Download error report",
       "errorColumn": "error",
@@ -356,7 +354,6 @@
       "tryAgain": "Nothing was lost. Try again.",
       "mapHint": "We matched what we could. Check each one, name and phone are needed.",
       "detected": "Detected",
-      "required": "Required",
       "optional": "Optional",
       "continue": "Continue",
       "back": "Back",
@@ -378,16 +375,17 @@
       "noConsentColumn": "Your file has no consent column, so everyone is added without marketing consent. You can ask them later.",
       "unconfirmed": "Without your confirmation, everyone is added without marketing consent.",
       "doneTitle": "Import finished",
-      "viewGuests": "View guests"
-    },
-    "pagination": "Pages",
-    "density": {
-      "label": "Row height",
-      "comfortable": "Comfortable rows",
-      "compact": "Compact rows"
+      "viewGuests": "View guests",
+      "previewTitle": "First rows",
+      "previewMore": "{count, plural, one {And # more row.} other {And # more rows.}}",
+      "summary": {
+        "created": "added",
+        "merged": "already here, updated",
+        "failed": "skipped",
+        "kept": "opted out before, consent kept withdrawn"
+      }
     },
     "detail": {
-      "subtitle": "Guest, speaks {language}",
       "contact": "Contact",
       "phone": "Phone",
       "email": "Email",
@@ -431,7 +429,29 @@
       "deleteConfirm": "Delete permanently",
       "cancel": "Cancel",
       "deleted": "Guest deleted.",
-      "error": "Something went wrong. Try again."
+      "error": "Something went wrong. Try again.",
+      "edit": "Edit",
+      "firstStay": "First stay",
+      "stays": "Stays",
+      "noStays": "No stay recorded yet.",
+      "offers": "Offers used",
+      "noOffers": "No offer used yet.",
+      "surveys": "Survey answers",
+      "noSurveys": "No survey answer yet.",
+      "nps": "Would recommend: {score}/10",
+      "rating": {
+        "rooms": "Rooms {value}/5",
+        "cleanliness": "Cleanliness {value}/5",
+        "service": "Service {value}/5"
+      },
+      "neverAsked": "Never asked",
+      "history": "{count, plural, one {Consent log, # change} other {Consent log, # changes}}",
+      "grant": "Record consent",
+      "grantTitle": "Record {channel} consent?",
+      "grantBody": "Read this to the guest. Confirm only if they say yes. The change is added to the consent log.",
+      "grantConfirm": "The guest agrees",
+      "grantedToast": "Consent recorded.",
+      "deleteType": "Type {name} to confirm"
     },
     "finder": {
       "label": "Find a guest",
@@ -449,6 +469,21 @@
       "language": "Language",
       "lastOffer": "Last offer used",
       "consents": "Can contact"
+    },
+    "range": "<from></from>–<to></to> of <total></total> guests",
+    "returning": "{count, plural, one {Returning, # stay} other {Returning, # stays}}",
+    "edit": {
+      "title": "Edit guest",
+      "description": "Fix the name, language or contact details. Consent is changed on the guest page.",
+      "email": "Email",
+      "birthday": "Birthday",
+      "optional": "(optional)",
+      "emailNeeded": "This guest agreed to emails. Withdraw that consent before removing the email.",
+      "birthdayInvalid": "Pick a real birthday.",
+      "submit": "Save changes",
+      "cancel": "Cancel",
+      "saved": "Guest updated.",
+      "error": "The changes could not be saved. Try again."
     }
   },
   "guestData": {

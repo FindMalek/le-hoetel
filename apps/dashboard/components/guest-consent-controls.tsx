@@ -10,36 +10,75 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function WithdrawConsent({ guestId, channel }: { guestId: string; channel: ConsentChannel }) {
+/**
+ * Staff change one consent after a confirm. Withdrawing is logged as the guest's request. Granting shows the exact
+ * wording the guest agrees to, in their language, and is logged as staff.
+ */
+export function ConsentChange({
+  guestId,
+  channel,
+  granted,
+  wording,
+}: {
+  guestId: string
+  channel: ConsentChannel
+  granted: boolean
+  /** The consent text read to the guest. Without it, granting is not offered. */
+  wording?: string
+}) {
   const t = useTranslations("guests.detail")
   const tChannel = useTranslations("guests.consent")
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const withdraw = useMutation({
-    mutationFn: () => browserClient.guests.setConsent({ guestId, channel, granted: false, source: "guest_request" }),
+  const change = useMutation({
+    mutationFn: () =>
+      browserClient.guests.setConsent({
+        guestId,
+        channel,
+        granted: !granted,
+        source: granted ? "guest_request" : "staff",
+      }),
     onSuccess: () => {
       setOpen(false)
-      toast.success(t("withdrawn"))
+      toast.success(t(granted ? "withdrawn" : "grantedToast"))
       router.refresh()
     },
     onError: () => toast.error(t("error")),
   })
+  if (!granted && !wording) return null
   return (
     <>
-      <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
-        {t("withdraw")}
+      <Button variant="outline" size="sm" className="coarse:h-11" onClick={() => setOpen(true)}>
+        {t(granted ? "withdraw" : "grant")}
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        destructive
-        pending={withdraw.isPending}
-        title={t("withdrawTitle", { channel: tChannel(channel) })}
-        description={t("withdrawBody")}
-        confirmLabel={t("withdrawConfirm")}
+        destructive={granted}
+        pending={change.isPending}
+        title={t(granted ? "withdrawTitle" : "grantTitle", { channel: tChannel(channel) })}
+        description={t(granted ? "withdrawBody" : "grantBody")}
+        confirmLabel={t(granted ? "withdrawConfirm" : "grantConfirm")}
         cancelLabel={t("cancel")}
-        onConfirm={() => withdraw.mutate()}
-      />
+        onConfirm={() => change.mutate()}
+      >
+        {!granted && wording ? (
+          <blockquote dir="auto" className="rounded-lg border-primary border-s-2 bg-surface p-4 text-sm">
+            {wording}
+          </blockquote>
+        ) : null}
+      </ConfirmDialog>
     </>
   )
 }
+
+// i18n-used: guests.detail.withdraw
+// i18n-used: guests.detail.withdrawTitle
+// i18n-used: guests.detail.withdrawBody
+// i18n-used: guests.detail.withdrawConfirm
+// i18n-used: guests.detail.withdrawn
+// i18n-used: guests.detail.grant
+// i18n-used: guests.detail.grantTitle
+// i18n-used: guests.detail.grantBody
+// i18n-used: guests.detail.grantConfirm
+// i18n-used: guests.detail.grantedToast

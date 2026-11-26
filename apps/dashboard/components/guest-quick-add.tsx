@@ -1,11 +1,13 @@
 "use client"
 
+import { consentWording } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { parsePhone } from "@ritorno/common/phone"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@ritorno/ui/components/field"
+import { FieldDescription, FieldGroup, FieldLegend, FieldSet } from "@ritorno/ui/components/field"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
@@ -16,14 +18,13 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { type FormEvent, useRef, useState } from "react"
 import { toast } from "sonner"
-import { FieldProblem } from "@/components/field-problem"
 import { LanguageChoice } from "@/components/language-choice"
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type Touched = Partial<Record<"name" | "phone" | "email", boolean>>
 
-export function GuestQuickAdd({ defaultLanguage }: { defaultLanguage: HotelLanguage }) {
+export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage: HotelLanguage; hotelName: string }) {
   const t = useTranslations("guests.add")
   const phoneBox = useRef<HTMLDivElement>(null)
   const [name, setName] = useState("")
@@ -96,88 +97,75 @@ export function GuestQuickAdd({ defaultLanguage }: { defaultLanguage: HotelLangu
         />
       )}
       <FieldGroup>
-        <Field data-invalid={!!shown("phone")}>
-          <FieldLabel htmlFor="quick-phone">{t("phone")}</FieldLabel>
-          <div ref={phoneBox}>
-            <PhoneInput
-              id="quick-phone"
-              value={phone}
-              onValueChange={setPhone}
-              dialCode={dialCode}
-              onDialCodeChange={setDialCode}
-              dialCodeLabel={t("dialCode")}
+        <FormField id="quick-phone" label={t("phone")} required error={shown("phone")}>
+          {(aria) => (
+            <div ref={phoneBox}>
+              <PhoneInput
+                {...aria}
+                value={phone}
+                onValueChange={setPhone}
+                dialCode={dialCode}
+                onDialCodeChange={setDialCode}
+                dialCodeLabel={t("dialCode")}
+                enterKeyHint="next"
+                onBlur={() => touch("phone")}
+                autoFocus
+              />
+            </div>
+          )}
+        </FormField>
+        <FormField id="quick-name" label={t("name")} required error={shown("name")}>
+          {(aria) => (
+            <Input
+              {...aria}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              onBlur={() => touch("name")}
+              required
+              maxLength={120}
+              autoComplete="off"
+              autoCapitalize="words"
               enterKeyHint="next"
-              onBlur={() => touch("phone")}
-              aria-invalid={!!shown("phone")}
-              aria-describedby="quick-phone-error"
-              autoFocus
             />
-          </div>
-          <FieldProblem id="quick-phone-error">{shown("phone")}</FieldProblem>
-        </Field>
-        <Field data-invalid={!!shown("name")}>
-          <FieldLabel htmlFor="quick-name">{t("name")}</FieldLabel>
-          <Input
-            id="quick-name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            onBlur={() => touch("name")}
-            aria-invalid={!!shown("name")}
-            aria-describedby="quick-name-error"
-            maxLength={120}
-            autoComplete="off"
-            autoCapitalize="words"
-            enterKeyHint="next"
-          />
-          <FieldProblem id="quick-name-error">{shown("name")}</FieldProblem>
-        </Field>
+          )}
+        </FormField>
         <LanguageChoice name="quick-language" value={language} onChange={setLanguage} legend={t("language")} />
-        <Field data-invalid={!!shown("email")}>
-          <FieldLabel htmlFor="quick-email">{t("email")}</FieldLabel>
-          <Input
-            id="quick-email"
-            type="email"
-            inputMode="email"
-            autoComplete="off"
-            autoCapitalize="none"
-            enterKeyHint="done"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            onBlur={() => touch("email")}
-            aria-invalid={!!shown("email")}
-            aria-describedby="quick-email-error"
-            maxLength={200}
-          />
-          <FieldProblem id="quick-email-error">{shown("email")}</FieldProblem>
-        </Field>
+        <FormField id="quick-email" label={t("email")} error={shown("email")}>
+          {(aria) => (
+            <Input
+              {...aria}
+              type="email"
+              inputMode="email"
+              autoComplete="off"
+              autoCapitalize="none"
+              enterKeyHint="done"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              onBlur={() => touch("email")}
+              maxLength={200}
+            />
+          )}
+        </FormField>
         <FieldSet>
           <FieldLegend variant="label">{t("consentTitle")}</FieldLegend>
           <FieldDescription>{t("consentHint")}</FieldDescription>
           <div className="flex flex-col gap-2">
-            <Label
-              htmlFor="quick-whatsapp"
-              className="min-h-12 cursor-pointer gap-3 rounded-lg border px-3 py-2 font-normal has-disabled:cursor-not-allowed has-disabled:opacity-60"
-            >
-              <Checkbox
-                id="quick-whatsapp"
-                checked={whatsapp && canWhatsapp}
-                disabled={!canWhatsapp}
-                onCheckedChange={setWhatsapp}
-              />
-              {canWhatsapp ? t("consentWhatsapp") : t("noWhatsapp")}
-            </Label>
-            <Label
-              htmlFor="quick-email-consent"
-              className="min-h-12 cursor-pointer gap-3 rounded-lg border px-3 py-2 font-normal has-disabled:cursor-not-allowed has-disabled:opacity-60"
-            >
-              <Checkbox
-                id="quick-email-consent"
-                checked={emailConsent && hasEmail}
-                disabled={!hasEmail}
-                onCheckedChange={setEmailConsent}
-              />
-              {hasEmail ? t("consentEmail") : t("needEmail")}
-            </Label>
+            <ConsentBox
+              id="quick-whatsapp"
+              checked={whatsapp && canWhatsapp}
+              disabled={!canWhatsapp}
+              onCheckedChange={setWhatsapp}
+              title={canWhatsapp ? t("consentWhatsapp") : t("noWhatsapp")}
+              wording={consentWording("whatsapp", language, hotelName)}
+            />
+            <ConsentBox
+              id="quick-email-consent"
+              checked={emailConsent && hasEmail}
+              disabled={!hasEmail}
+              onCheckedChange={setEmailConsent}
+              title={hasEmail ? t("consentEmail") : t("needEmail")}
+              wording={consentWording("email", language, hotelName)}
+            />
           </div>
         </FieldSet>
       </FieldGroup>
@@ -190,5 +178,36 @@ export function GuestQuickAdd({ defaultLanguage }: { defaultLanguage: HotelLangu
         </Button>
       </StickyFormActions>
     </form>
+  )
+}
+
+function ConsentBox({
+  id,
+  checked,
+  disabled,
+  onCheckedChange,
+  title,
+  wording,
+}: {
+  id: string
+  checked: boolean
+  disabled: boolean
+  onCheckedChange: (checked: boolean) => void
+  title: string
+  wording: string
+}) {
+  return (
+    <Label
+      htmlFor={id}
+      className="min-h-12 cursor-pointer items-start gap-3 rounded-lg border bg-card p-3 font-normal has-checked:border-primary has-disabled:cursor-not-allowed has-disabled:opacity-60"
+    >
+      <Checkbox id={id} className="mt-0.5" checked={checked} disabled={disabled} onCheckedChange={onCheckedChange} />
+      <span className="grid gap-1">
+        <span className="font-medium">{title}</span>
+        <span dir="auto" className="text-muted-foreground text-sm">
+          {wording}
+        </span>
+      </span>
+    </Label>
   )
 }

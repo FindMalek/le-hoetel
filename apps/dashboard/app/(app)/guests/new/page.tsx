@@ -17,7 +17,7 @@ export default async function NewGuestPage() {
         description={t("add.description")}
       />
       <div className="p-4 md:p-6">
-        <GuestQuickAdd defaultLanguage={hotel.defaultLanguage} />
+        <GuestQuickAdd defaultLanguage={hotel.defaultLanguage} hotelName={hotel.displayName} />
       </div>
     </>
   )

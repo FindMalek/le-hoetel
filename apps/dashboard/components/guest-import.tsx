@@ -12,18 +12,21 @@ import {
   guestFromImportRow,
 } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
-import { Badge } from "@ritorno/ui/components/badge"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
+import { DataTable } from "@ritorno/ui/components/data-table"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Label } from "@ritorno/ui/components/label"
+import { Num } from "@ritorno/ui/components/num"
 import { Select } from "@ritorno/ui/components/select"
+import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { cn } from "@ritorno/ui/lib/utils"
 import { useMutation } from "@tanstack/react-query"
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, DownloadIcon, FileSpreadsheetIcon, UploadIcon } from "lucide-react"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
 import { LanguageChoice } from "@/components/language-choice"
 import { download } from "@/lib/download"
@@ -36,6 +39,7 @@ type Step = "upload" | "map" | "review" | "done"
 const REQUIRED: ImportField[] = ["name", "phone"]
 const STEPS = ["upload", "map", "review"] as const
 const PROBLEM_FIELDS = ["name", "phone", "email", "birthday", "language"] as const
+const PREVIEW_FIELDS = ["name", "phone", "email", "language", "consent"] as const
 
 const GUESSES: Record<ImportField, string[]> = {
   name: ["name", "nom", "full", "client", "guest", "اسم"],
@@ -86,6 +90,7 @@ const problemOf = (message: string): (typeof PROBLEM_FIELDS)[number] | "row" => 
 
 export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguage }) {
   const t = useTranslations("guests.import")
+  const locale = useLocale()
   const [step, setStep] = useState<Step>("upload")
   const [error, setError] = useState<string | null>(null)
   const [fileName, setFileName] = useState("")
@@ -281,33 +286,41 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               const examples = mapping[field] >= 0 ? sample(body, mapping[field]).slice(0, 3) : []
               const auto = detected !== null && detected[field] >= 0 && detected[field] === mapping[field]
               return (
-                <div key={field} className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <Label htmlFor={`map-${field}`}>{t(`field.${field}`)}</Label>
-                    <span className="flex items-center gap-2">
-                      {auto && <Badge variant="secondary">{t("detected")}</Badge>}
-                      {REQUIRED.includes(field) ? (
-                        <Badge variant="outline">{t("required")}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">{t("optional")}</span>
+                <FormField
+                  key={field}
+                  id={`map-${field}`}
+                  required={REQUIRED.includes(field)}
+                  optional={REQUIRED.includes(field) ? undefined : t("optional")}
+                  label={
+                    <>
+                      {t(`field.${field}`)}
+                      {auto && (
+                        <StatusBadge tone="info" className="ms-1">
+                          {t("detected")}
+                        </StatusBadge>
                       )}
-                    </span>
-                  </div>
-                  <Select
-                    id={`map-${field}`}
-                    value={String(mapping[field])}
-                    onValueChange={(value) => setMapping({ ...mapping, [field]: Number(value) })}
-                    options={[
-                      { value: "-1", label: t("none") },
-                      ...headers.map((header, index) => ({ value: String(index), label: header })),
-                    ]}
-                  />
-                  {examples.length > 0 && (
-                    <p dir="ltr" className="truncate text-start text-muted-foreground text-xs">
-                      {examples.join("  ·  ")}
-                    </p>
+                    </>
+                  }
+                  hint={
+                    examples.length > 0 ? (
+                      <span dir="ltr" className="block truncate text-start">
+                        {examples.join("  ·  ")}
+                      </span>
+                    ) : undefined
+                  }
+                >
+                  {(aria) => (
+                    <Select
+                      {...aria}
+                      value={String(mapping[field])}
+                      onValueChange={(value) => setMapping({ ...mapping, [field]: Number(value) })}
+                      options={[
+                        { value: "-1", label: t("none") },
+                        ...headers.map((header, index) => ({ value: String(index), label: header })),
+                      ]}
+                    />
                   )}
-                </div>
+                </FormField>
               )
             })}
           </div>
@@ -373,6 +386,38 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
             </div>
           )}
 
+          <div className="flex flex-col gap-2">
+            <h2 className="font-heading font-semibold">{t("previewTitle")}</h2>
+            <DataTable
+              caption={t("previewTitle")}
+              columns={PREVIEW_FIELDS.map((field) => ({
+                id: field,
+                header: t(`field.${field}`),
+                showFrom: field === "email" || field === "consent" ? ("lg" as const) : undefined,
+                cell: (row: GuestImportRow) => (
+                  <span dir={field === "name" ? "auto" : "ltr"} className="block truncate">
+                    {row[field] || "–"}
+                  </span>
+                ),
+              }))}
+              rows={rows.slice(0, 5)}
+              getRowKey={(row) => String(row.line)}
+              card={(row) => (
+                <div className="flex min-w-0 flex-col gap-1 text-sm">
+                  <span dir="auto" className="truncate font-medium">
+                    {row.name || "–"}
+                  </span>
+                  <span dir="ltr" className="truncate text-start text-muted-foreground">
+                    {[row.phone || "–", row.email, row.language, row.consent].filter(Boolean).join(" · ")}
+                  </span>
+                </div>
+              )}
+            />
+            {rows.length > 5 && (
+              <p className="text-muted-foreground text-sm">{t("previewMore", { count: rows.length - 5 })}</p>
+            )}
+          </div>
+
           <div className="flex flex-col gap-3 rounded-lg border p-4">
             <h2 className="font-heading font-semibold">{t("consentTitle")}</h2>
             {consentMapped ? (
@@ -407,9 +452,25 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
       {step === "done" && result && (
         <div className="flex flex-col gap-4">
           <InlineAlert tone={result.errors.length ? "warning" : "success"} title={t("doneTitle")}>
-            {t("result", { created: result.created, merged: result.merged, failed: result.errors.length })}
-            {result.consentKept > 0 && <> {t("consentKept", { count: result.consentKept })}</>}
+            {result.consentKept > 0 ? t("consentKept", { count: result.consentKept }) : null}
           </InlineAlert>
+          <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {(
+              [
+                ["created", result.created],
+                ["merged", result.merged],
+                ["failed", result.errors.length],
+                ["kept", result.consentKept],
+              ] as const
+            ).map(([key, value]) => (
+              <div key={key} className="flex flex-col gap-1 rounded-lg border bg-card p-4">
+                <dt className="order-last text-muted-foreground text-sm">{t(`summary.${key}`)}</dt>
+                <dd className="font-semibold text-h2 tabular-nums">
+                  <Num value={value} locale={locale} />
+                </dd>
+              </div>
+            ))}
+          </dl>
           <div className="flex flex-wrap gap-2">
             <Button size="lg" render={<Link href="/guests" />} nativeButton={false}>
               {t("viewGuests")}
