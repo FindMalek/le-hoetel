@@ -46,7 +46,8 @@ export function CampaignDetail({
       refetchInterval: (query) => (["scheduled", "sending"].includes(query.state.data?.status ?? "") ? 5_000 : false),
     }),
   )
-  const audience = useAudience(campaign)
+  const { guests: audience, refresh: refreshAudience } = useAudience(campaign)
+  const [counted, setCounted] = useState(false)
   const { data: offers } = useQuery(orpc.offers.list.queryOptions())
   const offerTitle = offers?.find((offer) => offer.id === campaign.offerId)?.title ?? null
   const languages = HOTEL_LANGUAGES.filter((language) => campaign.content[language])
@@ -61,7 +62,12 @@ export function CampaignDetail({
   const [confirm, setConfirmKind] = useState<Confirm>("send")
   const [confirmOpen, setConfirmOpen] = useState(false)
   const setConfirm = (next: Confirm | null) => {
-    if (next) setConfirmKind(next)
+    if (next) {
+      setConfirmKind(next)
+      // the count in a confirm is always fetched again, never the cached one
+      setCounted(false)
+      void refreshAudience().then(setCounted)
+    }
     setConfirmOpen(next !== null)
   }
 
@@ -108,15 +114,22 @@ export function CampaignDetail({
   const atError = !at ? t("errors.at") : new Date(at).getTime() < Date.now() ? t("errors.atPast") : undefined
   const noAudience = audience === 0
 
+  const countedTitle = (key: "confirm.sendTitle" | "confirm.scheduleTitle") =>
+    counted && audience !== null ? t.rich(key, { count: audience, n: () => num(audience) }) : t("counting")
+  const needsCount = confirm === "send" || confirm === "schedule" || (confirm === "delete" && isDraft)
+  const confirmBlocked = needsCount && (!counted || ((confirm === "send" || confirm === "schedule") && !audience))
   const confirmCopy: Record<Confirm, { title: React.ReactNode; body: string; label: string; destructive?: boolean }> = {
     send: {
-      title: t.rich("confirm.sendTitle", { count: audience ?? 0, n: () => num(audience ?? 0) }),
-      body: t("confirm.sendBody", { channel }),
+      title: countedTitle("confirm.sendTitle"),
+      body: counted && audience === 0 ? t("errors.audience") : t("confirm.sendBody", { channel }),
       label: t("detail.sendNow"),
     },
     schedule: {
-      title: t.rich("confirm.scheduleTitle", { count: audience ?? 0, n: () => num(audience ?? 0) }),
-      body: t("confirm.scheduleBody", { channel, date: at ? date(new Date(at)) : "" }),
+      title: countedTitle("confirm.scheduleTitle"),
+      body:
+        counted && audience === 0
+          ? t("errors.audience")
+          : t("confirm.scheduleBody", { channel, date: at ? date(new Date(at)) : "" }),
       label: t("detail.schedule"),
     },
     cancel: {
@@ -128,7 +141,9 @@ export function CampaignDetail({
     delete: {
       title: t("confirm.deleteTitle", { name: campaign.name }),
       body: isDraft
-        ? t("confirm.deleteDraftBody", { count: audience ?? 0, channel })
+        ? counted
+          ? t("confirm.deleteDraftBody", { count: audience ?? 0, channel })
+          : t("counting")
         : t("confirm.deleteBody", { count: results.targeted, channel }),
       label: t("detail.delete"),
       destructive: true,
@@ -297,6 +312,7 @@ export function CampaignDetail({
         cancelLabel={t("confirm.back")}
         destructive={confirmCopy[confirm].destructive}
         pending={confirmPending}
+        confirmDisabled={confirmBlocked}
         onConfirm={onConfirm}
       />
     </div>

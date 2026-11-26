@@ -50,7 +50,11 @@ export function CampaignStatusBadge({ campaign }: { campaign: Campaign }) {
 }
 
 /** Guests it would reach today while it can still change, the guests it reached out to once it went out. */
-export function useAudience(campaign: Campaign): number | null {
+export function useAudience(campaign: Campaign): {
+  guests: number | null
+  /** Counts again, for a confirm that must not show a cached number. Resolves to whether the count is fresh. */
+  refresh: () => Promise<boolean>
+} {
   const live = campaign.status === "draft" || campaign.status === "scheduled"
   const preview = useQuery(
     orpc.campaigns.preview.queryOptions({
@@ -58,14 +62,17 @@ export function useAudience(campaign: Campaign): number | null {
       enabled: live,
     }),
   )
-  if (!live) return campaign.results.targeted
-  return preview.data?.guests ?? null
+  if (!live) return { guests: campaign.results.targeted, refresh: async () => true }
+  return {
+    guests: preview.data?.guests ?? null,
+    refresh: async () => (await preview.refetch()).isSuccess,
+  }
 }
 
 function Audience({ campaign }: { campaign: Campaign }) {
   const t = useTranslations("campaigns")
   const locale = useLocale()
-  const guests = useAudience(campaign)
+  const { guests } = useAudience(campaign)
   if (guests === null) return <span className="text-muted-foreground">{t("counting")}</span>
   return (
     <span className="tabular-nums">

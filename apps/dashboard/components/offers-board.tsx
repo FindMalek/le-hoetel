@@ -154,7 +154,11 @@ export function OffersBoard({ canEdit }: { canEdit: boolean }) {
   const now = new Date()
   const stateOf = (offer: Offer) => offerState(offer, offer.redeemed, now)
   const active = offers.filter((offer) => stateOf(offer) === "ready").length
-  const usedIn = (offer: Offer) => campaigns?.filter((campaign) => campaign.offerId === offer.id).length ?? 0
+  // only campaigns that have not gone out yet would send without the offer
+  const usedIn = (offer: Offer) =>
+    campaigns?.filter(
+      (campaign) => campaign.offerId === offer.id && (campaign.status === "draft" || campaign.status === "scheduled"),
+    ).length ?? 0
   const num = (value: number) => <Num value={value} locale={locale} />
 
   return (

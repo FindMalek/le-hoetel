@@ -132,6 +132,7 @@ export function CampaignForm({
   const [touched, setTouched] = useState<Set<string>>(new Set())
   const [attempted, setAttempted] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [counted, setCounted] = useState(false)
   const [savedId, setSavedId] = useState<string | undefined>(campaign?.id)
 
   const fullSegment: CampaignSegment = { ...segment, countries: parseCountries(countries) }
@@ -203,7 +204,12 @@ export function CampaignForm({
       return
     }
     if (mode === "draft") void save("draft").catch(() => undefined)
-    else setConfirming(true)
+    else {
+      // the count in a confirm is always fetched again for this exact audience, never a placeholder
+      setCounted(false)
+      setConfirming(true)
+      void reach.refetch().then((result) => setCounted(result.isSuccess && !result.isPlaceholderData))
+    }
   }
 
   const text = content[editing] ?? { subject: "", body: "" }
@@ -560,18 +566,25 @@ export function CampaignForm({
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}
-        title={t.rich(when === "now" ? "confirm.sendTitle" : "confirm.scheduleTitle", {
-          count: audience ?? 0,
-          n: () => num(audience ?? 0),
-        })}
+        title={
+          counted && audience !== null
+            ? t.rich(when === "now" ? "confirm.sendTitle" : "confirm.scheduleTitle", {
+                count: audience,
+                n: () => num(audience),
+              })
+            : t("counting")
+        }
         description={
-          when === "now"
-            ? t("confirm.sendBody", { channel: t(`channel.${channel}`) })
-            : t("confirm.scheduleBody", { channel: t(`channel.${channel}`), date: scheduledDate })
+          counted && audience === 0
+            ? t("errors.audience")
+            : when === "now"
+              ? t("confirm.sendBody", { channel: t(`channel.${channel}`) })
+              : t("confirm.scheduleBody", { channel: t(`channel.${channel}`), date: scheduledDate })
         }
         confirmLabel={when === "now" ? t("detail.sendNow") : t("detail.schedule")}
         cancelLabel={t("confirm.back")}
         pending={busy}
+        confirmDisabled={!counted || !audience}
         onConfirm={() => {
           void save(when)
             .catch(() => undefined)
