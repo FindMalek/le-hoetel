@@ -122,6 +122,7 @@ export const guestCreateSchema = z
 export const guestUpdateSchema = z.object({
   id: z.uuid(),
   name: name.optional(),
+  phone: phoneInputSchema.optional(),
   language: z.enum(HOTEL_LANGUAGES).optional(),
   email: email.nullable().optional(),
   birthday: birthday.nullable().optional(),

@@ -516,7 +516,11 @@
       "error": "The changes could not be saved. Try again.",
       "checkOut": "Check-out date",
       "checkOutHint": "The survey goes out the day after.",
-      "checkOutNeedsConsent": "Needs the stay details consent. Turn it on from the guest page, if the guest agrees."
+      "checkOutNeedsConsent": "Needs the stay details consent. Turn it on from the guest page, if the guest agrees.",
+      "phoneTaken": "Another guest already has this number.",
+      "openOther": "Open that guest",
+      "phoneWhatsappOff": "WhatsApp consent was given for the old number. Saving turns it off. Ask the guest, then turn it back on from the guest page.",
+      "savedWhatsappOff": "Guest updated. WhatsApp consent is now off."
     }
   },
   "guestData": {
@@ -1785,7 +1789,8 @@
         "delete": "Deleted a guest",
         "export-all": "Exported all guests",
         "export": "Exported a guest",
-        "import": "Imported guests"
+        "import": "Imported guests",
+        "phone-change": "Changed a guest's phone number"
       },
       "hotel": {
         "admin-update": "Updated plan, status or pilot",

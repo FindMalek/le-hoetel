@@ -8,6 +8,7 @@ import {
   consentEventSchema,
   consentSetSchema,
   GUEST_EXTRA_FIELDS,
+  type Guest,
   guestActivitySchema,
   guestCreateSchema,
   guestExportSchema,
@@ -50,6 +51,7 @@ import {
   upsertGuest,
   withConsents,
 } from "../lib/guests"
+import { isUniqueViolation } from "../lib/offers"
 import { eraseGuestScans, scansForExport } from "../lib/whatsapp-scans"
 import { can, hotelExportProcedure, hotelProcedure } from "../procedures"
 
@@ -84,6 +86,50 @@ async function eventsOf(db: Context["db"], hotelId: string, guestIds: string[] |
     .from(consentEvents)
     .where(and(eq(consentEvents.hotelId, hotelId), guestIds ? inArray(consentEvents.guestId, guestIds) : undefined))
     .orderBy(desc(consentEvents.at))
+}
+
+const phoneTaken = (guestId?: string) =>
+  new ORPCError("CONFLICT", { message: "Another guest already has this phone number.", data: { guestId } })
+
+/**
+ * WhatsApp consent was given for the old number, so a new number turns it off, logged, until the guest agrees again.
+ * The old number's QR scans go too: after the change, deleting the guest would no longer reach them.
+ */
+async function updateWithNewPhone(
+  context: Pick<Context, "db" | "now">,
+  change: { hotelId: string; staffUserId: string; guest: Guest },
+  patch: Partial<typeof guests.$inferInsert> & { phoneE164: string },
+): Promise<{ whatsappWithdrawn: boolean }> {
+  const { hotelId, staffUserId, guest } = change
+  const holder = () =>
+    context.db
+      .select({ id: guests.id })
+      .from(guests)
+      .where(and(eq(guests.hotelId, hotelId), eq(guests.phoneE164, patch.phoneE164)))
+  const [other] = await holder()
+  if (other) throw phoneTaken(other.id)
+  try {
+    return await context.db.transaction(async (tx) => {
+      const whatsappWithdrawn =
+        guest.consents.whatsapp &&
+        (await recordConsent(tx, {
+          hotelId,
+          guestId: guest.id,
+          channel: "whatsapp",
+          granted: false,
+          source: "staff",
+          at: context.now(),
+          staffUserId,
+        }))
+      await eraseGuestScans(tx, hotelId, guest.id)
+      await tx.update(guests).set(patch).where(hotelGuest(hotelId, guest.id))
+      return { whatsappWithdrawn }
+    })
+  } catch (error) {
+    // Someone took the number between the check and the write.
+    if (isUniqueViolation(error)) throw phoneTaken((await holder())[0]?.id)
+    throw error
+  }
 }
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, "\\$&")
@@ -298,7 +344,7 @@ export const guestsRouter = {
     .route({ method: "PATCH", path: "/guests/{id}", summary: "Update a guest's details", tags: ["guests"] })
     .input(guestUpdateSchema)
     .output(guestSchema)
-    .handler(async ({ context, input: { id, ...patch } }) => {
+    .handler(async ({ context, input: { id, phone, ...patch } }) => {
       const { hotelId } = context.hotel
       const current = await loadGuest(context.db, hotelId, id)
       if (!current.consents.profile && GUEST_EXTRA_FIELDS.some((field) => patch[field] != null)) {
@@ -307,7 +353,15 @@ export const guestsRouter = {
       if (patch.email === null && current.consents.email) {
         throw new ORPCError("BAD_REQUEST", { message: "Withdraw the email consent before removing the email." })
       }
-      if (Object.keys(patch).length) {
+      if (phone && phone !== current.phoneE164) {
+        const { whatsappWithdrawn } = await updateWithNewPhone(
+          context,
+          { hotelId, staffUserId: context.user.id, guest: current },
+          { ...patch, phoneE164: phone },
+        )
+        // Never the numbers themselves: the audit log holds no guest contact details.
+        await audit(context, { action: "guest.phone-change", targetId: id, metadata: { hotelId, whatsappWithdrawn } })
+      } else if (Object.keys(patch).length) {
         await context.db.update(guests).set(patch).where(hotelGuest(hotelId, id))
       }
       return loadGuest(context.db, hotelId, id)
