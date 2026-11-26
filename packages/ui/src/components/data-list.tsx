@@ -3,7 +3,7 @@ import { DataTable } from "@ritorno/ui/components/data-table"
 import { LoadingState } from "@ritorno/ui/components/loading-state"
 import { Num } from "@ritorno/ui/components/num"
 import { Skeleton } from "@ritorno/ui/components/skeleton"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 /** A link (server pages, state in the url) or a handler (client lists). Missing means there is no page that way. */

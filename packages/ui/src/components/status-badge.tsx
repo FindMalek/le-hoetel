@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 import { AlertCircleIcon, CheckCircle2Icon, InfoIcon, TriangleAlertIcon } from "lucide-react"
 
 const STATUS_TONES = {

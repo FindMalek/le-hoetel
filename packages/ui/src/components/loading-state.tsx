@@ -1,5 +1,5 @@
 import { Skeleton } from "@ritorno/ui/components/skeleton"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 type LoadingStateProps = React.ComponentProps<"div"> & {
   label: string

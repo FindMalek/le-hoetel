@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 type DialCode = { value: string; label: string }
 

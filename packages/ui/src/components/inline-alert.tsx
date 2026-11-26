@@ -1,6 +1,6 @@
 import { AlertCircleIcon, CheckCircle2Icon, InfoIcon, TriangleAlertIcon } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@ritorno/ui/components/alert"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 const TONES = {
   info: { icon: InfoIcon, className: "border-s-4 border-s-primary", role: "status" },

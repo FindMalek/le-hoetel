@@ -8,7 +8,7 @@ import {
   EmptyTitle,
 } from "@ritorno/ui/components/empty"
 import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 type EmptyStateProps = Omit<React.ComponentProps<typeof Empty>, "title"> & {
   icon?: React.ReactNode

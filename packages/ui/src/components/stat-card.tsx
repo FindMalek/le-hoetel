@@ -1,5 +1,5 @@
 import { StatusBadge, type StatusTone } from "@ritorno/ui/components/status-badge"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon } from "lucide-react"
 
 type StatDelta = {

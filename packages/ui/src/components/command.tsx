@@ -1,7 +1,7 @@
 "use client"
 
 import { Command as CommandPrimitive } from "cmdk"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 import { SearchIcon } from "lucide-react"
 import type * as React from "react"
 

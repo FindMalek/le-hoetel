@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 import { useId } from "react"
 
 type SegmentedOption<V extends string> = {

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 import { Label } from "@ritorno/ui/components/label"
 import { Separator } from "@ritorno/ui/components/separator"
