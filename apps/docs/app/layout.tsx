@@ -16,7 +16,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("antialiased", fontVariables, "font-sans")}>
       <body className="flex min-h-screen flex-col">
-        <RootProvider theme={{ enabled: false }}>{children}</RootProvider>
+        {/* The search route serves a prebuilt index (staticGET), so the dialog has to search it client side. */}
+        <RootProvider theme={{ enabled: false }} search={{ options: { type: "static" } }}>
+          {children}
+        </RootProvider>
       </body>
     </html>
   )

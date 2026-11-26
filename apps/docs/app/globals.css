@@ -11,3 +11,66 @@
 @utility not-prose {
   isolation: isolate;
 }
+
+/* Callout and diff colors follow the tone tokens. */
+:root {
+  --color-fd-info: var(--info);
+  --color-fd-warning: var(--warning);
+  --color-fd-error: var(--destructive);
+  --color-fd-success: var(--success);
+  --color-fd-overlay: color-mix(in oklch, var(--ink-900) 20%, transparent);
+}
+
+/* Pill active states and hairlines in the sidebar, TOC and search; unlayered so they beat fumadocs utilities. */
+:is(#nd-sidebar, #nd-sidebar-mobile) a[data-active="true"] {
+  border-radius: 9999px;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-weight: 500;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+:is(#nd-sidebar, #nd-sidebar-mobile) :is(a, button) {
+  border-radius: 9999px;
+}
+
+#nd-toc a[data-active="true"] {
+  color: var(--blue-700);
+}
+
+[role="dialog"]:has(> [cmdk-input], input[type="search"], [aria-autocomplete]) {
+  box-shadow: var(--shadow-device);
+}
+
+[role="dialog"] [aria-selected="true"] {
+  border-radius: 9999px;
+  background-color: var(--blue-50);
+  color: var(--blue-800);
+}
+
+/* Phone: every nav row, toggle and TOC link is a 44px target. */
+@media (pointer: coarse), (max-width: 767px) {
+  :is(#nd-sidebar, #nd-sidebar-mobile, #nd-subnav, #nd-nav) :is(a, button),
+  #nd-toc a {
+    min-block-size: var(--spacing-touch);
+  }
+  :is(#nd-subnav, #nd-nav) button {
+    min-inline-size: var(--spacing-touch);
+  }
+}
+
+.shiki:not(.not-fumadocs-codeblock *) {
+  font-family: var(--font-mono);
+}
+
+.prose :not(pre) > code {
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--blue-800);
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background-color: var(--blue-100);
+}
