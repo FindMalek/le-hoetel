@@ -5,7 +5,7 @@ import { isForbidden, isUnauthorized } from "@ritorno/orpc/errors"
 import { createServerClient } from "@ritorno/orpc/server"
 import { QueryClient } from "@tanstack/react-query"
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { cache } from "react"
 import { viewedHotelId } from "@/lib/view-hotel"
 
@@ -31,6 +31,18 @@ export const currentHotel = cache(() =>
     throw error
   }),
 )
+
+/** The caller's role on that hotel, null with none on screen. */
+export const hotelRole = cache(async () => {
+  const [{ role }, hotel] = await Promise.all([call((client) => client.hotel.mine()), currentHotel()])
+  return hotel ? role : null
+})
+
+/** The platform pages do not exist for anyone else. Call before the page's own data, which the api would refuse. */
+export async function requireAdmin(): Promise<void> {
+  const me = await call((client) => client.me.get())
+  if (me.role !== "admin") notFound()
+}
 
 /** A direct call for server components; an expired session goes back to sign-in. */
 export async function call<T>(fn: (client: AppRouterClient) => Promise<T>): Promise<T> {

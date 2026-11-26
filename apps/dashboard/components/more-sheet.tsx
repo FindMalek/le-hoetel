@@ -20,12 +20,23 @@ import { openFeedback } from "@/components/feedback-button"
 import { setLocale } from "@/components/preferences-menu"
 import { type Me, signOut, UserAvatar } from "@/components/user-menu"
 import { activeHref, navGroups } from "@/lib/nav"
+import type { Viewer } from "@/lib/viewer"
 
 // i18n-used: shell.more
 // i18n-used: shell.appearance
 
 /** Every page on a phone, grouped like the sidebar, plus language, feedback and sign out. Opens from the inline start. */
-export function MoreSheet({ me, switcher, className }: { me: Me; switcher: React.ReactNode; className?: string }) {
+export function MoreSheet({
+  me,
+  viewer,
+  switcher,
+  className,
+}: {
+  me: Me
+  viewer: Viewer
+  switcher: React.ReactNode
+  className?: string
+}) {
   const t = useTranslations("nav")
   const tShell = useTranslations("shell")
   const locale = useLocale()
@@ -34,7 +45,7 @@ export function MoreSheet({ me, switcher, className }: { me: Me; switcher: React
   // The switcher navigates on its own, so close on any page change.
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger
   useEffect(() => setOpen(false), [pathname])
-  const groups = navGroups(me.role)
+  const groups = navGroups(viewer)
   const active = activeHref(
     groups.flatMap((group) => group.items.map((item) => item.href)),
     pathname,

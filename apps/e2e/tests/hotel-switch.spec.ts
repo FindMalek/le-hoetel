@@ -121,6 +121,10 @@ test("the app admin changes hotel from the Hotels page and the switcher", async 
   await expect(page.locator("#main")).not.toContainText("Not available for your role")
   await open(page, "/team")
   await expect(page.locator("#main")).toContainText("You are not a member of Villa Mimosa")
+  await expect(page.locator("#main")).toContainText("manager.villa-mimosa@")
+  await expect(page.locator("#main")).not.toContainText("Could not load the team")
+  await open(page, "/guests/import")
+  await expect(page).toHaveURL(/\/guests\/import$/)
 
   // Picking their own hotel in the switcher ends the view.
   await open(page, "/")

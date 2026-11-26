@@ -1,12 +1,13 @@
 import { ORPCError } from "@orpc/server"
+import { UNDO_WINDOW_MS } from "@ritorno/common/hotel-time"
 import { newGuestCode, verifyOfferToken } from "@ritorno/common/offer-tokens"
 import { normalizeCode, offerState } from "@ritorno/common/offers"
 import type { offerLookupSchema } from "@ritorno/common/schemas"
-import { type Db, guests, offerCodes, offerRedemptions, offers, user } from "@ritorno/db"
+import { type Db, guests, guestVisits, offerCodes, offerRedemptions, offers, user } from "@ritorno/db"
 import { and, count, desc, eq, gt, isNull, lte, or } from "drizzle-orm"
 import type { z } from "zod"
 import type { Context } from "../context"
-import { hotelGuest } from "./guests"
+import { hotelGuest, recordVisit } from "./guests"
 import { hotelBranding } from "./hotel"
 import { qrSvg } from "./qr"
 
@@ -87,6 +88,8 @@ const empty = (status: Lookup["status"]): Lookup => ({
   guestFirstName: null,
   redeemed: null,
   justNow: false,
+  guestId: null,
+  redemptionId: null,
 })
 
 const GUEST_CODE = /^[A-Z0-9]{4}-?[A-Z0-9]{4}$/
@@ -140,6 +143,8 @@ async function describe(db: Db | Tx, found: Resolved, now: Date, rowId?: string)
     guestFirstName: guest ? firstName(guest.name) : null,
     redeemed: past ? { at: past.at, by: past.by } : null,
     justNow: false,
+    guestId: guest?.id ?? null,
+    redemptionId: null,
   }
 }
 
@@ -154,19 +159,21 @@ const isUniqueViolation = (error: unknown): boolean =>
 /**
  * Marks a code redeemed, once. The offer row is locked while the limit is counted, and a guest's second redemption
  * hits the unique `(offer_id, guest_id)`, so two phones scanning together cannot both succeed.
+ * A guest's code also counts their visit, stamped with the redemption's time so the undo finds it.
  */
 export async function redeemCode(
   context: Pick<Context, "db" | "now">,
   hotelId: string,
   userId: string,
   raw: string,
-): Promise<Lookup & { redemptionId: string | null }> {
+): Promise<Lookup> {
   const found = await resolve(context.db, hotelId, raw)
-  if (typeof found === "string") return { ...empty(found), redemptionId: null }
+  if (typeof found === "string") return empty(found)
   return context.db.transaction(async (tx) => {
     await tx.select({ id: offers.id }).from(offers).where(eq(offers.id, found.offer.id)).for("update")
     const before = await describe(tx, found, context.now())
-    if (before.status !== "ready") return { ...before, redemptionId: null }
+    if (before.status !== "ready") return before
+    const at = context.now()
     try {
       const [row] = await tx.transaction((inner) =>
         inner
@@ -176,14 +183,49 @@ export async function redeemCode(
             hotelId,
             guestId: found.guest?.id ?? null,
             redeemedBy: userId,
-            redeemedAt: context.now(),
+            redeemedAt: at,
           })
           .returning({ id: offerRedemptions.id }),
       )
-      return { ...(await describe(tx, found, context.now(), row?.id)), justNow: true, redemptionId: row?.id ?? null }
+      if (found.guest) await recordVisit(tx, { hotelId, guestId: found.guest.id, source: "staff", at })
+      return { ...(await describe(tx, found, at, row!.id)), justNow: true, redemptionId: row!.id }
     } catch (error) {
       if (!isUniqueViolation(error)) throw error
-      return { ...(await describe(tx, found, context.now())), redemptionId: null }
+      return describe(tx, found, context.now())
     }
+  })
+}
+
+/** Takes back a redemption made moments ago, and the visit it counted. Null when it is gone or too old. */
+export async function undoRedemption(
+  context: Pick<Context, "db" | "now">,
+  hotelId: string,
+  redemptionId: string,
+): Promise<{ offerId: string } | null> {
+  return context.db.transaction(async (tx) => {
+    const [gone] = await tx
+      .delete(offerRedemptions)
+      .where(
+        and(
+          eq(offerRedemptions.id, redemptionId),
+          eq(offerRedemptions.hotelId, hotelId),
+          gt(offerRedemptions.redeemedAt, new Date(context.now().getTime() - UNDO_WINDOW_MS)),
+        ),
+      )
+      .returning()
+    if (!gone) return null
+    if (gone.guestId) {
+      await tx
+        .delete(guestVisits)
+        .where(
+          and(
+            eq(guestVisits.hotelId, hotelId),
+            eq(guestVisits.guestId, gone.guestId),
+            eq(guestVisits.source, "staff"),
+            eq(guestVisits.at, gone.redeemedAt),
+          ),
+        )
+    }
+    return { offerId: gone.offerId }
   })
 }

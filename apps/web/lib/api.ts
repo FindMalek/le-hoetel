@@ -24,3 +24,10 @@ export const getSurveyPage = (token: string) => api.public.survey.get({ token })
 export const submitSurvey = (input: Parameters<typeof api.public.survey.submit>[0]) =>
   guestApi.public.survey.submit(input)
 export const getReviewUrl = (token: string) => api.public.survey.review({ token }).catch(() => null)
+
+/** `null` is a code nobody has. A down api throws, so the guest is told to try again, not that the code is wrong. */
+export const getShortLink = (code: string) =>
+  guestApi.public.shortLink({ code }).catch((error: { code?: string }) => {
+    if (error.code === "NOT_FOUND" || error.code === "BAD_REQUEST") return null
+    throw error
+  })

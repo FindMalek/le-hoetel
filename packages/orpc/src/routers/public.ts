@@ -7,6 +7,7 @@ import {
   guestCreateSchema,
   offerPageSchema,
   publicHotelSchema,
+  shortLinkSchema,
   statusSchema,
 } from "@ritorno/common/schemas"
 import { surveyAnswerSchema } from "@ritorno/common/survey"
@@ -21,6 +22,7 @@ import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
 import { offerPage, welcomeOffer } from "../lib/offers"
 import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
+import { findShortLink } from "../lib/short-links"
 import { reviewClick, submitSurvey, surveyPage } from "../lib/surveys"
 import { changeChoices, unsubscribeAll, unsubscribePage } from "../lib/unsubscribe"
 import { publicProcedure } from "../procedures"
@@ -156,6 +158,15 @@ function botReason(input: z.output<typeof captureInputSchema>): "honeypot" | "li
 }
 
 export const publicRouter = {
+  shortLink: publicProcedure
+    .route({ method: "POST", path: "/public/short-link", summary: "Where a printed /q/<code> leads", tags: ["public"] })
+    .input(z.object({ code: z.string().min(1).max(20) }))
+    .output(shortLinkSchema)
+    .handler(async ({ context, input }) => {
+      await enforceRateLimit(context, "short-link.ip", RATE_LIMITS.shortLinkIp)
+      return findShortLink(context.db, input.code)
+    }),
+
   unsubscribe: unsubscribeRouter,
   survey: surveyRouter,
 

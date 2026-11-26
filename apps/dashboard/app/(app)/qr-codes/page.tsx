@@ -3,16 +3,17 @@ import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { PageHeader } from "@/components/page-header"
 import { QrCodesBoard } from "@/components/qr-codes-board"
-import { getQueryClient, serverOrpc } from "@/lib/api"
+import { call, getQueryClient, serverOrpc } from "@/lib/api"
 
 export const metadata: Metadata = { title: "QR codes" }
 
 export default async function QrCodesPage() {
   const t = await getTranslations("qrCodes")
   const queryClient = getQueryClient()
+  // `fetchQuery`, not `prefetchQuery`: a swallowed failure leaves the suspense query loading forever.
   await Promise.all([
-    queryClient.prefetchQuery(serverOrpc.hotel.captureStats.queryOptions()),
-    queryClient.prefetchQuery(serverOrpc.hotel.spots.list.queryOptions()),
+    call(() => queryClient.fetchQuery(serverOrpc.hotel.captureStats.queryOptions())),
+    call(() => queryClient.fetchQuery(serverOrpc.hotel.spots.list.queryOptions())),
   ])
   return (
     <>

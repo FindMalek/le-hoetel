@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { createRouterClient } from "@orpc/server"
 import { DEMO_VIEWER_EMAIL } from "@ritorno/common/demo"
+import { shortLinks } from "@ritorno/db"
 import { createContext } from "../../context"
 import { createTestApp } from "../../testing"
 import { appRouter } from ".."
@@ -17,7 +18,10 @@ test("the demo viewer looks around its hotel but changes nothing", async () => {
   const viewer = await app.joinHotel(await app.signUp(DEMO_VIEWER_EMAIL), hotelId, "manager")
 
   expect((await viewer.client.hotel.get()).id).toBe(hotelId)
-  expect(await viewer.client.hotel.qrCodes({ source: "desk", spots: [] })).toHaveLength(1)
+  // a code that scans, without a row being made for it
+  const [code] = await viewer.client.hotel.qrCodes({ source: "desk", spots: [] })
+  expect(code?.url).toEndWith("/h/viewer-hotel?src=desk")
+  expect(await app.services.db.select().from(shortLinks)).toHaveLength(0)
   expect((await viewer.client.emails.preview({ template: "welcome", locale: "en" })).subject).toBeTruthy()
   expect((await viewer.client.offers.lookup({ code: "NOPE" })).status).toBe("unknown")
 

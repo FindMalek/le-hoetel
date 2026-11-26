@@ -41,7 +41,7 @@ A code can be a guest's code (`AB3D-EF7H`) or the offer's promo code. A promo co
 | `wrongHotel` | the guest code belongs to another hotel, nothing about it is shown |
 | `unknown` | no such code |
 
-`offers.redeem` locks the offer row while it counts, then inserts, so two phones scanning the same code at once give one redemption and one "already redeemed". The unique `(offer_id, guest_id)` is the backstop. Each redemption writes an `offer.redeem` audit row (offer id, no guest data). Owners, managers and staff can redeem. `offers.redemptionStats` gives the counts (today in the hotel's timezone, last 7 days, total) and `offers.redemptions` lists every redemption of the hotel, newest first, which the screen loads as you scroll.
+`offers.redeem` locks the offer row while it counts, then inserts, so two phones scanning the same code at once give one redemption and one "already redeemed". The unique `(offer_id, guest_id)` is the backstop. Each redemption writes an `offer.redeem` audit row (offer id, no guest data). A guest's code also counts their visit for the day and the result links to the guest. A wrong tap can be taken back for 10 minutes with `offers.undoRedeem`: the redemption and the visit it counted are removed and `offer.unredeem` is audited. Owners, managers and staff can redeem. `offers.redemptionStats` gives the counts (today in the hotel's timezone, last 7 days, total) and `offers.redemptions` lists every redemption of the hotel, newest first, which the screen loads as you scroll.
 
 ## Demo data
 

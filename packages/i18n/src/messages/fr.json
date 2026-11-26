@@ -310,13 +310,33 @@
       "needEmail": "Ajoutez un e-mail pour demander le consentement e-mail.",
       "submit": "Ajouter le client",
       "added": "Client ajouté",
-      "merged": "Ce client existait déjà : informations mises à jour",
+      "merged": "Ce client était déjà enregistré",
       "nameRequired": "Saisissez le nom du client.",
       "phoneInvalid": "Saisissez un numéro valide, par exemple 20 123 456.",
       "emailInvalid": "Saisissez un e-mail valide, par exemple nom@exemple.com.",
       "done": "Terminé",
       "view": "Voir le client",
-      "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez."
+      "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez.",
+      "known": "Ce numéro est déjà enregistré",
+      "changed": "Mis à jour : {fields}.",
+      "unchanged": "Rien n'a changé dans la fiche.",
+      "kept": "Conservé tel quel, votre saisie n'a pas été enregistrée : {fields}.",
+      "visitSaved": "Visite enregistrée.",
+      "visitCounted": "La visite du jour était déjà comptée.",
+      "fields": {
+        "name": "nom",
+        "language": "langue",
+        "email": "e-mail",
+        "birthday": "anniversaire",
+        "country": "pays",
+        "city": "ville",
+        "stayCheckIn": "date d'arrivée",
+        "stayCheckOut": "date de départ",
+        "nextDestination": "prochaine destination",
+        "emailConsent": "consentement e-mail",
+        "whatsappConsent": "consentement WhatsApp",
+        "profileConsent": "consentement profil"
+      }
     },
     "import": {
       "title": "Importer des clients",
@@ -473,7 +493,12 @@
       "lastVisit": "Dernière visite",
       "language": "Langue",
       "lastOffer": "Dernière offre utilisée",
-      "consents": "Contact autorisé"
+      "consents": "Contact autorisé",
+      "markedToday": "Visite du jour enregistrée",
+      "alreadyCounted": "La visite du jour était déjà comptée",
+      "undo": "Annuler",
+      "undone": "Visite retirée",
+      "markError": "La visite n'a pas pu être enregistrée. Réessayez."
     },
     "returning": "{count, plural, one {Fidèle, # séjour} other {Fidèle, # séjours}}",
     "edit": {
@@ -644,7 +669,9 @@
     "hotelMissingTitle": "Cette page d'hôtel n'existe pas",
     "hotelMissing": "Le QR code est peut-être ancien. Demandez le code actuel à la réception.",
     "reviewInvalidTitle": "Ce lien d'avis n'est pas valide",
-    "reviewInvalid": "Ouvrez à nouveau le lien de votre message, ou demandez à la réception."
+    "reviewInvalid": "Ouvrez à nouveau le lien de votre message, ou demandez à la réception.",
+    "codeMissingTitle": "Ce code ne fonctionne pas",
+    "codeMissing": "Vérifiez les lettres sous le code QR, ou demandez à la réception."
   },
   "adminHotels": {
     "title": "Hôtels",
@@ -1115,7 +1142,10 @@
       "exhausted": "Toutes les utilisations de ce code sont épuisées.",
       "wrongHotel": "Demandez au client le code envoyé par cet hôtel.",
       "unknown": "Vérifiez le code avec le client et réessayez."
-    }
+    },
+    "viewGuest": "Voir le client",
+    "undo": "Annuler, touché par erreur",
+    "undone": "Utilisation annulée"
   },
   "notFound": {
     "title": "Page introuvable",
@@ -1438,7 +1468,7 @@
     "logoOpen": "Ouvrir l'identité comme cet hôtel",
     "people": "Propriétaires et membres",
     "peopleHint": "Qui peut se connecter à cet hôtel, et les invitations en attente.",
-    "noPeople": "Personne pour l'instant. Invitez le propriétaire depuis la page équipe de l'hôtel une fois ouvert.",
+    "noPeople": "Personne pour le moment.",
     "invited": "Invité",
     "inviteExpires": "Expire le {date}",
     "pilotPlan": "Pilote et offre",
@@ -1472,7 +1502,7 @@
     "renameHint": "Le nom officiel et l'adresse de la page client.",
     "renameSave": "Enregistrer le nom et le slug",
     "slugTitle": "Changer le slug de {hotel} ?",
-    "slugConsequence": "Tous les QR codes imprimés avec {old} cessent de fonctionner. Imprimez de nouveaux codes depuis la page QR codes juste après.",
+    "slugConsequence": "Les codes avec une adresse courte /q/ continuent de fonctionner. Les liens et les anciens codes imprimés qui contiennent {old} ne fonctionneront plus.",
     "slugConfirm": "Changer le slug",
     "renamed": "Nom et slug enregistrés.",
     "deleteConfirm": "Supprimer définitivement",
@@ -1552,8 +1582,8 @@
       "suspended": "L'équipe ne peut plus se connecter à cet hôtel et aucun message n'est envoyé à ses clients. Les données sont gardées et vous pourrez le réactiver."
     },
     "statusConfirm": "Passer en {status}",
-    "slugHint": "Minuscules, chiffres et tirets. Elle fait partie de chaque lien de QR code.",
-    "slugWarningTitle": "Les QR codes imprimés ne marcheront plus"
+    "slugHint": "Minuscules, chiffres et tirets. C’est l’adresse de la page des clients.",
+    "slugWarningTitle": "Les liens avec l’ancien identifiant ne fonctionneront plus"
   },
   "adminWizard": {
     "title": "Nouvel hôtel",
@@ -1764,7 +1794,8 @@
         "create": "Offre créée",
         "delete": "Offre supprimée",
         "redeem": "Offre utilisée",
-        "update": "Offre modifiée"
+        "update": "Offre modifiée",
+        "unredeem": "A annulé l'utilisation d'une offre"
       },
       "privacy": {
         "delete-account": "Compte supprimé",
@@ -2118,7 +2149,7 @@
     "revokeTitle": "Révoquer l'invitation de {email} ?",
     "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard.",
     "notMember": "Vous n'êtes pas membre de {hotel}",
-    "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici. Sa page d'administration les liste.",
+    "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici.",
     "notMemberAction": "Ouvrir la page d'administration"
   },
   "usage": {

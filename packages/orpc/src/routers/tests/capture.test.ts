@@ -1,12 +1,13 @@
 import { afterAll, beforeAll, expect, spyOn, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
-import { parseSpots, QR_LOGO_RATIO } from "@ritorno/common/qr"
-import { guests, hotelSettings } from "@ritorno/db"
+import { captionedSvg, parseSpots, printedUrl, QR_LOGO_RATIO } from "@ritorno/common/qr"
+import { guests, hotelSettings, organization, shortLinks } from "@ritorno/db"
 import { logger } from "@ritorno/logger"
 import { eq } from "drizzle-orm"
 import jsQR from "jsqr"
 import sharp from "sharp"
 import { RATE_LIMITS } from "../../lib/rate-limit"
+import { SHORT_LINKS_PER_HOTEL } from "../../lib/short-links"
 import { createTestApp, type TestApp } from "../../testing"
 
 let app: TestApp
@@ -183,7 +184,14 @@ test("the printed code still decodes to its spot with a solid logo over its midd
     .toBuffer({ resolveWithObject: true })
   const decoded = jsQR(new Uint8ClampedArray(data), info.width, info.height)?.data
   expect(decoded).toBe(code!.url)
-  expect(decoded).toEndWith("/h/capture-decode?src=room&loc=12+A")
+  expect(decoded).toMatch(/\/q\/[2-9A-Z]{8}$/)
+
+  // the download writes the address under the code, and still scans
+  const download = captionedSvg(code!.svg, printedUrl(code!.url))
+  expect(download).toContain(`>${printedUrl(code!.url)}</text>`)
+  const captioned = await sharp(Buffer.from(download)).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  expect(captioned.info.height).toBeGreaterThan(captioned.info.width)
+  expect(jsQR(new Uint8ClampedArray(captioned.data), captioned.info.width, captioned.info.height)?.data).toBe(code!.url)
 })
 
 test("staff save rooms and tables in bulk, once each, and only for their own hotel", async () => {
@@ -212,16 +220,17 @@ test("staff save rooms and tables in bulk, once each, and only for their own hot
   expect(await other.hotel.spots.list()).toEqual([{ source: "room", name: "101" }])
 })
 
-test("QR codes carry the hotel slug, source and spot, and the stats count captures per spot", async () => {
+test("each spot has its own stable code, and the stats count captures per spot", async () => {
   const owner = await app.signUp("capture-qr@ritorno.test")
   const hotelId = await app.createHotel("capture-qr", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
 
   const codes = await client.hotel.qrCodes({ source: "room", spots: ["101", "102"] })
   expect(codes.map((code) => code.location)).toEqual(["101", "102"])
-  expect(codes[0]?.url).toEndWith("/h/capture-qr?src=room&loc=101")
+  expect(codes[0]?.url).not.toBe(codes[1]?.url)
   expect(codes[0]?.svg).toStartWith("<svg")
-  expect((await client.hotel.qrCodes({ source: "desk", spots: [] }))[0]?.url).toEndWith("?src=desk")
+  const again = await client.hotel.qrCodes({ source: "room", spots: ["102", "101", "101"] })
+  expect(again.map((code) => code.url)).toEqual([codes[1]!.url, codes[0]!.url, codes[0]!.url])
 
   await app.anonymous.public.capture({ slug: "capture-qr", ...scan, source: "room", location: "101" })
   await app.anonymous.public.capture({
@@ -232,4 +241,64 @@ test("QR codes carry the hotel slug, source and spot, and the stats count captur
     location: "101",
   })
   expect(await client.hotel.captureStats()).toEqual([{ source: "qr_room", location: "101", guests: 2 }])
+})
+
+test("a printed code follows its own hotel through a rename and keeps source and spot", async () => {
+  const owner = await app.signUp("capture-short@ritorno.test")
+  const hotelId = await app.createHotel("capture-short", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const otherOwner = await app.signUp("capture-short-other@ritorno.test")
+  const otherId = await app.createHotel("capture-short-other", otherOwner)
+  const other = (await app.joinHotel(otherOwner, otherId, "owner")).client
+  const codeOf = async (hotel: typeof client, spots: string[]) =>
+    (await hotel.hotel.qrCodes({ source: spots.length ? "room" : "desk", spots }))[0]!.url.split("/q/")[1]!
+
+  const room = await codeOf(client, ["101"])
+  const desk = await codeOf(client, [])
+  const theirs = await codeOf(other, ["101"])
+  expect(theirs).not.toBe(room)
+  await app.services.db.update(organization).set({ slug: "capture-renamed" }).where(eq(organization.id, hotelId))
+
+  const resolve = (code: string) => app.anonymous.public.shortLink({ code })
+  expect(await resolve(room.toLowerCase())).toEqual({ slug: "capture-renamed", source: "room", location: "101" })
+  expect(await resolve(desk)).toEqual({ slug: "capture-renamed", source: "desk", location: null })
+  expect(await resolve(theirs)).toEqual({ slug: "capture-short-other", source: "room", location: "101" })
+  expect(await codeOf(client, ["101"])).toBe(room)
+  await expect(resolve("00000000")).rejects.toThrow("Code not found")
+
+  await app.services.db
+    .update(hotelSettings)
+    .set({ status: "suspended" })
+    .where(eq(hotelSettings.organizationId, hotelId))
+  await expect(resolve(room)).rejects.toThrow("Code not found")
+})
+
+test("resolving codes is limited per ip, with room for a whole hotel wifi", async () => {
+  const from = (ip: string) => app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": ip }))
+  const guess = (ip: string) => from(ip).public.shortLink({ code: "22222222" })
+  // counted straight on the limiter: this many real calls would meet the 120 a minute every route has first
+  for (let i = 1; i < RATE_LIMITS.shortLinkIp.limit; i++) {
+    await app.services.rateLimiter.hit("short-link.ip:10.3.0.1", RATE_LIMITS.shortLinkIp)
+  }
+  await expect(guess("10.3.0.1")).rejects.toThrow("Code not found")
+  await expect(guess("10.3.0.1")).rejects.toThrow("Too many requests")
+  await expect(guess("10.3.0.2")).rejects.toThrow("Code not found")
+})
+
+test("a hotel stops getting new codes at the cap and keeps the ones it has", async () => {
+  const owner = await app.signUp("capture-cap@ritorno.test")
+  const hotelId = await app.createHotel("capture-cap", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const [first] = await client.hotel.qrCodes({ source: "room", spots: ["101"] })
+  await app.services.db.insert(shortLinks).values(
+    Array.from({ length: SHORT_LINKS_PER_HOTEL - 1 }, (_, i) => ({
+      code: `cap-${i}`,
+      hotelId,
+      source: "table" as const,
+      location: String(i),
+    })),
+  )
+
+  await expect(client.hotel.qrCodes({ source: "room", spots: ["102"] })).rejects.toThrow("printed codes")
+  expect((await client.hotel.qrCodes({ source: "room", spots: ["101"] }))[0]?.url).toBe(first!.url)
 })
