@@ -4,11 +4,11 @@ import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
+import { Select } from "@ritorno/ui/components/select"
 import { HistoryIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
-import { selectClass } from "@/components/admin-fields"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
@@ -101,36 +101,39 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
         <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <div className="grid gap-1.5 lg:col-span-2">
             <Label htmlFor="audit-action">{t("filters.action")}</Label>
-            <select id="audit-action" name="action" defaultValue={params.action ?? ""} className={selectClass}>
-              <option value="">{t("filters.any")}</option>
-              {actions.map((action) => (
-                <option key={action} value={action}>
-                  {actionLabel(action)}
-                </option>
-              ))}
-            </select>
+            <Select
+              id="audit-action"
+              name="action"
+              defaultValue={params.action ?? ""}
+              options={[
+                { value: "", label: t("filters.any") },
+                ...actions.map((action) => ({ value: action, label: actionLabel(action) })),
+              ]}
+            />
           </div>
           <div className="grid gap-1.5 lg:col-span-2">
             <Label htmlFor="audit-actor">{t("filters.actor")}</Label>
-            <select id="audit-actor" name="actor" defaultValue={params.actor ?? ""} className={selectClass}>
-              <option value="">{t("filters.any")}</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.email}
-                </option>
-              ))}
-            </select>
+            <Select
+              id="audit-actor"
+              name="actor"
+              defaultValue={params.actor ?? ""}
+              options={[
+                { value: "", label: t("filters.any") },
+                ...users.map((user) => ({ value: user.id, label: user.email })),
+              ]}
+            />
           </div>
           <div className="grid gap-1.5 sm:col-span-2 lg:col-span-2">
             <Label htmlFor="audit-hotel">{t("filters.hotel")}</Label>
-            <select id="audit-hotel" name="hotel" defaultValue={params.hotel ?? ""} className={selectClass}>
-              <option value="">{t("filters.any")}</option>
-              {hotels.map((hotel) => (
-                <option key={hotel.id} value={hotel.id}>
-                  {hotel.displayName}
-                </option>
-              ))}
-            </select>
+            <Select
+              id="audit-hotel"
+              name="hotel"
+              defaultValue={params.hotel ?? ""}
+              options={[
+                { value: "", label: t("filters.any") },
+                ...hotels.map((hotel) => ({ value: hotel.id, label: hotel.displayName })),
+              ]}
+            />
           </div>
           <div className="grid gap-1.5 lg:col-span-2">
             <Label htmlFor="audit-from">{t("filters.from")}</Label>

@@ -17,6 +17,9 @@ WORKDIR /app
 ENV NODE_ENV=production PORT=3001
 COPY --from=deps --chown=bun:bun /app ./
 COPY --from=pruner --chown=bun:bun /app/out/full/ ./
+# Reported by /health; the deploy waits until it matches the commit it asked for.
+ARG GIT_SHA=""
+ENV GIT_SHA=$GIT_SHA
 USER bun
 
 # The job worker alone, no http server: docker build --target worker -f apps/api/Dockerfile .

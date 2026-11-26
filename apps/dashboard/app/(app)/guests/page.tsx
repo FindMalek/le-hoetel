@@ -42,7 +42,7 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
     <PageHeader
       title={t("title")}
       description={t("description")}
-      actions={
+      secondaryActions={
         activeId &&
         canImport && (
           <Button variant="outline" render={<Link href="/guests/import" />} nativeButton={false}>

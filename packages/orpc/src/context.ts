@@ -13,6 +13,7 @@ export interface Services {
   now: () => Date
   config: {
     deployEnv: string
+    gitSha?: string
     githubAuth: boolean
     githubRepo?: string
     githubToken?: string

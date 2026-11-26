@@ -2,6 +2,7 @@ import { isForbidden } from "@ritorno/orpc/errors"
 import { Button } from "@ritorno/ui/components/button"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { Section } from "@ritorno/ui/components/section"
+import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { StatCard } from "@ritorno/ui/components/stat-card"
 import { ChartColumnIcon, GiftIcon, SendIcon, ShieldCheckIcon, StarIcon, UsersIcon } from "lucide-react"
 import type { Metadata } from "next"
@@ -31,25 +32,21 @@ export default async function MetricsPage({ searchParams }: PageProps<"/metrics"
   })
 
   const switcher = (
-    <nav aria-label={t("periodLabel")} className="flex gap-1 rounded-lg border p-1">
-      {PERIODS.map((period) => (
-        <Button
-          key={period}
-          size="sm"
-          variant={period === days ? "secondary" : "ghost"}
-          aria-current={period === days ? "true" : undefined}
-          render={<Link href={`/metrics?days=${period}`} />}
-          nativeButton={false}
-        >
-          {t("period.days", { count: period })}
-        </Button>
-      ))}
-    </nav>
+    <SegmentedControl
+      label={t("periodLabel")}
+      value={String(days)}
+      linkComponent={Link}
+      options={PERIODS.map((period) => ({
+        value: String(period),
+        label: t("period.days", { count: period }),
+        href: `/metrics?days=${period}`,
+      }))}
+    />
   )
 
   return (
     <>
-      <PageHeader title={t("title")} description={t("description")} actions={data ? switcher : null} />
+      <PageHeader title={t("title")} description={t("description")} secondaryActions={data ? switcher : null} />
       <div className="flex flex-col gap-10 p-4 md:p-6">
         {!data ? (
           <EmptyState icon={<ChartColumnIcon />} title={t("forbidden")} />

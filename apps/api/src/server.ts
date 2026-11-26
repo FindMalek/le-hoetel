@@ -74,7 +74,8 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
         .execute(sql`select 1`)
         .then(() => true)
         .catch(() => false)
-      return Response.json({ ok: db, db, env: services.config.deployEnv }, { status: db ? 200 : 503 })
+      const { deployEnv: env, gitSha: sha = null } = services.config
+      return Response.json({ ok: db, db, env, sha }, { status: db ? 200 : 503 })
     }
     if (pathname.startsWith("/unsubscribe/") && request.method === "POST") {
       const ip = clientIp(request.headers)

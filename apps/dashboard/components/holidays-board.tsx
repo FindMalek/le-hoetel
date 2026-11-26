@@ -3,13 +3,11 @@
 import { HOLIDAY_CHANNELS, HOLIDAYS, type HolidayChannel } from "@ritorno/common/holidays"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
+import { Select } from "@ritorno/ui/components/select"
 import { Switch } from "@ritorno/ui/components/switch"
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
-
-const SELECT_CLASS =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 md:h-9 md:w-44 md:text-sm"
 
 export function HolidaysBoard() {
   const t = useTranslations("holidays")
@@ -43,19 +41,15 @@ export function HolidaysBoard() {
               <span className="text-muted-foreground text-sm">{date ? t("next", { date }) : t("noDate")}</span>
             </div>
             <div className="flex items-center justify-between gap-3 md:justify-end">
-              <select
+              <Select
                 aria-label={t("channelFor", { name })}
-                className={SELECT_CLASS}
+                size="sm"
+                className="md:w-44"
                 value={holiday.channel}
                 disabled={!holiday.enabled || pending}
-                onChange={(event) => change({ channel: event.target.value as HolidayChannel })}
-              >
-                {HOLIDAY_CHANNELS.map((channel) => (
-                  <option key={channel} value={channel}>
-                    {t(`channel.${channel}`)}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(channel) => change({ channel })}
+                options={HOLIDAY_CHANNELS.map((channel) => ({ value: channel, label: t(`channel.${channel}`) }))}
+              />
               <Switch
                 aria-label={t("switchFor", { name })}
                 checked={holiday.enabled}

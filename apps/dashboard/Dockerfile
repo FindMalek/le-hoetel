@@ -14,6 +14,8 @@ RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
 ARG TURBO_API
 ARG TURBO_TEAM
+# Client code gets NEXT_PUBLIC_* inlined at build time, so they are build args too.
+ARG NEXT_PUBLIC_GLITCHTIP_DSN NEXT_PUBLIC_UMAMI_URL NEXT_PUBLIC_UMAMI_WEBSITE_ID
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN --mount=type=secret,id=turbo_token,env=TURBO_TOKEN pnpm turbo build --filter=dashboard
 

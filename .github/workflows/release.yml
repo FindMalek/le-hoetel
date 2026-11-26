@@ -82,6 +82,7 @@ jobs:
           TARGET: production
           REF: ${{ inputs.tag || needs.release.outputs.tag || github.event.release.tag_name }}
           DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+          GITHUB_TOKEN: ${{ github.token }}
           DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
           DOKPLOY_PRODUCTION_COMPOSE_ID: ${{ vars.DOKPLOY_PRODUCTION_COMPOSE_ID }}
           PRODUCTION_API_URL: ${{ vars.PRODUCTION_API_URL }}

@@ -17,6 +17,7 @@ import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Label } from "@ritorno/ui/components/label"
+import { Select } from "@ritorno/ui/components/select"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { cn } from "@ritorno/ui/lib/utils"
 import { useMutation } from "@tanstack/react-query"
@@ -82,9 +83,6 @@ const problemOf = (message: string): (typeof PROBLEM_FIELDS)[number] | "row" => 
   const head = message.split(":")[0]?.split(".")[0] ?? ""
   return PROBLEM_FIELDS.find((field) => field === head) ?? "row"
 }
-
-const selectClass =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface md:text-sm"
 
 export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguage }) {
   const t = useTranslations("guests.import")
@@ -295,19 +293,15 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
                       )}
                     </span>
                   </div>
-                  <select
+                  <Select
                     id={`map-${field}`}
-                    className={selectClass}
-                    value={mapping[field]}
-                    onChange={(event) => setMapping({ ...mapping, [field]: Number(event.target.value) })}
-                  >
-                    <option value={-1}>{t("none")}</option>
-                    {headers.map((header, index) => (
-                      <option key={index} value={index}>
-                        {header}
-                      </option>
-                    ))}
-                  </select>
+                    value={String(mapping[field])}
+                    onValueChange={(value) => setMapping({ ...mapping, [field]: Number(value) })}
+                    options={[
+                      { value: "-1", label: t("none") },
+                      ...headers.map((header, index) => ({ value: String(index), label: header })),
+                    ]}
+                  />
                   {examples.length > 0 && (
                     <p dir="ltr" className="truncate text-start text-muted-foreground text-xs">
                       {examples.join("  ·  ")}
@@ -414,6 +408,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
         <div className="flex flex-col gap-4">
           <InlineAlert tone={result.errors.length ? "warning" : "success"} title={t("doneTitle")}>
             {t("result", { created: result.created, merged: result.merged, failed: result.errors.length })}
+            {result.consentKept > 0 && <> {t("consentKept", { count: result.consentKept })}</>}
           </InlineAlert>
           <div className="flex flex-wrap gap-2">
             <Button size="lg" render={<Link href="/guests" />} nativeButton={false}>

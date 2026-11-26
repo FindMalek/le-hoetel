@@ -16,7 +16,7 @@ export default async function AdminHotelsPage() {
       <PageHeader
         title={t("title")}
         description={t("description")}
-        actions={
+        action={
           <Button render={<Link href="/admin/hotels/new" />} nativeButton={false}>
             <PlusIcon data-icon="inline-start" />
             {t("new")}

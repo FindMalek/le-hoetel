@@ -6,8 +6,10 @@ import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { Field, FieldLabel } from "@ritorno/ui/components/field"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { FormSection } from "@ritorno/ui/components/form-section"
 import { Input } from "@ritorno/ui/components/input"
+import { Select } from "@ritorno/ui/components/select"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { Switch } from "@ritorno/ui/components/switch"
 import { Textarea } from "@ritorno/ui/components/textarea"
@@ -17,8 +19,6 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { useForm } from "@/lib/use-form"
-import { FormField } from "./form-field"
-import { NativeSelect } from "./native-select"
 import { OfferCardPreview, type OfferPreviewCopies } from "./offer-card-preview"
 
 const TRIGGERS = ["welcome", "birthday", "manual"] as const
@@ -114,7 +114,7 @@ export function OfferForm({
   const bind = (key: keyof Values) => ({
     name: String(key),
     value: values[key] as string,
-    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       form.set(key, event.target.value as never),
     onBlur: () => form.blur(key),
   })
@@ -178,14 +178,17 @@ export function OfferForm({
         <FormSection title={t("sections.who.title")} description={t("sections.who.description")}>
           <FormField id="trigger" label={t("fieldTrigger")}>
             {(aria) => (
-              <NativeSelect {...aria} {...bind("trigger")}>
-                <option value="">{t("triggerNone")}</option>
-                {TRIGGERS.map((value) => (
-                  <option key={value} value={value}>
-                    {t(`trigger.${value}`)}
-                  </option>
-                ))}
-              </NativeSelect>
+              <Select
+                {...aria}
+                name="trigger"
+                value={values.trigger}
+                onValueChange={(value) => form.set("trigger", value)}
+                onBlur={() => form.blur("trigger")}
+                options={[
+                  { value: "", label: t("triggerNone") },
+                  ...TRIGGERS.map((value) => ({ value, label: t(`trigger.${value}`) })),
+                ]}
+              />
             )}
           </FormField>
         </FormSection>

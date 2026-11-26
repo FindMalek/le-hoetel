@@ -445,7 +445,7 @@ export const adminHotelsRouter = {
     .output(z.object({ ok: z.literal(true) }))
     .handler(async ({ context, input }) => {
       const hotel = await loadHotel(context.db, input.id)
-      if (hotel.slug !== input.confirmSlug) {
+      if (hotel.slug !== input.confirmSlug.trim().toLowerCase()) {
         throw new ORPCError("UNPROCESSABLE_CONTENT", { message: "Type the hotel's slug to confirm." })
       }
       await context.db.delete(organization).where(eq(organization.id, input.id))

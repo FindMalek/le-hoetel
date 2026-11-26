@@ -15,10 +15,13 @@ afterAll(() => app.close())
 
 const call = (path: string, init: RequestInit = {}) => handle(new Request(`http://localhost:3001${path}`, init))
 
-test("/health reports the database", async () => {
-  const response = await call("/health")
+test("/health reports the database and the build sha", async () => {
+  const services = { ...app.services, config: { ...app.services.config, gitSha: "abc123" } }
+  const response = await createServer(services, { publicUrl: "http://localhost:3001" })(
+    new Request("http://localhost:3001/health"),
+  )
   expect(response.status).toBe(200)
-  expect(await response.json()).toEqual({ ok: true, db: true, env: "test" })
+  expect(await response.json()).toEqual({ ok: true, db: true, env: "test", sha: "abc123" })
 })
 
 test("sign in over http, then use the session cookie on the REST api", async () => {
