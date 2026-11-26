@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { automationSends, messages } from "@ritorno/db"
+import { automationSends, hotelSettings, messages } from "@ritorno/db"
 import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../../testing"
@@ -111,4 +111,17 @@ test("the welcome carries the hotel's active welcome offer with the guest's own 
 
   expect(sent[0]?.email.html).toContain("Free mint tea")
   expect(sent[0]?.email.html).not.toContain("Old news")
+})
+
+test("a suspended hotel sends no welcome", async () => {
+  const { hotelId, guestId } = await hotel("welcome-suspended", { email: true, whatsapp: false })
+  await app.services.db
+    .update(hotelSettings)
+    .set({ status: "suspended" })
+    .where(eq(hotelSettings.organizationId, hotelId))
+  sent.length = 0
+
+  await welcome()(hotelId, guestId)
+
+  expect(sent).toHaveLength(0)
 })

@@ -34,7 +34,7 @@ import {
   upsertGuest,
   withConsents,
 } from "../lib/guests"
-import { can, hotelProcedure } from "../procedures"
+import { can, hotelExportProcedure, hotelProcedure } from "../procedures"
 
 const guestMessageSchema = z.object({
   id: z.uuid(),
@@ -275,7 +275,7 @@ export const guestsRouter = {
       return loadGuest(context.db, hotelId, input.guestId)
     }),
 
-  export: hotelProcedure
+  export: hotelExportProcedure
     .use(can({ guest: ["export"] }))
     .route({
       method: "GET",
@@ -292,7 +292,7 @@ export const guestsRouter = {
       return { exportedAt: context.now(), guest, consentEvents: await eventsOf(context.db, hotelId, [input.id]) }
     }),
 
-  exportAll: hotelProcedure
+  exportAll: hotelExportProcedure
     .use(can({ guest: ["export"] }))
     .route({
       method: "GET",
@@ -313,7 +313,7 @@ export const guestsRouter = {
       }
     }),
 
-  exportCsv: hotelProcedure
+  exportCsv: hotelExportProcedure
     .use(can({ guest: ["export"] }))
     .route({
       method: "GET",

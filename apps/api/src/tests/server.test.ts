@@ -4,7 +4,6 @@ import { hmacSha256 } from "@ritorno/webhooks"
 import { createServer } from "../server"
 
 const ORIGIN = "http://localhost:3002"
-const PASSWORD = "correct horse battery"
 
 let app: TestApp
 let handle: (request: Request) => Promise<Response>
@@ -22,14 +21,15 @@ test("/health reports the database", async () => {
   expect(await response.json()).toEqual({ ok: true, db: true, env: "test" })
 })
 
-test("sign up over http, then use the session cookie on the REST api", async () => {
-  const signUp = await call("/auth/sign-up/email", {
+test("sign in over http, then use the session cookie on the REST api", async () => {
+  await app.signUp("web@ritorno.test")
+  const signIn = await call("/auth/sign-in/email", {
     method: "POST",
     headers: { "content-type": "application/json", origin: ORIGIN },
-    body: JSON.stringify({ email: "web@ritorno.test", password: PASSWORD, name: "Web" }),
+    body: JSON.stringify({ email: "web@ritorno.test", password: app.password }),
   })
-  expect(signUp.status).toBe(200)
-  const cookie = signUp.headers
+  expect(signIn.status).toBe(200)
+  const cookie = signIn.headers
     .getSetCookie()
     .map((c) => c.split(";")[0])
     .join("; ")

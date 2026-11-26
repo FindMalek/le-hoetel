@@ -1,5 +1,6 @@
-import { guests } from "@ritorno/db"
+import { guests, hotelSettings } from "@ritorno/db"
 import { defineJob } from "@ritorno/jobs"
+import { and, eq, ne } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { claimSend, consentedChannels, triggerOffer } from "../lib/automations"
@@ -21,10 +22,12 @@ export const welcomeJob = (services: JobServices) =>
     handler: async ({ hotelId, guestId }) => {
       const channels = await consentedChannels(services.db, hotelId, guestId)
       if (!channels.length) return
+      // A suspended hotel sends nothing, like the other automations.
       const [guest] = await services.db
         .select({ language: guests.language })
         .from(guests)
-        .where(hotelGuest(hotelId, guestId))
+        .innerJoin(hotelSettings, eq(hotelSettings.organizationId, guests.hotelId))
+        .where(and(hotelGuest(hotelId, guestId), ne(hotelSettings.status, "suspended")))
       if (!guest) return
       const perk = await triggerOffer(services, { hotelId, guestId, language: guest.language, trigger: "welcome" })
       for (const channel of channels) {

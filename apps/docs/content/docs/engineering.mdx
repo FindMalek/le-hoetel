@@ -89,7 +89,7 @@ See [data and consent rules](/docs/data-rules) and [decisions](/docs/decisions).
 - One focused test per behavior or bug: it fails before the fix and passes after.
 - No happy-path padding, snapshot dumps, or tests of types or the framework.
 - Test through the public function or endpoint. Mock only external boundaries, never our own modules.
-- Tests run against a real Postgres. `createTestDb()` from `@ritorno/db/testing` gives a fresh migrated database and `createTestApp()` from `@ritorno/orpc/testing` the real services plus `signUp()` for signed-in clients.
+- Tests run against a real Postgres. `createTestDb()` from `@ritorno/db/testing` gives a fresh migrated database and `createTestApp()` from `@ritorno/orpc/testing` the real services plus `signUp()` for signed-in clients (server side, so it needs no invitation).
 
 ### Accessibility and speed budgets
 

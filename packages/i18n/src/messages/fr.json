@@ -131,12 +131,12 @@
       "description": "Connectez-vous pour suivre vos clients.",
       "submit": "Se connecter",
       "forgot": "Mot de passe oublié ?",
-      "noAccount": "Nouveau ici ?",
+      "noAccount": "Vous avez reçu une invitation ?",
       "create": "Créer un compte"
     },
     "signUp": {
       "title": "Créez votre compte",
-      "description": "Cela prend moins d'une minute.",
+      "description": "Utilisez l'adresse e-mail à laquelle votre invitation a été envoyée.",
       "name": "Votre nom",
       "submit": "Créer le compte",
       "have": "Vous avez déjà un compte ?",
@@ -168,6 +168,7 @@
       "passwordShort": "Utilisez au moins 10 caractères.",
       "invalidCredentials": "E-mail ou mot de passe incorrect.",
       "exists": "Un compte existe déjà avec cet e-mail. Essayez de vous connecter.",
+      "notInvited": "Aucune invitation pour cet e-mail. Demandez à votre hôtel de vous inviter.",
       "tooMany": "Trop d'essais. Attendez une minute et réessayez.",
       "generic": "Une erreur est survenue. Réessayez."
     },
