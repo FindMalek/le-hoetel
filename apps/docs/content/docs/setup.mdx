@@ -63,7 +63,7 @@ A feature that adds tables adds its rows to a scenario file in `packages/db/src/
 
 ## End-to-end tests
 
-`pnpm test:e2e` (needs `pnpm db:up`) builds web and dashboard, starts the api on a fresh database with `SEED=demo` and runs Playwright from `apps/e2e`. Three projects: `desktop`, `iphone` (iPhone 14) and `android` (Pixel 7). Phone profiles run in chromium and only the `web` and `dashboard` specs, which check each language (en, fr, ar) for `lang`, `dir` (RTL in Arabic) and no sideways scroll. `fixtures.ts` has the shared helpers. Sign in as a demo account with the credentials above. The api allows 10 sign-in posts a minute per ip, so keep UI sign-ins few.
+`pnpm test:e2e` (needs `pnpm db:up`) builds web and dashboard, starts the api on a fresh database with `SEED=demo` and runs Playwright from `apps/e2e`. Three projects: `desktop`, `iphone` (iPhone 14) and `android` (Pixel 7). Phone profiles run in chromium and only the `web` and `dashboard` specs, which check each language (en, fr, ar) for `lang`, `dir` (RTL in Arabic) and no sideways scroll. `fixtures.ts` has the shared helpers. `flows.spec.ts` (desktop) creates a hotel through the admin UI and runs it through invitation, branding, offers and capture, unsubscribe, survey alert, CSV import, export and delete; isolation, login and the QR page have their own specs. Specs never sleep: wait on what the page or the database shows. Set `E2E_DATABASE_URL` when Postgres is not on port 5432. Sign in as a demo account with the credentials above. The api allows 10 sign-in posts a minute per ip, so keep UI sign-ins few.
 
 | App | Url |
 | --- | --- |

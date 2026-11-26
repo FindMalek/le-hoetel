@@ -9,6 +9,9 @@ export const URLS = {
 export const BASE_DATABASE_URL =
   process.env.E2E_DATABASE_URL || process.env.DATABASE_URL || "postgres://ritorno:ritorno@localhost:5432/ritorno"
 
+/** Signs the api's sessions and guest links, so a spec can mint a link the way the api does. */
+export const E2E_SECRET = "e2e-secret-e2e-secret-e2e-secret-0123"
+
 export const E2E_DATABASE = "ritorno_e2e"
 
 export function e2eDatabaseUrl(): string {

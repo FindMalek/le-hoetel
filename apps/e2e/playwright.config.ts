@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test"
-import { BASE_DATABASE_URL, e2eDatabaseUrl, URLS } from "./env"
+import { BASE_DATABASE_URL, E2E_SECRET, e2eDatabaseUrl, URLS } from "./env"
 
 const shared = {
   API_URL: URLS.api,
@@ -39,7 +39,8 @@ export default defineConfig({
         ...shared,
         E2E_DATABASE_URL: BASE_DATABASE_URL,
         DATABASE_URL: e2eDatabaseUrl(),
-        BETTER_AUTH_SECRET: "e2e-secret-e2e-secret-e2e-secret-0123",
+        BETTER_AUTH_SECRET: E2E_SECRET,
+        MESSAGING_LIVE: "false",
         PORT: port(URLS.api),
         SEED: "demo",
         DEPLOY_ENV: "e2e",

@@ -1,7 +1,8 @@
 import { ORPCError } from "@orpc/server"
+import { inviterMayInvite } from "@ritorno/auth"
 import { ADMIN_LIST_LIMIT } from "@ritorno/common/constants"
 import { adminUserSchema, meSchema, okSchema, profileInputSchema } from "@ritorno/common/schemas"
-import { hotelSettings, member, session, user } from "@ritorno/db"
+import { hotelSettings, invitation, member, organization, session, user } from "@ritorno/db"
 import { count, desc, eq, inArray } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"
@@ -10,6 +11,46 @@ import { adminProcedure, protectedProcedure } from "../procedures"
 const IMAGE_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }
 
 export const meRouter = {
+  invitation: protectedProcedure
+    .route({
+      method: "GET",
+      path: "/me/invitations/{id}",
+      summary: "A hotel invitation sent to you",
+      tags: ["account"],
+    })
+    .input(z.object({ id: z.string() }))
+    .output(z.object({ organizationName: z.string(), inviterEmail: z.string(), role: z.string() }))
+    // Not better-auth's `getInvitation`: it refuses once the inviter left the hotel, and the admin who creates a hotel leaves at once.
+    .handler(async ({ context, input }) => {
+      const [row] = await context.db
+        .select({
+          email: invitation.email,
+          role: invitation.role,
+          status: invitation.status,
+          expiresAt: invitation.expiresAt,
+          inviterId: invitation.inviterId,
+          organizationId: invitation.organizationId,
+          organizationName: organization.name,
+          inviterEmail: user.email,
+        })
+        .from(invitation)
+        .innerJoin(organization, eq(organization.id, invitation.organizationId))
+        .innerJoin(user, eq(user.id, invitation.inviterId))
+        .where(eq(invitation.id, input.id))
+      if (
+        !row ||
+        row.status !== "pending" ||
+        row.expiresAt <= context.now() ||
+        !(await inviterMayInvite(context.db, row))
+      ) {
+        throw new ORPCError("NOT_FOUND", { message: "Invitation not found." })
+      }
+      if (row.email.toLowerCase() !== context.user.email.toLowerCase()) {
+        throw new ORPCError("FORBIDDEN", { message: "This invitation is for another account." })
+      }
+      return { organizationName: row.organizationName, inviterEmail: row.inviterEmail, role: row.role ?? "staff" }
+    }),
+
   get: protectedProcedure
     .route({ method: "GET", path: "/me", summary: "The signed-in user", tags: ["account"] })
     .output(meSchema)
