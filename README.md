@@ -110,7 +110,7 @@ The Next apps also run on Vercel with the app folder as the root directory. Set 
 
 - every merge to `main` deploys staging, a published release deploys production (`.github/workflows/staging.yml`, `release.yml`)
 - every PR gets a preview at `pr-<N>-<app>.preview-ritorno.findmalek.engineer` for what changed, the rest links to staging, see the docs page `previews`. WhoDB for preview databases: [whodb-ritorno](https://whodb-ritorno.findmalek.engineer)
-- releases: release-please keeps a release PR open, merging it tags `vX.Y.Z` and deploys production. Cut a release when a milestone is done: `v0.1.0` foundation and hotel core, `v0.2.0` messaging, `v0.3.0` feedback and dashboard, `v1.0.0` pilot launch
+- releases: run the `release` workflow by hand, it tags `vX.Y.Z`, writes notes from merged PR titles and deploys production. Cut a release when a milestone is done: `v0.1.0` foundation and hotel core, `v0.2.0` messaging, `v0.3.0` feedback and dashboard, `v1.0.0` pilot launch
 - rollback, backups and setup: docs pages `deploy-runbook` and `releases`
 
 ---
