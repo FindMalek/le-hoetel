@@ -39,7 +39,7 @@ export function ColorField({
         {(aria) => (
           <div className="flex items-center gap-2">
             <label
-              className="relative grid size-11 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-lg border bg-(--swatch) focus-within:ring-1 focus-within:ring-ring"
+              className="relative grid size-11 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-lg border bg-(--swatch) focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-surface"
               // the swatch shows the color being typed
               // oxlint-disable-next-line shadcn/no-inline-styles
               style={{ "--swatch": color ?? "transparent" } as React.CSSProperties}

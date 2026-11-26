@@ -26,9 +26,8 @@ export function PreferencesSection() {
         {LOCALES.map((value) => (
           <Button
             key={value}
-            variant={locale === value ? "secondary" : "outline"}
+            variant={locale === value ? "default" : "outline"}
             aria-pressed={locale === value}
-            className={locale === value ? "border-primary" : undefined}
             onClick={() => value !== locale && setLocale(value)}
           >
             {LOCALE_NAMES[value]}

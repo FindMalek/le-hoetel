@@ -75,7 +75,7 @@ function MoreSheet({ me, items, active }: { me: Me; items: NavItem[]; active: bo
               {LOCALES.map((value) => (
                 <Button
                   key={value}
-                  variant={locale === value ? "secondary" : "outline"}
+                  variant={locale === value ? "default" : "outline"}
                   aria-pressed={locale === value}
                   onClick={() => value !== locale && setLocale(value)}
                 >

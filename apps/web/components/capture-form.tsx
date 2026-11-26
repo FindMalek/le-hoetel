@@ -39,7 +39,7 @@ type Status = "idle" | "done" | "invalid" | "tooMany"
 
 const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
 const CONTROL =
-  "h-12 w-full min-w-0 rounded-xl border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 aria-invalid:border-destructive"
+  "h-12 w-full min-w-0 rounded-xl border border-input bg-background px-4 text-base outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface aria-invalid:border-destructive"
 
 const nationalDigits = (national: string) => national.replace(/\D/g, "").replace(/^0+/, "")
 
@@ -218,7 +218,7 @@ export function CaptureForm(props: {
                 />
                 <span
                   lang={language}
-                  className="flex h-11 items-center justify-center rounded-xl border font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-3 peer-focus-visible:ring-ring/40"
+                  className="flex h-11 items-center justify-center rounded-xl border font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
                 >
                   {LANGUAGE_NAMES[language]}
                 </span>

@@ -84,7 +84,7 @@ const problemOf = (message: string): (typeof PROBLEM_FIELDS)[number] | "row" => 
 }
 
 const selectClass =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 md:text-sm"
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface md:text-sm"
 
 export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguage }) {
   const t = useTranslations("guests.import")
@@ -237,7 +237,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               void pick(event.dataTransfer.files[0])
             }}
             className={cn(
-              "flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed px-6 py-12 text-center transition-colors duration-150 has-focus-visible:ring-2 has-focus-visible:ring-ring/50 hover:bg-muted/50",
+              "flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed px-6 py-12 text-center transition-colors duration-150 has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-surface hover:bg-muted/50",
               dragging && "border-primary bg-muted/50",
             )}
           >

@@ -20,7 +20,7 @@ const NPS = Array.from({ length: 11 }, (_, score) => score)
 const STARS = [1, 2, 3, 4, 5]
 
 const PILL =
-  "flex min-h-12 items-center justify-center rounded-lg border bg-background font-medium tabular-nums transition-colors hover:bg-accent peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
+  "flex min-h-12 items-center justify-center rounded-lg border bg-background font-medium tabular-nums transition-colors hover:bg-accent peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
 
 function Choice({ name, value, required }: { name: string; value: number; required?: boolean }) {
   return (

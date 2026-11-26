@@ -32,7 +32,7 @@ import { type FormEvent, useState } from "react"
 import { toast } from "sonner"
 
 const SELECT_CLASS =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 md:text-sm"
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface md:text-sm"
 
 const WINDOWS = [30, 90, 180, 365] as const
 

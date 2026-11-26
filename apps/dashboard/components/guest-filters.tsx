@@ -29,7 +29,7 @@ export interface GuestFilterValues {
 type Key = keyof GuestFilterValues
 
 const chip =
-  "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 text-sm outline-none transition-colors duration-150 coarse:h-11 focus-visible:ring-2 focus-visible:ring-ring/50"
+  "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 text-sm outline-none transition-colors duration-150 coarse:h-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
 
 function Chip({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (

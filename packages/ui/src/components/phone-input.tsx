@@ -40,7 +40,7 @@ function PhoneInput({
       data-slot="phone-input"
       dir="ltr"
       className={cn(
-        "flex h-11 w-full min-w-0 items-center rounded-lg border border-input transition-colors focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/50 has-[input[aria-invalid=true]]:border-destructive",
+        "flex h-11 w-full min-w-0 items-center rounded-lg border border-input transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-surface has-[input[aria-invalid=true]]:border-destructive",
         className
       )}
     >

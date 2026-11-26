@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl"
 import { useId } from "react"
 
 export const selectClass =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm"
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface aria-invalid:border-destructive md:text-sm"
 
 interface Shared {
   label: string
