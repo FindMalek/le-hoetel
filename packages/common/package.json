@@ -25,7 +25,8 @@
     "./csv": "./src/csv.ts",
     "./offers": "./src/offers.ts",
     "./offer-tokens": "./src/offer-tokens.ts",
-    "./survey": "./src/survey.ts"
+    "./survey": "./src/survey.ts",
+    "./whatsapp-scan": "./src/whatsapp-scan.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

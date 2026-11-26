@@ -38,6 +38,7 @@ Locally the values come from the Infisical `dev` environment, loaded by the root
 | `MESSAGING_LIVE` | `true` lets email and whatsapp really send, default `false` |
 | `RESEND_API_KEY`, `EMAIL_FROM`, `RESEND_WEBHOOK_SECRET` | email through Resend, and its bounce and complaint webhook |
 | `KAPSO_API_KEY`, `WHATSAPP_PHONE_NUMBER_ID`, `KAPSO_WEBHOOK_SECRET` | whatsapp through Kapso, and its status webhook |
+| `WHATSAPP_BUSINESS_NUMBER` | the shared number behind that phone id, digits only: the QR page's [Continue on WhatsApp](/docs/messaging#scan-to-whatsapp) button. Empty hides it |
 
 Messages only leave the server when `NODE_ENV=production` and `MESSAGING_LIVE=true`. Everywhere else (local, tests, previews, staging) every channel logs `message not sent, log-only provider` with the channel and template name, never the recipient or the text. Only the production deploy sets `MESSAGING_LIVE=true`, so a preview can never message a real guest even with real keys in its env.
 

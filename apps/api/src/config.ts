@@ -12,5 +12,6 @@ export const serviceConfig = (env: ApiEnv): Services["config"] => ({
   apiUrl: env.API_PUBLIC_URL,
   tokenSecret: env.BETTER_AUTH_SECRET,
   leadsEmail: env.LEADS_NOTIFY_EMAIL ?? env.ADMIN_EMAIL,
+  whatsappNumber: env.WHATSAPP_BUSINESS_NUMBER || undefined,
   webhookSecrets: { resend: env.RESEND_WEBHOOK_SECRET, kapso: env.KAPSO_WEBHOOK_SECRET },
 })

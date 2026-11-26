@@ -36,7 +36,7 @@ test("csv quotes commas, neutralises formulas and folds the consent log into the
     },
   ])
   const [header, row] = csv.split("\r\n")
-  expect(header?.split(",")).toHaveLength(17)
+  expect(header?.split(",")).toHaveLength(18)
   expect(row).toStartWith(`"'=HYPERLINK(""http://evil.test"")",+21620123456,fr,`)
   expect(row).toContain('"a,b@example.test"')
   expect(row).toEndWith("2026-11-01T10:00:00.000Z email granted qr_room v1")

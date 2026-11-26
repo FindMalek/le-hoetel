@@ -25,6 +25,7 @@ const COLUMNS = [
   "consent_profile",
   "created_at",
   "feedback_follow_up",
+  "whatsapp_scans",
   "consent_log",
 ] as const
 
@@ -55,11 +56,25 @@ const feedbackLine = (item: ExportedFeedback): string =>
     .filter(Boolean)
     .join(" ")
 
+export interface ExportedScan {
+  source: string
+  location: string | null
+  lastScanAt: Date
+}
+
+const scanLine = (scan: ExportedScan): string =>
+  [scan.lastScanAt.toISOString(), scan.source, scan.location].filter(Boolean).join(" ")
+
 /** One row per guest, with the feedback follow-up and the consent log (last column) folded into one cell each. The json export has them as proper rows. */
 export function guestsToCsv(
-  rows: { guest: Guest; consentEvents: ExportedConsentEvent[]; feedback?: ExportedFeedback[] }[],
+  rows: {
+    guest: Guest
+    consentEvents: ExportedConsentEvent[]
+    feedback?: ExportedFeedback[]
+    whatsappScans?: ExportedScan[]
+  }[],
 ): string {
-  const lines = rows.map(({ guest, consentEvents, feedback = [] }) =>
+  const lines = rows.map(({ guest, consentEvents, feedback = [], whatsappScans = [] }) =>
     [
       guest.name,
       guest.phoneE164,
@@ -77,6 +92,7 @@ export function guestsToCsv(
       guest.consents.profile,
       guest.createdAt,
       feedback.map(feedbackLine).join(" | "),
+      whatsappScans.map(scanLine).join(" | "),
       consentEvents.map(logLine).join(" | "),
     ]
       .map(csvCell)

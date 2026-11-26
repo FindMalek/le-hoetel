@@ -25,6 +25,8 @@ export interface Services {
     tokenSecret: string
     /** Signing secrets of provider webhooks. A route answers 404 without its secret. */
     webhookSecrets?: { resend?: string; kapso?: string }
+    /** The shared WhatsApp business number guests can write to from a QR page, digits only. */
+    whatsappNumber?: string
     /** Where a new demo request is emailed. */
     leadsEmail?: string
   }

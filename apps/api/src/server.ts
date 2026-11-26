@@ -8,6 +8,7 @@ import type { Auth } from "@ritorno/auth"
 import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@ritorno/orpc"
 import { applyKapsoEvent, applyResendEvent, type KapsoPayload, type ResendEvent } from "@ritorno/orpc/messages"
 import { handleInboundWhatsApp, unsubscribeAll } from "@ritorno/orpc/unsubscribe"
+import { handleWhatsAppScan } from "@ritorno/orpc/whatsapp-scans"
 import { isPublicKey } from "@ritorno/storage"
 import { verifyHmac, verifySvix } from "@ritorno/webhooks"
 import * as Sentry from "@sentry/bun"
@@ -30,7 +31,7 @@ type Interceptors = NonNullable<NonNullable<ConstructorParameters<typeof RPCHand
  *   /billing/webhook  Stripe or Polar events (signature checked)
  *   /unsubscribe/<token>  POST: one tap unsubscribe from a mail client's List-Unsubscribe header (RFC 8058)
  *   /resend/webhook  Resend delivery, bounce and complaint events (svix signature checked)
- *   /whatsapp/webhook  Kapso status events and inbound messages, STOP replies included (signature header checked)
+ *   /whatsapp/webhook  Kapso status events and inbound messages, STOP replies and QR scans included (signature header checked)
  *   /health       for Dokploy and uptime checks
  */
 export function createServer(services: Services & { auth: Auth }, opts: { publicUrl: string }) {
@@ -107,8 +108,8 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
       const event = request.headers.get("x-webhook-event") ?? ""
       const parsed = JSON.parse(body) as KapsoPayload | { batch: true; data: KapsoPayload[] }
       for (const payload of "batch" in parsed ? parsed.data : [parsed]) {
-        if (event === "whatsapp.message.received") await handleInboundWhatsApp(services, payload)
-        else await applyKapsoEvent(services.db, event, payload)
+        if (event !== "whatsapp.message.received") await applyKapsoEvent(services.db, event, payload)
+        else if (!(await handleInboundWhatsApp(services, payload))) await handleWhatsAppScan(services, payload)
       }
       return Response.json({ ok: true })
     }

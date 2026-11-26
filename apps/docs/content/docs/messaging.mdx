@@ -48,9 +48,23 @@ There is no recipient column, and nothing logs the phone, email or name. A real 
 
 The same webhook gets `whatsapp.message.received` (single or batched). `handleInboundWhatsApp` ignores everything except a text that is, as a whole, a stop word: `stop`, `arrêt`, `إيقاف`, `توقف` and the usual variants (case, accents and punctuation do not matter, "don't stop" does nothing). Then:
 
-- **Hotel:** one business number serves every hotel, so the number alone does not say which hotel. The hotel is the one whose WhatsApp message that guest number got last. A number we never wrote to is unsubscribed in every hotel, the safe side.
+- **Hotel:** one business number serves every hotel, so the number alone does not say which hotel. The hotel is the one whose WhatsApp message that guest number got last, plus every hotel that still keeps a [scan](#scan-to-whatsapp) of the number (a welcome writes no `messages` row). A number we never wrote to is unsubscribed in every hotel, the safe side.
 - **Consent:** `applyStopReply` withdraws WhatsApp consent with a consent event, source `stop_reply`. Email consent is untouched.
 - **Reply:** when a consent really changed, one free-form confirmation goes back in the guest's language (allowed inside the 24 hour window the guest just opened). A repeated delivery changes nothing and sends nothing. Log-only outside live messaging.
+
+### Scan to WhatsApp
+
+The QR capture page has a **Continue on WhatsApp** button when `WHATSAPP_BUSINESS_NUMBER` is set. It opens `wa.me` on the one shared Ritorno number with a short message in the page's language and a reference code. The guest sees Ritorno as the sender, not the hotel, and the page and the reply both say so.
+
+- **Code:** `signScanCode` puts the hotel slug, spot and language in the code and signs it. Nothing is stored when the page is opened. A made up or edited code is ignored, so codes can't list hotels, and the reply never repeats the spot or anything else the guest typed.
+- **Reply:** `handleWhatsAppScan` sends one scripted free-form welcome (inside the 24 hour window, no template): hotel name, the welcome offer (or the default gift line), the capture page link when that number has not signed up with the hotel, that requests go to the front desk because the hotel team does not see what is written (only number and spot), and the STOP line. No message balance is charged and no `messages` row is written. Log-only outside live messaging.
+- **Limits:** one reply per hotel and number per 24 hours, 5 codes per number per day, 100 per hotel per hour. A suspended hotel gets no reply and nothing is stored. A failed send is logged (hotel id and status only) and not retried. A redelivery is ignored (same message id within 24 hours, or a message over an hour old), so it can't bring back a removed row.
+- **Not consent:** writing to us creates no guest and no consent, and nothing else is ever sent to that number by Ritorno.
+- **Staff:** every member of the hotel gets an inbox notification (hotel and spot, never the number). `/whatsapp` in the dashboard lists the last 30 days, and **Write on WhatsApp** opens `wa.me` to the guest from the staff member's own WhatsApp. Staff see the number and spot, never the guest's message. Ritorno does not see that conversation. This is not a team inbox and there is no AI.
+- **Stored:** `whatsapp_scans`, one row per hotel and number: phone, spot, language, two timestamps. No name, no message text. Rows go after 30 days (`purge-whatsapp-scans` job, hourly), on STOP (from every hotel), when the guest is deleted, with delete all, with the hotel, or with **Remove** in the list (`whatsappScans.remove`).
+- **Export:** the guest export has that guest's `whatsappScans`; the hotel JSON export has all of them, numbers that never signed up included. The CSV has a `whatsapp_scans` column for signed-up guests only.
+
+Setup: set `WHATSAPP_BUSINESS_NUMBER` to the number behind `WHATSAPP_PHONE_NUMBER_ID`, and subscribe the Kapso webhook to `whatsapp.message.received`.
 
 ## Dashboard
 

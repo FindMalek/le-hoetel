@@ -22,6 +22,7 @@ import { overviewRouter } from "./overview"
 import { privacyRouter } from "./privacy"
 import { publicRouter } from "./public"
 import { statusRouter } from "./status"
+import { whatsappScansRouter } from "./whatsapp-scans"
 
 const notes = {
   ...notesRouter,
@@ -63,6 +64,7 @@ export const appRouter = {
   inbox: inboxRouter,
   jobs: jobsRouter,
   status: statusRouter,
+  whatsappScans: whatsappScansRouter,
 }
 
 export type AppRouter = typeof appRouter

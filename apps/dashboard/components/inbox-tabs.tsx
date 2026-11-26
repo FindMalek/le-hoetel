@@ -2,8 +2,8 @@ import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 
-/** The two halves of the Inbox: notes for you, and the hotel's unhappy guests. */
-export async function InboxTabs({ current }: { current: "/inbox" | "/feedback" }) {
+/** The parts of the Inbox: notes for you, the hotel's unhappy guests, and guests who wrote on WhatsApp. */
+export async function InboxTabs({ current }: { current: "/inbox" | "/feedback" | "/whatsapp" }) {
   const [t, tNav] = await Promise.all([getTranslations("inbox"), getTranslations("nav")])
   return (
     <SegmentedControl
@@ -14,6 +14,7 @@ export async function InboxTabs({ current }: { current: "/inbox" | "/feedback" }
       options={[
         { value: "/inbox", href: "/inbox", label: t("notifications") },
         { value: "/feedback", href: "/feedback", label: tNav("unhappyGuests") },
+        { value: "/whatsapp", href: "/whatsapp", label: tNav("whatsappScans") },
       ]}
     />
   )

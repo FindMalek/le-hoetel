@@ -262,6 +262,8 @@ export async function applyResendEvent(db: Context["db"], event: ResendEvent): P
 export interface KapsoPayload {
   message?: {
     id?: string
+    /** Unix seconds. */
+    timestamp?: string
     from?: string
     type?: string
     text?: { body?: string }

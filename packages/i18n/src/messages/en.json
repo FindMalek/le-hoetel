@@ -237,7 +237,8 @@
     "groupGrow": "Grow",
     "groupInsights": "Insights",
     "groupSettings": "Settings",
-    "unhappyGuests": "Unhappy guests"
+    "unhappyGuests": "Unhappy guests",
+    "whatsappScans": "WhatsApp"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -617,7 +618,9 @@
     "whatsappTitle": "WhatsApp",
     "emailTitle": "Email",
     "submitHint": "No message is sent unless you switch one on.",
-    "thanksPerk": "Show this screen at the front desk to get it."
+    "thanksPerk": "Show this screen at the front desk to get it.",
+    "whatsappButton": "Continue on WhatsApp",
+    "whatsappHint": "This opens a chat with Ritorno's number, which sends one automatic welcome for {hotel}. The hotel team sees your number and may write to you, but not what you write: for requests, ask the front desk. It does not sign you up for messages."
   },
   "guest": {
     "languageLabel": "Language",
@@ -2212,5 +2215,24 @@
     "notFoundBody": "It is not in {hotel}. If the alert was for another hotel, switch hotel in the menu, then open the link again.",
     "backToList": "Back to unhappy guests",
     "loadingCase": "Loading the case"
+  },
+  "whatsappScans": {
+    "description": "Guests who scanned a code and continued on WhatsApp.",
+    "notice": "You see their number and spot, not what they wrote. Their one automatic welcome sends requests to the front desk. If you write from your own WhatsApp, only offer help: this is not consent to marketing. Entries are deleted after 30 days.",
+    "reply": "Write on WhatsApp",
+    "replyTo": "Write to {guest} on WhatsApp",
+    "remove": "Remove",
+    "removeFrom": "Remove {guest}",
+    "removeTitle": "Remove this entry?",
+    "removeBody": "The number is deleted from this list. A guest who signed up stays in your guests.",
+    "cancel": "Cancel",
+    "emptyTitle": "No messages yet",
+    "emptyBody": "When a guest continues on WhatsApp from a QR code, they show up here.",
+    "spot": {
+      "room": "Room",
+      "table": "Table",
+      "desk": "Front desk"
+    },
+    "loading": "Loading WhatsApp scans"
   }
 }
