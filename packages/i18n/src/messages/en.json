@@ -1609,7 +1609,11 @@
       "messages": "Messages sent",
       "messagesHint": "{delivered} delivered, {failed} failed",
       "lowBalance": "Low WhatsApp credit",
-      "lowBalanceHint": "Open hotels under the low balance line"
+      "lowBalanceHint": "Open hotels under the low balance line",
+      "consent": "Consent rate",
+      "consentHint": "{count, plural, one {# guest agreed} other {# guests agreed}} to email or WhatsApp",
+      "activeHotels": "Active hotels",
+      "activeHotelsHint": "Open hotels with a guest visit in the last 7 days"
     },
     "funnel": {
       "title": "Pilot funnel",
@@ -1627,6 +1631,16 @@
       "lowBalance": "Credit low: {amount}",
       "none": "Every hotel looks fine",
       "noneHint": "Nothing to follow up on right now."
+    },
+    "success": {
+      "title": "Pilot success",
+      "description": "Open hotels, most guests first. An active day is a day with at least one guest visit.",
+      "guests": "Guests",
+      "newGuests": "{count, plural, one {# new in 7 days} other {# new in 7 days}}",
+      "consent": "Consent rate",
+      "activeDays": "Active days, last 7",
+      "none": "No open hotel",
+      "noneHint": "Suspended hotels are left out."
     }
   },
   "adminUsers": {

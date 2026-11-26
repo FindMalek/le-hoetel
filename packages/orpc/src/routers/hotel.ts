@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server"
+import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
 import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
 import { captureUrl, HOTEL_SPOTS_MAX } from "@ritorno/common/qr"
@@ -23,6 +24,7 @@ import {
   captureSpots,
   guestConsents,
   guests,
+  guestVisits,
   hotelBalance,
   hotelSettings,
   invitation,
@@ -32,7 +34,22 @@ import {
   user,
 } from "@ritorno/db"
 import { hotelPublicPrefix } from "@ritorno/storage"
-import { and, asc, count, countDistinct, eq, gte, inArray, like, lt, max, ne, or, sql } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  countDistinct,
+  eq,
+  gte,
+  inArray,
+  like,
+  lt,
+  max,
+  ne,
+  or,
+  type SQLWrapper,
+  sql,
+} from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -278,41 +295,58 @@ export const hotelLogoRouter = {
     }),
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000
+
 type AdminHotelRow = Awaited<ReturnType<typeof loadHotel>>
 
 async function withHealth(context: Context, hotels: AdminHotelRow[]) {
   const { db } = context
-  const [guestStats, consents, owners] = await Promise.all([
+  const now = context.now()
+  const weekAgo = new Date(now.getTime() - 7 * DAY_MS)
+  const localDay = (at: SQLWrapper) => sql`(${at} at time zone ${hotelSettings.timezone})::date`
+  const [guestStats, consents, owners, activity] = await Promise.all([
     db
-      .select({ hotelId: guests.hotelId, guestCount: count(), lastGuestAt: max(guests.createdAt) })
+      .select({
+        hotelId: guests.hotelId,
+        guestCount: count(),
+        guestsLast7Days: count(sql`case when ${gte(guests.createdAt, weekAgo)} then 1 end`),
+        lastGuestAt: max(guests.createdAt),
+      })
       .from(guests)
       .groupBy(guests.hotelId),
     db
       .select({ hotelId: guestConsents.hotelId, consentedCount: countDistinct(guestConsents.guestId) })
       .from(guestConsents)
-      .where(eq(guestConsents.granted, true))
+      .where(and(eq(guestConsents.granted, true), inArray(guestConsents.channel, MESSAGE_CHANNELS.slice())))
       .groupBy(guestConsents.hotelId),
     db
       .select({ hotelId: member.organizationId, ownerCount: count() })
       .from(member)
       .where(like(member.role, "%owner%"))
       .groupBy(member.organizationId),
+    db
+      .select({ hotelId: guestVisits.hotelId, activeDays: countDistinct(localDay(guestVisits.at)) })
+      .from(guestVisits)
+      .innerJoin(hotelSettings, eq(hotelSettings.organizationId, guestVisits.hotelId))
+      .where(sql`${localDay(guestVisits.at)} > ${localDay(sql`${now.toISOString()}::timestamptz`)} - 7`)
+      .groupBy(guestVisits.hotelId),
   ])
   const guestsOf = new Map(guestStats.map((row) => [row.hotelId, row]))
   const consentsOf = new Map(consents.map((row) => [row.hotelId, row.consentedCount]))
   const ownersOf = new Map(owners.map((row) => [row.hotelId, row.ownerCount]))
-  const now = context.now()
+  const activityOf = new Map(activity.map((row) => [row.hotelId, row.activeDays]))
   return hotels.map((hotel) => {
     const guestCount = guestsOf.get(hotel.id)?.guestCount ?? 0
     const lastGuestAt = guestsOf.get(hotel.id)?.lastGuestAt ?? null
     const ownerCount = ownersOf.get(hotel.id) ?? 0
     const consentedCount = consentsOf.get(hotel.id) ?? 0
     const health = hotelHealth({ status: hotel.status, ownerCount, guestCount, lastGuestAt, now })
-    return { ...hotel, guestCount, consentedCount, ownerCount, lastGuestAt, health }
+    const guestsLast7Days = guestsOf.get(hotel.id)?.guestsLast7Days ?? 0
+    const activeDays = activityOf.get(hotel.id) ?? 0
+    return { ...hotel, guestCount, guestsLast7Days, activeDays, consentedCount, ownerCount, lastGuestAt, health }
   })
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000
 const PILOT_ENDING_DAYS = 14
 
 export const adminHotelsRouter = {

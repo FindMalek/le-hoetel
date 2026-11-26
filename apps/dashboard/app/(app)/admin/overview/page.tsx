@@ -4,13 +4,23 @@ import { PageState } from "@ritorno/ui/components/page-state"
 import { Section } from "@ritorno/ui/components/section"
 import { StatCard } from "@ritorno/ui/components/stat-card"
 import { formatNumber } from "@ritorno/ui/lib/number"
-import { BuildingIcon, MessageCircleIcon, PlusIcon, UsersIcon, WalletIcon } from "lucide-react"
+import {
+  ActivityIcon,
+  BuildingIcon,
+  CheckCircle2Icon,
+  MessageCircleIcon,
+  PlusIcon,
+  UsersIcon,
+  WalletIcon,
+} from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getLocale, getTranslations } from "next-intl/server"
 import type { CSSProperties } from "react"
 import { AdminAttention } from "@/components/admin-attention"
+import { AdminPilotSuccess } from "@/components/admin-pilot-success"
 import { PageHeader } from "@/components/page-header"
+import { consentRate } from "@/lib/admin"
 import { call } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Platform overview" }
@@ -23,6 +33,8 @@ export default async function AdminOverviewPage() {
     call((api) => api.admin.hotels.list()),
   ])
   const count = (value: number) => formatNumber(value, locale)
+  const rate = consentRate({ guestCount: guests.total, consentedCount: guests.consented })
+  const open = list.filter((hotel) => hotel.status !== "suspended")
   const funnel = [
     { key: "created", value: hotels.total },
     { key: "owner", value: hotels.withOwner },
@@ -55,7 +67,7 @@ export default async function AdminOverviewPage() {
     <>
       <PageHeader title={t("title")} description={t("description")} />
       <div className="flex flex-col gap-10 p-4 md:p-6">
-        <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3">
           <StatCard
             label={t("stats.hotels")}
             icon={<BuildingIcon />}
@@ -71,6 +83,18 @@ export default async function AdminOverviewPage() {
             icon={<UsersIcon />}
             value={count(guests.total)}
             hint={t("stats.guestsHint", { count: guests.last7Days })}
+          />
+          <StatCard
+            label={t("stats.consent")}
+            icon={<CheckCircle2Icon />}
+            value={rate === null ? "–" : <Num value={`${rate}%`} />}
+            hint={t("stats.consentHint", { count: guests.consented })}
+          />
+          <StatCard
+            label={t("stats.activeHotels")}
+            icon={<ActivityIcon />}
+            value={<Num value={`${open.filter((hotel) => hotel.activeDays > 0).length} / ${open.length}`} />}
+            hint={t("stats.activeHotelsHint")}
           />
           <StatCard
             label={t("stats.messages")}
@@ -96,6 +120,10 @@ export default async function AdminOverviewPage() {
           }
         >
           <AdminAttention hotels={list} lowBalance={lowBalance} now={new Date()} />
+        </Section>
+
+        <Section title={t("success.title")} description={t("success.description")}>
+          <AdminPilotSuccess hotels={open} />
         </Section>
 
         <Section title={t("funnel.title")} description={t("funnel.description")}>
