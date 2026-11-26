@@ -238,7 +238,8 @@
     "groupInsights": "Insights",
     "groupSettings": "Settings",
     "unhappyGuests": "Unhappy guests",
-    "whatsappScans": "WhatsApp"
+    "whatsappScans": "WhatsApp",
+    "activityLog": "Activity log"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -1674,8 +1675,6 @@
     "title": "Audit log",
     "description": "Who did what, newest first. Admins only.",
     "system": "System",
-    "newer": "Newer",
-    "older": "Older",
     "columns": {
       "action": "Action",
       "who": "Actor",
@@ -1755,9 +1754,27 @@
       },
       "note": {
         "delete": "Deleted a note"
+      },
+      "feedback-case": {
+        "update": "Updated a feedback follow-up"
+      },
+      "email": {
+        "send-test": "Sent a test email"
+      },
+      "whatsapp-scan": {
+        "delete": "Deleted a WhatsApp scan"
       }
     },
-    "range": "Entries {from} to {to}"
+    "loadMore": "Load more",
+    "loading": "Loading entries",
+    "loadFailed": "The log could not be loaded.",
+    "retry": "Try again",
+    "hotel": {
+      "title": "Activity log",
+      "description": "What your team and Ritorno did on this hotel, newest first.",
+      "forbidden": "Only owners and managers can read the activity log.",
+      "platform": "Ritorno team"
+    }
   },
   "campaigns": {
     "title": "Campaigns",
@@ -2122,7 +2139,9 @@
       "summary": "{count, plural, one {# guest} other {# guests}} captured.",
       "emptyTitle": "No new guests in this period",
       "emptyBody": "Guests appear here when they scan your QR code or when staff add them. Print a code for the front desk, a room or a table.",
-      "emptyAction": "Get a QR code"
+      "emptyAction": "Get a QR code",
+      "byDay": "Each bar is one day.",
+      "byWeek": "Each bar is one week, starting Monday."
     },
     "reach": {
       "title": "Reach",

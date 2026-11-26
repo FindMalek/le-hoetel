@@ -1,29 +1,8 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
-exports[`welcome in en renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: welcome en 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="en"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">So happy to have you with us, Sara.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Welcome, Sara</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Hi Sara,</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Thank you for staying with us. We are so happy to have you at Hôtel Dar Zitouna, and we will take good care of you.</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">To say thank you, here is a little something for you:</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Your code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valid until December 31, 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">See my offer</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Warmly,<br/>The Hôtel Dar Zitouna team</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">You are receiving this email because you shared your address with Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Unsubscribe</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "Welcome to Hôtel Dar Zitouna",
+  "subject": "Welcome to Hôtel Dar Zitouna de la Médina",
   "text": 
 " 
 
@@ -34,56 +13,35 @@ WELCOME, SARA
 
 Hi Sara,
 
-Thank you for staying with us. We are so happy to have you at Hôtel Dar Zitouna, and we will take good care of you.
+Thank you for staying with us. We are so happy to have you at Hôtel Dar Zitouna de la Médina, and we will take good care of you.
 
 To say thank you, here is a little something for you:
 
-Free breakfast
+Free breakfast for two
 
-For two
+Enjoy it on your next stay.
 
-Your code: DAR-24
+Your code: WELCOME
 
 Valid until December 31, 2026
 
 See my offer https://ritorno.test/o/1
 
 Warmly,
-The Hôtel Dar Zitouna team
+The Hôtel Dar Zitouna de la Médina team
 
-You are receiving this email because you shared your address with Hôtel Dar Zitouna.
+You are receiving this email because you shared your address with Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Unsubscribe https://ritorno.test/u/token"
+Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`welcome in fr renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: welcome fr 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="fr"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Nous sommes ravis de vous accueillir, Sara.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Bienvenue, Sara</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Bonjour Sara,</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Merci de séjourner chez nous. Nous sommes ravis de vous accueillir à Hôtel Dar Zitouna et nous prendrons grand soin de vous.</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Pour vous remercier, voici une petite attention :</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Votre code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valable jusqu&#x27;au 31 décembre 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Voir mon offre</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Chaleureusement,<br/>L&#x27;équipe Hôtel Dar Zitouna</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Se désabonner</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "Bienvenue à Hôtel Dar Zitouna",
+  "subject": "Bienvenue à Hôtel Dar Zitouna de la Médina",
   "text": 
 " 
 
@@ -94,115 +52,73 @@ BIENVENUE, SARA
 
 Bonjour Sara,
 
-Merci de séjourner chez nous. Nous sommes ravis de vous accueillir à Hôtel Dar Zitouna et nous prendrons grand soin de vous.
+Merci de séjourner chez nous. Nous sommes ravis de vous accueillir à Hôtel Dar Zitouna de la Médina et nous prendrons grand soin de vous.
 
 Pour vous remercier, voici une petite attention :
 
-Free breakfast
+Petit-déjeuner offert pour deux
 
-For two
+À savourer lors de votre prochain séjour.
 
-Votre code: DAR-24
+Votre code : WELCOME
 
 Valable jusqu'au 31 décembre 2026
 
 Voir mon offre https://ritorno.test/o/1
 
 Chaleureusement,
-L'équipe Hôtel Dar Zitouna
+L'équipe Hôtel Dar Zitouna de la Médina
 
-Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.
+Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Se désabonner https://ritorno.test/u/token"
+Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`welcome in ar renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: welcome ar 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="rtl" lang="ar"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">يسعدنا استضافتك يا ⁨Sara⁩.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="rtl" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:&#x27;Noto Naskh Arabic&#x27;, &#x27;Geeza Pro&#x27;, &#x27;Traditional Arabic&#x27;, Tahoma, serif;color:#0b0b0c;text-align:right;font-size:32px;line-height:46px;font-style:normal;font-weight:700;letter-spacing:0">أهلاً بك يا ⁨Sara⁩</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">مرحباً ⁨Sara⁩،</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">شكراً لإقامتك معنا. يسعدنا جداً استقبالك في ⁨Hôtel Dar Zitouna⁩ وسنحرص على راحتك.</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">وكلمة شكر منا، هذه هدية صغيرة لك:</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">رمزك<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="right" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">عرض هديتي</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">مع خالص مودّتنا،<br/>فريق ⁨Hôtel Dar Zitouna⁩</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">إلغاء الاشتراك</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "أهلاً بك في ⁨Hôtel Dar Zitouna⁩",
+  "subject": "أهلاً بك في ⁨Hôtel Dar Zitouna de la Médina⁩",
   "text": 
 " 
 
 
 
 
-أهلاً بك يا ⁨SARA⁩
+أهلاً بك يا ⁨سارة⁩
 
-مرحباً ⁨Sara⁩،
+مرحباً ⁨سارة⁩،
 
-شكراً لإقامتك معنا. يسعدنا جداً استقبالك في ⁨Hôtel Dar Zitouna⁩ وسنحرص على راحتك.
+شكراً لإقامتك معنا. يسعدنا جداً استقبالك في ⁨Hôtel Dar Zitouna de la Médina⁩ وسنحرص على راحتك.
 
 وكلمة شكر منا، هذه هدية صغيرة لك:
 
-Free breakfast
+⁨إفطار مجاني لشخصين⁩
 
-For two
+⁨استمتع به في إقامتك القادمة.⁩
 
-رمزك: DAR-24
+رمزك: WELCOME
 
 صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩
 
 عرض هديتي https://ritorno.test/o/1
 
 مع خالص مودّتنا،
-فريق ⁨Hôtel Dar Zitouna⁩
+فريق ⁨Hôtel Dar Zitouna de la Médina⁩
 
-وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.
+وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna de la Médina⁩.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-إلغاء الاشتراك https://ritorno.test/u/token"
+إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`birthday in en renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: birthday en 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="en"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">A small gift from all of us at Hôtel Dar Zitouna.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Happy birthday, Sara</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Everyone at Hôtel Dar Zitouna is thinking of you today. To celebrate, here is a small gift for your next stay.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Your code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valid until December 31, 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Claim my gift</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Warmly,<br/>The Hôtel Dar Zitouna team</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">You are receiving this email because you shared your address with Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Unsubscribe</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
   "subject": "Happy birthday, Sara",
   "text": 
 " 
@@ -212,53 +128,32 @@ exports[`birthday in en renders html, text and subject 1`] = `
 
 HAPPY BIRTHDAY, SARA
 
-Everyone at Hôtel Dar Zitouna is thinking of you today. To celebrate, here is a small gift for your next stay.
+Everyone at Hôtel Dar Zitouna de la Médina is thinking of you today. To celebrate, here is a small gift for your next stay.
 
-Free breakfast
+Free breakfast for two
 
-For two
+Enjoy it on your next stay.
 
-Your code: DAR-24
+Your code: WELCOME
 
 Valid until December 31, 2026
 
 Claim my gift https://ritorno.test/o/1
 
 Warmly,
-The Hôtel Dar Zitouna team
+The Hôtel Dar Zitouna de la Médina team
 
-You are receiving this email because you shared your address with Hôtel Dar Zitouna.
+You are receiving this email because you shared your address with Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Unsubscribe https://ritorno.test/u/token"
+Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`birthday in fr renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: birthday fr 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="fr"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Un petit cadeau de toute l&#x27;équipe de Hôtel Dar Zitouna.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Joyeux anniversaire, Sara</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Toute l&#x27;équipe de Hôtel Dar Zitouna pense à vous aujourd&#x27;hui. Pour fêter ça, voici un petit cadeau pour votre prochain séjour.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Votre code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valable jusqu&#x27;au 31 décembre 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Profiter de mon cadeau</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Chaleureusement,<br/>L&#x27;équipe Hôtel Dar Zitouna</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Se désabonner</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
   "subject": "Joyeux anniversaire, Sara",
   "text": 
 " 
@@ -268,110 +163,68 @@ exports[`birthday in fr renders html, text and subject 1`] = `
 
 JOYEUX ANNIVERSAIRE, SARA
 
-Toute l'équipe de Hôtel Dar Zitouna pense à vous aujourd'hui. Pour fêter ça, voici un petit cadeau pour votre prochain séjour.
+Toute l'équipe de Hôtel Dar Zitouna de la Médina pense à vous aujourd'hui. Pour fêter ça, voici un petit cadeau pour votre prochain séjour.
 
-Free breakfast
+Petit-déjeuner offert pour deux
 
-For two
+À savourer lors de votre prochain séjour.
 
-Votre code: DAR-24
+Votre code : WELCOME
 
 Valable jusqu'au 31 décembre 2026
 
 Profiter de mon cadeau https://ritorno.test/o/1
 
 Chaleureusement,
-L'équipe Hôtel Dar Zitouna
+L'équipe Hôtel Dar Zitouna de la Médina
 
-Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.
+Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Se désabonner https://ritorno.test/u/token"
+Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`birthday in ar renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: birthday ar 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="rtl" lang="ar"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">هدية صغيرة من فريق ⁨Hôtel Dar Zitouna⁩.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="rtl" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:&#x27;Noto Naskh Arabic&#x27;, &#x27;Geeza Pro&#x27;, &#x27;Traditional Arabic&#x27;, Tahoma, serif;color:#0b0b0c;text-align:right;font-size:32px;line-height:46px;font-style:normal;font-weight:700;letter-spacing:0">عيد ميلاد سعيد يا ⁨Sara⁩</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">الجميع في ⁨Hôtel Dar Zitouna⁩ يفكرون بك اليوم. احتفالاً بك، إليك هدية صغيرة لإقامتك القادمة.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">رمزك<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="right" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">احصل على هديتي</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">مع خالص مودّتنا،<br/>فريق ⁨Hôtel Dar Zitouna⁩</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">إلغاء الاشتراك</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "عيد ميلاد سعيد يا ⁨Sara⁩",
+  "subject": "عيد ميلاد سعيد يا ⁨سارة⁩",
   "text": 
 " 
 
 
 
 
-عيد ميلاد سعيد يا ⁨SARA⁩
+عيد ميلاد سعيد يا ⁨سارة⁩
 
-الجميع في ⁨Hôtel Dar Zitouna⁩ يفكرون بك اليوم. احتفالاً بك، إليك هدية صغيرة لإقامتك القادمة.
+الجميع في ⁨Hôtel Dar Zitouna de la Médina⁩ يفكرون بك اليوم. احتفالاً بك، إليك هدية صغيرة لإقامتك القادمة.
 
-Free breakfast
+⁨إفطار مجاني لشخصين⁩
 
-For two
+⁨استمتع به في إقامتك القادمة.⁩
 
-رمزك: DAR-24
+رمزك: WELCOME
 
 صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩
 
 احصل على هديتي https://ritorno.test/o/1
 
 مع خالص مودّتنا،
-فريق ⁨Hôtel Dar Zitouna⁩
+فريق ⁨Hôtel Dar Zitouna de la Médina⁩
 
-وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.
+وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna de la Médina⁩.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-إلغاء الاشتراك https://ritorno.test/u/token"
+إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`survey in en renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: survey en 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="en"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">One minute to tell us how it went.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">How was your stay?</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Hi Sara,</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Thank you for choosing Hôtel Dar Zitouna. Your opinion helps us welcome you even better next time. It takes less than a minute.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Share my feedback</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Warmly,<br/>The Hôtel Dar Zitouna team</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">You are receiving this email because you shared your address with Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Unsubscribe</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "How was your stay at Hôtel Dar Zitouna?",
+  "subject": "How was your stay at Hôtel Dar Zitouna de la Médina?",
   "text": 
 " 
 
@@ -382,46 +235,25 @@ HOW WAS YOUR STAY?
 
 Hi Sara,
 
-Thank you for choosing Hôtel Dar Zitouna. Your opinion helps us welcome you even better next time. It takes less than a minute.
+Thank you for choosing Hôtel Dar Zitouna de la Médina. Your opinion helps us welcome you even better next time. It takes less than a minute.
 
 Share my feedback https://ritorno.test/o/1
 
 Warmly,
-The Hôtel Dar Zitouna team
+The Hôtel Dar Zitouna de la Médina team
 
-You are receiving this email because you shared your address with Hôtel Dar Zitouna.
+You are receiving this email because you shared your address with Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Unsubscribe https://ritorno.test/u/token"
+Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`survey in fr renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: survey fr 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="fr"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Une minute pour nous dire ce que vous en avez pensé.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Comment s&#x27;est passé votre séjour ?</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Bonjour Sara,</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Merci d&#x27;avoir choisi Hôtel Dar Zitouna. Votre avis nous aide à mieux vous accueillir la prochaine fois. Cela prend moins d&#x27;une minute.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Donner mon avis</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Chaleureusement,<br/>L&#x27;équipe Hôtel Dar Zitouna</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Se désabonner</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "Votre séjour à Hôtel Dar Zitouna s'est bien passé ?",
+  "subject": "Votre séjour à Hôtel Dar Zitouna de la Médina s'est bien passé ?",
   "text": 
 " 
 
@@ -432,46 +264,25 @@ COMMENT S'EST PASSÉ VOTRE SÉJOUR ?
 
 Bonjour Sara,
 
-Merci d'avoir choisi Hôtel Dar Zitouna. Votre avis nous aide à mieux vous accueillir la prochaine fois. Cela prend moins d'une minute.
+Merci d'avoir choisi Hôtel Dar Zitouna de la Médina. Votre avis nous aide à mieux vous accueillir la prochaine fois. Cela prend moins d'une minute.
 
 Donner mon avis https://ritorno.test/o/1
 
 Chaleureusement,
-L'équipe Hôtel Dar Zitouna
+L'équipe Hôtel Dar Zitouna de la Médina
 
-Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.
+Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Se désabonner https://ritorno.test/u/token"
+Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`survey in ar renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: survey ar 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="rtl" lang="ar"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">دقيقة واحدة لتخبرنا برأيك.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="rtl" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:&#x27;Noto Naskh Arabic&#x27;, &#x27;Geeza Pro&#x27;, &#x27;Traditional Arabic&#x27;, Tahoma, serif;color:#0b0b0c;text-align:right;font-size:32px;line-height:46px;font-style:normal;font-weight:700;letter-spacing:0">كيف كانت إقامتك؟</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">مرحباً ⁨Sara⁩،</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">شكراً لاختيارك ⁨Hôtel Dar Zitouna⁩. رأيك يساعدنا على استقبالك بشكل أفضل في المرة القادمة، ولن يستغرق أكثر من دقيقة.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="right" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">شارك رأيي</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">مع خالص مودّتنا،<br/>فريق ⁨Hôtel Dar Zitouna⁩</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">إلغاء الاشتراك</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "كيف كانت إقامتك في ⁨Hôtel Dar Zitouna⁩؟",
+  "subject": "كيف كانت إقامتك في ⁨Hôtel Dar Zitouna de la Médina⁩؟",
   "text": 
 " 
 
@@ -480,48 +291,27 @@ exports[`survey in ar renders html, text and subject 1`] = `
 
 كيف كانت إقامتك؟
 
-مرحباً ⁨Sara⁩،
+مرحباً ⁨سارة⁩،
 
-شكراً لاختيارك ⁨Hôtel Dar Zitouna⁩. رأيك يساعدنا على استقبالك بشكل أفضل في المرة القادمة، ولن يستغرق أكثر من دقيقة.
+شكراً لاختيارك ⁨Hôtel Dar Zitouna de la Médina⁩. رأيك يساعدنا على استقبالك بشكل أفضل في المرة القادمة، ولن يستغرق أكثر من دقيقة.
 
 شارك رأيي https://ritorno.test/o/1
 
 مع خالص مودّتنا،
-فريق ⁨Hôtel Dar Zitouna⁩
+فريق ⁨Hôtel Dar Zitouna de la Médina⁩
 
-وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.
+وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna de la Médina⁩.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-إلغاء الاشتراك https://ritorno.test/u/token"
+إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`reminder in en renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: reminder en 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="en"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Your offer is still waiting for you.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Your offer is waiting</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Hi Sara,</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">A quick reminder from Hôtel Dar Zitouna: your offer is still yours, and we would love to welcome you back.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Your code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valid until December 31, 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Use my offer</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Warmly,<br/>The Hôtel Dar Zitouna team</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">You are receiving this email because you shared your address with Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Unsubscribe</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "Your offer at Hôtel Dar Zitouna ends soon",
+  "subject": "Your offer at Hôtel Dar Zitouna de la Médina ends soon",
   "text": 
 " 
 
@@ -532,54 +322,33 @@ YOUR OFFER IS WAITING
 
 Hi Sara,
 
-A quick reminder from Hôtel Dar Zitouna: your offer is still yours, and we would love to welcome you back.
+A quick reminder from Hôtel Dar Zitouna de la Médina: your offer is still yours, and we would love to welcome you back.
 
-Free breakfast
+Free breakfast for two
 
-For two
+Enjoy it on your next stay.
 
-Your code: DAR-24
+Your code: WELCOME
 
 Valid until December 31, 2026
 
 Use my offer https://ritorno.test/o/1
 
 Warmly,
-The Hôtel Dar Zitouna team
+The Hôtel Dar Zitouna de la Médina team
 
-You are receiving this email because you shared your address with Hôtel Dar Zitouna.
+You are receiving this email because you shared your address with Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Unsubscribe https://ritorno.test/u/token"
+Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`reminder in fr renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: reminder fr 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="fr"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Votre offre vous attend toujours.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Votre offre vous attend</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Bonjour Sara,</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Un petit rappel de Hôtel Dar Zitouna : votre offre est toujours à vous, et nous serions heureux de vous revoir.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Votre code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valable jusqu&#x27;au 31 décembre 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Profiter de mon offre</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Chaleureusement,<br/>L&#x27;équipe Hôtel Dar Zitouna</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Se désabonner</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "Votre offre à Hôtel Dar Zitouna se termine bientôt",
+  "subject": "Votre offre à Hôtel Dar Zitouna de la Médina se termine bientôt",
   "text": 
 " 
 
@@ -590,54 +359,33 @@ VOTRE OFFRE VOUS ATTEND
 
 Bonjour Sara,
 
-Un petit rappel de Hôtel Dar Zitouna : votre offre est toujours à vous, et nous serions heureux de vous revoir.
+Un petit rappel de Hôtel Dar Zitouna de la Médina : votre offre est toujours à vous, et nous serions heureux de vous revoir.
 
-Free breakfast
+Petit-déjeuner offert pour deux
 
-For two
+À savourer lors de votre prochain séjour.
 
-Votre code: DAR-24
+Votre code : WELCOME
 
 Valable jusqu'au 31 décembre 2026
 
 Profiter de mon offre https://ritorno.test/o/1
 
 Chaleureusement,
-L'équipe Hôtel Dar Zitouna
+L'équipe Hôtel Dar Zitouna de la Médina
 
-Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.
+Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Se désabonner https://ritorno.test/u/token"
+Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`reminder in ar renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: reminder ar 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="rtl" lang="ar"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">عرضك ما زال بانتظارك.<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="rtl" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:&#x27;Noto Naskh Arabic&#x27;, &#x27;Geeza Pro&#x27;, &#x27;Traditional Arabic&#x27;, Tahoma, serif;color:#0b0b0c;text-align:right;font-size:32px;line-height:46px;font-style:normal;font-weight:700;letter-spacing:0">عرضك بانتظارك</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">مرحباً ⁨Sara⁩،</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">تذكير سريع من ⁨Hôtel Dar Zitouna⁩: عرضك ما زال لك، وسنسعد باستقبالك من جديد.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">رمزك<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="right" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">استخدم عرضي</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">مع خالص مودّتنا،<br/>فريق ⁨Hôtel Dar Zitouna⁩</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">إلغاء الاشتراك</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "عرضك في ⁨Hôtel Dar Zitouna⁩ ينتهي قريباً",
+  "subject": "عرضك في ⁨Hôtel Dar Zitouna de la Médina⁩ ينتهي قريباً",
   "text": 
 " 
 
@@ -646,202 +394,133 @@ exports[`reminder in ar renders html, text and subject 1`] = `
 
 عرضك بانتظارك
 
-مرحباً ⁨Sara⁩،
+مرحباً ⁨سارة⁩،
 
-تذكير سريع من ⁨Hôtel Dar Zitouna⁩: عرضك ما زال لك، وسنسعد باستقبالك من جديد.
+تذكير سريع من ⁨Hôtel Dar Zitouna de la Médina⁩: عرضك ما زال لك، وسنسعد باستقبالك من جديد.
 
-Free breakfast
+⁨إفطار مجاني لشخصين⁩
 
-For two
+⁨استمتع به في إقامتك القادمة.⁩
 
-رمزك: DAR-24
+رمزك: WELCOME
 
 صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩
 
 استخدم عرضي https://ritorno.test/o/1
 
 مع خالص مودّتنا،
-فريق ⁨Hôtel Dar Zitouna⁩
+فريق ⁨Hôtel Dar Zitouna de la Médina⁩
 
-وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.
+وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna de la Médina⁩.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-إلغاء الاشتراك https://ritorno.test/u/token"
+إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`message in en renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: message en 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="en"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Hello Sara<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Hello Sara</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">One.</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Two.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Your code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valid until December 31, 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">Learn more</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Warmly,<br/>The Hôtel Dar Zitouna team</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">You are receiving this email because you shared your address with Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Unsubscribe</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "News from Hôtel Dar Zitouna",
+  "subject": "News from Hôtel Dar Zitouna de la Médina",
   "text": 
 " 
 
 
 
 
-HELLO SARA
+A LITTLE NEWS, SARA
 
-One.
+We have something new to share with you.
 
-Two.
+Free breakfast for two
 
-Free breakfast
+Enjoy it on your next stay.
 
-For two
-
-Your code: DAR-24
+Your code: WELCOME
 
 Valid until December 31, 2026
 
 Learn more https://ritorno.test/o/1
 
 Warmly,
-The Hôtel Dar Zitouna team
+The Hôtel Dar Zitouna de la Médina team
 
-You are receiving this email because you shared your address with Hôtel Dar Zitouna.
+You are receiving this email because you shared your address with Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Unsubscribe https://ritorno.test/u/token"
+Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`message in fr renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: message fr 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="ltr" lang="fr"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Hello Sara<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="ltr" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:Newsreader, Georgia, &#x27;Times New Roman&#x27;, serif;color:#0b0b0c;text-align:left;font-size:32px;line-height:38px;font-style:italic;font-weight:400;letter-spacing:-0.01em">Hello Sara</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">One.</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Two.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">Votre code<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Valable jusqu&#x27;au 31 décembre 2026</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="left" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">En savoir plus</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#0b0b0c;text-align:left;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">Chaleureusement,<br/>L&#x27;équipe Hôtel Dar Zitouna</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:Geist, -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif;color:#6b6b70;text-align:left;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">Se désabonner</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "News from Hôtel Dar Zitouna",
+  "subject": "Des nouvelles de Hôtel Dar Zitouna de la Médina",
   "text": 
 " 
 
 
 
 
-HELLO SARA
+UN PETIT MOT, SARA
 
-One.
+Nous avons une nouveauté à partager avec vous.
 
-Two.
+Petit-déjeuner offert pour deux
 
-Free breakfast
+À savourer lors de votre prochain séjour.
 
-For two
-
-Votre code: DAR-24
+Votre code : WELCOME
 
 Valable jusqu'au 31 décembre 2026
 
 En savoir plus https://ritorno.test/o/1
 
 Chaleureusement,
-L'équipe Hôtel Dar Zitouna
+L'équipe Hôtel Dar Zitouna de la Médina
 
-Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna.
+Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zitouna de la Médina.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-Se désabonner https://ritorno.test/u/token"
+Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;
 
-exports[`message in ar renders html, text and subject 1`] = `
+exports[`subject and text of every hotel email: message ar 1`] = `
 {
-  "html": 
-"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html style="background-color:#f4f4f3" class="e-cv" dir="rtl" lang="ar"><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/><meta name="x-apple-disable-message-reformatting"/><meta name="color-scheme" content="light dark"/><meta name="supported-color-schemes" content="light dark"/><style>
-:root { color-scheme: light dark; supported-color-schemes: light dark; }
-@media (prefers-color-scheme: dark) {
-  .e-cv { background-color: #0b0b0c !important; }
-  .e-bg { background-color: #161618 !important; }
-  .e-fg { color: #f4f4f3 !important; }
-  .e-mut { color: #a1a1a6 !important; }
-  .e-bd { border-color: #2c2c2e !important; }
-  .e-sf { background-color: #1f1f21 !important; }
-  .e-pr { background-color: #0f766e !important; border-color: #0f766e !important; color: #ffffff !important; }
-  .e-ac { background-color: #f59e0b !important; border-color: #f59e0b !important; }
-  .e-logo { background-color: #ffffff !important; }
-}
-@media only screen and (max-width: 480px) {
-  .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-btn { width: 100% !important; }
-  .e-btn a { display: block !important; text-align: center !important; }
-}
-</style></head><body class="e-cv" style="background-color:#f4f4f3;margin:0;padding:0"><!--$--><!--html--><!--head--><div style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0" data-skip-in-text="true">Hello ⁨Sara⁩<div> ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF ‌​‍‎‏\uFEFF</div></div><!--body--><table border="0" width="100%" cellPadding="0" cellSpacing="0" role="presentation" align="center"><tbody><tr><td style="margin:0;padding:0;background-color:#f4f4f3"><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-cv" style="background-color:#f4f4f3"><tbody><tr><td><table align="center" width="100%" dir="rtl" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:600px;width:100%;margin:0 auto;padding:24px 12px"><tbody><tr style="width:100%"><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-bg e-bd" style="background-color:#ffffff;border:1px solid #e4e4e2;border-radius:20px"><tbody><tr><td><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-ac" style="height:6px;line-height:6px;font-size:0;background-color:#f59e0b;border-radius:19px 19px 0 0"><tbody><tr><td> </td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 0"><tbody><tr><td><img class="e-logo" alt="Hôtel Dar Zitouna" height="48" src="https://cdn.test/logo.png" style="display:block;outline:none;border:none;text-decoration:none;height:48px;width:auto;max-width:200px;border-radius:8px"/></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:28px 32px 36px"><tbody><tr><td><h1 class="e-fg" style="margin:0 0 20px;font-family:&#x27;Noto Naskh Arabic&#x27;, &#x27;Geeza Pro&#x27;, &#x27;Traditional Arabic&#x27;, Tahoma, serif;color:#0b0b0c;text-align:right;font-size:32px;line-height:46px;font-style:normal;font-weight:700;letter-spacing:0">Hello ⁨Sara⁩</h1><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">One.</p><p class="e-fg" style="font-size:16px;line-height:26px;margin:0 0 16px;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:0;margin-right:0;margin-bottom:16px;margin-left:0">Two.</p><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-sf e-bd" style="margin:8px 0 0;padding:20px;background-color:#f4f4f3;border:1px solid #f59e0b;border-radius:16px"><tbody><tr><td><p class="e-fg" style="font-size:18px;line-height:26px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;font-weight:600;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">Free breakfast</p><p class="e-fg" style="font-size:15px;line-height:22px;margin:6px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:6px;margin-right:0;margin-bottom:0;margin-left:0">For two</p><p class="e-fg" style="font-size:14px;line-height:22px;margin:12px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:12px;margin-right:0;margin-bottom:0;margin-left:0">رمزك<!-- -->:<!-- --> <strong style="font-family:&#x27;Geist Mono&#x27;, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:0.08em" dir="ltr">DAR-24</strong></p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩</p></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="margin:28px 0 0"><tbody><tr><td><table role="presentation" cellPadding="0" cellSpacing="0" border="0" align="right" class="e-btn"><tbody><tr><td class="e-pr" style="background-color:#0f766e;border-radius:999px"><a href="https://ritorno.test/o/1" class="e-pr" style="line-height:20px;text-decoration:none;display:inline-block;max-width:100%;mso-padding-alt:0px;box-sizing:border-box;background-color:#0f766e;border:1px solid #0f766e;border-radius:999px;color:#ffffff;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;font-size:16px;font-weight:600;padding:14px 28px;padding-top:14px;padding-right:28px;padding-bottom:14px;padding-left:28px" target="_blank"><span><!--[if mso]><i style="mso-font-width:466.6666666666667%;mso-text-raise:21" hidden>&#8202;&#8202;&#8202;</i><![endif]--></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:10.5px">اعرف المزيد</span><span><!--[if mso]><i style="mso-font-width:466.6666666666667%" hidden>&#8202;&#8202;&#8202;&#8203;</i><![endif]--></span></a></td></tr></tbody></table></td></tr></tbody></table><p class="e-fg" style="font-size:16px;line-height:24px;margin:32px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#0b0b0c;text-align:right;margin-top:32px;margin-right:0;margin-bottom:0;margin-left:0">مع خالص مودّتنا،<br/>فريق ⁨Hôtel Dar Zitouna⁩</p></td></tr></tbody></table></td></tr></tbody></table><table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" class="e-pad" style="padding:20px 32px 8px"><tbody><tr><td><p class="e-mut" style="font-size:13px;line-height:20px;margin:0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:0;margin-bottom:0;margin-left:0;margin-right:0">وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.</p><p class="e-mut" style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0">Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis</p><p style="font-size:13px;line-height:20px;margin:8px 0 0;font-family:&#x27;Noto Sans Arabic&#x27;, &#x27;Geeza Pro&#x27;, Tahoma, Arial, sans-serif;color:#6b6b70;text-align:right;margin-top:8px;margin-right:0;margin-bottom:0;margin-left:0"><a href="https://ritorno.test/u/token" class="e-mut" style="color:#6b6b70;text-decoration-line:none;text-decoration:underline" target="_blank">إلغاء الاشتراك</a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><!--/$--></body></html>"
-,
-  "subject": "News from ⁨Hôtel Dar Zitouna⁩",
+  "subject": "أخبار من ⁨Hôtel Dar Zitouna de la Médina⁩",
   "text": 
 " 
 
 
 
 
-HELLO ⁨SARA⁩
+⁨رسالة صغيرة، ⁨سارة⁩⁩
 
-One.
+⁨لدينا خبر جديد نود مشاركته معك.⁩
 
-Two.
+⁨إفطار مجاني لشخصين⁩
 
-Free breakfast
+⁨استمتع به في إقامتك القادمة.⁩
 
-For two
-
-رمزك: DAR-24
+رمزك: WELCOME
 
 صالح حتى ⁨⁨31⁩ ⁨ديسمبر⁩ ⁨2026⁩⁩
 
 اعرف المزيد https://ritorno.test/o/1
 
 مع خالص مودّتنا،
-فريق ⁨Hôtel Dar Zitouna⁩
+فريق ⁨Hôtel Dar Zitouna de la Médina⁩
 
-وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna⁩.
+وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع ⁨Hôtel Dar Zitouna de la Médina⁩.
 
-Hôtel Dar Zitouna · 12 Rue de la Médina, Tunis
+Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
-إلغاء الاشتراك https://ritorno.test/u/token"
+إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
 ,
 }
 `;

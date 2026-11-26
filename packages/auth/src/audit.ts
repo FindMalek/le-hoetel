@@ -1,3 +1,4 @@
+import type { AuditAction } from "@ritorno/common/audit"
 import { auditLog, type Db } from "@ritorno/db"
 import { createAuthMiddleware } from "better-auth/api"
 
@@ -9,9 +10,11 @@ export function auditHooks(db: Db) {
         create: {
           after: async (session: { userId: string; impersonatedBy?: string | null }) => {
             if (!session.impersonatedBy) return
-            await db
-              .insert(auditLog)
-              .values({ actorId: session.impersonatedBy, action: "admin.impersonate", targetId: session.userId })
+            await db.insert(auditLog).values({
+              actorId: session.impersonatedBy,
+              action: "admin.impersonate" satisfies AuditAction,
+              targetId: session.userId,
+            })
           },
         },
       },
@@ -20,7 +23,8 @@ export function auditHooks(db: Db) {
       after: createAuthMiddleware(async (ctx) => {
         if (ctx.path !== "/admin/stop-impersonating") return
         const adminId = ctx.context.newSession?.user.id
-        if (adminId) await db.insert(auditLog).values({ actorId: adminId, action: "admin.impersonate-stop" })
+        if (adminId)
+          await db.insert(auditLog).values({ actorId: adminId, action: "admin.impersonate-stop" satisfies AuditAction })
       }),
     },
   }

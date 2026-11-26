@@ -39,6 +39,3 @@ export const TIMEZONES = [
   "Africa/Cairo",
   "Asia/Dubai",
 ] as const
-
-/** The audit filters' "no filter" value: an empty one renders as the Select placeholder, muted. */
-export const AUDIT_ALL = "all"

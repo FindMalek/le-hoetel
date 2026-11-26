@@ -2,6 +2,7 @@ import { Body, Container, Head, Heading, Html, Img, Link, Preview, Section, Text
 import { contrastRatio, MIN_UI_CONTRAST, readableForeground } from "@ritorno/common/color"
 import { htmlAttributes, type Locale } from "@ritorno/i18n/config"
 import type { CSSProperties, ReactNode } from "react"
+import { isolate } from "../bidi"
 import { BRAND, brandFonts } from "../brand"
 import { PillButton } from "../templates/primitives"
 import type { Copy } from "./copy"
@@ -17,6 +18,8 @@ export interface Ctx {
   locale: Locale
   copy: Copy
   t: (text: string, values?: Record<string, string>) => string
+  /** For text the hotel typed itself, which may not be in the email's direction. */
+  own: (text: string) => string
   theme: Theme
 }
 
@@ -69,6 +72,7 @@ export const createCtx = (hotel: EmailHotel, guest: EmailGuest, locale: Locale, 
     copy,
     theme,
     t: (text, values = {}) => fill(text, { hotel: hotel.name, name: guest.name, ...values }, theme.dir === "rtl"),
+    own: (text) => (theme.dir === "rtl" ? isolate(text) : text),
   }
 }
 
@@ -84,6 +88,7 @@ const css = (theme: Theme): string => `
   .e-sf { background-color: ${dark.surface} !important; }
   .e-pr { background-color: ${theme.darkPrimary} !important; border-color: ${theme.darkPrimary} !important; color: ${theme.darkOnPrimary} !important; }
   .e-ac { background-color: ${theme.darkAccent} !important; border-color: ${theme.darkAccent} !important; }
+  .e-ob { border-color: ${theme.darkAccent} !important; }
   .e-logo { background-color: ${light.background} !important; }
 }
 @media only screen and (max-width: 480px) {
@@ -252,7 +257,7 @@ export function OfferCard({ ctx, offer }: { ctx: Ctx; offer: EmailOffer }) {
   const until = offer.validUntil ? formatDate(offer.validUntil, ctx) : null
   return (
     <Section
-      className="e-sf e-bd"
+      className="e-sf e-ob"
       style={{
         margin: "8px 0 0",
         padding: 20,
@@ -262,16 +267,16 @@ export function OfferCard({ ctx, offer }: { ctx: Ctx; offer: EmailOffer }) {
       }}
     >
       <Text className="e-fg" style={{ ...text(theme), fontSize: 18, lineHeight: "26px", fontWeight: 600 }}>
-        {offer.title}
+        {ctx.own(offer.title)}
       </Text>
       {offer.description ? (
         <Text className="e-fg" style={{ ...text(theme), margin: "6px 0 0", fontSize: 15, lineHeight: "22px" }}>
-          {offer.description}
+          {ctx.own(offer.description)}
         </Text>
       ) : null}
       {offer.code ? (
         <Text className="e-fg" style={{ ...text(theme), margin: "12px 0 0", fontSize: 14, lineHeight: "22px" }}>
-          {copy.common.offerCode}:{" "}
+          {copy.common.offerCode}{" "}
           <strong style={{ fontFamily: BRAND.fontMono, letterSpacing: "0.08em" }} dir="ltr">
             {offer.code}
           </strong>
