@@ -114,7 +114,7 @@ export function InvoiceList({ invoices, showHotel }: { invoices: Invoice[]; show
                     setStatus.mutate({ id: invoice.id, status: invoice.status === "paid" ? "issued" : "paid" })
                   }
                 >
-                  {t(invoice.status === "paid" ? "markUnpaid" : "markPaid")}
+                  {invoice.status === "paid" ? t("markUnpaid") : t("markPaid")}
                 </Button>
                 <Button variant="ghost" onClick={() => setVoiding(invoice)}>
                   {t("void")}

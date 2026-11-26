@@ -33,6 +33,7 @@ import { openAsHotel } from "../actions"
 
 export const metadata: Metadata = { title: "Hotel" }
 
+// i18n-used: adminBilling.hotelHint
 export default async function AdminHotelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const [t, tList, tBilling, locale, hotel, balance, plans, invoices] = await Promise.all([
