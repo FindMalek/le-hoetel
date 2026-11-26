@@ -1,42 +1,94 @@
-import { BentoGrid, BentoTile } from "@ritorno/ui/brand/bento"
+import { PixelSky } from "@ritorno/ui/brand/pixel-sky"
 import { Chip } from "@ritorno/ui/components/chip"
 import { cn } from "@ritorno/ui/lib/utils"
 import {
   BellRingIcon,
-  ClipboardListIcon,
-  MessageCircleIcon,
+  ConciergeBellIcon,
+  GiftIcon,
   PhoneIcon,
   QrCodeIcon,
+  RotateCcwIcon,
   StarIcon,
-  UsersIcon,
+  UserPlusIcon,
+  UtensilsIcon,
 } from "lucide-react"
-import { getTranslations } from "next-intl/server"
-import type { ReactNode } from "react"
-import { Avatar, ConsentChips, SAMPLE_HOTEL } from "./mockups"
+import { getLocale, getTranslations } from "next-intl/server"
+import type { ComponentType, ReactNode } from "react"
+import { JourneyChecklist } from "./journey-checklist"
+import { Avatar, SAMPLE_HOTEL } from "./mockups"
 import { CONTAINER, SECTION_Y, SectionHeading } from "./section"
 
-/**
- * Centers of the four lg columns (6% gaps) and of the gaps between them, in percent of the grid's content box.
- * The lines run center to center behind the opaque tiles, so only the part in the gaps shows.
- */
-const LINES = [
-  "M10.25 25 V75",
-  "M10.25 75 H23.5 V50 H36.75",
-  "M36.75 50 H63.25",
-  "M63.25 50 H76.5 V25 H89.75",
-  "M76.5 50 V75 H89.75",
-]
+const STEPS = [
+  { key: "joined", day: 12, time: "14:02" },
+  { key: "welcome", day: 12, time: "14:02" },
+  { key: "birthday", day: 13, time: "09:00" },
+  { key: "checkout", day: 15, time: "11:30" },
+  { key: "survey", day: 15, time: "18:45" },
+  { key: "alerted", day: 15, time: "18:46" },
+  { key: "called", day: 15, time: "19:10" },
+  { key: "happy", day: 15, time: "19:24" },
+  { key: "review", day: 15, time: "19:25" },
+] as const
 
-function Mini({ children, className }: { children: ReactNode; className?: string }) {
+/**
+ * Columns are 1fr 1.2fr 1fr with 6% gaps, so their centers (13.75, 50, 86.25) and the gap middles (30.5, 69.5) are
+ * fixed fractions of the grid. The side cards are centered in three equal rows (16.7, 50, 83.3). Lines run center to
+ * center behind the opaque cards, so only the hairlines in the gaps show.
+ */
+const LINES = ["M13.75 16.7 H30.5 V83.3 H13.75", "M13.75 50 H86.25", "M86.25 16.7 H69.5 V83.3 H86.25"]
+
+/** A white card with hoplite's small folder tab holding an icon. */
+function Card({
+  icon: Icon,
+  title,
+  children,
+  className,
+}: {
+  icon: ComponentType<{ className?: string }>
+  title: string
+  children?: ReactNode
+  className?: string
+}) {
   return (
-    <div className={cn("mx-3 mb-3 flex flex-1 flex-col gap-2 rounded-2xl bg-surface p-3 text-caption", className)}>
-      {children}
+    <div className={cn("relative mt-4 rounded-card border bg-background p-4 shadow-xs", className)}>
+      <span
+        aria-hidden
+        className="absolute -top-4 start-4 grid h-4 w-8 place-items-center rounded-t-md border border-b-0 bg-background"
+      >
+        <Icon className="size-3 text-ink-400" />
+      </span>
+      <h3 className="font-medium text-small">{title}</h3>
+      {children ? <div className="mt-3 text-caption">{children}</div> : null}
     </div>
   )
 }
 
+/** Side column: three rows on desktop, a horizontal snap carousel on phones. */
+function Column({ label, children, className }: { label: string; children: ReactNode[]; className?: string }) {
+  return (
+    <section aria-label={label} className={cn("min-w-0", className)}>
+      <h3 className="mb-1 px-4 text-caption text-muted-foreground lg:sr-only">{label}</h3>
+      <ul
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable carousel must be reachable by keyboard
+        tabIndex={0}
+        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 outline-none focus-visible:ring-2 focus-visible:ring-ring lg:mx-0 lg:grid lg:h-full lg:grid-rows-3 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+      >
+        {children.map((child, index) => (
+          <li key={index} className="w-4/5 max-w-72 shrink-0 snap-start sm:w-72 lg:w-auto lg:max-w-none lg:self-center">
+            {child}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
 export async function HowItWorks({ docsUrl }: { docsUrl: string }) {
-  const [t, survey] = await Promise.all([getTranslations("landing.how"), getTranslations("survey")])
+  const [t, survey, locale] = await Promise.all([
+    getTranslations("landing.how"),
+    getTranslations("survey"),
+    getLocale(),
+  ])
   const stars = (count: number) => (
     <span className="flex gap-0.5 text-warning" role="img" aria-label={t("stars", { count })}>
       {[1, 2, 3, 4, 5].map((n) => (
@@ -44,147 +96,123 @@ export async function HowItWorks({ docsUrl }: { docsUrl: string }) {
       ))}
     </span>
   )
+  // The stay spans four days, so each time carries its day to read in order.
+  const day = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" })
+  const steps = STEPS.map((step) => ({
+    label: t(`hub.steps.${step.key}`),
+    time: `${day.format(Date.UTC(2026, 2, step.day))} ${step.time}`,
+  }))
+  const progress = Array.from({ length: steps.length + 1 }, (_, done) =>
+    t("hub.progress", { done, total: steps.length }),
+  )
   return (
     <section id="how" aria-labelledby="how-title" className={`scroll-mt-20 bg-canvas ${SECTION_Y}`}>
       <div className={CONTAINER}>
         <SectionHeading id="how-title" title={t("title")} lead={t("lead")} link={{ href: docsUrl, label: t("link") }} />
-        <BentoGrid className="relative mt-10 gap-4 p-3 md:mt-14 md:grid-cols-1 md:gap-4 md:p-4 lg:grid-cols-[repeat(4,minmax(0,1fr))] lg:grid-rows-2 lg:gap-x-[6%] lg:gap-y-4 lg:p-8">
-          <span aria-hidden className="absolute inset-y-8 start-9 w-px bg-foreground/15 md:start-10 lg:hidden" />
+        <div className="relative isolate mt-10 overflow-hidden rounded-panel bg-surface px-4 py-6 md:mt-14 md:p-8 lg:px-10 lg:py-12">
+          <div aria-hidden className="absolute -end-10 -bottom-10 -z-10 size-96 mask-corner-end md:size-144">
+            <div className="absolute inset-0 rotate-180">
+              <PixelSky animated={false} />
+            </div>
+          </div>
           <svg
             aria-hidden
             focusable="false"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
-            className="absolute inset-8 hidden size-[calc(100%-4rem)] text-foreground/15 lg:block rtl:-scale-x-100"
+            className="absolute inset-x-10 inset-y-12 hidden h-[calc(100%-6rem)] w-[calc(100%-5rem)] text-foreground/20 lg:block rtl:-scale-x-100"
           >
             {LINES.map((d) => (
               <path key={d} d={d} fill="none" stroke="currentColor" strokeWidth={1} vectorEffect="non-scaling-stroke" />
             ))}
           </svg>
-          <BentoTile
-            className="md:col-span-1 lg:col-start-1 lg:row-start-1 lg:self-center"
-            chips={
-              <Chip>
-                <QrCodeIcon />
-                {t("qr.chip")}
-              </Chip>
-            }
-            title={t("qr.title")}
-            description={t("qr.body")}
-            media={
-              <Mini className="flex-row items-center gap-3">
-                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-background shadow-xs">
-                  <QrCodeIcon aria-hidden className="size-7" />
-                </span>
-                <span className="grid">
-                  <span className="font-medium">{SAMPLE_HOTEL}</span>
-                  <span className="text-muted-foreground">{t("qr.place")}</span>
-                </span>
-              </Mini>
-            }
-          />
-          <BentoTile
-            className="md:col-span-1 lg:col-start-1 lg:row-start-2 lg:self-center"
-            chips={
-              <Chip>
-                <UsersIcon />
-                {t("list.chip")}
-              </Chip>
-            }
-            title={t("list.title")}
-            description={t("list.body")}
-            media={
-              <Mini>
-                <span className="flex min-w-0 items-center gap-2.5">
-                  <Avatar name="Amira Ben Salah" className="size-7" />
-                  <span className="truncate font-medium">Amira Ben Salah</span>
-                </span>
-                <ConsentChips whatsapp email={false} />
-              </Mini>
-            }
-          />
-          <BentoTile
-            className="md:col-span-1 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-center"
-            chips={
-              <Chip tone="success">
-                <MessageCircleIcon />
-                {t("welcome.chip")}
-              </Chip>
-            }
-            title={t("welcome.title")}
-            description={t("welcome.body")}
-            media={
-              <Mini>
-                <span className="max-w-[92%] rounded-2xl rounded-ss-sm bg-background p-2.5 leading-snug shadow-xs">
-                  {t("welcome.message", { name: "Amira", hotel: SAMPLE_HOTEL })}
-                  <span className="mt-1 block text-end text-muted-foreground tabular-nums">
-                    <bdi dir="ltr">09:41</bdi>
+          <div className="relative flex flex-col gap-8 lg:grid lg:grid-cols-[1fr_1.2fr_1fr] lg:gap-x-[6%] lg:gap-y-0">
+            <Column label={t("inputsLabel")}>
+              {[
+                <Card key="room" icon={QrCodeIcon} title={t("inputs.room.title")}>
+                  <span className="flex items-center gap-3">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-surface">
+                      <QrCodeIcon aria-hidden className="size-6" />
+                    </span>
+                    <span className="grid">
+                      <span className="font-medium">{SAMPLE_HOTEL}</span>
+                      <span className="text-muted-foreground">{t("inputs.room.body")}</span>
+                    </span>
                   </span>
-                </span>
-              </Mini>
-            }
-          />
-          <BentoTile
-            className="md:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1 lg:self-center"
-            chips={
-              <Chip>
-                <ClipboardListIcon />
-                {t("survey.chip")}
-              </Chip>
-            }
-            title={t("survey.title")}
-            description={t("survey.body")}
-            media={
-              <Mini>
-                <span className="font-medium">{survey("title")}</span>
-                {stars(4)}
-              </Mini>
-            }
-          />
-          <BentoTile
-            className="md:col-span-1 lg:col-start-4 lg:row-start-1 lg:self-center"
-            chips={
-              <Chip tone="warning">
-                <BellRingIcon />
-                {t("alert.chip")}
-              </Chip>
-            }
-            title={t("alert.title")}
-            description={t("alert.body")}
-            media={
-              <Mini>
-                <span className="flex items-center justify-between gap-2">
-                  {stars(2)}
-                  <span className="text-muted-foreground">{t("alert.room")}</span>
-                </span>
-                <span className="text-pretty">{t("alert.quote")}</span>
-                <span className="flex h-8 w-fit items-center gap-1.5 rounded-full bg-foreground px-3 font-medium text-background">
-                  <PhoneIcon aria-hidden className="size-3.5" />
-                  {t("alert.action")}
-                </span>
-              </Mini>
-            }
-          />
-          <BentoTile
-            className="md:col-span-1 lg:col-start-4 lg:row-start-2 lg:self-center"
-            chips={
-              <Chip tone="success">
-                <StarIcon />
-                {t("review.chip")}
-              </Chip>
-            }
-            title={t("review.title")}
-            description={t("review.body")}
-            media={
-              <Mini className="flex-row items-center justify-between">
-                {stars(5)}
-                <span className="flex h-8 items-center rounded-full border bg-background px-3 font-medium">
-                  {survey("shareOnGoogle")}
-                </span>
-              </Mini>
-            }
-          />
-        </BentoGrid>
+                </Card>,
+                <Card key="table" icon={UtensilsIcon} title={t("inputs.table.title")}>
+                  <span className="flex flex-wrap gap-1.5">
+                    <Chip>
+                      <ConciergeBellIcon />
+                      {t("inputs.table.desk")}
+                    </Chip>
+                    <Chip>
+                      <UtensilsIcon />
+                      {t("inputs.table.table")}
+                    </Chip>
+                  </span>
+                </Card>,
+                <Card key="staff" icon={UserPlusIcon} title={t("inputs.staff.title")}>
+                  <span className="flex items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2">
+                    <span className="truncate">Youssef Trabelsi</span>
+                    <bdi dir="ltr" className="text-muted-foreground tabular-nums">
+                      +216 22 418 903
+                    </bdi>
+                  </span>
+                </Card>,
+              ]}
+            </Column>
+            <div className="max-lg:order-first lg:self-center">
+              <div className="rounded-card border bg-background p-5 shadow-md md:p-6">
+                <div className="mb-4 flex items-center gap-3 border-b pb-4">
+                  <Avatar name="Amira Ben Salah" className="size-10" />
+                  <div className="grid min-w-0 flex-1">
+                    <h3 className="truncate font-medium">Amira Ben Salah</h3>
+                    <span className="text-caption text-muted-foreground">{t("hub.stay")}</span>
+                  </div>
+                  <Chip>{t("hub.nights")}</Chip>
+                </div>
+                <JourneyChecklist steps={steps} progress={progress} />
+              </div>
+            </div>
+            <Column label={t("outcomesLabel")}>
+              {[
+                <Card key="alert" icon={BellRingIcon} title={t("outcomes.alert.title")}>
+                  <span className="flex items-center justify-between gap-2">
+                    {stars(2)}
+                    <span className="text-muted-foreground">{t("outcomes.alert.room")}</span>
+                  </span>
+                  <span className="mt-2 block text-pretty">{t("outcomes.alert.quote")}</span>
+                  <span className="mt-3 flex h-8 w-fit items-center gap-1.5 rounded-full bg-foreground px-3 font-medium text-background">
+                    <PhoneIcon aria-hidden className="size-3.5" />
+                    {t("outcomes.alert.action")}
+                  </span>
+                </Card>,
+                <Card key="review" icon={StarIcon} title={t("outcomes.review.title")}>
+                  <span className="flex items-center justify-between gap-2">
+                    {stars(5)}
+                    <span className="flex h-8 items-center rounded-full border bg-background px-3 font-medium">
+                      {survey("shareOnGoogle")}
+                    </span>
+                  </span>
+                </Card>,
+                <Card key="return" icon={RotateCcwIcon} title={t("outcomes.return.title")}>
+                  <span className="flex flex-wrap items-center gap-1.5">
+                    <Chip tone="info">
+                      <StarIcon />
+                      {t("outcomes.return.badge")}
+                    </Chip>
+                    <Chip tone="success">
+                      <GiftIcon />
+                      {t("outcomes.return.offer")}
+                    </Chip>
+                  </span>
+                  <span className="mt-2 block text-muted-foreground">{t("outcomes.return.when")}</span>
+                </Card>,
+              ]}
+            </Column>
+          </div>
+        </div>
       </div>
     </section>
   )

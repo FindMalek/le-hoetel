@@ -1039,44 +1039,58 @@
       "stop": "Chaque message a un lien pour s'arrêter."
     },
     "how": {
-      "title": "D'un QR code à un client qui revient",
-      "lead": "Six étapes auxquelles l'hôtel n'a jamais à penser. La première prend dix secondes au client.",
+      "title": "Une cliente, du QR code à son deuxième séjour",
+      "lead": "Amira scanne le code de la chambre 12. Tout le reste se fait tout seul, et le directeur n'intervient que quand ça compte.",
       "link": "Lire la documentation",
       "stars": "{count} sur 5",
-      "qr": {
-        "chip": "QR code",
-        "title": "Un scan en chambre",
-        "body": "À la réception, à table ou en chambre. Sans application ni compte.",
-        "place": "Chambre 12"
+      "inputsLabel": "Comment les clients arrivent",
+      "outcomesLabel": "Ce que l'hôtel y gagne",
+      "inputs": {
+        "room": {
+          "title": "QR code en chambre",
+          "body": "Chambre 12"
+        },
+        "table": {
+          "title": "À la réception ou à table",
+          "desk": "Réception",
+          "table": "Table 7"
+        },
+        "staff": {
+          "title": "Ajout rapide par le personnel"
+        }
       },
-      "list": {
-        "chip": "Liste clients",
-        "title": "Dans votre liste de clients",
-        "body": "Nom, téléphone, langue et un oui clair par canal."
+      "hub": {
+        "stay": "Chambre 12, du 12 au 15 mars",
+        "nights": "3 nuits",
+        "progress": "{done} étapes sur {total} faites",
+        "steps": {
+          "joined": "Inscrite avec le QR code de la chambre",
+          "welcome": "Bienvenue envoyée sur WhatsApp",
+          "birthday": "Offre d'anniversaire envoyée",
+          "checkout": "Départ",
+          "survey": "Enquête : 2 étoiles sur 5",
+          "alerted": "Directeur alerté",
+          "called": "Rappelée par le directeur",
+          "happy": "Se dit contente maintenant",
+          "review": "Invitation à un avis Google envoyée"
+        }
       },
-      "welcome": {
-        "chip": "WhatsApp",
-        "title": "Un accueil chaleureux",
-        "body": "Sur le canal choisi par le client, dans sa langue.",
-        "message": "Bienvenue à {hotel}, {name}. Votre verre de bienvenue vous attend au bar."
-      },
-      "survey": {
-        "chip": "Enquête",
-        "title": "Une question après le séjour",
-        "body": "Une courte enquête le lendemain du départ."
-      },
-      "alert": {
-        "chip": "Mauvaise note",
-        "title": "Le directeur le sait en premier",
-        "body": "Une mauvaise note arrive au directeur le jour même.",
-        "room": "Chambre 204",
-        "quote": "« La climatisation ne marchait pas. »",
-        "action": "Appeler"
-      },
-      "review": {
-        "chip": "Client content",
-        "title": "Une invitation à un avis Google",
-        "body": "Les clients contents sont invités à le dire sur Google."
+      "outcomes": {
+        "alert": {
+          "title": "Alerte au directeur",
+          "room": "Chambre 12",
+          "quote": "« La climatisation était bruyante la nuit. »",
+          "action": "Appeler"
+        },
+        "review": {
+          "title": "Un avis Google"
+        },
+        "return": {
+          "title": "De retour pour un deuxième séjour",
+          "badge": "Fidèle",
+          "offer": "Offre utilisée",
+          "when": "Juin, à nouveau la chambre 12"
+        }
       }
     },
     "features": {

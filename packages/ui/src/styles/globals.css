@@ -309,3 +309,12 @@
   background:
     conic-gradient(transparent 0 25%, var(--canvas) 0) 0 0 / calc(var(--sky-cell) * 2) calc(var(--sky-cell) * 2);
 }
+
+/* Fades art in from the inline-end bottom corner, like the glow in the How it works panel. */
+@utility mask-corner-end {
+  mask-image: radial-gradient(circle at 100% 100%, black 15%, transparent 68%);
+
+  &:where([dir="rtl"], [dir="rtl"] *) {
+    mask-image: radial-gradient(circle at 0% 100%, black 15%, transparent 68%);
+  }
+}
