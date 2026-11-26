@@ -9,7 +9,7 @@ on:
       - apps/web/**
       - packages/ui/**
       - packages/i18n/**
-      - packages/common/**
+      - packages/common/** - packages/env/**
       - packages/compliance/**
       - packages/logger/**
       - packages/orpc/**
