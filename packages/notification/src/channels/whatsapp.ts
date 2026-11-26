@@ -24,9 +24,12 @@ export interface GuestTemplateMessage {
   params: Record<string, string>
 }
 
+/** A phone number, or the business scoped user id of someone who hides theirs. */
+export type WhatsAppAddress = string | { userId: string }
+
 export interface WhatsAppChannel {
   /** A free-form reply, allowed for 24 hours after the guest wrote to us. */
-  sendText: (to: string, body: string) => Promise<{ id?: string }>
+  sendText: (to: WhatsAppAddress, body: string) => Promise<{ id?: string }>
   /** A named template with named variables, for messages to guests. */
   sendTemplate: (message: GuestTemplateMessage) => Promise<{ id?: string }>
   send: (text: string, options?: { to?: string }) => Promise<{ id?: string }>
@@ -39,7 +42,9 @@ export function createWhatsAppChannel(config: WhatsAppConfig): WhatsAppChannel |
   const client = new WhatsAppClient({ baseUrl: KAPSO_BASE_URL, kapsoApiKey: apiKey, fetch: config.fetch })
   return {
     async sendText(to, body) {
-      const response = await client.messages.sendText({ phoneNumberId, to, body })
+      // Meta takes a user id in `recipient`, never in `to`.
+      const address = typeof to === "string" ? { to } : { recipient: to.userId }
+      const response = await client.messages.sendText({ phoneNumberId, ...address, body })
       return { id: response.messages?.[0]?.id }
     },
     async sendTemplate({ to, name, language, params }) {

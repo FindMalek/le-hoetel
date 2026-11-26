@@ -265,9 +265,23 @@ export interface KapsoPayload {
     /** Unix seconds. */
     timestamp?: string
     from?: string
+    /** Business scoped user id. With a WhatsApp username it can be the only sender field: `from` is left out. */
+    from_user_id?: string
+    /** The message this one replies to. */
+    context?: { id?: string }
     type?: string
     text?: { body?: string }
     kapso?: { direction?: string; statuses?: Array<{ status?: string; errors?: Array<{ code?: number | string }> }> }
+  }
+  conversation?: { phone_number?: string | null; business_scoped_user_id?: string | null }
+}
+
+/** Who wrote to us: the phone when WhatsApp shares it, and the business scoped user id. */
+export function kapsoSender({ message, conversation }: KapsoPayload) {
+  const digits = (message?.from ?? conversation?.phone_number)?.replace(/\D/g, "")
+  return {
+    phoneE164: digits && digits.length <= 15 ? `+${digits}` : null,
+    userId: message?.from_user_id ?? conversation?.business_scoped_user_id ?? null,
   }
 }
 
