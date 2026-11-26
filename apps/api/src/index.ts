@@ -7,18 +7,18 @@ import { loadApiEnv } from "@ritorno/env/api"
 import { authEmails, createNotifier } from "@ritorno/notification"
 import { createRateLimiter } from "@ritorno/orpc"
 import { createStorage } from "@ritorno/storage"
-import * as Sentry from "@sentry/bun"
 import { ensureAdmin } from "./admin"
 import { serviceConfig } from "./config"
 import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 import { startOpenObserve } from "./openobserve"
 import { PREVIEW_ORIGINS } from "./origins"
+import { initSentry } from "./sentry"
 import { createServer } from "./server"
 
 const env = loadApiEnv()
 startLogger(env)
-Sentry.init({ dsn: env.GLITCHTIP_DSN, environment: env.DEPLOY_ENV })
+initSentry(env)
 startOpenObserve(env)
 const db = createDb(env.DATABASE_URL)
 await runMigrations(db)

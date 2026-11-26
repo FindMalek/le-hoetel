@@ -27,6 +27,7 @@
     "@ritorno/common": "workspace:*",
     "@ritorno/db": "workspace:*",
     "@ritorno/jobs": "workspace:*",
+    "@ritorno/logger": "workspace:*",
     "@ritorno/notification": "workspace:*",
     "@ritorno/storage": "workspace:*",
     "@orpc/client": "catalog:",
