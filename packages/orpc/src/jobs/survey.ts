@@ -2,7 +2,7 @@ import { isQuietHour, localTime } from "@ritorno/common/hotel-time"
 import { SURVEY_HOURS_AFTER_STAY, SURVEY_INVITE_DAYS, signSurveyToken, surveyPageUrl } from "@ritorno/common/survey"
 import { guests, hotelSettings, surveyInvites } from "@ritorno/db"
 import { defineJob } from "@ritorno/jobs"
-import { and, eq, isNull, ne, sql } from "drizzle-orm"
+import { and, eq, isNotNull, isNull, ne, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import { claimAndSend, consentedChannels, type SendPacing } from "../lib/automations"
 import { surveyExpiry } from "../lib/surveys"
@@ -14,7 +14,8 @@ export const SURVEY_JOB = "survey-invites"
 const dueAt = sql`coalesce((${guests.stayCheckOut} + time '12:00') at time zone ${hotelSettings.timezone}, ${guests.createdAt}) + make_interval(hours => ${SURVEY_HOURS_AFTER_STAY})`
 
 /**
- * Runs every hour. A guest is due 24 hours after check-out (or after being captured when no check-out is known),
+ * Runs every hour. A guest is due 24 hours after check-out (or after being captured when no check-out is known,
+ * never for a csv import),
  * outside the hotel's quiet hours, and only for 14 days, so a fresh deploy never surveys old guests. One invite per
  * guest (unique) and one claim per channel keep it to one message each however often this runs, and a crash
  * between the invite and the send is picked up by the next run.
@@ -48,6 +49,8 @@ export const surveyJob = (services: JobServices, pacing?: SendPacing) =>
             and(
               eq(guests.hotelId, hotelId),
               isNull(surveyInvites.sentAt),
+              // An imported list has no capture moment, so only a real check-out can make it due.
+              or(ne(guests.source, "csv"), isNotNull(guests.stayCheckOut)),
               sql`${dueAt} <= ${at.toISOString()}::timestamptz`,
               sql`${dueAt} > ${new Date(at.getTime() - SURVEY_INVITE_DAYS * 864e5).toISOString()}::timestamptz`,
             ),

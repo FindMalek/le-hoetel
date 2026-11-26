@@ -209,7 +209,7 @@ export const guestsRouter = {
           const { id, merged } = await context.db.transaction((tx) =>
             upsertGuest(tx, hotelId, parsed.data, context.now()),
           )
-          await enqueueWelcome(context, hotelId, id, parsed.data.consents)
+          // No welcome on import: an old list would get a burst of welcomes for stays long past.
           if (merged) result.merged++
           else result.created++
         } catch {
