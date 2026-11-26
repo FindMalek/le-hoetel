@@ -17,7 +17,7 @@ export async function getPreviewCopies(): Promise<PreviewCopies> {
         locale,
         {
           welcome: raw(capture, "welcome"),
-          intro: raw(capture, "intro"),
+          intro: raw(capture, "perkBody"),
           name: raw(capture, "name"),
           phone: raw(capture, "phone"),
           submit: raw(capture, "submit"),

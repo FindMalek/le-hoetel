@@ -54,7 +54,7 @@ function CapturePreview({ draft, copy }: { draft: BrandDraft; copy: PreviewCopy 
           <p className="text-balance font-heading font-semibold text-xl leading-tight tracking-tight">
             {fill(copy.welcome, values)}
           </p>
-          <p className="text-pretty text-muted-foreground text-sm">{copy.intro}</p>
+          <p className="text-pretty text-muted-foreground text-sm">{fill(copy.intro, values)}</p>
         </div>
         <div className="flex flex-col gap-3">
           {[copy.name, copy.phone].map((label) => (

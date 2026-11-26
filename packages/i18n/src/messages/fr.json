@@ -476,7 +476,11 @@
     "count": "{count, plural, one {# client} other {# clients}}",
     "dangerTitle": "Tout supprimer",
     "dangerDescription": "Quand l'hôtel arrête d'utiliser Ritorno ou qu'une liste doit être effacée. C'est irréversible.",
-    "deleteAllText": "{count, plural, one {Cela supprime # client} other {Cela supprime # clients}} et leur historique de consentement. Exportez d'abord si vous voulez une copie."
+    "deleteAllText": "{count, plural, one {Cela supprime # client} other {Cela supprime # clients}} et leur historique de consentement. Exportez d'abord si vous voulez une copie.",
+    "deletedTitle": "Supprimé définitivement",
+    "deletedList": "Chaque client, son journal de consentement, ses séjours, ses messages et les offres qui lui ont été envoyées.",
+    "keptTitle": "Conservé",
+    "keptList": "Votre équipe, votre marque, vos offres, vos campagnes et votre solde WhatsApp. Les notes du questionnaire restent, sans aucun nom."
   },
   "unsubscribe": {
     "title": "Vos messages de {hotel}",
@@ -645,12 +649,11 @@
   },
   "hotelSettings": {
     "title": "Hôtel",
-    "description": "Le logo et l’identité visuelle de votre hôtel.",
+    "description": "Votre marque, vos messages, vos alertes et votre lien d'avis. Chaque partie s'enregistre seule.",
     "logo": "Logo",
     "logoHint": "PNG, JPEG ou WebP, 1 Mo maximum.",
     "upload": "Téléverser le logo",
     "remove": "Supprimer le logo",
-    "saved": "Logo enregistré.",
     "invalidFile": "Utilisez une image PNG, JPEG ou WebP de 1 Mo maximum.",
     "noHotel": "Choisissez d’abord un hôtel.",
     "primaryColor": "Couleur principale",
@@ -667,30 +670,25 @@
       "required": "Obligatoire.",
       "color": "Utilisez une couleur hexadécimale comme #0a7c66.",
       "email": "Saisissez un e-mail valide.",
-      "https": "Utilisez un lien complet commençant par https://.",
-      "phone": "Utilisez un numéro international comme +216 20 123 456."
+      "https": "Utilisez un lien complet commençant par https://."
     },
     "readOnly": "Seuls les propriétaires et responsables peuvent modifier ces réglages.",
     "sections": {
-      "identity": {
-        "title": "Identité",
-        "description": "Le nom que les clients voient dans les messages et les pages."
-      },
       "brand": {
-        "title": "Couleurs de la marque",
-        "description": "Deux couleurs pour les pages et e-mails des clients."
-      },
-      "language": {
-        "title": "Langue et heure",
-        "description": "Ce que lisent les clients et le fuseau des dates."
-      },
-      "contact": {
-        "title": "Contact",
-        "description": "Où les clients peuvent vous joindre et vous noter."
+        "title": "Marque",
+        "description": "Le logo, le nom, les couleurs et la langue que les clients voient sur vos pages et e-mails."
       },
       "alerts": {
-        "title": "Alertes pour le responsable",
-        "description": "Où nous vous prévenons des clients mécontents."
+        "title": "Alertes",
+        "description": "Où nous vous prévenons quand un client est mécontent."
+      },
+      "messaging": {
+        "title": "Messages",
+        "description": "À qui les clients répondent, ce qui termine chaque e-mail, et votre heure locale."
+      },
+      "review": {
+        "title": "Avis Google",
+        "description": "Les clients satisfaits sont invités à laisser un avis ici après le questionnaire."
       }
     },
     "displayName": "Nom de l'hôtel",
@@ -706,11 +704,7 @@
     "address": "Adresse",
     "addressHint": "Affichée en bas des e-mails.",
     "reviewUrl": "Lien d'avis Google",
-    "reviewUrlHint": "Les clients satisfaits sont envoyés ici.",
-    "whatsapp": "WhatsApp du responsable",
-    "whatsappHint": "Format international, comme +216 20 123 456.",
-    "telegram": "Telegram",
-    "telegramHint": "Facultatif. Identifiant de discussion pour les alertes.",
+    "reviewUrlHint": "Le lien de partage de votre fiche Google Business.",
     "optional": "Facultatif",
     "discard": "Annuler les modifications",
     "preview": {
@@ -724,11 +718,17 @@
       "emailCta": "Voir mon offre",
       "emailFooter": "Vous recevez cet e-mail car vous l'avez donné à {hotel}.",
       "unsubscribe": "Se désabonner"
-    }
+    },
+    "savedInline": "Enregistré",
+    "unsaved": "Modifications non enregistrées",
+    "quietHours": "Heures calmes",
+    "quietHoursText": "Aucun message automatique ne part entre <from></from> et <until></until>, heure de l'hôtel.",
+    "threshold": "Alerte note basse",
+    "thresholdHint": "Vous êtes alerté quand un client donne cette note ou moins sur 10 au questionnaire.",
+    "thresholdOption": "{score} ou moins"
   },
   "managerAlerts": {
-    "title": "Alertes gérant sur Telegram",
-    "description": "Recevez une alerte sur votre téléphone quand quelque chose demande votre attention, comme un client mécontent. Ça prend 30 secondes.",
+    "title": "Telegram",
     "linked": "Connecté. Les alertes arrivent dans votre discussion Telegram.",
     "notLinked": "Pas encore connecté.",
     "notConfigured": "Les alertes Telegram ne sont pas encore activées sur la plateforme. Nous vous envoyons vos alertes par e-mail pour l'instant.",
@@ -743,7 +743,12 @@
     "testNone": "Aucune discussion Telegram ni e-mail où envoyer.",
     "disconnect": "Déconnecter",
     "disconnected": "Telegram déconnecté.",
-    "refresh": "J'ai appuyé sur Démarrer"
+    "refresh": "J'ai appuyé sur Démarrer",
+    "badge": {
+      "connected": "Connecté",
+      "notConnected": "Non connecté",
+      "unavailable": "Indisponible"
+    }
   },
   "qrCodes": {
     "title": "Codes QR",
@@ -1662,8 +1667,8 @@
     }
   },
   "settings": {
-    "title": "Paramètres",
-    "description": "Votre profil, mot de passe et données.",
+    "title": "Compte",
+    "description": "Votre profil, votre langue, votre mot de passe, vos appareils et vos données.",
     "sections": {
       "profile": {
         "title": "Profil",
@@ -1671,7 +1676,7 @@
       },
       "preferences": {
         "title": "Préférences",
-        "description": "Langue et thème pour votre propre écran."
+        "description": "La langue de l'application sur vos écrans."
       },
       "password": {
         "title": "Mot de passe",
@@ -1724,7 +1729,10 @@
     "sessionEnded": "Appareil déconnecté.",
     "endSession": "Déconnecter",
     "othersEnded": "Autres appareils déconnectés.",
-    "endOthers": "Déconnecter les autres appareils"
+    "endOthers": "Déconnecter les autres appareils",
+    "signOutEverywhere": "Se déconnecter partout",
+    "signOutEverywhereTitle": "Se déconnecter de tous les appareils ?",
+    "signOutEverywhereBody": "Tous les appareils, celui-ci compris, sont déconnectés tout de suite. Vous vous reconnectez avec votre mot de passe."
   },
   "team": {
     "title": "Équipe",
@@ -1769,7 +1777,6 @@
     "resent": "Invitation renvoyée à {email}.",
     "resend": "Renvoyer",
     "cancelled": "Invitation annulée.",
-    "cancel": "Annuler l'invitation",
     "emptyTitle": "Personne d'autre pour l'instant",
     "emptyHint": "Invitez un collègue pour partager la réception.",
     "inviteTitle": "Inviter un collègue",
@@ -1779,7 +1786,10 @@
     "removeTitle": "Retirer {name} ?",
     "removeBody": "Cette personne perd l'accès à cet hôtel immédiatement.",
     "cancelAction": "Garder",
-    "removed": "Membre retiré."
+    "removed": "Membre retiré.",
+    "revoke": "Révoquer",
+    "revokeTitle": "Révoquer l'invitation de {email} ?",
+    "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard."
   },
   "usage": {
     "title": "Consommation WhatsApp",
@@ -1787,7 +1797,7 @@
     "balance": "Solde",
     "month": "Dépensé ce mois-ci",
     "monthMessages": "{count, plural, one {# message WhatsApp} other {# messages WhatsApp}}",
-    "low": "Le solde est bas. Les messages WhatsApp s'arrêtent à zéro, l'e-mail n'est pas touché. Demandez-nous une recharge.",
+    "low": "Il vous reste moins de <min></min>. Les messages WhatsApp s'arrêtent à zéro, l'e-mail continue. Demandez-nous une recharge.",
     "history": "Derniers mouvements",
     "empty": "Aucun mouvement pour l'instant. Votre première recharge apparaîtra ici.",
     "kinds": {
@@ -1795,7 +1805,11 @@
       "usage": "Message WhatsApp",
       "refund": "Remboursement (non remis)"
     },
-    "forbidden": "Seuls les propriétaires et les gérants voient le solde."
+    "forbidden": "Seuls les propriétaires et les gérants voient le solde.",
+    "lowTitle": "Solde bas",
+    "lowBadge": "Bas",
+    "okBadge": "Suffisant pour l'instant",
+    "historyHint": "Recharges, messages et remboursements, du plus récent au plus ancien."
   },
   "survey": {
     "invalidTitle": "Ce lien n'est pas valide",
