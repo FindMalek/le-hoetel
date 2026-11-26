@@ -26,6 +26,8 @@ export interface ConsentChange {
   source: ConsentSource
   at: Date
   ipHash?: string | null
+  /** Only when a signed-in staff member made the change. */
+  staffUserId?: string
 }
 
 /**
@@ -62,6 +64,7 @@ export async function recordConsent(db: Db | Tx, change: ConsentChange): Promise
     source: change.source,
     wordingVersion: CONSENT_WORDING_VERSION,
     ipHash: change.ipHash ?? null,
+    staffUserId: change.staffUserId ?? null,
     at: change.at,
   })
   return true
@@ -108,6 +111,7 @@ export async function upsertGuest(
   hotelId: string,
   input: GuestInput,
   at: Date,
+  staffUserId?: string,
 ): Promise<{ id: string; merged: boolean; consentKept: boolean }> {
   const { consents, phone, ...fields } = input
   const [created] = await tx
@@ -161,7 +165,7 @@ export async function upsertGuest(
       consentKept = true
       continue
     }
-    await recordConsent(tx, { hotelId, guestId: id, channel, granted, source: fields.source, at })
+    await recordConsent(tx, { hotelId, guestId: id, channel, granted, source: fields.source, at, staffUserId })
   }
   return { id, merged: !created, consentKept }
 }

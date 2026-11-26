@@ -50,6 +50,27 @@ test("consent: every change is a logged event with its wording version, an uncha
   expect(events.some((event) => event.channel === "profile" && !event.granted)).toBe(true)
 })
 
+test("consent: the log names the staff member behind a change, never for the guest's own scan", async () => {
+  const owner = await app.signUp("consent-staff@ritorno.test")
+  const hotelId = await app.createHotel("consent-staff", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  await app.anonymous.public.capture({
+    slug: "consent-staff",
+    renderedAt: Date.now() - 3_600_000,
+    name: "Amel",
+    phone: newGuest.phone,
+    language: "fr",
+    source: "table",
+    consents: { email: false, whatsapp: true },
+  })
+  const [guest] = (await client.guests.list({})).items
+  await client.guests.setConsent({ guestId: guest!.id, channel: "whatsapp", granted: false, source: "staff" })
+
+  const events = await app.services.db.select().from(consentEvents).where(eq(consentEvents.hotelId, hotelId))
+  expect(events.filter((e) => e.source === "staff").map((e) => e.staffUserId)).toEqual([owner.id])
+  expect(events.filter((e) => e.source === "qr_table").every((e) => e.staffUserId === null)).toBe(true)
+})
+
 test("tiers: extra details need the profile consent and go away with it", async () => {
   const { client } = await hotelAs("tiers")
   await expect(client.guests.create({ ...newGuest, city: "Lyon" })).rejects.toThrow()

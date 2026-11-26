@@ -145,8 +145,22 @@
     {
       "idx": 24,
       "version": "7",
-      "when": 1795707958580,
-      "tag": "0024_colossal_lifeguard",
+      "when": 1795707519612,
+      "tag": "0024_glorious_jack_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1795708170966,
+      "tag": "0025_omniscient_cassandra_nova",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1795708520049,
+      "tag": "0026_green_blacklash",
       "breakpoints": true
     }
   ]

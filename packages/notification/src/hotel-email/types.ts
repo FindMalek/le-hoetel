@@ -1,7 +1,7 @@
+import { HOTEL_EMAIL_KEYS, type HotelEmailKey } from "@ritorno/common/message"
 import type { Locale } from "@ritorno/i18n/config"
 
-export const HOTEL_EMAIL_KEYS = ["welcome", "birthday", "survey", "reminder", "message"] as const
-export type HotelEmailKey = (typeof HOTEL_EMAIL_KEYS)[number]
+export { HOTEL_EMAIL_KEYS, type HotelEmailKey }
 
 export interface EmailHotel {
   name: string

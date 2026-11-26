@@ -1,5 +1,5 @@
 {
-  "id": "3d680d0e-4f76-49b6-ae4a-4637e2f28129",
+  "id": "d458f96a-fd97-436a-9d26-b3d4bc04a08e",
   "prevId": "a4308a28-76cd-4e76-be76-831b040cd8e2",
   "version": "7",
   "dialect": "postgresql",
@@ -1936,19 +1936,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "weekly_digest": {
-          "name": "weekly_digest",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "last_digest_week": {
-          "name": "last_digest_week",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
         "plan": {
           "name": "plan",
           "type": "hotel_plan",
@@ -2234,6 +2221,12 @@
         "error_code": {
           "name": "error_code",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "preview": {
+          "name": "preview",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },

@@ -8,6 +8,7 @@ import {
   type HotelPlan,
   type HotelStatus,
 } from "@ritorno/common/hotel"
+import { hotelAdminUpdateSchema } from "@ritorno/common/schemas"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -23,8 +24,6 @@ import { toast } from "sonner"
 import { AdminInput, AdminSelect, ColorInput, isHex } from "@/components/admin-fields"
 import { CapturePreview } from "@/components/hotel-previews"
 import { logoSrc, TIMEZONES } from "@/lib/admin"
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 interface BrandingHotel {
   id: string
@@ -57,7 +56,9 @@ export function AdminBrandingForm({ hotel }: { hotel: BrandingHotel }) {
     displayName: values.displayName.trim() ? null : t("errors.displayName"),
     primaryColor: values.primaryColor && !isHex(values.primaryColor) ? t("errors.color") : null,
     accentColor: values.accentColor && !isHex(values.accentColor) ? t("errors.color") : null,
-    replyToEmail: values.replyToEmail && !EMAIL.test(values.replyToEmail) ? t("errors.email") : null,
+    replyToEmail: hotelAdminUpdateSchema.shape.replyToEmail.safeParse(values.replyToEmail.trim() || null).success
+      ? null
+      : t("errors.email"),
   }
   const shown = (key: keyof typeof errors) => (touched[key] ? errors[key] : null)
 

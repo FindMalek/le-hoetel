@@ -1,4 +1,5 @@
 {
-  "workspaceId": "",
-  "defaultEnvironment": "dev"
+  "workspaceId": "2e84e85a-bad2-4fbc-8ae3-338ace9b2ca0",
+  "defaultEnvironment": "dev",
+  "domain": "https://secrets.findmalek.engineer"
 }

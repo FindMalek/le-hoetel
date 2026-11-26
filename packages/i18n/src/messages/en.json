@@ -811,7 +811,7 @@
   },
   "messages": {
     "title": "Messages",
-    "description": "Every message sent to your guests and how it ended. Never the text or the contact.",
+    "description": "Every message sent to your guests and how it ended. Never the contact.",
     "guest": "Guest",
     "channel": "Channel",
     "template": "Message",
@@ -850,6 +850,17 @@
       "anyTemplate": "Any message",
       "days": "{count} days",
       "reset": "Clear filters"
+    },
+    "preview": {
+      "tag": "Development: not sent",
+      "view": "Preview",
+      "viewFor": "Preview the message to {name}",
+      "title": "Message preview",
+      "hint": "This message was not sent. This is what the guest would have received.",
+      "subject": "Subject",
+      "close": "Close",
+      "loading": "Loading the preview",
+      "error": "The preview could not be loaded."
     },
     "range": "<from></from>–<to></to> of <total></total>",
     "previous": "Previous",

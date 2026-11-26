@@ -2,7 +2,7 @@
 
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { QUIET_HOURS } from "@ritorno/common/hotel-time"
-import type { Hotel } from "@ritorno/common/schemas"
+import { type Hotel, hotelUpdateSchema } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
@@ -41,7 +41,6 @@ const TIMEZONES = [
   "UTC",
 ]
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const HTTPS = /^https:\/\/\S+\.\S+/
 const THRESHOLDS = Array.from({ length: 11 }, (_, score) => score)
 
@@ -260,7 +259,10 @@ function MessagingSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean
   const t = useTranslations("hotelSettings")
   const { form, state } = useSection(
     { replyToEmail: hotel.replyToEmail ?? "", address: hotel.address ?? "", timezone: hotel.timezone },
-    (v) => (v.replyToEmail && !EMAIL.test(v.replyToEmail.trim()) ? { replyToEmail: t("errors.email") } : {}),
+    (v) =>
+      hotelUpdateSchema.shape.replyToEmail.safeParse(v.replyToEmail.trim() || null).success
+        ? {}
+        : { replyToEmail: t("errors.email") },
     (v) => ({ replyToEmail: v.replyToEmail.trim() || null, address: v.address.trim() || null, timezone: v.timezone }),
   )
   const timezones = TIMEZONES.includes(form.values.timezone) ? TIMEZONES : [form.values.timezone, ...TIMEZONES]
