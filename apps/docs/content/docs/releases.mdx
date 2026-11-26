@@ -8,8 +8,8 @@ One version for the whole monorepo, tagged `vX.Y.Z`, starting at `0.1.0`.
 ## Flow
 
 1. every merge to `main` deploys **staging** (`staging.yml`, after `ci` is green)
-2. run the `release` workflow by hand on `main` (Actions tab) with a `bump` (`minor`, `patch` or `major`). `dry_run` is `true` by default and only prints the next version and the notes in the job summary
-3. run it again with `dry_run` off. It tags `vX.Y.Z` on the current `main`, creates the GitHub release and deploys **production** from the tag. Edit the release notes on GitHub afterwards if needed. Publishing a release by hand from the GitHub ui deploys too
+2. once staging proves the new commit live (`/health` reports its sha) and `ci` passed on it, `staging.yml` calls the `release` workflow for that exact commit: it tags `vX.Y.Z` (minor if a `type:feature` PR was merged since the last tag, patch otherwise, no release when nothing was merged), creates the GitHub release and deploys **production** from the tag. Nothing to click
+3. by hand (Actions tab, `release` workflow) only for a `major` bump, a dry run (`dry_run` prints the next version and the notes) or a rollback (`tag`). Edit the release notes on GitHub afterwards if needed. Publishing a release by hand from the GitHub ui deploys too
 4. optional: run the `release email` workflow by hand. It sends the notes of the GitHub release. `dry_run` is `true` by default and only prints the email. Setting it to `false` sends a Resend broadcast to `RESEND_AUDIENCE_ID`. It never runs by itself and only repo admins and maintainers can run it
 
 The notes list every PR merged since the last tag by title, grouped by its `type:*` label: `type:feature` under what is new, `type:bug` under fixes, then docs, maintenance and other. PR titles stay plain short descriptions, nothing has to be conventional. Below 1.0, bump `minor` for a milestone and `patch` for fixes in between.

@@ -1,12 +1,20 @@
 name: release
 
-# Manual. Run from the Actions tab on main: bumps the last vX.Y.Z tag, writes notes from the PRs merged since
-# (grouped by type:* label), tags, creates the GitHub release and deploys production from the tag.
-# dry_run (default) only prints the version and the notes. A release published by hand also deploys.
+# Automatic: when the staging deploy of a main commit succeeds, the next version is tagged on that exact commit (minor
+# when a type:feature PR was merged since the last tag, patch otherwise, nothing when no PR was merged), notes come
+# from the merged PR titles grouped by type:* label, the GitHub release is created and production deploys from the tag.
+# Manual run from the Actions tab: choose the bump (major only this way); dry_run (default) only prints the version and
+# the notes. A release published by hand also deploys.
 # Rollback: set `tag` to an older tag, nothing is released and that tag is redeployed.
 # Needs the same Dokploy variables as staging plus DOKPLOY_PRODUCTION_COMPOSE_ID and PRODUCTION_API_URL.
 
 on:
+  workflow_call:
+    inputs:
+      sha:
+        description: the commit staging proved healthy
+        type: string
+        required: true
   release:
     types: [published]
   workflow_dispatch:
@@ -14,8 +22,8 @@ on:
       bump:
         description: version part to bump
         type: choice
-        options: [minor, patch, major]
-        default: minor
+        options: [auto, minor, patch, major]
+        default: auto
       dry_run:
         description: only print the version and notes
         type: boolean
@@ -30,11 +38,15 @@ permissions:
 
 jobs:
   release:
-    if: github.event_name == 'workflow_dispatch' && inputs.tag == ''
+    if: inputs.sha != '' || (github.event_name == 'workflow_dispatch' && inputs.tag == '')
     runs-on: ubuntu-latest
+    concurrency:
+      group: release
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: read
+      checks: read
     outputs:
       tag: ${{ steps.publish.outputs.tag }}
     steps:
@@ -44,19 +56,30 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          # the commit staging just deployed, not whatever main points to now
+          ref: ${{ inputs.sha || github.sha }}
+      - name: ci passed on this commit
+        if: inputs.sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ inputs.sha }}
+        run: |
+          state=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/check-runs?check_name=ci" --jq '[.check_runs[].conclusion] | if length == 0 then "none" elif all(. == "success") then "success" else "failed" end')
+          [ "$state" = success ] || { echo "ci is $state on $SHA, no release"; exit 1; }
       - id: notes
         run: node .github/scripts/release-notes.mjs
         env:
-          BUMP: ${{ inputs.bump }}
+          BUMP: ${{ inputs.bump || 'auto' }}
           GH_TOKEN: ${{ github.token }}
       - run: cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
       - id: publish
-        if: ${{ !inputs.dry_run }}
+        if: ${{ steps.notes.outputs.skip != 'true' && (inputs.sha != '' || !inputs.dry_run) }}
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.notes.outputs.tag }}
+          TARGET: ${{ inputs.sha || github.sha }}
         run: |
-          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes-file release-notes.md
+          gh release create "$TAG" --target "$TARGET" --title "$TAG" --notes-file release-notes.md
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
   deploy-production:
