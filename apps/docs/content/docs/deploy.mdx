@@ -39,7 +39,9 @@ Create a project with a postgres database, add one application per app with buil
 | variable | `DOKPLOY_URL` | base url of Dokploy |
 | variable | `DOKPLOY_STAGING_COMPOSE_ID` | id of the staging compose service |
 | secret | `DOKPLOY_TOKEN` | Dokploy api key |
-| variable | `STAGING_API_URL` | optional, the job waits for its `/health` |
+| variable | `STAGING_API_URL` | optional, overrides the api url the job checks |
+
+After deploying, the job waits until the api, web, dashboard and docs all report the new commit, see [deploy runbook](/docs/deploy-runbook).
 
 Setup, once, in Dokploy:
 
