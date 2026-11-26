@@ -73,7 +73,7 @@ test("tiers: extra details need the profile consent and go away with it", async 
   await expect(client.guests.update({ id: guest.id, city: "Paris" })).rejects.toMatchObject({ code: "BAD_REQUEST" })
 })
 
-test("one phone is one guest per hotel: a second capture merges, and only a guest can withdraw consent", async () => {
+test("one phone is one guest per hotel: a second capture merges and never withdraws consent", async () => {
   const one = await hotelAs("phone-one")
   const two = await hotelAs("phone-two")
   const first = await one.client.guests.create({
@@ -104,9 +104,9 @@ test("one phone is one guest per hotel: a second capture merges, and only a gues
     phone: "+216 20 123 456",
     consents: { email: true, whatsapp: false, profile: false },
   })
-  expect(rescan.consents.whatsapp).toBe(false)
+  expect(rescan.consents.whatsapp).toBe(true)
   const events = await one.client.guests.consentHistory({ id: first.id })
-  expect(events.filter((event) => event.channel === "whatsapp").map((event) => event.granted)).toEqual([false, true])
+  expect(events.filter((event) => event.channel === "whatsapp").map((event) => event.granted)).toEqual([true])
 
   await expect(two.client.guests.create(newGuest)).resolves.toMatchObject({ merged: false })
   expect((await one.client.guests.list({})).total).toBe(1)
