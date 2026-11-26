@@ -17,7 +17,8 @@ export const formatDotenv = (values) =>
     .map(([k, v]) => `${k}=${String(v).replace(/\r?\n/g, "\\n")}`)
     .join("\n")
 
-export async function infisicalLogin(env = process.env) {
+export async function pullSecrets(environment, env = process.env) {
+  if (!ENVIRONMENTS.includes(environment)) throw new Error(`environment must be one of ${ENVIRONMENTS.join(", ")}`)
   if (!infisicalConfigured(env))
     throw new Error("set INFISICAL_URL, INFISICAL_PROJECT_ID, INFISICAL_CLIENT_ID and INFISICAL_CLIENT_SECRET")
   const base = env.INFISICAL_URL.replace(/\/+$/, "")
@@ -28,28 +29,6 @@ export async function infisicalLogin(env = process.env) {
   })
   if (!login.ok) throw new Error(`infisical login failed (${login.status})`)
   const { accessToken } = await login.json()
-  return { base, accessToken }
-}
-
-export async function pushSecret(environment, key, value, env = process.env) {
-  const { base, accessToken } = await infisicalLogin(env)
-  const res = await fetch(`${base}/api/v3/secrets/raw/${encodeURIComponent(key)}`, {
-    method: "POST",
-    headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      workspaceId: env.INFISICAL_PROJECT_ID,
-      environment,
-      secretPath: "/",
-      secretValue: value,
-      type: "shared",
-    }),
-  })
-  if (!res.ok) throw new Error(`infisical write of ${key} to ${environment} failed (${res.status})`)
-}
-
-export async function pullSecrets(environment, env = process.env) {
-  if (!ENVIRONMENTS.includes(environment)) throw new Error(`environment must be one of ${ENVIRONMENTS.join(", ")}`)
-  const { base, accessToken } = await infisicalLogin(env)
   const query = new URLSearchParams({
     workspaceId: env.INFISICAL_PROJECT_ID,
     environment,
