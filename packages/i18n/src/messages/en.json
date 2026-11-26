@@ -1733,6 +1733,7 @@
       "stop": "Reply STOP to stop these messages."
     },
     "errors": {
+      "count": "Could not count the guests. Close and try again.",
       "name": "Give the campaign a name.",
       "subject": "Write a subject for this language.",
       "body": "Write the message for this language.",

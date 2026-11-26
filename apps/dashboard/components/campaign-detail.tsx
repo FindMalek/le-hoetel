@@ -48,6 +48,7 @@ export function CampaignDetail({
   )
   const { guests: audience, refresh: refreshAudience } = useAudience(campaign)
   const [counted, setCounted] = useState(false)
+  const [countFailed, setCountFailed] = useState(false)
   const { data: offers } = useQuery(orpc.offers.list.queryOptions())
   const offerTitle = offers?.find((offer) => offer.id === campaign.offerId)?.title ?? null
   const languages = HOTEL_LANGUAGES.filter((language) => campaign.content[language])
@@ -66,7 +67,11 @@ export function CampaignDetail({
       setConfirmKind(next)
       // the count in a confirm is always fetched again, never the cached one
       setCounted(false)
-      void refreshAudience().then(setCounted)
+      setCountFailed(false)
+      void refreshAudience().then((ok) => {
+        setCounted(ok)
+        setCountFailed(!ok)
+      })
     }
     setConfirmOpen(next !== null)
   }
@@ -115,7 +120,9 @@ export function CampaignDetail({
   const noAudience = audience === 0
 
   const countedTitle = (key: "confirm.sendTitle" | "confirm.scheduleTitle") =>
-    counted && audience !== null ? t.rich(key, { count: audience, n: () => num(audience) }) : t("counting")
+    counted && audience !== null
+      ? t.rich(key, { count: audience, n: () => num(audience) })
+      : t(countFailed ? "errors.count" : "counting")
   const needsCount = confirm === "send" || confirm === "schedule" || (confirm === "delete" && isDraft)
   const confirmBlocked = needsCount && (!counted || ((confirm === "send" || confirm === "schedule") && !audience))
   const confirmCopy: Record<Confirm, { title: React.ReactNode; body: string; label: string; destructive?: boolean }> = {
@@ -143,7 +150,7 @@ export function CampaignDetail({
       body: isDraft
         ? counted
           ? t("confirm.deleteDraftBody", { count: audience ?? 0, channel })
-          : t("counting")
+          : t(countFailed ? "errors.count" : "counting")
         : t("confirm.deleteBody", { count: results.targeted, channel }),
       label: t("detail.delete"),
       destructive: true,

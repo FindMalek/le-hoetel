@@ -1733,6 +1733,7 @@
       "stop": "Répondez STOP pour ne plus recevoir ces messages."
     },
     "errors": {
+      "count": "Impossible de compter les clients. Fermez et réessayez.",
       "name": "Donnez un nom à la campagne.",
       "subject": "Écrivez un objet pour cette langue.",
       "body": "Écrivez le message pour cette langue.",
