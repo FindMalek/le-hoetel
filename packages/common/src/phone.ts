@@ -1,5 +1,5 @@
 import { parsePhoneNumberFromString } from "libphonenumber-js/min"
-import { toLatinDigits } from "./dial"
+import { type PhoneValue, toInternational, toLatinDigits } from "./dial"
 
 export const DEFAULT_PHONE_COUNTRY = "TN"
 
@@ -28,6 +28,18 @@ export function parsePhone(input: string, defaultCountry: string = DEFAULT_PHONE
   const parsed = parsePhoneNumberFromString(value, defaultCountry as "TN")
   if (!parsed?.isValid()) return null
   return { e164: parsed.number, country: parsed.country ?? null, whatsappCapable: isWhatsappCapable(parsed.number) }
+}
+
+/**
+ * A preselected country is only a guess from the browser: a local number that is invalid there and valid in Tunisia
+ * is Tunisian. A country the guest picked or typed has no `detected` and is never changed.
+ */
+export function settleCountry(value: PhoneValue): PhoneValue {
+  const { detected, national } = value
+  if (!detected || /^(\+|00)/.test(national)) return value
+  const valid = (country: string) => parsePhone(toInternational({ country, national })) !== null
+  const country = !valid(detected) && valid(DEFAULT_PHONE_COUNTRY) ? DEFAULT_PHONE_COUNTRY : detected
+  return { ...value, country }
 }
 
 /** For display: `+21696818091` becomes `+216 96 818 091`. Anything that doesn't parse is shown as stored. */

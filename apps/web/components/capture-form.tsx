@@ -140,6 +140,7 @@ export function CaptureForm(props: {
     }
     const data = new FormData(event.currentTarget)
     setStatus("sending")
+    data.set("phone", await phone.settle())
     // The action rejects when the request itself is lost (offline, dropped wifi).
     const result = await captureAction("idle", data).catch(() => "failed" as const)
     setStatus(result)
@@ -223,7 +224,10 @@ export function CaptureForm(props: {
                 phone.setValue(next)
                 clearRejected()
               }}
-              onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
+              onBlur={() => {
+                setTouched((current) => ({ ...current, phone: true }))
+                void phone.settle()
+              }}
               locale={props.language}
               copy={copy.countryPicker}
               enterKeyHint="done"

@@ -72,6 +72,7 @@ export function DemoForm({ language, locale, copy }: { language: HotelLanguage; 
     }
     const data = new FormData(form)
     start(async () => {
+      data.set("phone", await phone.settle())
       const next = await requestDemo(data)
       setResult(next)
       if (next.startsWith("invalid:")) form.querySelector<HTMLElement>(`#demo-${next.slice(8)}`)?.focus()
@@ -158,6 +159,7 @@ export function DemoForm({ language, locale, copy }: { language: HotelLanguage; 
           }}
           locale={locale}
           copy={copy.countryPicker}
+          onBlur={() => void phone.settle()}
           enterKeyHint="next"
           aria-invalid={wrong("phone")}
           aria-describedby="demo-phone-error"

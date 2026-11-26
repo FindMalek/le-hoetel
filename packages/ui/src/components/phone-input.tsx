@@ -9,15 +9,29 @@ import * as React from "react"
 // read through `tPicker` by the callers, which the key check cannot follow. i18n-used: countryPicker.
 type CountryPickerCopy = { label: string; search: string; empty: string; close: string }
 
+// libphonenumber is only fetched once a phone field with a guessed country is used
+const loadParser = () => import("@ritorno/common/phone")
+
 /** State of a phone field. `detect` preselects the country of the browser, for forms people fill about themselves. */
 function usePhoneNumber({ detect }: { detect: boolean }) {
   const [value, setValue] = React.useState<PhoneValue>({ country: "TN", national: "" })
   React.useEffect(() => {
     if (!detect) return
     const country = countryFromLocales(navigator.languages)
-    if (country) setValue((current) => (current.national ? current : { ...current, country }))
+    if (country) setValue((current) => (current.national ? current : { ...current, country, detected: country }))
   }, [detect])
-  return { value, setValue, number: toInternational(value) }
+
+  /** Call on blur and before sending: moves a guessed country to Tunisia when the number only works there. */
+  async function settle(): Promise<string> {
+    if (!value.detected) return toInternational(value)
+    // offline the number goes as it is and the api answers
+    const module = await loadParser().catch(() => null)
+    if (!module) return toInternational(value)
+    setValue((current) => module.settleCountry(current))
+    return toInternational(module.settleCountry(value))
+  }
+
+  return { value, setValue, number: toInternational(value), settle }
 }
 
 type PhoneInputProps = Omit<React.ComponentProps<"input">, "value" | "onChange" | "type"> & {
@@ -49,6 +63,7 @@ function PhoneInput({ className, value, onValueChange, locale, copy, ...props }:
     <div
       ref={box}
       data-slot="phone-input"
+      onFocus={() => value.detected && void loadParser().catch(() => {})}
       dir="ltr"
       className={cn(
         "flex h-11 w-full min-w-0 items-center rounded-lg border border-input transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-surface has-[input[aria-invalid=true]]:border-destructive",
@@ -73,7 +88,7 @@ function PhoneInput({ className, value, onValueChange, locale, copy, ...props }:
         inputMode="tel"
         autoComplete="tel"
         value={value.national}
-        onChange={(event) => onValueChange(readPhone(event.target.value, value.country))}
+        onChange={(event) => onValueChange(readPhone(event.target.value, value))}
         className="h-full min-w-0 flex-1 rounded-e-lg bg-transparent px-3 text-base outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
         {...props}
       />
@@ -83,7 +98,7 @@ function PhoneInput({ className, value, onValueChange, locale, copy, ...props }:
           onOpenChange={setOpen}
           country={value.country}
           onSelect={(country) => {
-            onValueChange({ ...value, country })
+            onValueChange({ country, national: value.national })
             setOpen(false)
           }}
           locale={locale}

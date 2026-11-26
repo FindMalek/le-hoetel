@@ -18,20 +18,23 @@ export const toLatinDigits = (text: string): string =>
 export interface PhoneValue {
   country: string
   national: string
+  /** The browser's region, kept while the guest has not chosen a country themselves. */
+  detected?: string
 }
 
 /**
  * Reads what was typed or pasted. A leading `+` or `00` with a known calling code switches the country and leaves the
  * rest; until the code is complete (or if it is unknown) the text stays as it is. The current country wins a shared code.
  */
-export function readPhone(input: string, country: string): PhoneValue {
+export function readPhone(input: string, current: PhoneValue): PhoneValue {
+  const { country } = current
   const text = toLatinDigits(input)
     .replace(/\(\s*0\s*\)/g, " ")
     .replace(/[-.()/ ]/g, " ")
     .replace(/[^\d+\s]/g, "")
     .trimStart()
   const prefix = text.match(/^(\+|00)/)?.[0]
-  if (!prefix) return { country, national: text.replace(/\+/g, "") }
+  if (!prefix) return { ...current, national: text.replace(/\+/g, "") }
   const rest = text.slice(prefix.length).replace(/\+/g, "").trimStart()
   for (let length = 1; length <= 3; length++) {
     const code = rest.slice(0, length)
@@ -39,7 +42,7 @@ export function readPhone(input: string, country: string): PhoneValue {
     const match = matches.find((item) => item.country === country) ?? matches[0]
     if (match) return { country: match.country, national: rest.slice(length).trimStart() }
   }
-  return { country, national: `${prefix}${rest}` }
+  return { ...current, national: `${prefix}${rest}` }
 }
 
 /** The number to send: `+33 6 12 34 56 78`. The server drops the trunk zero where a country has one. */

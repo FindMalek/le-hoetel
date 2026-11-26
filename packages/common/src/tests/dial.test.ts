@@ -8,24 +8,25 @@ import {
   readPhone,
   toInternational,
 } from "../dial"
-import { parsePhone } from "../phone"
+import { parsePhone, settleCountry } from "../phone"
 
-const sent = (input: string, country = "TN") => parsePhone(toInternational(readPhone(input, country)))?.e164
+const read = (input: string, country = "TN") => readPhone(input, { country, national: "" })
+const sent = (input: string, country = "TN") => parsePhone(toInternational(read(input, country)))?.e164
 
 test("a pasted international number switches the country instead of getting the selected code", () => {
-  expect(readPhone("+33 6 12 34 56 78", "TN")).toEqual({ country: "FR", national: "6 12 34 56 78" })
+  expect(read("+33 6 12 34 56 78")).toEqual({ country: "FR", national: "6 12 34 56 78" })
   expect(sent("+33 6 12 34 56 78")).toBe("+33612345678")
   expect(sent("0033 6 12 34 56 78")).toBe("+33612345678")
   expect(sent("+971 (0) 50 123 4567")).toBe("+971501234567")
   expect(sent("‏+٣٣ ٦ ١٢ ٣٤ ٥٦ ٧٨")).toBe("+33612345678")
-  expect(readPhone("+1 416 555 0199", "CA").country).toBe("CA")
+  expect(read("+1 416 555 0199", "CA").country).toBe("CA")
 })
 
 test("typing a code one key at a time keeps the text until it names a country", () => {
   let value = { country: "TN", national: "" }
-  for (const key of "+351") value = readPhone(value.national + key, value.country)
+  for (const key of "+351") value = readPhone(value.national + key, value)
   expect(value).toEqual({ country: "PT", national: "" })
-  expect(toInternational(readPhone("+999 123456", "TN"))).toBe("+999 123456")
+  expect(toInternational(read("+999 123456"))).toBe("+999 123456")
 })
 
 test("a national number keeps or loses its zero as the country needs", () => {
@@ -62,4 +63,14 @@ test("local and 00 spellings search the stored number", () => {
   for (const query of ["06 12 34 56 78", "0033 612345678", "٠٦١٢٣٤٥٦٧٨"]) {
     expect("+33612345678").toContain(phoneSearchDigits(query))
   }
+})
+
+test("a local number under a guessed country becomes Tunisian, a chosen country is left alone", () => {
+  const guessed = { country: "US", national: "98 765 432", detected: "US" }
+  const settled = settleCountry(guessed)
+  expect(settled.country).toBe("TN")
+  // more digits make it a real US number again
+  expect(settleCountry({ ...settled, national: "415 555 2671" }).country).toBe("US")
+  expect(settleCountry({ country: "FR", national: "98 765 432" }).country).toBe("FR")
+  expect(settleCountry(readPhone("+33 98 765 432", guessed))).toEqual({ country: "FR", national: "98 765 432" })
 })
