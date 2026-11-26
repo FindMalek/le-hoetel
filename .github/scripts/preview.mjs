@@ -94,8 +94,9 @@ const urlOf = (app) => (deployed.has(app) ? previewUrl(app) : stagingUrl(app, en
 const db = apiChanged ? previewDb(pr, env.DOKPLOY_TOKEN, "") : null
 const password = previewSecret(env.DOKPLOY_TOKEN, pr, "demo")
 // The PR comment is public: errors from Dokploy can echo env or connection strings, so secrets are cut out first.
-const secretValues = [password, db?.password, env.DOKPLOY_TOKEN].filter(Boolean)
-const masked = (text) => secretValues.reduce((t, secret) => t.split(secret).join("***"), String(text))
+const secretValues = () =>
+  [password, db?.password, env.DOKPLOY_TOKEN, ...Object.values(infisicalEnv)].filter((v) => String(v ?? "").length >= 8)
+const masked = (text) => secretValues().reduce((t, secret) => t.split(String(secret)).join("***"), String(text))
 const fromInfisical = infisicalConfigured(env)
 const infisicalEnv = fromInfisical ? await pullSecrets("preview", env) : {}
 
