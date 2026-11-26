@@ -21,6 +21,8 @@ Deleting a hotel and changing its name or slug only go through the admin procedu
 
 Accounts are never self-served either. Sign up over http only works for an email with a pending, unexpired invitation (password, GitHub and magic link alike, checked in the `user.create.before` hook of `packages/auth`). Accounts made server side (the `ADMIN_EMAIL` admin, the demo seed, `signUp()` in tests) and the admin plugin's create-user skip the check.
 
+App admins can ban a user from the Users page: it signs them out everywhere and blocks sign in until they are unbanned. You cannot ban yourself or another app admin. Every ban and unban is in the audit log.
+
 A `suspended` hotel is closed: `resolveHotel` refuses its team with `FORBIDDEN` and no automation (welcome, birthday, holidays, survey, campaigns) sends for it. The owner keeps the read-only guest exports (`guests.export`, `guests.exportAll`, `guests.exportCsv`, built on `hotelExportProcedure`). The app admin keeps full access.
 
 Health is the first problem found, by `hotelHealth` in `packages/common/src/hotel.ts`: `suspended`, `no-owner` (invitation not accepted yet), `no-guests`, `quiet` (no new guest for 14 days), else `healthy`.

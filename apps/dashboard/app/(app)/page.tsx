@@ -298,7 +298,7 @@ async function PlatformHome({ name }: { name: string }) {
                 value={count(hotels.length)}
                 icon={<BuildingIcon />}
                 link={
-                  <Link href="/admin/overview" className="text-blue-700 underline-offset-4 hover:underline">
+                  <Link href="/admin/overview" className="text-primary underline underline-offset-4">
                     {t("overviewLink")}
                   </Link>
                 }

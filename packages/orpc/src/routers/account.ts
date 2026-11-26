@@ -113,12 +113,13 @@ export const adminRouter = {
     .output(okSchema)
     .handler(async ({ context, input }) => {
       if (input.userId === context.user.id) throw new ORPCError("BAD_REQUEST", { message: "You can't ban yourself." })
-      const [row] = await context.db
+      const [target] = await context.db.select({ role: user.role }).from(user).where(eq(user.id, input.userId))
+      if (!target) throw new ORPCError("NOT_FOUND", { message: "User not found." })
+      if (target.role === "admin") throw new ORPCError("FORBIDDEN", { message: "An app admin can't be banned." })
+      await context.db
         .update(user)
         .set({ banned: input.banned, banReason: null, banExpires: null, updatedAt: context.now() })
         .where(eq(user.id, input.userId))
-        .returning({ id: user.id })
-      if (!row) throw new ORPCError("NOT_FOUND", { message: "User not found." })
       if (input.banned) await context.db.delete(session).where(eq(session.userId, input.userId))
       await audit(context, { action: input.banned ? "admin.user-ban" : "admin.user-unban", targetId: input.userId })
       return { ok: true as const }

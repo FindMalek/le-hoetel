@@ -11,7 +11,7 @@ beforeAll(async () => {
 })
 afterAll(() => app.close())
 
-test("a banned user can't sign in until the ban is lifted, and an admin can't ban themselves", async () => {
+test("a ban ends the user's live session and sign in until lifted, and never hits an admin", async () => {
   const admin = await app.signUp("ban-admin@ritorno.test", { role: "admin" })
   const target = await app.signUp("ban-target@ritorno.test")
   const signIn = () =>
@@ -20,7 +20,13 @@ test("a banned user can't sign in until the ban is lifted, and an admin can't ba
   await expect(admin.client.admin.setBanned({ userId: admin.id, banned: true })).rejects.toMatchObject({
     code: "BAD_REQUEST",
   })
+  const other = await app.signUp("ban-other-admin@ritorno.test", { role: "admin" })
+  await expect(admin.client.admin.setBanned({ userId: other.id, banned: true })).rejects.toMatchObject({
+    code: "FORBIDDEN",
+  })
+  expect((await target.client.me.get()).id).toBe(target.id)
   await admin.client.admin.setBanned({ userId: target.id, banned: true })
+  await expect(target.client.me.get()).rejects.toMatchObject({ code: "UNAUTHORIZED" })
   await expect(signIn()).rejects.toThrow()
   const banned = (await admin.client.admin.users()).users.find((user) => user.id === target.id)
   expect(banned?.banned).toBe(true)

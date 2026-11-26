@@ -78,11 +78,7 @@ export function AdminUsersBoard({ users, meId }: { users: User[]; meId: string }
     user.hotels.length ? (
       <span className="flex flex-wrap gap-x-3 gap-y-1">
         {user.hotels.map((hotel) => (
-          <Link
-            key={hotel.id}
-            href={`/admin/hotels/${hotel.id}`}
-            className="text-blue-700 underline-offset-4 hover:underline"
-          >
+          <Link key={hotel.id} href={`/admin/hotels/${hotel.id}`} className="text-primary underline underline-offset-4">
             {hotel.name}
           </Link>
         ))}
@@ -93,7 +89,7 @@ export function AdminUsersBoard({ users, meId }: { users: User[]; meId: string }
   const action = (user: User) =>
     user.id === meId ? (
       <span className="text-caption text-muted-foreground">{t("you")}</span>
-    ) : (
+    ) : user.role === "admin" ? null : (
       <Button
         variant={user.banned ? "outline" : "ghost"}
         className={user.banned ? undefined : "text-destructive"}
