@@ -54,7 +54,7 @@ export function LoadMore({ query, shown, total }: LoadMoreProps) {
           loading={isFetchingNextPage}
           onClick={() => fetchNextPage()}
         >
-          {t(isFetchNextPageError ? "retry" : "more")}
+          {isFetchNextPageError ? t("retry") : t("more")}
         </Button>
       ) : null}
       <p aria-live="polite" className="tabular-nums">
