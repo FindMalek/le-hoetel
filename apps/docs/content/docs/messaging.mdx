@@ -99,8 +99,8 @@ The `owner-digest` job runs every hour. On Monday, from 09:00 until quiet hours 
 It is written in the hotel's guest language (en, fr or ar), sent by email only with the `ownerDigest` template, and only logged outside live messaging.
 
 - Suspended hotels and hotels without an owner get nothing.
-- `hotel_settings.weekly_digest` is on by default. The footer link and the `List-Unsubscribe` header open **Hotel** settings, **Weekly summary** (`/hotel#weekly-digest`), where an owner or manager turns it off. The switch is per hotel, so it applies to all its owners.
-- `hotel_settings.last_digest_week` is claimed before sending, so a rerun or a second worker never sends a week twice. A retryable provider error (see below the automatic messages) releases the claim for the next hour, with the same Resend `Idempotency-Key` per owner. A week missed for the whole Monday is not sent later.
+- `hotel_settings.weekly_digest` is on by default. The footer link and the `List-Unsubscribe` header open **Hotel** settings, **Weekly summary** (`/hotel?hotel=<id>#weekly-digest`), where an owner or manager turns it off. When that is not the hotel on screen, the page shows no settings: a member gets a button to switch to it, anyone else is told the link is for another hotel. The switch is per hotel, so it applies to all its owners.
+- `hotel_settings.last_digest_week` is claimed once the email is built and before sending, so a failure while building is tried again the next hour and a rerun or a second worker never sends a week twice. A retryable provider error (see below the automatic messages) releases the claim for the next hour, with the same Resend `Idempotency-Key` per owner. A week missed for the whole Monday is not sent later.
 
 ## Prepaid WhatsApp balance
 

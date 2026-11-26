@@ -762,8 +762,15 @@
     "threshold": "Low score alert",
     "thresholdHint": "You get an alert when a guest scores this or less out of 10 in the survey.",
     "thresholdOption": "{score} or less",
-    "weeklyDigest": "Email me the weekly summary",
-    "weeklyDigestHint": "Sent Monday from 09:00, hotel time. Counts only, no guest details."
+    "weeklyDigest": "Email owners the weekly summary",
+    "weeklyDigestHint": "Sent Monday from 09:00, hotel time. Counts only, no guest details.",
+    "linked": {
+      "title": "This link is for {hotel}",
+      "viewing": "You are viewing {hotel}.",
+      "switch": "Switch to {hotel}",
+      "unknown": "This link is for another hotel",
+      "unknownHint": "Your account does not belong to it. Sign in with the account that received the email."
+    }
   },
   "managerAlerts": {
     "title": "Email",

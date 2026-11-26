@@ -762,8 +762,15 @@
     "threshold": "Alerte note basse",
     "thresholdHint": "Vous êtes alerté quand un client donne cette note ou moins sur 10 au questionnaire.",
     "thresholdOption": "{score} ou moins",
-    "weeklyDigest": "Recevoir le résumé hebdomadaire",
-    "weeklyDigestHint": "Envoyé le lundi à partir de 09:00, heure de l’hôtel. Des chiffres seulement, aucune donnée client."
+    "weeklyDigest": "Envoyer le résumé hebdomadaire aux propriétaires",
+    "weeklyDigestHint": "Envoyé le lundi à partir de 09:00, heure de l’hôtel. Des chiffres seulement, aucune donnée client.",
+    "linked": {
+      "title": "Ce lien concerne {hotel}",
+      "viewing": "Vous consultez {hotel}.",
+      "switch": "Passer à {hotel}",
+      "unknown": "Ce lien concerne un autre hôtel",
+      "unknownHint": "Votre compte n’en fait pas partie. Connectez-vous avec le compte qui a reçu l’e-mail."
+    }
   },
   "managerAlerts": {
     "title": "E-mail",

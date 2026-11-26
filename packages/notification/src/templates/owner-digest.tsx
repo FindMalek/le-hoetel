@@ -136,7 +136,7 @@ export const ownerDigest = defineTemplate<OwnerDigestData>({
     score: 8.6,
     openCases: 1,
     url: "https://app.example.com",
-    settingsUrl: "https://app.example.com/hotel#weekly-digest",
+    settingsUrl: "https://app.example.com/hotel?hotel=hotel-id#weekly-digest",
   },
   Email: ({ appUrl, ...data }) => {
     const { copy, title, intro, items, reason } = words(data)

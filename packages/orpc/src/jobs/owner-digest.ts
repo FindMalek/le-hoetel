@@ -46,6 +46,7 @@ export const ownerDigestJob = (services: JobServices, pacing: SendPacing = SEND_
           timezone: hotelSettings.timezone,
           name: hotelSettings.displayName,
           locale: hotelSettings.defaultLanguage,
+          lastWeek: hotelSettings.lastDigestWeek,
         })
         .from(hotelSettings)
         .where(and(ne(hotelSettings.status, "suspended"), eq(hotelSettings.weeklyDigest, true)))
@@ -68,11 +69,13 @@ interface Hotel {
   timezone: string
   name: string
   locale: OwnerDigestData["locale"]
+  lastWeek: string | null
 }
 
 async function sendDigest(services: JobServices, hotel: Hotel, week: string, pacing: SendPacing) {
   const { db } = services
   const { hotelId } = hotel
+  if (hotel.lastWeek && hotel.lastWeek >= week) return
   const owners = await db
     .select({ id: user.id, email: user.email })
     .from(member)
@@ -85,6 +88,20 @@ async function sendDigest(services: JobServices, hotel: Hotel, week: string, pac
       ),
     )
   if (!owners.length) return
+  const dashboardUrl = services.config.dashboardUrl.replace(/\/$/, "")
+  const settingsUrl = `${dashboardUrl}/hotel?hotel=${encodeURIComponent(hotelId)}#weekly-digest`
+  const email = await renderTemplate(
+    "ownerDigest",
+    {
+      ...(await weekNumbers(services, hotel, week)),
+      locale: hotel.locale,
+      hotel: hotel.name,
+      url: dashboardUrl,
+      settingsUrl,
+    },
+    dashboardUrl,
+  )
+  // Claimed only once the email is built, so a failure up to here leaves the week for the next run.
   // `updatedAt` is kept: sending a digest is not an edit of the hotel.
   const mark = (value: string | null) => ({ lastDigestWeek: value, updatedAt: sql`${hotelSettings.updatedAt}` })
   const [claimed] = await db
@@ -99,19 +116,6 @@ async function sendDigest(services: JobServices, hotel: Hotel, week: string, pac
     .returning({ hotelId: hotelSettings.organizationId })
   if (!claimed) return
 
-  const dashboardUrl = services.config.dashboardUrl.replace(/\/$/, "")
-  const settingsUrl = `${dashboardUrl}/hotel#weekly-digest`
-  const email = await renderTemplate(
-    "ownerDigest",
-    {
-      ...(await weekNumbers(services, hotel, week)),
-      locale: hotel.locale,
-      hotel: hotel.name,
-      url: dashboardUrl,
-      settingsUrl,
-    },
-    dashboardUrl,
-  )
   let retry = false
   for (const owner of owners) {
     try {
