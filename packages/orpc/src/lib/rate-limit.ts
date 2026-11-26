@@ -24,7 +24,9 @@ export const RATE_LIMITS = {
   feedback: { limit: 3, windowMs: 10 * 60_000 },
   feedbackAll: { limit: 30, windowMs: 60 * 60_000 },
   emailTest: { limit: 5, windowMs: 10 * 60_000 },
-  captureIp: { limit: 10, windowMs: 10 * 60_000 },
+  // Keyed per hotel and ip: a whole hotel wifi is one ip, so this must fit a coach arriving at once.
+  captureIp: { limit: 60, windowMs: 10 * 60_000 },
+  surveyIp: { limit: 60, windowMs: 10 * 60_000 },
   captureHotel: { limit: 200, windowMs: 60 * 60_000 },
   welcomeHotel: { limit: 60, windowMs: 60 * 60_000 },
   scanPhone: { limit: 5, windowMs: 24 * 60 * 60_000 },
