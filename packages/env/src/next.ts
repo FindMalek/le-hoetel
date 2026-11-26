@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { logLevel, parseEnv, phone } from "./parse"
+import { parseEnv, phone } from "./parse"
 
 const schema = z.object({
   /** Where the Next server reaches the api: http://localhost:3001 locally, the api service inside the cluster. */
@@ -8,9 +8,9 @@ const schema = z.object({
   API_PUBLIC_URL: z.url().default("http://localhost:3001"),
   DASHBOARD_URL: z.url().default("http://localhost:3002"),
   DOCS_URL: z.url().default("http://localhost:3003"),
-  /** Commit the image was built from (Docker build arg), reported by /api/health so a deploy can wait for it. */
+  /** Commit the image was built from (Docker build arg), reported by /api/version so a deploy can wait for it. */
   GIT_SHA: z.string().optional(),
-  LOG_LEVEL: logLevel,
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   /** The landing page WhatsApp button, with the country code (+216 12 345 678), read as digits. No number, no button. */
   WHATSAPP_CONTACT_NUMBER: phone
     .transform((value) => value.replace(/^\+/, ""))

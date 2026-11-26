@@ -1,6 +1,7 @@
 // Every app reports the commit its image was built from. A deploy is healthy only when all of them report the new one
 // in the same round; a crashed app answers 404 from Traefik and keeps the run waiting until it fails.
-export const HEALTH_PATHS = { api: "/health", web: "/api/health", dashboard: "/api/health", docs: "/api/health" }
+// `/api/health` on web and dashboard proxies to the api, so the Next apps report on `/api/version`.
+export const HEALTH_PATHS = { api: "/health", web: "/api/version", dashboard: "/api/version", docs: "/api/version" }
 
 async function probe(url, sha, fetch) {
   try {

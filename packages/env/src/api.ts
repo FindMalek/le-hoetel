@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { logLevel, parseEnv, phone } from "./parse"
+import { parseEnv, phone } from "./parse"
 
 const optional = z.string().optional()
 
@@ -33,7 +33,7 @@ const schema = z.object({
   GITHUB_REPO: optional,
   GITHUB_TOKEN: optional,
 
-  LOG_LEVEL: logLevel,
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 
   /** Shared by the cache and the rate limits; without them both are kept in memory per process. */
   UPSTASH_REDIS_REST_URL: z.url().optional(),

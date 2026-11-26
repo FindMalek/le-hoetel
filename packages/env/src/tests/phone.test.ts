@@ -13,7 +13,3 @@ test("phone values accept a leading + and spaces", () => {
   })
   expect(api.WHATSAPP_NOTIFY_TO).toBe("+15551234567")
 })
-
-test("the log level ignores case and spaces", () => {
-  expect(nextEnv({ LOG_LEVEL: " WARN " }).LOG_LEVEL).toBe("warn")
-})
