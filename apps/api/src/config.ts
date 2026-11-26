@@ -3,6 +3,7 @@ import type { Services } from "@ritorno/orpc"
 
 export const serviceConfig = (env: ApiEnv): Services["config"] => ({
   deployEnv: env.DEPLOY_ENV,
+  gitSha: env.GIT_SHA,
   githubAuth: Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET),
   githubRepo: env.GITHUB_REPO,
   githubToken: env.GITHUB_TOKEN,
