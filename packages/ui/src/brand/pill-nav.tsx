@@ -1,11 +1,13 @@
 "use client"
 
 import { Button } from "@ritorno/ui/components/button"
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@ritorno/ui/components/sheet"
 import { cn } from "@ritorno/ui/lib/utils"
 import { ArrowRightIcon, MenuIcon } from "lucide-react"
-import { type ReactNode, useState } from "react"
+import { lazy, type ReactNode, Suspense, useState } from "react"
 import { Logo } from "./logo"
+
+// The menu sheet (a dialog) is only needed under md once tapped, so its code stays out of the first load.
+const PillNavSheet = lazy(() => import("./pill-nav-sheet"))
 
 export interface PillNavLink {
   href: string
@@ -64,28 +66,29 @@ export function PillNav({
           ))}
         </nav>
         {language ? <div className="hidden md:block">{language}</div> : null}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
-            <MenuIcon />
-            <span className="sr-only">{menuLabel}</span>
-          </SheetTrigger>
-          <SheetContent side="top" className="rounded-b-card px-4 pt-safe pb-4">
-            <SheetTitle className="sr-only">{menuLabel}</SheetTitle>
-            <nav aria-label={navLabel} className="mt-14 flex flex-col">
-              {links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="flex min-h-touch items-center border-b text-lead text-foreground last:border-b-0"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-            {language ? <div className="mt-3">{language}</div> : null}
-          </SheetContent>
-        </Sheet>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          onClick={() => setOpen(true)}
+        >
+          <MenuIcon />
+          <span className="sr-only">{menuLabel}</span>
+        </Button>
+        {open ? (
+          <Suspense fallback={null}>
+            <PillNavSheet
+              open={open}
+              onOpenChange={setOpen}
+              links={links}
+              language={language}
+              navLabel={navLabel}
+              menuLabel={menuLabel}
+            />
+          </Suspense>
+        ) : null}
       </div>
       <a
         href={cta.href}
