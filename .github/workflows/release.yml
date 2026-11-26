@@ -9,10 +9,12 @@ name: release
 # Needs the same Dokploy variables as staging plus DOKPLOY_PRODUCTION_COMPOSE_ID and PRODUCTION_API_URL.
 
 on:
-  workflow_run:
-    workflows: [staging]
-    types: [completed]
-    branches: [main]
+  workflow_call:
+    inputs:
+      sha:
+        description: the commit staging proved healthy
+        type: string
+        required: true
   release:
     types: [published]
   workflow_dispatch:
@@ -36,10 +38,7 @@ permissions:
 
 jobs:
   release:
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.tag == '') ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event != 'workflow_dispatch')
+    if: inputs.sha != '' || (github.event_name == 'workflow_dispatch' && inputs.tag == '')
     runs-on: ubuntu-latest
     concurrency:
       group: release
@@ -47,6 +46,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      checks: read
     outputs:
       tag: ${{ steps.publish.outputs.tag }}
     steps:
@@ -57,7 +57,15 @@ jobs:
         with:
           fetch-depth: 0
           # the commit staging just deployed, not whatever main points to now
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ inputs.sha || github.sha }}
+      - name: ci passed on this commit
+        if: inputs.sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ inputs.sha }}
+        run: |
+          state=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/check-runs?check_name=ci" --jq '[.check_runs[].conclusion] | if length == 0 then "none" elif all(. == "success") then "success" else "failed" end')
+          [ "$state" = success ] || { echo "ci is $state on $SHA, no release"; exit 1; }
       - id: notes
         run: node .github/scripts/release-notes.mjs
         env:
@@ -65,11 +73,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - run: cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
       - id: publish
-        if: ${{ steps.notes.outputs.skip != 'true' && (github.event_name == 'workflow_run' || !inputs.dry_run) }}
+        if: ${{ steps.notes.outputs.skip != 'true' && (inputs.sha != '' || !inputs.dry_run) }}
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.notes.outputs.tag }}
-          TARGET: ${{ github.event.workflow_run.head_sha || github.sha }}
+          TARGET: ${{ inputs.sha || github.sha }}
         run: |
           gh release create "$TAG" --target "$TARGET" --title "$TAG" --notes-file release-notes.md
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
