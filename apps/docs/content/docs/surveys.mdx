@@ -37,7 +37,7 @@ Seed data: about one guest in five of the four demo hotels has an invite, 70% of
 A response with `nps` at or below the hotel's `hotel_settings.low_score_threshold` (default 6, `hotel.update` takes `lowScoreThreshold` 0 to 10) does two things:
 
 - opens a `feedback_cases` row for the response with status `new` (then `contacted`, `resolved`), `notes` and `handled_by`, so it shows in the feedback inbox
-- calls `notifyManager(hotelId, text)`: Telegram first, email when there is no chat. The text has the guest's first name, the score, a comment excerpt (140 characters) and a link to `/feedback/<case id>` in the dashboard. Never a phone number or email.
+- calls `notifyManager(hotelId, text)`, which emails the manager. The text has the guest's first name, the score, a comment excerpt (140 characters) and a link to `/feedback/<case id>` in the dashboard. Never a phone number or email.
 
 A failed alert never fails the guest's answer. One case per response.
 

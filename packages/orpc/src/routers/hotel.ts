@@ -53,7 +53,6 @@ const hotelColumns = {
   googleReviewUrl: hotelSettings.googleReviewUrl,
   lowScoreThreshold: hotelSettings.lowScoreThreshold,
   managerWhatsapp: hotelSettings.managerWhatsapp,
-  managerTelegram: hotelSettings.managerTelegram,
   plan: hotelSettings.plan,
   status: hotelSettings.status,
   pilotEndsAt: hotelSettings.pilotEndsAt,

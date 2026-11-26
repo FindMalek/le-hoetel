@@ -11,7 +11,6 @@ export const serviceConfig = (env: ApiEnv): Services["config"] => ({
   dashboardUrl: env.DASHBOARD_URL,
   apiUrl: env.API_PUBLIC_URL,
   tokenSecret: env.BETTER_AUTH_SECRET,
-  telegramBot: env.TELEGRAM_BOT_USERNAME,
   leadsEmail: env.LEADS_NOTIFY_EMAIL ?? env.ADMIN_EMAIL,
   webhookSecrets: { resend: env.RESEND_WEBHOOK_SECRET, kapso: env.KAPSO_WEBHOOK_SECRET },
 })

@@ -1,16 +1,9 @@
 import { expect, test } from "bun:test"
-import { hmacSha256, verifyHmac, verifySecretHeader, verifySvix, verifyTimestamped } from "../index"
+import { hmacSha256, verifyHmac, verifySvix, verifyTimestamped } from "../index"
 
 const NOW = new Date("2026-01-01T00:00:00Z")
 const now = () => NOW
 const ts = String(NOW.getTime() / 1000)
-
-test("secret header must match exactly", () => {
-  const request = (value: string) => new Request("https://api.test", { headers: { "x-secret": value } })
-  expect(verifySecretHeader(request("s3cret"), "x-secret", "s3cret")).toBe(true)
-  expect(verifySecretHeader(request("s3cre"), "x-secret", "s3cret")).toBe(false)
-  expect(verifySecretHeader(request("s3cret"), "x-secret", undefined)).toBe(false)
-})
 
 test("hmac accepts a sha256= prefix and rejects a tampered body", () => {
   const signature = `sha256=${hmacSha256("key", "{}")}`
