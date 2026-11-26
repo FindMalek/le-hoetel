@@ -1,0 +1,31 @@
+---
+title: Feedback widget
+description: The product feedback form, filed as issues on the GitHub repo.
+---
+
+Product feedback about Ritorno itself. It is not the guest [surveys](/docs/surveys) or the hotel feedback inbox.
+
+## Where it is
+
+- web: a floating button, not on `/`, `/privacy`, `/terms` or guest pages
+- dashboard: "Feedback" in the sidebar footer, the phone "More" sheet and the command palette
+
+## What happens
+
+Both call `feedback.send` (`POST /public/feedback`), which opens an issue labelled `feedback` on `GITHUB_REPO` with `GITHUB_TOKEN`. Nothing is stored in the database.
+
+- without both keys the api answers `SERVICE_UNAVAILABLE` and the widget shows an error
+- 3 sends per 10 minutes per user or ip, and a hidden honeypot field drops bots
+- use a fine grained token limited to that one repo with Issues: write
+- any environment that has both keys files real issues, previews included. Leave the token out where that is not wanted
+
+## The repo is public
+
+Anyone can read the issues, so:
+
+- the form asks for no name, email or phone, and tells people to leave personal and guest data out
+- emails, phone numbers (any run of 7 or more digits), links and long codes are replaced in the title and body before sending
+- the page is sent as a route only: no query or hash, and ids or tokens become `:id`
+- the message is put in a code block, so it cannot mention users or embed images
+
+Names cannot be detected. If an issue holds personal data, delete the issue (closing it is not enough).

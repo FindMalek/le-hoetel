@@ -15,7 +15,6 @@ export const feedbackRouter = {
     .input(
       z.object({
         message: z.string().trim().min(5).max(2000),
-        email: z.email().max(254).optional().or(z.literal("")),
         page: z.string().max(300).optional(),
         /** A honeypot: people never see this field, bots fill it. */
         website: z.string().max(200).optional(),
@@ -34,7 +33,7 @@ export const feedbackRouter = {
       try {
         await createFeedbackIssue(
           { repo: githubRepo, token: githubToken },
-          { message: input.message, email: input.email, page: input.page },
+          { message: input.message, page: input.page },
         )
       } catch (error) {
         console.error("[feedback]", error)

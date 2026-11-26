@@ -1,29 +1,30 @@
 "use client"
 
-import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
-import { Input } from "@ritorno/ui/components/input"
 import { Textarea } from "@ritorno/ui/components/textarea"
 import { useMutation } from "@tanstack/react-query"
 import { MessageSquareIcon } from "lucide-react"
 import { useState } from "react"
 
 /** A small button bottom left that opens a form and files the answer as a GitHub issue. */
-export function FeedbackButton() {
+export function FeedbackButton({
+  labels,
+}: {
+  labels: Record<"open" | "description" | "placeholder" | "send" | "cancel" | "thanks" | "error", string>
+}) {
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
-  const [email, setEmail] = useState("")
   const [website, setWebsite] = useState("")
   const [note, setNote] = useState<string | null>(null)
   const send = useMutation(
     orpc.feedback.send.mutationOptions({
       onSuccess: () => {
-        setNote("Thanks, we got it.")
+        setNote(labels.thanks)
         setMessage("")
         setOpen(false)
       },
-      onError: (error) => setNote(errorMessage(error)),
+      onError: () => setNote(labels.error),
     }),
   )
 
@@ -34,19 +35,20 @@ export function FeedbackButton() {
           className="grid w-72 gap-2 rounded-lg border bg-card p-3 shadow-lg"
           onSubmit={(event) => {
             event.preventDefault()
-            send.mutate({ message, email, website, page: window.location.pathname })
+            setNote(null)
+            send.mutate({ message, website, page: window.location.pathname })
           }}
         >
+          <p id="feedback-description" className="text-muted-foreground text-xs">
+            {labels.description}
+          </p>
           <Textarea
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            placeholder="What could be better?"
-          />
-          <Input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="Email (optional)"
+            placeholder={labels.placeholder}
+            aria-label={labels.placeholder}
+            aria-describedby="feedback-description"
+            maxLength={2000}
           />
           <input
             tabIndex={-1}
@@ -57,12 +59,17 @@ export function FeedbackButton() {
             value={website}
             onChange={(event) => setWebsite(event.target.value)}
           />
+          {note && (
+            <p role="alert" className="text-destructive text-xs">
+              {note}
+            </p>
+          )}
           <div className="flex justify-end gap-2">
             <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
-              Cancel
+              {labels.cancel}
             </Button>
             <Button type="submit" size="sm" disabled={send.isPending || message.trim().length < 5}>
-              Send
+              {labels.send}
             </Button>
           </div>
         </form>
@@ -76,9 +83,11 @@ export function FeedbackButton() {
               setOpen(true)
             }}
           >
-            <MessageSquareIcon /> Feedback
+            <MessageSquareIcon /> {labels.open}
           </Button>
-          {note && <span className="text-muted-foreground text-xs">{note}</span>}
+          <span role="status" className="text-muted-foreground text-xs">
+            {note}
+          </span>
         </div>
       )}
     </div>

@@ -1,6 +1,5 @@
 "use client"
 
-import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import {
@@ -11,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ritorno/ui/components/dialog"
-import { Input } from "@ritorno/ui/components/input"
 import { Textarea } from "@ritorno/ui/components/textarea"
 import { useMutation } from "@tanstack/react-query"
 import { useTranslations } from "next-intl"
@@ -29,7 +27,6 @@ export function FeedbackDialog() {
   const t = useTranslations("shell")
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
-  const [email, setEmail] = useState("")
   const [website, setWebsite] = useState("")
   const send = useMutation(
     orpc.feedback.send.mutationOptions({
@@ -38,7 +35,7 @@ export function FeedbackDialog() {
         setMessage("")
         setOpen(false)
       },
-      onError: (error) => toast.error(errorMessage(error)),
+      onError: () => toast.error(t("feedbackError")),
     }),
   )
 
@@ -55,7 +52,7 @@ export function FeedbackDialog() {
           className="grid gap-4"
           onSubmit={(event) => {
             event.preventDefault()
-            send.mutate({ message, email, website, page: window.location.pathname })
+            send.mutate({ message, website, page: window.location.pathname })
           }}
         >
           <DialogHeader>
@@ -68,14 +65,7 @@ export function FeedbackDialog() {
             placeholder={t("feedbackPlaceholder")}
             aria-label={t("feedbackPlaceholder")}
             rows={4}
-          />
-          <Input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder={t("feedbackEmail")}
-            aria-label={t("feedbackEmail")}
-            dir="ltr"
+            maxLength={2000}
           />
           <input
             tabIndex={-1}
