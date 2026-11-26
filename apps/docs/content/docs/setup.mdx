@@ -3,13 +3,16 @@ title: Setup
 description: From a fresh clone to every app running locally.
 ---
 
-You need node 24, pnpm, bun and docker.
+You need node 24, pnpm, bun, docker, the [Infisical cli](https://infisical.com/docs/cli/overview) and access to the tailnet.
 
 ```bash
 pnpm install
+infisical login   # once per machine, from the repo root
 pnpm db:up
 pnpm dev
 ```
+
+No `.env` is needed: `pnpm dev` reads the Infisical `dev` environment, see [secrets](/docs/secrets#locally). Without Infisical it warns and reads the root `.env` instead (copy `.env.example`, set `BETTER_AUTH_SECRET`).
 
 `pnpm db:up` starts a local postgres from `docker/docker-compose.yml`. The api applies migrations on start and, when `SEED=demo`, fills an empty database with sample data.
 
@@ -34,7 +37,7 @@ A feature that adds tables adds its own section to `seedDemo` and a test in `pac
 | dashboard | http://localhost:3002 |
 | docs | http://localhost:3003 |
 
-Sign in to the dashboard with `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `.env`. The admin is created or reset on every api start.
+Sign in to the dashboard with `ADMIN_EMAIL` and `ADMIN_PASSWORD` of the Infisical `dev` environment (or your `.env`). The admin is created or reset on every api start.
 
 ## Working on one app
 

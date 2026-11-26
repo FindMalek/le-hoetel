@@ -14,9 +14,9 @@
     "check-types": "tsc --noEmit",
     "test": "bun test",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "bun --env-file=../../.env src/migrate-cli.ts",
-    "db:seed": "bun --env-file=../../.env src/seed-cli.ts",
-    "db:studio": "bun --env-file=../../.env x drizzle-kit studio"
+    "db:migrate": "node ../../scripts/with-env.mjs bun src/migrate-cli.ts",
+    "db:seed": "node ../../scripts/with-env.mjs bun src/seed-cli.ts",
+    "db:studio": "node ../../scripts/with-env.mjs bun x drizzle-kit studio"
   },
   "dependencies": {
     "@ritorno/common": "workspace:*",

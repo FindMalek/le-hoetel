@@ -14,7 +14,7 @@
     "test": "bun test",
     "domain": "bun src/setup/domain.ts",
     "telegram:setup": "bun --env-file=../../.env src/setup/telegram.ts",
-    "whatsapp:setup": "bun --env-file=../../.env src/setup/whatsapp.ts"
+    "whatsapp:setup": "node ../../scripts/with-env.mjs bun src/setup/whatsapp.ts"
   },
   "dependencies": {
     "@ritorno/common": "workspace:*",
