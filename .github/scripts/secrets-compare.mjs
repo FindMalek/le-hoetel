@@ -45,7 +45,8 @@ for (const stack of STACKS) {
     .filter((k) => !COMPUTED.has(k))
     .sort()
   const shared = keys.filter((k) => k in live)
-  const differ = shared.filter((k) => hash(live[k]) !== hash(infisical[k]))
+  // deploy.mjs writes newlines as a literal \\n, so compare in that form
+  const differ = shared.filter((k) => hash(live[k]) !== hash(String(infisical[k]).replace(/\r?\n/g, "\\n")))
   const dokployOnly = Object.keys(live)
     .filter((k) => !COMPUTED.has(k) && !SKIP.test(k) && live[k] !== "" && !(k in infisical))
     .sort()
