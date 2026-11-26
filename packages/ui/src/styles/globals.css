@@ -148,7 +148,7 @@
   body {
     @apply bg-background font-sans text-body text-foreground antialiased;
     font-variant-numeric: lining-nums;
-    /* Room for the analytics consent bar (`@ritorno/compliance/banner`) while it shows. */
+    /* Room for the analytics consent card (`@ritorno/compliance/banner`) while it shows. */
     padding-block-end: var(--consent-banner-height, 0px);
   }
   :lang(ar) body {
@@ -209,13 +209,21 @@
   mask-image: radial-gradient(closest-side, transparent 35%, black);
 }
 
+/* Sticks above the phone tabs, and above the analytics consent card while it shows. */
 @utility bottom-nav {
-  bottom: var(--bottom-nav-height, 0px);
+  bottom: calc(var(--bottom-nav-height, 0px) + var(--consent-banner-height, 0px));
 }
 
-/* Bottom-fixed bars sit on top of the analytics consent bar instead of under it. */
-@utility bottom-consent {
-  bottom: var(--consent-banner-height, 0px);
+/* Keeps the foot of a full height panel clear of the consent card. */
+@utility pb-consent {
+  padding-block-end: var(--consent-banner-height, 0px);
+}
+
+/* The consent card floats above the phone tabs, not over them. */
+@media (width < 48rem) {
+  :root:has([data-bottom-tabs]) {
+    --consent-banner-offset: calc(3.5rem + env(safe-area-inset-bottom));
+  }
 }
 
 @utility pb-nav {
