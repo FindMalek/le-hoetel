@@ -182,9 +182,6 @@ export function Layout({ ctx, preview, children }: { ctx: Ctx; preview: string; 
                   {copy.common.unsubscribe}
                 </Link>
               </Text>
-              <Text className="e-mut" style={{ ...small(theme), margin: "20px 0 0", fontSize: 12, lineHeight: "18px" }}>
-                {copy.common.poweredBy}
-              </Text>
             </Section>
           </Container>
         </Section>

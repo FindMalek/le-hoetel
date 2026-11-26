@@ -145,7 +145,8 @@ function Words({ text, gap, style }: { text: string; gap: number; style: CSSProp
     <div style={{ display: "flex", flexDirection: "row-reverse", flexWrap: "wrap", columnGap: gap, ...style }}>
       {text
         .split(/\s+/)
-        .map(shapeArabic)
+        // Only Arabic words are shaped and reversed; latin words and digits keep their order.
+        .map((word) => (/[\u0600-\u06FF]/.test(word) ? shapeArabic(word) : word))
         .map((word, index) => (
           <div key={index} style={{ display: "flex" }}>
             {word}
