@@ -36,6 +36,9 @@ export function localTime(now: Date, timeZone: string): LocalTime {
 export const isSameLocalDay = (a: Date, b: Date, timeZone: string): boolean =>
   localTime(a, timeZone).date === localTime(b, timeZone).date
 
+/** The furthest departure date the public capture page accepts. */
+export const STAY_MAX_NIGHTS = 90
+
 /** How long a wrong "mark visit" or "redeem" tap can be taken back. */
 export const UNDO_WINDOW_MS = 10 * 60 * 1000
 

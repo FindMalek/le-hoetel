@@ -25,6 +25,11 @@ export async function captureAction(_previous: CaptureState, form: FormData): Pr
     source: source in CAPTURE_SOURCES ? (source as CaptureSource) : "desk",
     location: field(form, "location") || null,
     website: field(form, "website") || null,
-    consents: { whatsapp: form.get("whatsapp") === "on", email: form.get("emailConsent") === "on" && !!email },
+    stayCheckOut: field(form, "stayCheckOut") || null,
+    consents: {
+      whatsapp: form.get("whatsapp") === "on",
+      email: form.get("emailConsent") === "on" && !!email,
+      profile: form.get("stayConsent") === "on",
+    },
   })
 }
