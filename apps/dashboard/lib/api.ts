@@ -22,8 +22,8 @@ export const serverOrpc = createTanstackQueryUtils(api)
 export const getQueryClient = cache(() => new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } }))
 
 /**
- * The hotel this request's data calls act on: the one the admin opened, else the member's active one. Not
- * `hotel.mine().activeId`, which ignores the admin's choice. Null when the api refuses (none, or suspended).
+ * The hotel this request's data calls act on: the one the admin opened, else the member's active one. Null when the
+ * api refuses (none, or suspended).
  */
 export const currentHotel = cache(() =>
   call((client) => client.hotel.get()).catch((error) => {

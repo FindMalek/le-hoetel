@@ -68,11 +68,21 @@ function Crumbs() {
 }
 
 /** Breadcrumb, search and notifications. Page titles and actions live in each page's `PageHeader`. */
-export function TopBar({ me, hotelName, bell }: { me: Me; hotelName: string | null; bell: React.ReactNode }) {
+export function TopBar({
+  me,
+  hotelName,
+  switcher,
+  bell,
+}: {
+  me: Me
+  hotelName: string | null
+  switcher: React.ReactNode
+  bell: React.ReactNode
+}) {
   const t = useTranslations("shell")
   return (
     <div className="flex h-14 items-center gap-2 px-2 md:px-4">
-      <MoreSheet me={me} className="md:hidden" />
+      <MoreSheet me={me} switcher={switcher} className="md:hidden" />
       <p className="min-w-0 flex-1 truncate font-medium text-sm md:hidden">{hotelName}</p>
       <div className="flex min-w-0 flex-1 items-center gap-3 max-md:hidden">
         <SidebarToggle />

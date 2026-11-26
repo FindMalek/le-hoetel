@@ -113,6 +113,19 @@ test("a hotel user lands in their hotel at sign in and lists only their hotels",
   expect(await again.hotel.mine()).toMatchObject({ activeId: hotelId, role: "owner" })
 })
 
+test("the app admin naming another hotel gets that one from `mine`, a member naming it does not", async () => {
+  const admin = await app.signUp("view-admin@ritorno.test", { role: "admin" })
+  const member = await app.signUp("view-member@ritorno.test")
+  const own = await app.createHotel("view-own", member)
+  const other = await app.createHotel("view-other", await app.signUp("view-other@ritorno.test"))
+  const asMember = await app.joinHotel(member, own, "owner")
+  const naming = (headers: Headers) => app.clientFor(new Headers([...headers, ["x-hotel-id", other]])).hotel
+
+  expect(await naming(admin.headers).mine()).toMatchObject({ activeId: other, role: "owner" })
+  expect(await naming(asMember.headers).mine()).toMatchObject({ activeId: own })
+  await expect(naming(asMember.headers).get()).rejects.toMatchObject({ code: "FORBIDDEN" })
+})
+
 test("admin hotel detail has the numbers and people, the slug check and the funnel follow, delete needs the slug", async () => {
   const admin = await app.signUp("detail-admin@ritorno.test", { role: "admin" })
   const owner = await app.signUp("detail-owner@ritorno.test")
