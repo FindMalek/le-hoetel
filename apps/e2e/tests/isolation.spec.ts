@@ -100,6 +100,7 @@ test("one hotel can never read, change, export or delete another hotel's guests 
     ["patch", `/guests/${bobId}`, { name: "Hacked" }],
     ["get", `/guests/${bobId}/export`],
     ["get", `/guests/${bobId}/consent-events`],
+    ["get", `/guests/${bobId}/activity`],
     ["delete", `/guests/${bobId}`],
   ] as const) {
     const response = await call(request, ownerA.jar, method, path, data)

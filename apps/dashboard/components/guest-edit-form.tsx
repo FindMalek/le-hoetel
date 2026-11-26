@@ -1,7 +1,7 @@
 "use client"
 
 import type { HotelLanguage } from "@ritorno/common/hotel"
-import type { Guest } from "@ritorno/common/schemas"
+import { type Guest, guestUpdateSchema } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { FieldGroup } from "@ritorno/ui/components/field"
@@ -15,8 +15,6 @@ import { useTranslations } from "next-intl"
 import { type FormEvent, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type Touched = Partial<Record<"name" | "email" | "birthday", boolean>>
 
@@ -39,7 +37,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
         ? guest.consents.email
           ? t("emailNeeded")
           : null
-        : EMAIL.test(email.trim())
+        : guestUpdateSchema.shape.email.safeParse(email.trim()).success
           ? null
           : tAdd("emailInvalid"),
     birthday: birthday === "" || (birthday >= "1900-01-01" && birthday <= today) ? null : t("birthdayInvalid"),

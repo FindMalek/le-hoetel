@@ -1,6 +1,7 @@
 "use client"
 
 import { orgClient } from "@ritorno/auth/orgs"
+import { emailSchema } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
 import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
@@ -22,7 +23,6 @@ import { useForm } from "@/lib/use-form"
 
 const ASSIGNABLE = ["manager", "staff"] as const
 type Assignable = (typeof ASSIGNABLE)[number]
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type Role = "owner" | "manager" | "staff"
 const ROLE_ICONS = { owner: CrownIcon, manager: ShieldIcon, staff: UserIcon } as const
@@ -68,7 +68,9 @@ function InviteForm({ onSent }: { onSent: () => void }) {
   const t = useTranslations("team")
   const [role, setRole] = useState<Assignable>("staff")
   const [pending, setPending] = useState(false)
-  const form = useForm({ email: "" }, (v) => (EMAIL.test(v.email.trim()) ? {} : { email: t("errors.email") }))
+  const form = useForm({ email: "" }, (v) =>
+    emailSchema.safeParse(v.email.trim()).success ? {} : { email: t("errors.email") },
+  )
 
   async function submit(event: React.FormEvent) {
     event.preventDefault()
