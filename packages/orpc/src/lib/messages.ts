@@ -1,6 +1,6 @@
 import type { MessageChannel } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
-import type { MessageStatus } from "@ritorno/common/message"
+import type { MessagePreview, MessageStatus } from "@ritorno/common/message"
 import { whatsappPriceMillimes } from "@ritorno/common/pricing"
 import { listUnsubscribeHeaders, signUnsubscribeToken, unsubscribePageUrl } from "@ritorno/common/unsubscribe"
 import { guestConsents, guests, hotelSettings, messages, organization } from "@ritorno/db"
@@ -8,6 +8,7 @@ import {
   type EmailProps,
   GUEST_WHATSAPP_TEMPLATES,
   guestTemplateParams,
+  guestTemplateText,
   type HotelEmailKey,
   renderEmail,
 } from "@ritorno/notification"
@@ -94,10 +95,10 @@ async function hotelBranding(context: Ctx, hotelId: string) {
 
 /**
  * The only way a message reaches a guest. Checks the guest's current consent for the channel, refuses without it
- * (a `skipped_no_consent` row) and logs one row. A WhatsApp message first takes its price off the hotel's prepaid balance (`skipped_no_balance` when short, refunded if the send fails); email is free. The row has no body and no recipient. Emails are rendered with
+ * (a `skipped_no_consent` row) and logs one row. A WhatsApp message first takes its price off the hotel's prepaid balance (`skipped_no_balance` when short, refunded if the send fails); email is free. The row has no recipient, and no body once a message really goes out. Emails are rendered with
  * the hotel's branding, sent from the hotel's name with its reply-to, and carry the List-Unsubscribe headers; the
  * template's own footer holds the one unsubscribe link. Providers only send when messaging is live; otherwise the
- * row says `sent` with the provider id `log-only`.
+ * row says `sent` with the provider id `log-only` and keeps the rendered text in `preview` for the dashboard.
  */
 export async function sendToGuest<Key extends HotelEmailKey>(
   context: Ctx,
@@ -143,7 +144,8 @@ export async function sendToGuest<Key extends HotelEmailKey>(
   try {
     const result = await deliver(context, input, { to, guest })
     if (result.sent || !context.notification.live) {
-      return finish({ status: "sent", providerId: result.id ?? LOG_ONLY_ID, sentAt: context.now() })
+      const preview = result.sent ? null : result.preview
+      return finish({ status: "sent", providerId: result.id ?? LOG_ONLY_ID, sentAt: context.now(), preview })
     }
     return finish({ status: "failed", errorCode: "channel_not_configured", failedAt: context.now() })
   } catch (error) {
@@ -167,15 +169,17 @@ async function deliver<Key extends HotelEmailKey>(
   context: Ctx,
   { hotelId, guestId, channel, template, props, idempotencyKey }: GuestMessage<Key>,
   { to, guest }: Recipient,
-): Promise<{ sent: boolean; id?: string }> {
+): Promise<{ sent: boolean; id?: string; preview: MessagePreview }> {
   if (channel === "whatsapp") {
     const { name } = await hotelBranding(context, hotelId)
-    return context.notification.sendWhatsApp({
+    const params = guestTemplateParams(template, { guestName: guest.name, hotelName: name, props })
+    const result = await context.notification.sendWhatsApp({
       to,
       template: GUEST_WHATSAPP_TEMPLATES[template].name,
       language: guest.language,
-      params: guestTemplateParams(template, { guestName: guest.name, hotelName: name, props }),
+      params,
     })
+    return { ...result, preview: { text: guestTemplateText(template, guest.language, params) } }
   }
   const token = signUnsubscribeToken(context.config.tokenSecret, { hotelId, guestId, channel })
   const hotel = await hotelBranding(context, hotelId)
@@ -185,7 +189,7 @@ async function deliver<Key extends HotelEmailKey>(
     locale: guest.language,
     props,
   })
-  return context.notification.sendEmail({
+  const result = await context.notification.sendEmail({
     to,
     email,
     fromName: hotel.name,
@@ -193,6 +197,7 @@ async function deliver<Key extends HotelEmailKey>(
     headers: listUnsubscribeHeaders(context.config.apiUrl, token),
     idempotencyKey,
   })
+  return { ...result, preview: { subject: email.subject, html: email.html } }
 }
 
 export interface DeliveryUpdate {
