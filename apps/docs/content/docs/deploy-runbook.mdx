@@ -9,7 +9,7 @@ Each environment is one Dokploy compose service built from `docker-compose.deplo
 
 | | staging | production |
 | --- | --- | --- |
-| trigger | every merge to `main` | published release (tag) |
+| trigger | every merge to `main` | merged release PR (tag) |
 | hosts | `staging-ritorno`, `app-staging-ritorno`, `api-staging-ritorno`, `docs-staging-ritorno` | `ritorno`, `app-ritorno`, `api-ritorno`, `docs-ritorno` |
 | `SEED` | `demo` | `none` |
 | `MESSAGING_LIVE` | `false` | `true` (a channel still needs its provider keys) |

@@ -63,3 +63,5 @@ Run the `release` workflow by hand (Actions tab) with `tag`:
 - the tag production already runs, to redeploy it (after changing secrets, or when a deploy failed)
 
 Nothing is released, it points the production compose service at that tag and redeploys. Database migrations are forward only: restore from a backup if a migration has to be undone.
+
+If the GitHub release was created but the job failed before production deployed, run the `release` workflow by hand with that tag.
