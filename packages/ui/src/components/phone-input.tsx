@@ -6,6 +6,7 @@ import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon } from "lucide-react"
 import * as React from "react"
 
+// read through `tPicker` by the callers, which the key check cannot follow. i18n-used: countryPicker.
 type CountryPickerCopy = { label: string; search: string; empty: string; close: string }
 
 /** State of a phone field. `detect` preselects the country of the browser, for forms people fill about themselves. */
