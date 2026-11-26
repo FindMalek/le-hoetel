@@ -1,7 +1,8 @@
 import { getTemplate, type TemplateName } from "@ritorno/notification/templates"
 import { createElement } from "react"
 
-const APP_URL = "https://app.example.com"
+// The dashboard dev server, so the logo image in the header loads.
+const APP_URL = "http://localhost:3002"
 
 /** The preview page for a template: the package's own component with its sample props. */
 export function preview(name: TemplateName) {

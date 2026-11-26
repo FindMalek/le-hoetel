@@ -7,8 +7,5 @@ export const size = OG_SIZE
 export const contentType = "image/png"
 
 export default function OpengraphImage() {
-  return new ImageResponse(
-    <OgCard name={SITE.name} title="Dashboard" description={SITE.tagline} colors={SITE.og} />,
-    size,
-  )
+  return new ImageResponse(<OgCard title="Dashboard" description={SITE.tagline} colors={SITE.og} />, size)
 }

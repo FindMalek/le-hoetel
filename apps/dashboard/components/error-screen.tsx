@@ -1,5 +1,5 @@
+import { Logo } from "@ritorno/ui/brand/logo"
 import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
-import { BrandMark } from "@/components/brand-mark"
 
 export function ErrorScreen({
   code,
@@ -18,7 +18,7 @@ export function ErrorScreen({
         <ZelligePattern />
       </div>
       <div className="flex max-w-md flex-col items-center gap-6">
-        <BrandMark />
+        <Logo />
         <p className="font-heading font-semibold text-muted-foreground text-sm tabular-nums tracking-widest">{code}</p>
         <div className="flex flex-col gap-2">
           <h1 className="text-balance font-heading font-semibold text-3xl tracking-tight">{title}</h1>

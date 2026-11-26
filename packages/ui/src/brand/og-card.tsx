@@ -1,3 +1,5 @@
+import { LOGO_NAME, logoMarkSvg, logoWordmarkSvg } from "@ritorno/ui/brand/logo"
+
 export interface OgColors {
   background: string
   foreground: string
@@ -8,15 +10,18 @@ export interface OgColors {
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
+const svgSrc = (svg: string): string => `data:image/svg+xml;base64,${btoa(svg)}`
+
 /** Markup for next/og's ImageResponse: satori only takes inline styles and hex colors. Arabic is laid out word by word because satori reorders words when RTL text wraps. */
 export function OgCard({
-  name,
+  suffix,
   title,
   description,
   colors,
   rtl,
 }: {
-  name: string
+  /** Shown after the wordmark, like "docs". */
+  suffix?: string
   title: string
   description?: string
   colors: OgColors
@@ -44,9 +49,12 @@ export function OgCard({
           border: `2px solid ${colors.border}`,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 30, fontFamily: "monospace" }}>
-          <div style={{ width: 22, height: 22, background: colors.accent }} />
-          {name}
+        <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 30, color: colors.muted }}>
+          {/* biome-ignore lint/performance/noImgElement: satori only draws images through img */}
+          <img src={svgSrc(logoMarkSvg(56))} width={56} height={56} alt="" />
+          {/* biome-ignore lint/performance/noImgElement: satori only draws images through img */}
+          <img src={svgSrc(logoWordmarkSvg(29, colors.foreground))} height={29} alt={LOGO_NAME} />
+          {suffix}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {rtl ? (

@@ -79,6 +79,12 @@ All in `@ritorno/ui/components/*`, built on shadcn with Base UI, with the RTL mi
 | feedback | `sonner` toasts, `alert`, `spinner` |
 | states | `empty-state`, `loading-state` (`ListSkeleton`, `CardSkeleton`), `skeleton` |
 
+## Logo
+
+`Logo` from `@ritorno/ui/brand/logo`: `variant` is `mark`, `wordmark` or `lockup` (default), `size` is the tile side in px. The mark is a white Newsreader italic R on a blue tile (`#0a84ff`) with a dithered sky band; up to 48 px it is a solid tile with a heavier R. The wordmark takes `currentColor`. The lockup always reads mark then wordmark, left to right, in every language; only its place in the page follows the direction. Its accessible name is "Ritorno".
+
+The glyphs are outlined, so no font is needed. The SVGs in `packages/ui/assets/logo` are the source; `pnpm logo:build` turns them into the favicon (16, 32, 48), apple icon, PWA and maskable icons (R shrunk into the 80% safe zone), the email logo and an OG base image, and copies them into each app (`app/icon.svg`, `app/favicon.ico`, `app/apple-icon.png`, `public/brand/*`). Never edit the copies.
+
 ## Empty and loading states
 
 - loading: show a skeleton with the shape of the final content (`ListSkeleton`, `CardSkeleton`, `Skeleton`), never a blank page and never a lone spinner for a whole page. A spinner is for a pending button (`<Button loading>`) or a short inline wait
