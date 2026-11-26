@@ -26,3 +26,26 @@ test("the public issue carries no contact details, links or ids", async () => {
   )
   expect(sent.title).not.toMatch(/ada|216|s3cret/)
 })
+
+/** What GitHub would receive for `message`. */
+async function sentBody(message: string): Promise<string> {
+  let body = ""
+  const fetch = (async (_url: string, init: RequestInit) => {
+    body = JSON.parse(String(init.body)).body
+    return Response.json({ number: 1 })
+  }) as unknown as typeof globalThis.fetch
+  await createFeedbackIssue({ repo: "ritorno/app", token: "t", fetch }, { message })
+  return body
+}
+
+test("disguised phone numbers and emails are cut too", async () => {
+  const phones = ["22‑123‑456", "22–123–456", "22,123,456", "22_123_456", "22‎123‎456"]
+  const emails = ["ada @ hotel.com", "ada＠hotel.com", "ada%40hotel.com"]
+  expect(await sentBody([...phones, ...emails].join("; "))).toBe(
+    `\`\`\`text\n${[...phones.map(() => "[number]"), ...emails.map(() => "[email]")].join("; ")}\n\`\`\``,
+  )
+})
+
+test("backticks in the message cannot close the code block", async () => {
+  expect(await sentBody("```\n@octocat")).toBe("````text\n```\n@octocat\n````")
+})

@@ -15,7 +15,7 @@ Product feedback about Ritorno itself. It is not the guest [surveys](/docs/surve
 Both call `feedback.send` (`POST /public/feedback`), which opens an issue labelled `feedback` on `GITHUB_REPO` with `GITHUB_TOKEN`. Nothing is stored in the database.
 
 - without both keys the api answers `SERVICE_UNAVAILABLE` and the widget shows an error
-- 3 sends per 10 minutes per user or ip, and a hidden honeypot field drops bots
+- 3 sends per 10 minutes per user or ip, 30 per hour for everyone together (the ip can be forged), and a hidden honeypot field drops bots
 - use a fine grained token limited to that one repo with Issues: write
 - any environment that has both keys files real issues, previews included. Leave the token out where that is not wanted
 

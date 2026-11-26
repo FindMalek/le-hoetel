@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server"
 import { z } from "zod"
 import { createFeedbackIssue } from "../lib/feedback"
-import { enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
+import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
 import { publicProcedure } from "../procedures"
 
 export const feedbackRouter = {
@@ -30,6 +30,8 @@ export const feedbackRouter = {
           message: "Feedback needs GITHUB_REPO and GITHUB_TOKEN on the api.",
         })
       }
+      // The ip in `x-forwarded-for` can be forged, so the public repo also has one cap for everyone.
+      await enforceKey(context.rateLimiter, "feedback.send:all", RATE_LIMITS.feedbackAll)
       try {
         await createFeedbackIssue(
           { repo: githubRepo, token: githubToken },

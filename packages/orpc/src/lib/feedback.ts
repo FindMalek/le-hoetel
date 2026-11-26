@@ -6,9 +6,10 @@ export interface FeedbackInput {
 // The repo is public: whatever can identify someone or open a session is cut before it leaves. Names cannot be detected, the widget says so.
 const REDACTIONS: [RegExp, string][] = [
   [/\S*(?::\/\/|www\.|\.[a-z]{2,}\/|[?&#][\w-]+=)\S*/giu, "[link]"],
-  [/[^\s@<>()]+@[^\s@<>()]+\.[^\s@<>()]+/gu, "[email]"],
+  [/[^\s@＠<>()]+\s*(?:@|＠|%40)\s*[\p{L}\p{M}\p{N}_-]+(?:\.[\p{L}\p{M}\p{N}_-]+)+/gu, "[email]"],
   [/(?=[\w.-]*\d)[\w.-]{20,}/g, "[code]"],
-  [/\+?\p{Nd}(?:[\s()./-]*\p{Nd}){6,}/gu, "[number]"],
+  // Any dash, plus invisible format characters like bidi marks, which Arabic keyboards put between digits.
+  [/\+?\p{Nd}(?:[\s\p{Pd}\p{Cf}()./_,]*\p{Nd}){6,}/gu, "[number]"],
 ]
 
 function redact(text: string): string {
