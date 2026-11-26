@@ -9,7 +9,7 @@ import { ProfileForm } from "@/components/profile-form"
 import { SessionsList } from "@/components/sessions-list"
 import { call } from "@/lib/api"
 
-export const metadata: Metadata = { title: "Settings" }
+export const metadata: Metadata = { title: "Account" }
 
 export default async function SettingsPage() {
   const t = await getTranslations("settings")

@@ -1,6 +1,7 @@
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { getTranslations } from "next-intl/server"
 import type { PreviewCopies } from "@/components/brand-preview"
+import type { CampaignPreviewCopies } from "@/components/campaign-preview"
 import type { OfferPreviewCopies } from "@/components/offer-card-preview"
 
 // i18n-used: hotelSettings.preview.
@@ -17,7 +18,7 @@ export async function getPreviewCopies(): Promise<PreviewCopies> {
         locale,
         {
           welcome: raw(capture, "welcome"),
-          intro: raw(capture, "intro"),
+          intro: raw(capture, "perkBody"),
           name: raw(capture, "name"),
           phone: raw(capture, "phone"),
           submit: raw(capture, "submit"),
@@ -32,6 +33,19 @@ export async function getPreviewCopies(): Promise<PreviewCopies> {
     }),
   )
   return Object.fromEntries(entries) as PreviewCopies
+}
+
+// i18n-used: campaigns.guestCopy.
+/** The guest facing lines around a campaign message in each language, so the preview matches the language written. */
+export async function getCampaignPreviewCopies(): Promise<CampaignPreviewCopies> {
+  const entries = await Promise.all(
+    HOTEL_LANGUAGES.map(async (locale) => {
+      const t = await getTranslations({ locale, namespace: "campaigns.guestCopy" })
+      const raw = (key: string) => String((t.raw as (key: string) => unknown)(key))
+      return [locale, { offer: raw("offer"), unsubscribe: raw("unsubscribe"), stop: raw("stop") }] as const
+    }),
+  )
+  return Object.fromEntries(entries) as CampaignPreviewCopies
 }
 
 /** The words of the guest's offer page in each language. */

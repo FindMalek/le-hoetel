@@ -513,7 +513,11 @@
     "count": "{count, plural, one {# guest} other {# guests}}",
     "dangerTitle": "Delete everything",
     "dangerDescription": "For when the hotel stops using Ritorno or a guest list must be cleared. This cannot be undone.",
-    "deleteAllText": "{count, plural, one {This deletes # guest} other {This deletes # guests}} and their consent history. Export first if you need a copy."
+    "deleteAllText": "{count, plural, one {This deletes # guest} other {This deletes # guests}} and their consent history. Export first if you need a copy.",
+    "deletedTitle": "Deleted for good",
+    "deletedList": "Every guest, their consent log, stays, messages and the offers sent to them.",
+    "keptTitle": "Kept",
+    "keptList": "Your team, branding, offers, campaigns and WhatsApp balance. Survey scores stay, without any name."
   },
   "unsubscribe": {
     "title": "Your messages from {hotel}",
@@ -677,12 +681,11 @@
   },
   "hotelSettings": {
     "title": "Hotel",
-    "description": "Your hotel's logo and branding.",
+    "description": "Your brand, messages, alerts and review link. Each part saves on its own.",
     "logo": "Logo",
     "logoHint": "PNG, JPEG or WebP, 1 MB at most.",
     "upload": "Upload logo",
     "remove": "Remove logo",
-    "saved": "Logo saved.",
     "invalidFile": "Use a PNG, JPEG or WebP image of 1 MB at most.",
     "noHotel": "Pick a hotel first.",
     "primaryColor": "Primary color",
@@ -699,30 +702,25 @@
       "required": "Required.",
       "color": "Use a hex color like #0a7c66.",
       "email": "Enter a valid email.",
-      "https": "Use a full link starting with https://.",
-      "phone": "Use an international number like +216 20 123 456."
+      "https": "Use a full link starting with https://."
     },
     "readOnly": "Only owners and managers can change these settings.",
     "sections": {
-      "identity": {
-        "title": "Identity",
-        "description": "The name guests see on messages and pages."
-      },
       "brand": {
-        "title": "Brand colors",
-        "description": "Two colors for guest pages and emails."
-      },
-      "language": {
-        "title": "Language and time",
-        "description": "What guests read and when dates are shown."
-      },
-      "contact": {
-        "title": "Contact",
-        "description": "Where guests can reach you and review you."
+        "title": "Brand",
+        "description": "The logo, name, colors and language guests see on your pages and emails."
       },
       "alerts": {
-        "title": "Manager alerts",
-        "description": "Where we warn you about unhappy guests."
+        "title": "Alerts",
+        "description": "Where we warn you when a guest is unhappy."
+      },
+      "messaging": {
+        "title": "Messaging",
+        "description": "Who guests reply to, what closes every email, and your local time."
+      },
+      "review": {
+        "title": "Google review",
+        "description": "Happy guests are invited to review you here after the survey."
       }
     },
     "displayName": "Hotel name",
@@ -738,11 +736,7 @@
     "address": "Address",
     "addressHint": "Shown at the bottom of emails.",
     "reviewUrl": "Google review link",
-    "reviewUrlHint": "Happy guests are sent here.",
-    "whatsapp": "Manager WhatsApp",
-    "whatsappHint": "International format, like +216 20 123 456.",
-    "telegram": "Telegram",
-    "telegramHint": "Optional. Chat id for alerts.",
+    "reviewUrlHint": "The share link of your Google Business profile.",
     "optional": "Optional",
     "discard": "Discard changes",
     "preview": {
@@ -756,11 +750,17 @@
       "emailCta": "See my offer",
       "emailFooter": "You get this email because you shared it with {hotel}.",
       "unsubscribe": "Unsubscribe"
-    }
+    },
+    "savedInline": "Saved",
+    "unsaved": "Unsaved changes",
+    "quietHours": "Quiet hours",
+    "quietHoursText": "Automatic messages never go out between <from></from> and <until></until>, hotel time.",
+    "threshold": "Low score alert",
+    "thresholdHint": "You get an alert when a guest scores this or less out of 10 in the survey.",
+    "thresholdOption": "{score} or less"
   },
   "managerAlerts": {
-    "title": "Manager alerts on Telegram",
-    "description": "Get an alert on your phone when something needs you, like an unhappy guest. Takes 30 seconds.",
+    "title": "Telegram",
     "linked": "Connected. Alerts arrive in your Telegram chat.",
     "notLinked": "Not connected yet.",
     "notConfigured": "Telegram alerts are not set up on this platform yet. We email your alerts for now.",
@@ -775,7 +775,12 @@
     "testNone": "No Telegram chat or email to send to.",
     "disconnect": "Disconnect",
     "disconnected": "Telegram disconnected.",
-    "refresh": "I pressed Start"
+    "refresh": "I pressed Start",
+    "badge": {
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "unavailable": "Unavailable"
+    }
   },
   "qrCodes": {
     "title": "QR codes",
@@ -817,7 +822,6 @@
   "messages": {
     "title": "Messages",
     "description": "Every message sent to your guests and how it ended. Never the text or the contact.",
-    "empty": "No message yet.",
     "guest": "Guest",
     "channel": "Channel",
     "template": "Message",
@@ -838,7 +842,35 @@
     },
     "lowBalance": "WhatsApp balance is running low",
     "lowBalanceHint": "{balance} left. When it reaches zero, WhatsApp messages wait (email keeps going). Ask us to top up.",
-    "seeUsage": "See usage"
+    "seeUsage": "See usage",
+    "templates": {
+      "welcome": "Welcome",
+      "birthday": "Birthday offer",
+      "survey": "Stay survey",
+      "reminder": "Offer reminder",
+      "message": "Campaign"
+    },
+    "filters": {
+      "channel": "Channel",
+      "status": "Status",
+      "template": "Message",
+      "period": "Period",
+      "all": "All",
+      "anyStatus": "Any status",
+      "anyTemplate": "Any message",
+      "days": "{count} days",
+      "reset": "Clear filters"
+    },
+    "range": "<from></from>–<to></to> of <total></total>",
+    "previous": "Previous",
+    "next": "Next",
+    "emptyTitle": "No message sent yet",
+    "emptyBody": "Messages go out on their own: a welcome when a guest says yes on your QR form, a birthday offer, a survey after the stay, and the campaigns you send. Each one shows here with how it ended.",
+    "noMatchTitle": "No message matches",
+    "noMatchBody": "Try another period or clear the filters.",
+    "forbiddenTitle": "Messages are not available",
+    "forbiddenBody": "Pick a hotel you belong to, or ask its owner for access.",
+    "caption": "Messages sent to guests"
   },
   "emails": {
     "title": "Emails",
@@ -880,7 +912,7 @@
     "edit": "Edit",
     "remove": "Delete",
     "removeTitle": "Delete this offer?",
-    "removeBody": "“{title}” and its redemptions will be deleted. Guests lose their QR for it.",
+    "removeBody": "“{title}” and its {count, plural, =0 {redemptions} one {# redemption} other {# redemptions}} will be deleted. Guests lose their QR for it.{campaigns, plural, =0 {} one { # campaign will go out without it.} other { # campaigns will go out without it.}}",
     "cancel": "Cancel",
     "save": "Save",
     "saved": "Offer saved.",
@@ -900,10 +932,8 @@
     "fieldMax": "Maximum redemptions",
     "fieldMaxHint": "Empty means no limit.",
     "fieldActive": "Active",
-    "redeemed": "{count} redeemed",
-    "redeemedOf": "{count} of {max} redeemed",
-    "forever": "No end date",
-    "until": "Until {date}",
+    "redeemed": "<n></n> redeemed",
+    "redeemedOf": "<n></n> of <max></max> redeemed",
     "state": {
       "ready": "Active",
       "inactive": "Paused",
@@ -915,14 +945,6 @@
       "title": "What the guest sees",
       "titlePlaceholder": "Your offer title",
       "hint": "Shown in the guest language of your hotel, with a sample code."
-    },
-    "columns": {
-      "offer": "Offer",
-      "status": "Status",
-      "trigger": "Given to",
-      "redeemed": "Redeemed",
-      "valid": "Valid",
-      "actions": "Actions"
     },
     "trigger": {
       "welcome": "New guests",
@@ -962,7 +984,11 @@
     "fieldTextHint": "Up to {max} characters.",
     "optional": "Optional",
     "fieldActiveHint": "Pause it to stop guests from using it.",
-    "create": "Create offer"
+    "create": "Create offer",
+    "inCampaigns": "{count, plural, one {In <n></n> campaign} other {In <n></n> campaigns}}",
+    "between": "{from} to {until}",
+    "since": "From {from}, no end date",
+    "removeNamed": "Delete {title}"
   },
   "offer": {
     "invalidTitle": "Link not valid",
@@ -1016,7 +1042,16 @@
       "unknown": "Code not found"
     },
     "scanning": "Looking for a QR code...",
-    "scanHint": "Tap to start the camera."
+    "scanHint": "Tap to start the camera.",
+    "hints": {
+      "redeemed": "It was used before. Check when and by whom below.",
+      "expired": "This offer has ended. It can't be used anymore.",
+      "notStarted": "This offer starts later. Ask the guest to come back then.",
+      "inactive": "The offer is paused in Offers. Nothing to redeem for now.",
+      "exhausted": "Every redemption of this code is used up.",
+      "wrongHotel": "Ask the guest for the code this hotel sent them.",
+      "unknown": "Check the code with the guest and try again."
+    }
   },
   "notFound": {
     "title": "Page not found",
@@ -1026,8 +1061,6 @@
   "holidays": {
     "title": "Holiday messages",
     "description": "A short greeting on the days that matter to your guests. Off until you switch a holiday on.",
-    "saved": "Saved",
-    "next": "Next: {date}",
     "noDate": "No date known yet",
     "channelFor": "Channel for {name}",
     "switchFor": "Send {name} greeting",
@@ -1036,7 +1069,14 @@
       "email": "Email only",
       "whatsapp": "WhatsApp only"
     },
-    "footnote": "Sent at 09:00 hotel time, only to guests who agreed to the channel. Islamic dates follow the astronomical calendar and can move by a day."
+    "footnote": "Sent at 09:00 hotel time, only to guests who agreed to the channel. Islamic dates follow the astronomical calendar and can move by a day.",
+    "savedOn": "Switched on. It goes out on the day.",
+    "savedOff": "Switched off",
+    "summary": "<on></on> of <total></total> greetings on",
+    "previewIn": "Preview in",
+    "inDays": "{count, plural, =0 {today} one {in <n></n> day} other {in <n></n> days}}",
+    "on": "On",
+    "off": "Off"
   },
   "landing": {
     "meta": {
@@ -1676,20 +1716,22 @@
     "new": "New campaign",
     "empty": "No campaigns yet",
     "emptyHint": "Write a message, pick who gets it, and send it or schedule it.",
-    "resultsLine": "{sent} of {total} sent",
+    "resultsLine": "<sent></sent> of <total></total> sent",
     "columns": {
       "name": "Name",
       "channel": "Channel",
       "status": "Status",
       "results": "Results",
-      "when": "When"
+      "when": "When",
+      "audience": "Audience"
     },
     "status": {
       "draft": "Draft",
       "scheduled": "Scheduled",
       "sending": "Sending",
       "sent": "Sent",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "failed": "Failed"
     },
     "channel": {
       "both": "Email and WhatsApp",
@@ -1701,38 +1743,48 @@
       "sent": "Sent",
       "delivered": "Delivered",
       "failed": "Failed",
-      "skipped": "Skipped"
+      "skipped": "Skipped",
+      "audience": "Audience today",
+      "skippedHint": "Skipped or still waiting"
     },
     "detail": {
       "title": "Campaign",
       "description": "Check the message, send a test to yourself, then send or schedule it.",
-      "actions": "Actions",
       "edit": "Edit",
       "delete": "Delete",
       "cancel": "Cancel campaign",
       "cancelTitle": "Cancel this campaign?",
-      "cancelBody": "Messages not sent yet will not go out.",
       "cancelled": "Campaign cancelled",
-      "keep": "Keep it",
       "messageTitle": "Message",
       "quietNote": "Messages only go out between 9:00 and 20:00 hotel time.",
       "schedule": "Schedule",
       "scheduleAt": "Send on",
       "scheduled": "Campaign scheduled",
       "sendNow": "Send now",
-      "startsAt": "Starts {date}",
       "testSend": "Send a test to me",
-      "testSent": "Test sent to {to}"
+      "testSent": "Test sent to {to}",
+      "sendTitle": "Send it",
+      "or": "or",
+      "sending": "Campaign is sending",
+      "deleted": "Campaign deleted",
+      "dangerTitle": "Stop or remove",
+      "cancelHint": "Stops the messages that have not gone out yet.",
+      "deleteHint": "Removes the campaign and its results.",
+      "state": {
+        "draft": "Not sent. Nothing goes out until you send or schedule it.",
+        "scheduled": "Starts {date}.",
+        "sending": "Sending: {done} of {total} handled.",
+        "sent": "Sent {date}.",
+        "failed": "No message got through. Check the email and WhatsApp setup.",
+        "cancelled": "Cancelled {date}."
+      }
     },
     "form": {
       "newTitle": "New campaign",
       "editTitle": "Edit campaign",
       "hint": "Only guests who gave consent for the channel receive it.",
-      "basics": "Basics",
-      "basicsHint": "The name is only for you.",
       "name": "Campaign name",
       "channel": "Channel",
-      "audience": "Who gets it",
       "audienceHint": "Leave everything empty to reach all guests.",
       "languages": "Languages",
       "countries": "Countries",
@@ -1742,25 +1794,107 @@
       "anyTime": "Any time",
       "lastDays": "Last {days} days",
       "reachLoading": "Counting guests…",
-      "reach": "{guests} guests, {email} by email, {whatsapp} on WhatsApp",
       "consentNote": "Guests who unsubscribed or never agreed are always left out.",
-      "message": "Message",
       "messageHint": "Write it in one or more languages. Each guest gets their own language.",
       "subject": "Subject",
       "body": "Message text",
-      "bodyHint": "Keep it short and friendly.",
+      "bodyHint": "Short and friendly works best. {count}/{max}",
       "offer": "Offer",
       "offerHint": "Attach an offer guests can redeem.",
       "noOffer": "No offer",
-      "needText": "Write the message in at least one language",
       "saveDraft": "Save draft",
-      "saving": "Saving…",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "steps": {
+        "audience": "Audience",
+        "channel": "Channel",
+        "message": "Message",
+        "send": "Send"
+      },
+      "stepHasError": "needs attention",
+      "reachTitle": "Can be reached today",
+      "reachSplit": "<email></email> by email, <whatsapp></whatsapp> on WhatsApp",
+      "channelHint": "Each guest only gets it on a channel they agreed to.",
+      "nameHint": "Only your team sees it.",
+      "writeIn": "Language",
+      "written": "written",
+      "counter": "{count}/{max}",
+      "when": {
+        "draft": "Save as draft",
+        "draftHint": "Nothing goes out. Send or schedule it later.",
+        "now": "Send now",
+        "nowHint": "Starts right away, between 9:00 and 20:00 hotel time.",
+        "later": "Schedule",
+        "laterHint": "Pick the day and time it starts."
+      },
+      "summary": {
+        "audience": "Audience",
+        "channel": "Channel",
+        "languages": "Languages",
+        "offer": "Offer",
+        "none": "None yet"
+      },
+      "back": "Back",
+      "next": "Next",
+      "reviewSend": "Send now",
+      "reviewSchedule": "Schedule",
+      "savedDraft": "Draft saved"
+    },
+    "guests": "{count, plural, one {<n></n> guest} other {<n></n> guests}}",
+    "counting": "Counting…",
+    "notSentYet": "Not sent yet",
+    "failedLine": "<n></n> failed",
+    "when": {
+      "sentOn": "Sent {date}",
+      "scheduledFor": "Planned for {date}",
+      "createdOn": "Created {date}"
+    },
+    "filterLabel": "Show campaigns",
+    "filter": {
+      "all": "All",
+      "draft": "Drafts",
+      "scheduled": "Scheduled",
+      "sent": "Done"
+    },
+    "filterEmpty": "No campaign in this list",
+    "preview": {
+      "title": "Preview",
+      "viewLabel": "Preview as",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "label": "The message as a guest gets it",
+      "subjectPlaceholder": "Your subject",
+      "bodyPlaceholder": "Your message shows here as you write it."
+    },
+    "guestCopy": {
+      "offer": "Your offer",
+      "unsubscribe": "Unsubscribe",
+      "stop": "Reply STOP to stop these messages."
+    },
+    "errors": {
+      "count": "Could not count the guests. Close and try again.",
+      "name": "Give the campaign a name.",
+      "subject": "Write a subject for this language.",
+      "body": "Write the message for this language.",
+      "needText": "Write the message in at least one language.",
+      "at": "Pick a date and time.",
+      "atPast": "Pick a time in the future.",
+      "audience": "No guest matches this audience yet. Widen it in the Audience step."
+    },
+    "confirm": {
+      "sendTitle": "Send to {count, plural, one {<n></n> guest} other {<n></n> guests}} now?",
+      "sendBody": "It goes out by {channel}, between 9:00 and 20:00 hotel time. Messages already sent cannot be taken back.",
+      "scheduleTitle": "Schedule for {count, plural, one {<n></n> guest} other {<n></n> guests}}?",
+      "scheduleBody": "It starts {date} by {channel}. The audience is counted again then, so the number can change. You can cancel until it is sent.",
+      "cancelBody": "{count, plural, =0 {Nothing waiting} one {# message waiting} other {# messages waiting}} by {channel} will not go out. Messages already sent stay sent.",
+      "deleteTitle": "Delete “{name}”?",
+      "deleteDraftBody": "It was set to reach {count, plural, one {# guest} other {# guests}} by {channel}. Nobody gets it and the draft is gone for good.",
+      "deleteBody": "It reached out to {count, plural, one {# guest} other {# guests}} by {channel}. The campaign and its results are deleted for good.",
+      "back": "Go back"
     }
   },
   "settings": {
-    "title": "Settings",
-    "description": "Your profile, password and data.",
+    "title": "Account",
+    "description": "Your profile, language, password, devices and data.",
     "sections": {
       "profile": {
         "title": "Profile",
@@ -1768,7 +1902,7 @@
       },
       "preferences": {
         "title": "Preferences",
-        "description": "Language and theme for your own screen."
+        "description": "The language of this app on your screens."
       },
       "password": {
         "title": "Password",
@@ -1821,7 +1955,10 @@
     "sessionEnded": "Device signed out.",
     "endSession": "Sign out",
     "othersEnded": "Other devices signed out.",
-    "endOthers": "Sign out of other devices"
+    "endOthers": "Sign out of other devices",
+    "signOutEverywhere": "Sign out everywhere",
+    "signOutEverywhereTitle": "Sign out of every device?",
+    "signOutEverywhereBody": "Every device, this one included, is signed out right away. You sign in again with your password."
   },
   "team": {
     "title": "Team",
@@ -1866,7 +2003,6 @@
     "resent": "Invitation sent again to {email}.",
     "resend": "Send again",
     "cancelled": "Invitation cancelled.",
-    "cancel": "Cancel invitation",
     "emptyTitle": "No one else yet",
     "emptyHint": "Invite a colleague to share the desk.",
     "inviteTitle": "Invite a colleague",
@@ -1876,7 +2012,10 @@
     "removeTitle": "Remove {name}?",
     "removeBody": "They lose access to this hotel right away.",
     "cancelAction": "Keep",
-    "removed": "Member removed."
+    "removed": "Member removed.",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke the invitation for {email}?",
+    "revokeBody": "The link stops working right away. You can invite them again later."
   },
   "usage": {
     "title": "WhatsApp usage",
@@ -1884,7 +2023,7 @@
     "balance": "Balance",
     "month": "Spent this month",
     "monthMessages": "{count, plural, one {# WhatsApp message} other {# WhatsApp messages}}",
-    "low": "Balance is low. WhatsApp messages stop at zero, email is not affected. Ask us to top up.",
+    "low": "You have less than <min></min> left. WhatsApp messages stop at zero, email keeps going. Ask us to top up.",
     "history": "Latest movements",
     "empty": "No movement yet. Your first top-up will show here.",
     "kinds": {
@@ -1892,7 +2031,11 @@
       "usage": "WhatsApp message",
       "refund": "Refund (not delivered)"
     },
-    "forbidden": "Only owners and managers can see the balance."
+    "forbidden": "Only owners and managers can see the balance.",
+    "lowTitle": "Balance is low",
+    "lowBadge": "Low",
+    "okBadge": "Enough for now",
+    "historyHint": "Top-ups, messages and refunds, newest first."
   },
   "survey": {
     "invalidTitle": "This link is not valid",
@@ -1959,5 +2102,18 @@
       "reviewsHint": "Happy guests who tapped your Google review link.",
       "reviewsEmpty": "Happy survey guests are asked for a Google review. Add your link in Hotel settings."
     }
+  },
+  "inbox": {
+    "title": "Inbox",
+    "unread": "{count, plural, one {# unread} other {# unread}}",
+    "caughtUp": "All caught up.",
+    "markAll": "Mark all read",
+    "markRead": "Mark read",
+    "open": "Open",
+    "new": "New",
+    "emptyTitle": "Nothing here yet",
+    "emptyBody": "Notes from the Ritorno team and alerts about your hotel land here.",
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }
