@@ -45,7 +45,7 @@ All strings are in `packages/notification/src/hotel-email/copy`, one file per la
 `packages/notification/src/tests/matrix.ts` renders every email in every language it is written in, with made-up data and nothing sent. Hotel emails, the manager alert and the weekly digest exist in en, fr and ar; account emails are English only. A new template or locale joins the matrix.
 
 - `render.test.ts` snapshots the subject and plain text of the hotel emails, and asserts direction, branding, the unsubscribe link, no English left in fr or ar, and isolation of mixed-direction text. After a copy change run `bun test --update-snapshots` in `packages/notification` and read the diff.
-- `apps/e2e/tests/email.spec.ts` opens the matrix in chromium at 375px, light and dark: no horizontal scroll, direction, 44px buttons, a visible unsubscribe link and readable contrast. It checks layout instead of pixel baselines, because fonts differ per machine. Every run attaches screenshots to the Playwright report. It does not stand in for a look in Gmail or Outlook.
+- `apps/e2e/tests/email.spec.ts` opens the matrix in chromium at 375px, light and dark: no horizontal scroll, direction, 44px buttons, a visible unsubscribe link and readable contrast. It checks layout instead of pixel baselines, because fonts differ per machine. Each case attaches a screenshot, but CI keeps the report only when the run fails. To see them, with `pnpm db:up` running: `pnpm --filter e2e run e2e email.spec --project=desktop --reporter=html`, then `pnpm --filter e2e exec playwright show-report`. It does not stand in for a look in Gmail or Outlook.
 
 ## Preview in the dashboard
 

@@ -21,8 +21,10 @@ for (const colorScheme of ["light", "dark"] as const) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(WIDTH)
       await expect(page.locator("html")).toHaveCSS("direction", locale === "ar" ? "rtl" : "ltr")
 
-      // Every button is a full touch target.
-      for (const button of await page.locator("td > a").all()) {
+      // Every button is a full touch target. Each hotel email has one, so the loop can't pass on nothing.
+      const buttons = page.locator("td > a")
+      if (kind === "hotel") await expect(buttons).toHaveCount(1)
+      for (const button of await buttons.all()) {
         expect((await button.boundingBox())?.height).toBeGreaterThanOrEqual(44)
       }
 
@@ -40,6 +42,7 @@ for (const colorScheme of ["light", "dark"] as const) {
       const { violations } = await new AxeBuilder({ page }).withRules(["color-contrast", "image-alt"]).analyze()
       expect(violations.flatMap((violation) => violation.nodes.map((node) => node.html))).toEqual([])
 
+      // CI uploads the report only on failure; locally `--reporter=html` shows these.
       await testInfo.attach(`${kind}-${name}-${locale}-${colorScheme}`, {
         body: await page.screenshot({ fullPage: true }),
         contentType: "image/png",

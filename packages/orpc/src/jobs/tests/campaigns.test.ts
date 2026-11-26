@@ -75,6 +75,19 @@ test("the audience is the consented guests who match the filters, and the previe
   ).rejects.toThrow("No guest matches")
 })
 
+test("a campaign test send carries the hotel address, like the real email", async () => {
+  const { client, draft } = await hotel("camp-address")
+  await client.hotel.update({ address: "12 Rue de la Marsa" })
+  const campaign = await draft()
+  const real = app.services.notification
+  app.services.notification = notification as unknown as typeof real
+  sent.length = 0
+  await client.campaigns.testSend({ id: campaign.id, language: "fr" }).finally(() => {
+    app.services.notification = real
+  })
+  expect(sent[0]?.email.text).toContain("12 Rue de la Marsa")
+})
+
 test("a campaign goes out in batches, once per guest, and its results come from the message log", async () => {
   const { client, add, draft } = await hotel("camp-batches")
   for (let i = 0; i < 3; i++) await add("fr", { email: true, whatsapp: false })

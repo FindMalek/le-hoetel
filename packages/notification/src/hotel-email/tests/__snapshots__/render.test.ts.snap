@@ -1,6 +1,9 @@
 // Bun Snapshot v1, https://bun.sh/docs/test/snapshots
 
-exports[`subject and text of every hotel email: welcome en: Welcome to Hôtel Dar Zitouna de la Médina 1`] = `
+exports[`subject and text of every hotel email: welcome en 1`] = `
+{
+  "subject": "Welcome to Hôtel Dar Zitouna de la Médina",
+  "text": 
 " 
 
 
@@ -32,9 +35,14 @@ You are receiving this email because you shared your address with Hôtel Dar Zit
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: welcome fr: Bienvenue à Hôtel Dar Zitouna de la Médina 1`] = `
+exports[`subject and text of every hotel email: welcome fr 1`] = `
+{
+  "subject": "Bienvenue à Hôtel Dar Zitouna de la Médina",
+  "text": 
 " 
 
 
@@ -66,9 +74,14 @@ Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zi
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: welcome ar: أهلاً بك في ⁨Hôtel Dar Zitouna de la Médina⁩ 1`] = `
+exports[`subject and text of every hotel email: welcome ar 1`] = `
+{
+  "subject": "أهلاً بك في ⁨Hôtel Dar Zitouna de la Médina⁩",
+  "text": 
 " 
 
 
@@ -100,9 +113,14 @@ exports[`subject and text of every hotel email: welcome ar: أهلاً بك في
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: birthday en: Happy birthday, Sara 1`] = `
+exports[`subject and text of every hotel email: birthday en 1`] = `
+{
+  "subject": "Happy birthday, Sara",
+  "text": 
 " 
 
 
@@ -130,9 +148,14 @@ You are receiving this email because you shared your address with Hôtel Dar Zit
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: birthday fr: Joyeux anniversaire, Sara 1`] = `
+exports[`subject and text of every hotel email: birthday fr 1`] = `
+{
+  "subject": "Joyeux anniversaire, Sara",
+  "text": 
 " 
 
 
@@ -160,9 +183,14 @@ Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zi
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: birthday ar: عيد ميلاد سعيد يا ⁨سارة⁩ 1`] = `
+exports[`subject and text of every hotel email: birthday ar 1`] = `
+{
+  "subject": "عيد ميلاد سعيد يا ⁨سارة⁩",
+  "text": 
 " 
 
 
@@ -190,9 +218,14 @@ exports[`subject and text of every hotel email: birthday ar: عيد ميلاد �
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: survey en: How was your stay at Hôtel Dar Zitouna de la Médina? 1`] = `
+exports[`subject and text of every hotel email: survey en 1`] = `
+{
+  "subject": "How was your stay at Hôtel Dar Zitouna de la Médina?",
+  "text": 
 " 
 
 
@@ -214,9 +247,14 @@ You are receiving this email because you shared your address with Hôtel Dar Zit
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: survey fr: Votre séjour à Hôtel Dar Zitouna de la Médina s'est bien passé ? 1`] = `
+exports[`subject and text of every hotel email: survey fr 1`] = `
+{
+  "subject": "Votre séjour à Hôtel Dar Zitouna de la Médina s'est bien passé ?",
+  "text": 
 " 
 
 
@@ -238,9 +276,14 @@ Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zi
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: survey ar: كيف كانت إقامتك في ⁨Hôtel Dar Zitouna de la Médina⁩؟ 1`] = `
+exports[`subject and text of every hotel email: survey ar 1`] = `
+{
+  "subject": "كيف كانت إقامتك في ⁨Hôtel Dar Zitouna de la Médina⁩؟",
+  "text": 
 " 
 
 
@@ -262,9 +305,14 @@ exports[`subject and text of every hotel email: survey ar: كيف كانت إق�
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: reminder en: Your offer at Hôtel Dar Zitouna de la Médina ends soon 1`] = `
+exports[`subject and text of every hotel email: reminder en 1`] = `
+{
+  "subject": "Your offer at Hôtel Dar Zitouna de la Médina ends soon",
+  "text": 
 " 
 
 
@@ -294,9 +342,14 @@ You are receiving this email because you shared your address with Hôtel Dar Zit
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: reminder fr: Votre offre à Hôtel Dar Zitouna de la Médina se termine bientôt 1`] = `
+exports[`subject and text of every hotel email: reminder fr 1`] = `
+{
+  "subject": "Votre offre à Hôtel Dar Zitouna de la Médina se termine bientôt",
+  "text": 
 " 
 
 
@@ -326,9 +379,14 @@ Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zi
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: reminder ar: عرضك في ⁨Hôtel Dar Zitouna de la Médina⁩ ينتهي قريباً 1`] = `
+exports[`subject and text of every hotel email: reminder ar 1`] = `
+{
+  "subject": "عرضك في ⁨Hôtel Dar Zitouna de la Médina⁩ ينتهي قريباً",
+  "text": 
 " 
 
 
@@ -358,9 +416,14 @@ exports[`subject and text of every hotel email: reminder ar: عرضك في ⁨H�
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: message en: News from Hôtel Dar Zitouna de la Médina 1`] = `
+exports[`subject and text of every hotel email: message en 1`] = `
+{
+  "subject": "News from Hôtel Dar Zitouna de la Médina",
+  "text": 
 " 
 
 
@@ -388,9 +451,14 @@ You are receiving this email because you shared your address with Hôtel Dar Zit
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Unsubscribe https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: message fr: Des nouvelles de Hôtel Dar Zitouna de la Médina 1`] = `
+exports[`subject and text of every hotel email: message fr 1`] = `
+{
+  "subject": "Des nouvelles de Hôtel Dar Zitouna de la Médina",
+  "text": 
 " 
 
 
@@ -418,9 +486,14 @@ Vous recevez cet e-mail car vous avez communiqué votre adresse à Hôtel Dar Zi
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 Se désabonner https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;
 
-exports[`subject and text of every hotel email: message ar: أخبار من ⁨Hôtel Dar Zitouna de la Médina⁩ 1`] = `
+exports[`subject and text of every hotel email: message ar 1`] = `
+{
+  "subject": "أخبار من ⁨Hôtel Dar Zitouna de la Médina⁩",
+  "text": 
 " 
 
 
@@ -448,4 +521,6 @@ exports[`subject and text of every hotel email: message ar: أخبار من ⁨H
 Hôtel Dar Zitouna de la Médina · 12 Rue de la Médina, Tunis
 
 إلغاء الاشتراك https://ritorno.test/u/eyJob3RlbElkIjoiaCIsImd1ZXN0SWQiOiJnIn0.c2lnbmF0dXJl"
+,
+}
 `;

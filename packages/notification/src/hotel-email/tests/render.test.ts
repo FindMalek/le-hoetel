@@ -12,10 +12,11 @@ const strings = (value: object, path = ""): [string, string][] =>
     typeof item === "string" ? [[`${path}${key}`, item]] : strings(item, `${path}${key}.`),
   )
 
-// Only the text is snapshotted, so a copy change reads as a copy change. Markup is checked by the assertions below.
+// Subject and text only, so a copy change reads as a copy change. Markup is checked by the assertions below.
 test("subject and text of every hotel email", () => {
-  for (const { name, locale, subject, text } of hotelEmails)
-    expect(text).toMatchSnapshot(`${name} ${locale}: ${subject}`)
+  for (const { name, locale, subject, text } of hotelEmails) {
+    expect({ subject, text }).toMatchSnapshot(`${name} ${locale}`)
+  }
 })
 
 test("no french or arabic string is left in english", () => {
@@ -65,10 +66,18 @@ test("hotel and guest text in another direction is isolated in arabic", async ()
     hotel: HOTEL,
     guest: { name: "Sara", unsubscribeUrl: UNSUBSCRIBE_URL },
     locale: "ar",
-    props: { subject: "News", title: "Big news!", body: "Pool is open.", offer: { title: "Free tea." } },
+    props: {
+      subject: "News",
+      title: "Big news!",
+      body: "Pool is open.",
+      offer: { title: "Free tea." },
+      ctaUrl: CTA_URL,
+      ctaLabel: "Book now!",
+    },
   })
   const alert = matrix.find((item) => item.name === "alert" && item.locale === "ar")
-  for (const text of ["Big news!", "Pool is open.", "Free tea."]) expect(email.html).toContain(`\u2068${text}\u2069`)
+  for (const text of ["Big news!", "Pool is open.", "Free tea.", "Book now!"])
+    expect(email.html).toContain(`\u2068${text}\u2069`)
   expect(alert?.html).toContain("\u2068The room was noisy.\u2069")
 })
 

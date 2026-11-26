@@ -114,7 +114,7 @@ const message: Builder<"message"> = (ctx, { subject, title, body, offer, ctaUrl,
       {offer ? <OfferCard ctx={ctx} offer={offer} /> : null}
       {ctaUrl ? (
         <Cta ctx={ctx} href={ctaUrl}>
-          {ctaLabel ?? ctx.copy.message.cta}
+          {ctaLabel ? ctx.own(ctaLabel) : ctx.copy.message.cta}
         </Cta>
       ) : null}
     </>
