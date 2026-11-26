@@ -244,11 +244,12 @@
   "guests": {
     "title": "Clients",
     "description": "Toutes les personnes qui ont partagé leurs coordonnées avec votre hôtel.",
-    "search": "Rechercher par nom, téléphone ou e-mail",
+    "search": "Rechercher par nom ou téléphone",
     "reset": "Effacer les filtres",
     "filter": {
       "source": "Source",
-      "any": "Toutes les sources"
+      "any": "Toutes les sources",
+      "returning": "Fidèles"
     },
     "consent": {
       "email": "E-mail",
@@ -263,7 +264,6 @@
       "staff": "Équipe",
       "csv": "Import CSV"
     },
-    "total": "{count, plural, one {# client} other {# clients}}",
     "columns": {
       "guest": "Client",
       "phone": "Téléphone",
@@ -285,7 +285,6 @@
       "description": "Demandez à l'équipe Ritorno de vous ajouter à votre hôtel."
     },
     "loading": "Chargement des clients",
-    "page": "Page {page} sur {pages}",
     "previous": "Précédent",
     "next": "Suivant",
     "addButton": "Ajouter un client",
@@ -337,7 +336,6 @@
       "confirmHint": "Le consentement n'est enregistré que si la colonne dit true, yes, oui ou 1, et seulement si vous confirmez. Les autres sont ajoutés sans consentement marketing.",
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
-      "result": "{created} ajoutés, {merged} mis à jour, {failed} en échec",
       "consentKept": "{count, plural, one {# client avait retiré son consentement : il reste retiré.} other {# clients avaient retiré leur consentement : il reste retiré.}}",
       "download": "Télécharger le rapport d'erreurs",
       "errorColumn": "erreur",
@@ -356,7 +354,6 @@
       "tryAgain": "Rien n'a été perdu. Réessayez.",
       "mapHint": "Nous avons associé ce que nous avons pu. Vérifiez chaque colonne, le nom et le téléphone sont obligatoires.",
       "detected": "Détectée",
-      "required": "Obligatoire",
       "optional": "Facultatif",
       "continue": "Continuer",
       "back": "Retour",
@@ -378,16 +375,17 @@
       "noConsentColumn": "Votre fichier n'a pas de colonne de consentement : tout le monde est ajouté sans consentement marketing. Vous pourrez le demander plus tard.",
       "unconfirmed": "Sans votre confirmation, tout le monde est ajouté sans consentement marketing.",
       "doneTitle": "Import terminé",
-      "viewGuests": "Voir les clients"
-    },
-    "pagination": "Pages",
-    "density": {
-      "label": "Hauteur des lignes",
-      "comfortable": "Lignes aérées",
-      "compact": "Lignes compactes"
+      "viewGuests": "Voir les clients",
+      "previewTitle": "Premières lignes",
+      "previewMore": "{count, plural, one {Et # autre ligne.} other {Et # autres lignes.}}",
+      "summary": {
+        "created": "ajoutés",
+        "merged": "déjà là, mis à jour",
+        "failed": "ignorés",
+        "kept": "désinscrits avant, accord laissé retiré"
+      }
     },
     "detail": {
-      "subtitle": "Client, parle {language}",
       "contact": "Contact",
       "phone": "Téléphone",
       "email": "E-mail",
@@ -431,7 +429,29 @@
       "deleteConfirm": "Supprimer définitivement",
       "cancel": "Annuler",
       "deleted": "Client supprimé.",
-      "error": "Une erreur est survenue. Réessayez."
+      "error": "Une erreur est survenue. Réessayez.",
+      "edit": "Modifier",
+      "firstStay": "Premier séjour",
+      "stays": "Séjours",
+      "noStays": "Aucun séjour enregistré.",
+      "offers": "Offres utilisées",
+      "noOffers": "Aucune offre utilisée.",
+      "surveys": "Réponses au questionnaire",
+      "noSurveys": "Aucune réponse pour l'instant.",
+      "nps": "Recommanderait : {score}/10",
+      "rating": {
+        "rooms": "Chambres {value}/5",
+        "cleanliness": "Propreté {value}/5",
+        "service": "Service {value}/5"
+      },
+      "neverAsked": "Jamais demandé",
+      "history": "{count, plural, one {Journal du consentement, # changement} other {Journal du consentement, # changements}}",
+      "grant": "Enregistrer l'accord",
+      "grantTitle": "Enregistrer l'accord {channel} ?",
+      "grantBody": "Lisez ce texte au client. Confirmez seulement s'il accepte. Le changement est ajouté au journal du consentement.",
+      "grantConfirm": "Le client accepte",
+      "grantedToast": "Accord enregistré.",
+      "deleteType": "Tapez {name} pour confirmer"
     },
     "finder": {
       "label": "Trouver un client",
@@ -449,6 +469,21 @@
       "language": "Langue",
       "lastOffer": "Dernière offre utilisée",
       "consents": "Contact autorisé"
+    },
+    "range": "<from></from>–<to></to> sur <total></total> clients",
+    "returning": "{count, plural, one {Fidèle, # séjour} other {Fidèle, # séjours}}",
+    "edit": {
+      "title": "Modifier le client",
+      "description": "Corrigez le nom, la langue ou les coordonnées. Le consentement se change sur la fiche du client.",
+      "email": "E-mail",
+      "birthday": "Date de naissance",
+      "optional": "(facultatif)",
+      "emailNeeded": "Ce client a accepté les e-mails. Retirez cet accord avant de supprimer l'adresse.",
+      "birthdayInvalid": "Choisissez une vraie date de naissance.",
+      "submit": "Enregistrer",
+      "cancel": "Annuler",
+      "saved": "Client mis à jour.",
+      "error": "Les changements n'ont pas été enregistrés. Réessayez."
     }
   },
   "guestData": {

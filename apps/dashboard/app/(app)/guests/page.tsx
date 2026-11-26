@@ -3,12 +3,12 @@ import { GUEST_SOURCES } from "@ritorno/common/consent"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { GUEST_CONSENT_FILTERS } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
-import { EmptyState } from "@ritorno/ui/components/empty-state"
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, UploadIcon, UsersIcon } from "lucide-react"
+import { PageState } from "@ritorno/ui/components/page-state"
+import { pageWindow } from "@ritorno/ui/lib/pagination"
+import { PlusIcon, SearchXIcon, UploadIcon, UsersIcon } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { GuestFilters } from "@/components/guest-filters"
-import { GuestFinder } from "@/components/guest-finder"
 import { GuestList } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
@@ -21,34 +21,33 @@ const oneOf = <T extends string>(options: readonly T[], value: string | undefine
   options.find((option) => option === value)
 
 function parseSearch(raw: Record<string, string | string[] | undefined>) {
-  const page = Number(first(raw.page))
   return {
     q: (first(raw.q) ?? "").trim().slice(0, 80),
     consent: oneOf(GUEST_CONSENT_FILTERS, first(raw.consent)),
     source: oneOf(GUEST_SOURCES, first(raw.source)),
     language: oneOf(HOTEL_LANGUAGES, first(raw.language)),
-    page: Number.isInteger(page) && page > 0 ? page : 1,
+    returning: first(raw.returning) === "1" ? "1" : undefined,
+    page: Number(first(raw.page)) || 1,
   }
 }
 
 export default async function GuestsPage({ searchParams }: PageProps<"/guests">) {
-  const raw = await searchParams
-  const { page, q, ...filters } = parseSearch(raw)
+  const { page, ...values } = parseSearch(await searchParams)
+  const { q, returning, ...filters } = values
   const t = await getTranslations("guests")
   const { activeId, role } = await call((api) => api.hotel.mine())
   const canImport = role ? hotelRoles[role].authorize({ guest: ["import"] }).success : false
+  const addButton = (
+    <Button render={<Link href="/guests/new" />} nativeButton={false}>
+      <PlusIcon data-icon="inline-start" />
+      {t("addButton")}
+    </Button>
+  )
   const header = (
     <PageHeader
       title={t("title")}
       description={t("description")}
-      action={
-        activeId ? (
-          <Button render={<Link href="/guests/new" />} nativeButton={false}>
-            <PlusIcon data-icon="inline-start" />
-            {t("addButton")}
-          </Button>
-        ) : null
-      }
+      action={activeId ? addButton : null}
       secondaryActions={
         activeId &&
         canImport && (
@@ -65,82 +64,77 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
       <>
         {header}
         <div className="p-4 md:p-6">
-          <EmptyState icon={<UsersIcon />} title={t("noHotel.title")} description={t("noHotel.description")} />
+          <PageState
+            kind="empty"
+            icon={<UsersIcon />}
+            title={t("noHotel.title")}
+            description={t("noHotel.description")}
+          />
         </div>
       </>
     )
   }
 
+  const current = Math.max(1, Math.trunc(page))
   const { items, total } = await call((api) =>
-    api.guests.list({ ...filters, q: q || undefined, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE }),
+    api.guests.list({
+      ...filters,
+      q: q || undefined,
+      returning: returning ? true : undefined,
+      limit: PAGE_SIZE,
+      offset: (current - 1) * PAGE_SIZE,
+    }),
   )
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-  const filtered = Boolean(q || filters.consent || filters.source || filters.language)
+  const pages = pageWindow({ page: current, pageSize: PAGE_SIZE, total })
+  const filtered = Object.values(values).some(Boolean)
   const link = (target: number) => {
     const params = new URLSearchParams()
-    for (const [key, value] of Object.entries({ ...filters, q })) if (value) params.set(key, value)
-    params.set("page", String(target))
-    return `/guests?${params}` as const
+    for (const [key, value] of Object.entries(values)) if (value) params.set(key, value)
+    if (target > 1) params.set("page", String(target))
+    const query = params.toString()
+    return query ? `/guests?${query}` : "/guests"
   }
+
+  const empty = filtered ? (
+    <PageState
+      kind="empty"
+      icon={<SearchXIcon />}
+      title={t("noMatch.title")}
+      description={t("noMatch.description")}
+      action={
+        <div className="flex flex-wrap justify-center gap-2">
+          <Button variant="outline" render={<Link href="/guests" />} nativeButton={false}>
+            {t("reset")}
+          </Button>
+          {addButton}
+        </div>
+      }
+    />
+  ) : (
+    <PageState
+      kind="empty"
+      firstRun
+      icon={<UsersIcon />}
+      title={t("empty.title")}
+      description={t("empty.description")}
+      action={addButton}
+    />
+  )
 
   return (
     <>
       {header}
-      <div className="flex flex-col gap-4 p-4 md:p-6">
-        {total > 0 || filtered ? <GuestFinder /> : null}
-        <GuestFilters values={{ q, ...filters }} />
-        {items.length ? (
-          <>
-            <GuestList guests={items} total={total} />
-            {pages > 1 && (
-              <nav className="flex items-center justify-between gap-3" aria-label={t("pagination")}>
-                <Button
-                  variant="outline"
-                  disabled={page <= 1}
-                  render={<Link href={link(page - 1)} />}
-                  nativeButton={false}
-                >
-                  <ChevronLeftIcon data-icon="inline-start" className="rtl:rotate-180" />
-                  {t("previous")}
-                </Button>
-                <span className="text-muted-foreground text-sm tabular-nums">{t("page", { page, pages })}</span>
-                <Button
-                  variant="outline"
-                  disabled={page >= pages}
-                  render={<Link href={link(page + 1)} />}
-                  nativeButton={false}
-                >
-                  {t("next")}
-                  <ChevronRightIcon data-icon="inline-end" className="rtl:rotate-180" />
-                </Button>
-              </nav>
-            )}
-          </>
-        ) : filtered ? (
-          <EmptyState
-            icon={<UsersIcon />}
-            title={t("noMatch.title")}
-            description={t("noMatch.description")}
-            action={
-              <Button variant="outline" render={<Link href="/guests" />} nativeButton={false}>
-                {t("reset")}
-              </Button>
-            }
-          />
-        ) : (
-          <EmptyState
-            decorated
-            icon={<UsersIcon />}
-            title={t("empty.title")}
-            description={t("empty.description")}
-            action={
-              <Button render={<Link href="/guests/new" />} nativeButton={false}>
-                <PlusIcon data-icon="inline-start" />
-                {t("addButton")}
-              </Button>
-            }
-          />
-        )}
+      <div className="p-4 md:p-6">
+        <GuestList
+          guests={items}
+          total={total}
+          page={pages.page}
+          pageSize={PAGE_SIZE}
+          previousHref={pages.hasPrevious ? link(pages.page - 1) : undefined}
+          nextHref={pages.hasNext ? link(pages.page + 1) : undefined}
+          filters={total > 0 || filtered ? <GuestFilters values={values} /> : null}
+          empty={empty}
+        />
       </div>
     </>
   )

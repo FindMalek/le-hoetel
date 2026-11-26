@@ -94,6 +94,7 @@ export function GuestActions({
             description={t("deleteBody", { name })}
             confirmLabel={t("deleteConfirm")}
             cancelLabel={t("cancel")}
+            typedConfirmation={{ label: t("deleteType", { name }), expected: name }}
             onConfirm={() => remove.mutate()}
           />
         </>
