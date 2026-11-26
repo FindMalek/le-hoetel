@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 import { download, today } from "@/lib/download"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 export function useGuestExport() {
   const t = useTranslations("guests.detail")
@@ -52,10 +53,12 @@ export function GuestActions({
   const router = useRouter()
   const [confirming, setConfirming] = useState(false)
   const exporter = useGuestExport()
+  const refreshLists = useRefreshLists()
   const remove = useMutation({
     mutationFn: () => browserClient.guests.remove({ id }),
     onSuccess: () => {
       toast.success(t("deleted"))
+      void refreshLists()
       setConfirming(false)
       if (onDeleted) return onDeleted()
       router.push("/guests")

@@ -10,11 +10,13 @@ import { Section } from "@ritorno/ui/components/section"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { formatDate } from "@ritorno/ui/lib/date"
 import { cn } from "@ritorno/ui/lib/utils"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CameraIcon, CheckCircle2Icon, CircleAlertIcon, XCircleIcon } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { type FormEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
+import { redemptionStats, redemptionsList } from "@/lib/lists"
+import { LoadError, LoadMore } from "./load-more"
 import { canScanQr, QrScanner } from "./qr-scanner"
 
 type Tone = "good" | "warn" | "bad"
@@ -44,7 +46,7 @@ function buzz(good: boolean) {
 }
 
 /** `timeZone` is the hotel's, so a validity date never shifts by a day near midnight. */
-export function RedeemScreen({ timeZone }: { timeZone?: string }) {
+export function RedeemScreen({ hotelId, timeZone }: { hotelId: string; timeZone?: string }) {
   const t = useTranslations("redeem")
   const locale = useLocale()
   const day = (value: Date) => formatDate(value, locale, timeZone)
@@ -58,7 +60,9 @@ export function RedeemScreen({ timeZone }: { timeZone?: string }) {
     </time>
   )
   const queryClient = useQueryClient()
-  const stats = useQuery(orpc.offers.redemptionStats.queryOptions())
+  const stats = useQuery(redemptionStats(orpc, hotelId))
+  const history = useInfiniteQuery(redemptionsList(orpc, hotelId))
+  const rows = history.data?.pages.flatMap((page) => page.items) ?? []
   const [scanning, setScanning] = useState(false)
   const [supported, setSupported] = useState(true)
   const [typed, setTyped] = useState("")
@@ -76,7 +80,7 @@ export function RedeemScreen({ timeZone }: { timeZone?: string }) {
     orpc.offers.redeem.mutationOptions({
       onSuccess: (done) => {
         show(done)
-        return queryClient.invalidateQueries({ queryKey: orpc.offers.redemptionStats.key() })
+        return queryClient.invalidateQueries({ queryKey: orpc.offers.key() })
       },
       onError,
     }),
@@ -267,9 +271,9 @@ export function RedeemScreen({ timeZone }: { timeZone?: string }) {
           <Stat label={t("week")} value={stats.data?.week} />
           <Stat label={t("total")} value={stats.data?.total} />
         </div>
-        {stats.data?.recent.length ? (
+        {rows.length ? (
           <ul className="flex flex-col divide-y rounded-lg border bg-card">
-            {stats.data.recent.map((row) => (
+            {rows.map((row) => (
               <li key={row.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                 <span className="flex min-w-0 flex-col">
                   <span dir="auto" className="truncate text-start font-medium">
@@ -292,9 +296,12 @@ export function RedeemScreen({ timeZone }: { timeZone?: string }) {
               </li>
             ))}
           </ul>
+        ) : history.isPending ? null : history.isError && !history.data ? (
+          <LoadError onRetry={history.refetch} />
         ) : (
           <p className="text-muted-foreground text-sm">{t("noRecent")}</p>
         )}
+        <LoadMore query={history} shown={rows.length} total={stats.data?.total} />
       </Section>
     </div>
   )

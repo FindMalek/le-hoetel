@@ -234,9 +234,10 @@ test("the log filters by channel, template and period, pages with a total, and s
   expect(recent.total).toBe(1)
   expect(recent.items).toMatchObject([{ channel: "whatsapp", templateKey: "welcome" }])
 
-  const second = await client.messages.list({ limit: 3, offset: 3 })
-  expect(second.total).toBe(4)
-  expect(second.items).toHaveLength(1)
+  const first = await client.messages.list({ limit: 3 })
+  const second = await client.messages.list({ limit: 3, cursor: first.nextCursor! })
+  expect(second).toMatchObject({ total: 4, nextCursor: null })
+  expect(new Set([...first.items, ...second.items].map((item) => item.id)).size).toBe(4)
 })
 
 test("only a message that was not sent keeps its text, readable in its own hotel", async () => {

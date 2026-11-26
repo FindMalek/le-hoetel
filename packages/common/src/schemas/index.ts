@@ -1,5 +1,6 @@
 export * from "./account"
 export * from "./capture"
+export * from "./cursor"
 export * from "./guest"
 export * from "./hotel"
 export * from "./lead"

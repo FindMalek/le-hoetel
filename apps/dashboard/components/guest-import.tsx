@@ -30,6 +30,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
 import { LanguageChoice } from "@/components/language-choice"
 import { download } from "@/lib/download"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 const FIELDS = ["name", "phone", "email", "birthday", "language", "consent"] as const
 type ImportField = (typeof FIELDS)[number]
@@ -133,9 +134,11 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
     return { valid, consenting, problems }
   }, [rows, language])
 
+  const refreshLists = useRefreshLists()
   const send = useMutation(
     orpc.guests.import.mutationOptions({
       onSuccess: (data) => {
+        void refreshLists()
         setResult(data)
         setStep("done")
       },

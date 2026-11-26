@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl"
 import { type FormEvent, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 type Touched = Partial<Record<"name" | "email" | "birthday", boolean>>
 
@@ -45,10 +46,12 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
   const shown = (field: keyof Touched) => (touched[field] ? problems[field] : null)
   const touch = (field: keyof Touched) => setTouched((current) => ({ ...current, [field]: true }))
 
+  const refreshLists = useRefreshLists()
   const save = useMutation(
     orpc.guests.update.mutationOptions({
       onSuccess: () => {
         toast.success(t("saved"))
+        void refreshLists()
         router.push(back as never)
         router.refresh()
       },

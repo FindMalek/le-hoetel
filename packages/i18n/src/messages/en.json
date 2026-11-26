@@ -291,8 +291,6 @@
       "description": "Ask the Ritorno team to add you to your hotel."
     },
     "loading": "Loading guests",
-    "previous": "Previous",
-    "next": "Next",
     "addButton": "Add guest",
     "importButton": "Import CSV",
     "add": {
@@ -476,7 +474,6 @@
       "lastOffer": "Last offer used",
       "consents": "Can contact"
     },
-    "range": "<from></from>–<to></to> of <total></total> guests",
     "returning": "{count, plural, one {Returning, # stay} other {Returning, # stays}}",
     "edit": {
       "title": "Edit guest",
@@ -912,9 +909,6 @@
       "loading": "Loading the preview",
       "error": "The preview could not be loaded."
     },
-    "range": "<from></from>–<to></to> of <total></total>",
-    "previous": "Previous",
-    "next": "Next",
     "emptyTitle": "No message sent yet",
     "emptyBody": "Messages go out on their own: a welcome when a guest says yes on your QR form, a birthday offer, a survey after the stay, and the campaigns you send. Each one shows here with how it ended.",
     "noMatchTitle": "No message matches",
@@ -1766,10 +1760,7 @@
         "delete": "Deleted a WhatsApp scan"
       }
     },
-    "loadMore": "Load more",
     "loading": "Loading entries",
-    "loadFailed": "The log could not be loaded.",
-    "retry": "Try again",
     "hotel": {
       "title": "Activity log",
       "description": "What your team and Ritorno did on this hotel, newest first.",
@@ -2209,8 +2200,6 @@
     },
     "caption": "Unhappy guests",
     "noComment": "No comment",
-    "previous": "Previous",
-    "next": "Next",
     "loading": "Loading unhappy guests",
     "emptyTitle": "No unhappy guests",
     "emptyBody": "A guest who leaves a low score on the stay survey shows up here, so you can follow up.",
@@ -2254,5 +2243,12 @@
       "desk": "Front desk"
     },
     "loading": "Loading WhatsApp scans"
+  },
+  "loadMore": {
+    "more": "Load more",
+    "retry": "Try again",
+    "failed": "Could not load more.",
+    "loadFailed": "Could not load this list.",
+    "shown": "{shown} of {total} shown"
   }
 }

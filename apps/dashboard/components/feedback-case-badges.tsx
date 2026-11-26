@@ -1,7 +1,7 @@
 import type { FeedbackCaseStatus } from "@ritorno/common/feedback-case"
 import { Num } from "@ritorno/ui/components/num"
 import { StatusBadge, type StatusTone } from "@ritorno/ui/components/status-badge"
-import { getTranslations } from "next-intl/server"
+import { useTranslations } from "next-intl"
 
 const STATUS_TONE: Record<FeedbackCaseStatus, StatusTone> = {
   new: "warning",
@@ -9,8 +9,8 @@ const STATUS_TONE: Record<FeedbackCaseStatus, StatusTone> = {
   resolved: "success",
 }
 
-export async function CaseStatusBadge({ status }: { status: FeedbackCaseStatus }) {
-  const t = await getTranslations("feedbackCases.status")
+export function CaseStatusBadge({ status }: { status: FeedbackCaseStatus }) {
+  const t = useTranslations("feedbackCases.status")
   return <StatusBadge tone={STATUS_TONE[status]}>{t(status)}</StatusBadge>
 }
 

@@ -2,10 +2,12 @@ import { ORPCError } from "@orpc/server"
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
+import { cursorSchema } from "@ritorno/common/schemas"
 import { guests, messages } from "@ritorno/db"
 import { HOTEL_EMAIL_KEYS } from "@ritorno/notification"
 import { and, count, desc, eq, gte, isNotNull, sql } from "drizzle-orm"
 import { z } from "zod"
+import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
 import { can, hotelProcedure } from "../procedures"
 
 const messageSchema = z.object({
@@ -31,7 +33,7 @@ export const messagesRouter = {
     .input(
       z.object({
         limit: z.number().int().min(1).max(200).default(50),
-        offset: z.number().int().min(0).default(0),
+        cursor: cursorSchema.optional(),
         status: z.enum(MESSAGE_STATUSES).optional(),
         channel: z.enum(MESSAGE_CHANNELS).optional(),
         template: z.enum(HOTEL_EMAIL_KEYS).optional(),
@@ -39,7 +41,7 @@ export const messagesRouter = {
         days: z.number().int().min(1).max(366).optional(),
       }),
     )
-    .output(z.object({ items: z.array(messageSchema), total: z.number() }))
+    .output(z.object({ items: z.array(messageSchema), total: z.number(), nextCursor: z.string().nullable() }))
     .handler(async ({ context, input }) => {
       const where = and(
         eq(messages.hotelId, context.hotel.hotelId),
@@ -49,9 +51,10 @@ export const messagesRouter = {
         input.days ? gte(messages.createdAt, new Date(context.now().getTime() - input.days * 86_400_000)) : undefined,
       )
       const [totals] = await context.db.select({ n: count() }).from(messages).where(where)
-      const items = await context.db
+      const rows = await context.db
         .select({
           id: messages.id,
+          cursorAt: cursorAt(messages.createdAt),
           guestId: messages.guestId,
           guestName: guests.name,
           channel: messages.channel,
@@ -64,11 +67,10 @@ export const messagesRouter = {
         })
         .from(messages)
         .innerJoin(guests, and(eq(guests.id, messages.guestId), eq(guests.hotelId, messages.hotelId)))
-        .where(where)
+        .where(and(where, afterCursor(messages.createdAt, messages.id, input.cursor)))
         .orderBy(desc(messages.createdAt), messages.id)
-        .limit(input.limit)
-        .offset(input.offset)
-      return { items, total: totals?.n ?? 0 }
+        .limit(input.limit + 1)
+      return { ...cursorPage(rows, input.limit), total: totals?.n ?? 0 }
     }),
 
   preview: hotelProcedure

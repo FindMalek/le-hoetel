@@ -1,7 +1,7 @@
 import "server-only"
 import { createTanstackQueryUtils } from "@orpc/tanstack-query"
 import type { AppRouterClient } from "@ritorno/orpc/client"
-import { isUnauthorized } from "@ritorno/orpc/errors"
+import { isForbidden, isUnauthorized } from "@ritorno/orpc/errors"
 import { createServerClient } from "@ritorno/orpc/server"
 import { QueryClient } from "@tanstack/react-query"
 import { cookies } from "next/headers"
@@ -20,6 +20,17 @@ export const serverOrpc = createTanstackQueryUtils(api)
 
 /** One QueryClient per request, shared by every server component that prefetches into it. */
 export const getQueryClient = cache(() => new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } }))
+
+/**
+ * The hotel this request's data calls act on: the one the admin opened, else the member's active one. Not
+ * `hotel.mine().activeId`, which ignores the admin's choice. Null when the api refuses (none, or suspended).
+ */
+export const currentHotel = cache(() =>
+  call((client) => client.hotel.get()).catch((error) => {
+    if (isForbidden(error)) return null
+    throw error
+  }),
+)
 
 /** A direct call for server components; an expired session goes back to sign-in. */
 export async function call<T>(fn: (client: AppRouterClient) => Promise<T>): Promise<T> {

@@ -1,3 +1,4 @@
+import { QueryProvider } from "@ritorno/orpc/react"
 import { SidebarInset, SidebarProvider } from "@ritorno/ui/components/sidebar"
 import { getTranslations } from "next-intl/server"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -24,25 +25,28 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     viewedHotelId(),
   ])
   const current = hotel ? { name: hotel.displayName, logoKey: hotel.logoKey } : null
+  // A new query cache per hotel on screen: switching, or the admin opening or leaving one, drops every cached row.
   return (
-    <SidebarProvider className={SHELL_VARS}>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:shadow-lg"
-      >
-        {t("skip")}
-      </a>
-      <AppSidebar me={me} current={current} hotels={hotels} activeHotelId={activeId} />
-      <SidebarInset id="main" className="min-w-0">
-        <header className="sticky top-0 z-30 border-b bg-background pt-safe">
-          <TopBar me={me} hotelName={current?.name ?? null} bell={<InboxBell unread={unread} />} />
-          {viewedId && hotel ? <ViewingBanner hotelId={viewedId} hotelName={hotel.displayName} /> : null}
-        </header>
-        <div className="mx-auto w-full max-w-6xl flex-1 pb-nav">{children}</div>
-      </SidebarInset>
-      <BottomTabs unread={unread} />
-      <CommandPalette role={me.role} />
-      <FeedbackDialog />
-    </SidebarProvider>
+    <QueryProvider key={hotel?.id ?? "none"}>
+      <SidebarProvider className={SHELL_VARS}>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:shadow-lg"
+        >
+          {t("skip")}
+        </a>
+        <AppSidebar me={me} current={current} hotels={hotels} activeHotelId={activeId} />
+        <SidebarInset id="main" className="min-w-0">
+          <header className="sticky top-0 z-30 border-b bg-background pt-safe">
+            <TopBar me={me} hotelName={current?.name ?? null} bell={<InboxBell unread={unread} />} />
+            {viewedId && hotel ? <ViewingBanner hotelId={viewedId} hotelName={hotel.displayName} /> : null}
+          </header>
+          <div className="mx-auto w-full max-w-6xl flex-1 pb-nav">{children}</div>
+        </SidebarInset>
+        <BottomTabs unread={unread} />
+        <CommandPalette role={me.role} />
+        <FeedbackDialog />
+      </SidebarProvider>
+    </QueryProvider>
   )
 }

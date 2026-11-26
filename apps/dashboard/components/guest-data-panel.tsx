@@ -14,6 +14,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { GuestActions } from "@/components/guest-actions"
 import { download, today } from "@/lib/download"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 export function GuestDataPanel({ hotelName }: { hotelName: string }) {
   const t = useTranslations("guestData")
@@ -42,11 +43,12 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
     onSuccess: () => toast.success(t("exported")),
     onError: fail,
   })
+  const refreshLists = useRefreshLists()
   const removeAll = useMutation({
     mutationFn: () => browserClient.guests.removeAll({ confirmCount: count }),
     onSuccess: async () => {
       setConfirming(false)
-      await queryClient.invalidateQueries({ queryKey: orpc.guests.key() })
+      await refreshLists()
       router.refresh()
       toast.success(t("deleted"))
     },

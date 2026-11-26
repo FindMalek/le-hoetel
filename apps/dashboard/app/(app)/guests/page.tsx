@@ -4,16 +4,15 @@ import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { GUEST_CONSENT_FILTERS } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
 import { PageState } from "@ritorno/ui/components/page-state"
-import { pageWindow } from "@ritorno/ui/lib/pagination"
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import { PlusIcon, SearchXIcon, UploadIcon, UsersIcon } from "lucide-react"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { GuestFilters } from "@/components/guest-filters"
 import { GuestList } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
-import { call } from "@/lib/api"
-
-const PAGE_SIZE = 25
+import { call, currentHotel, getQueryClient, serverOrpc } from "@/lib/api"
+import { guestsList } from "@/lib/lists"
 
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)
 
@@ -27,15 +26,15 @@ function parseSearch(raw: Record<string, string | string[] | undefined>) {
     source: oneOf(GUEST_SOURCES, first(raw.source)),
     language: oneOf(HOTEL_LANGUAGES, first(raw.language)),
     returning: first(raw.returning) === "1" ? "1" : undefined,
-    page: Number(first(raw.page)) || 1,
   }
 }
 
 export default async function GuestsPage({ searchParams }: PageProps<"/guests">) {
-  const { page, ...values } = parseSearch(await searchParams)
+  const values = parseSearch(await searchParams)
   const { q, returning, ...filters } = values
   const t = await getTranslations("guests")
-  const { activeId, role } = await call((api) => api.hotel.mine())
+  const [{ activeId, role }, hotel] = await Promise.all([call((api) => api.hotel.mine()), currentHotel()])
+  const hotelId = hotel?.id ?? activeId
   const canImport = role ? hotelRoles[role].authorize({ guest: ["import"] }).success : false
   const addButton = (
     <Button render={<Link href="/guests/new" />} nativeButton={false}>
@@ -47,9 +46,9 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
     <PageHeader
       title={t("title")}
       description={t("description")}
-      action={activeId ? addButton : null}
+      action={hotelId ? addButton : null}
       secondaryActions={
-        activeId &&
+        hotelId &&
         canImport && (
           <Button variant="outline" render={<Link href="/guests/import" />} nativeButton={false}>
             <UploadIcon data-icon="inline-start" />
@@ -59,7 +58,7 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
       }
     />
   )
-  if (!activeId) {
+  if (!hotelId) {
     return (
       <>
         {header}
@@ -75,25 +74,10 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
     )
   }
 
-  const current = Math.max(1, Math.trunc(page))
-  const { items, total } = await call((api) =>
-    api.guests.list({
-      ...filters,
-      q: q || undefined,
-      returning: returning ? true : undefined,
-      limit: PAGE_SIZE,
-      offset: (current - 1) * PAGE_SIZE,
-    }),
-  )
-  const pages = pageWindow({ page: current, pageSize: PAGE_SIZE, total })
+  const query = { ...filters, q: q || undefined, returning: returning ? true : undefined }
+  const queryClient = getQueryClient()
+  await call(() => queryClient.fetchInfiniteQuery(guestsList(serverOrpc, hotelId, query)))
   const filtered = Object.values(values).some(Boolean)
-  const link = (target: number) => {
-    const params = new URLSearchParams()
-    for (const [key, value] of Object.entries(values)) if (value) params.set(key, value)
-    if (target > 1) params.set("page", String(target))
-    const query = params.toString()
-    return query ? `/guests?${query}` : "/guests"
-  }
 
   const empty = filtered ? (
     <PageState
@@ -125,16 +109,15 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
     <>
       {header}
       <div className="p-4 md:p-6">
-        <GuestList
-          guests={items}
-          total={total}
-          page={pages.page}
-          pageSize={PAGE_SIZE}
-          previousHref={pages.hasPrevious ? link(pages.page - 1) : undefined}
-          nextHref={pages.hasNext ? link(pages.page + 1) : undefined}
-          filters={total > 0 || filtered ? <GuestFilters values={values} /> : null}
-          empty={empty}
-        />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <GuestList
+            hotelId={hotelId}
+            query={query}
+            filtered={filtered}
+            filters={<GuestFilters values={values} />}
+            empty={empty}
+          />
+        </HydrationBoundary>
       </div>
     </>
   )

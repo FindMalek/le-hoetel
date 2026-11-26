@@ -61,6 +61,21 @@ test("staff move a case along and keep notes, and the list counts per status", a
   expect((await staff.feedbackCases.list({ status: "new" })).items).toHaveLength(0)
 })
 
+test("the case list continues after its cursor", async () => {
+  const { hotelId, staff, guestId, id } = await unhappy("cases-cursor")
+  const [response] = await app.services.db
+    .insert(surveyResponses)
+    .values({ hotelId, guestId, inviteId: crypto.randomUUID(), nps: 2, language: "fr" })
+    .returning()
+  const [newer] = await app.services.db.insert(feedbackCases).values({ hotelId, responseId: response!.id }).returning()
+
+  const first = await staff.feedbackCases.list({ limit: 1 })
+  const second = await staff.feedbackCases.list({ limit: 1, cursor: first.nextCursor! })
+
+  expect([first.items[0]?.id, second.items[0]?.id]).toEqual([newer!.id, id])
+  expect(second).toMatchObject({ total: 2, nextCursor: null })
+})
+
 test("another hotel cannot list, read or change a case", async () => {
   const mine = await unhappy("cases-mine")
   const other = await unhappy("cases-other")
