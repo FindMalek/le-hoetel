@@ -49,7 +49,7 @@ export function PillNav({
       )}
     >
       <div className="pointer-events-auto flex h-12 min-w-0 items-center gap-1 rounded-full bg-background ps-2 pe-1 shadow-md">
-        <a href={homeHref} className="flex h-10 min-w-0 items-center rounded-full ps-1 pe-2 md:pe-4">
+        <a href={homeHref} className="flex h-11 min-w-0 items-center rounded-full ps-1 pe-2 md:pe-4">
           <Logo size={32} label={homeLabel} />
         </a>
         <nav aria-label={navLabel} className="hidden items-center md:flex">
@@ -57,7 +57,7 @@ export function PillNav({
             <a
               key={link.href}
               href={link.href}
-              className="flex h-10 items-center rounded-full px-3 text-small text-muted-foreground transition-colors duration-200 hover:bg-surface hover:text-foreground"
+              className="flex h-11 items-center rounded-full px-3 text-small text-muted-foreground transition-colors duration-200 hover:bg-surface hover:text-foreground"
             >
               {link.label}
             </a>

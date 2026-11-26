@@ -34,7 +34,7 @@ export function Display({
     <Tag
       data-slot="display"
       className={cn(
-        "font-display text-balance text-foreground [&_em]:text-blue-600",
+        "font-display text-balance text-foreground [&_em]:text-blue-600 [&:lang(ar)_em]:not-italic",
         size === "xl" ? "text-display-xl" : "text-display",
         className,
       )}

@@ -70,8 +70,8 @@ export default function PixelSkyCanvas({
     let clear: ClearZone | undefined
     const target = clearCenter ? host.parentElement?.querySelector<HTMLElement>("[data-sky-clear]") : null
     let drift = 0
+    let timer: ReturnType<typeof setInterval> | undefined
     let frame = 0
-    let last = 0
     let visible = true
 
     const draw = (): void => {
@@ -96,32 +96,45 @@ export default function PixelSkyCanvas({
       }
     }
 
+    // Redraws only when the grid or the clear zone changed, so the observers' first callbacks after startup cost nothing.
     const resize = (): void => {
-      cell = cellSize ?? (Number.parseFloat(getComputedStyle(host).getPropertyValue("--sky-cell")) || 12)
-      cols = Math.ceil(host.clientWidth / cell)
-      rows = Math.ceil(host.clientHeight / cell)
-      canvas.width = cols
-      canvas.height = rows
-      canvas.style.width = `${cols * cell}px`
-      canvas.style.height = `${rows * cell}px`
-      clear = measureClear()
+      const nextCell = cellSize ?? (Number.parseFloat(getComputedStyle(host).getPropertyValue("--sky-cell")) || 12)
+      const nextCols = Math.ceil(host.clientWidth / nextCell)
+      const nextRows = Math.ceil(host.clientHeight / nextCell)
+      const sized = nextCell !== cell || nextCols !== cols || nextRows !== rows
+      if (sized) {
+        cell = nextCell
+        cols = nextCols
+        rows = nextRows
+        canvas.width = cols
+        canvas.height = rows
+        canvas.style.width = `${cols * cell}px`
+        canvas.style.height = `${rows * cell}px`
+      }
+      const nextClear = measureClear()
+      if (!sized && JSON.stringify(nextClear) === JSON.stringify(clear)) return
+      clear = nextClear
       draw()
     }
 
-    const tick = (now: number): void => {
-      frame = requestAnimationFrame(tick)
-      if (now - last < STEP_MS) return
-      last = now
-      drift += 1
-      draw()
+    const step = (): void => {
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        drift += 1
+        draw()
+      })
     }
     const play = (): void => {
-      if (!frame && visible && animated && motionAllowed()) frame = requestAnimationFrame(tick)
+      if (!timer && visible && !document.hidden && animated && motionAllowed()) timer = setInterval(step, STEP_MS)
     }
     const pause = (): void => {
+      clearInterval(timer)
+      timer = undefined
       cancelAnimationFrame(frame)
       frame = 0
     }
+    const onVisibility = (): void => (document.hidden ? pause() : play())
 
     const resizeObserver = new ResizeObserver(resize)
     const intersection = new IntersectionObserver(([entry]) => {
@@ -132,7 +145,6 @@ export default function PixelSkyCanvas({
     const cancelIdle = onIdle(() => {
       palette = readPalette(host)
       resize()
-      draw()
       canvas.dataset.ready = ""
       resizeObserver.observe(host)
       if (target) resizeObserver.observe(target)
@@ -142,6 +154,7 @@ export default function PixelSkyCanvas({
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)")
     const onMotion = (): void => (motion.matches ? pause() : play())
     motion.addEventListener("change", onMotion)
+    document.addEventListener("visibilitychange", onVisibility)
 
     return () => {
       cancelIdle()
@@ -149,6 +162,7 @@ export default function PixelSkyCanvas({
       resizeObserver.disconnect()
       intersection.disconnect()
       motion.removeEventListener("change", onMotion)
+      document.removeEventListener("visibilitychange", onVisibility)
     }
   }, [seed, cellSize, density, clearCenter, fadeTop, animated])
 

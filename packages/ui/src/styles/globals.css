@@ -194,6 +194,7 @@
   &:lang(ar) {
     font-family: var(--font-noto-naskh-arabic), ui-serif, serif;
     font-style: normal;
+    font-synthesis: none;
     font-weight: 600;
     line-height: 1.35;
   }
