@@ -206,7 +206,9 @@ export const guestsRouter = {
     .output(guestUpsertResultSchema)
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
-      const { id, merged } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, input, context.now()))
+      const { id, merged } = await context.db.transaction((tx) =>
+        upsertGuest(tx, hotelId, input, context.now(), context.user.id),
+      )
       await enqueueWelcome(context, hotelId, id, input.consents)
       return { ...(await loadGuest(context.db, hotelId, id)), merged }
     }),
@@ -234,7 +236,7 @@ export const guestsRouter = {
         }
         try {
           const { merged, consentKept } = await context.db.transaction((tx) =>
-            upsertGuest(tx, hotelId, parsed.data, context.now()),
+            upsertGuest(tx, hotelId, parsed.data, context.now(), context.user.id),
           )
           // No welcome on import: an old list would get a burst of welcomes for stays long past.
           if (consentKept) result.consentKept++
@@ -290,7 +292,7 @@ export const guestsRouter = {
         throw new ORPCError("BAD_REQUEST", { message: "Add an email address first." })
       }
       await context.db.transaction(async (tx) => {
-        await recordConsent(tx, { hotelId, ...input, at: context.now() })
+        await recordConsent(tx, { hotelId, ...input, at: context.now(), staffUserId: context.user.id })
         if (input.channel === "profile" && !input.granted) {
           await clearExtras(tx, hotelId, input.guestId)
         }

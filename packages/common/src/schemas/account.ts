@@ -1,6 +1,9 @@
 import { z } from "zod"
 import { PROFILE_NAME_MAX } from "../constants"
 
+/** The check better-auth runs on sign-in, sign-up, reset and invite. */
+export const emailSchema = z.email()
+
 export const meSchema = z.object({
   id: z.string(),
   name: z.string(),
