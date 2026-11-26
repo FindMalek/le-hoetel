@@ -2,4 +2,7 @@
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 
+/* Light only: no .dark class is ever set, so this keeps fumadocs dark: utilities off instead of following the OS. */
+@custom-variant dark (&:is(.dark *));
+
 @source "../node_modules/fumadocs-ui/dist/**/*.js";

@@ -21,7 +21,7 @@ export function ConsentToggle({
       </span>
       <span
         aria-hidden
-        className="relative order-2 mt-0.5 h-6 w-11 shrink-0 rounded-full bg-input transition-colors duration-150 after:absolute after:start-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-background after:shadow-sm after:transition-transform after:duration-150 peer-checked:bg-primary peer-checked:after:translate-x-5 peer-focus-visible:ring-3 peer-focus-visible:ring-ring/40 rtl:peer-checked:after:-translate-x-5"
+        className="relative order-2 mt-0.5 h-6 w-11 shrink-0 rounded-full bg-input transition-colors duration-150 after:absolute after:start-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-background after:shadow-sm after:transition-transform after:duration-150 peer-checked:bg-primary peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface rtl:peer-checked:after:-translate-x-5"
       />
     </label>
   )

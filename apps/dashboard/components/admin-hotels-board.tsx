@@ -56,7 +56,7 @@ export function AdminHotelsBoard({ hotels, now }: { hotels: Hotel[]; now: Date }
   const name = (hotel: Hotel) => (
     <Link
       href={`/admin/hotels/${hotel.id}`}
-      className="flex min-w-0 items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="flex min-w-0 items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
     >
       <HotelAvatar name={hotel.displayName} logoKey={hotel.logoKey} />
       <span className="flex min-w-0 flex-col">

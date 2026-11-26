@@ -1,5 +1,3 @@
-import { brandStyle } from "@ritorno/common/color"
-import { isForbidden } from "@ritorno/orpc/errors"
 import { SidebarInset, SidebarProvider } from "@ritorno/ui/components/sidebar"
 import { getTranslations } from "next-intl/server"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -13,22 +11,13 @@ import { call } from "@/lib/api"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("shell")
-  const [me, { unread }, { hotels, activeId }, hotel] = await Promise.all([
+  const [me, { unread }, { hotels, activeId }] = await Promise.all([
     call((api) => api.me.get()),
     call((api) => api.inbox.list()),
     call((api) => api.hotel.mine()),
-    call((api) => api.hotel.get()).catch((error) => {
-      if (isForbidden(error)) return null
-      throw error
-    }),
   ])
   return (
-    <SidebarProvider
-      className="[--bottom-nav-height:calc(3.5rem+env(safe-area-inset-bottom))] md:[--bottom-nav-height:0px]"
-      // the hotel's colors are css variables built by brandStyle
-      // oxlint-disable-next-line shadcn/no-inline-styles
-      style={hotel ? brandStyle(hotel) : undefined}
-    >
+    <SidebarProvider className="[--bottom-nav-height:calc(3.5rem+env(safe-area-inset-bottom))] md:[--bottom-nav-height:0px]">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:shadow-lg"

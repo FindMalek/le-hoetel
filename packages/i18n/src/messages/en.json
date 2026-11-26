@@ -9,10 +9,6 @@
     "searchPlaceholder": "Search or jump to…",
     "noResults": "Nothing found.",
     "goTo": "Go to",
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System",
     "language": "Language",
     "account": "Account",
     "signOut": "Sign out",
@@ -21,7 +17,7 @@
     "unread": "{count} unread notifications",
     "mainNav": "Main navigation",
     "tabs": "Quick navigation",
-    "appearance": "Appearance and language",
+    "appearance": "Language and account",
     "loading": "Loading…"
   },
   "home": {
@@ -629,7 +625,6 @@
     "save": "Save",
     "sample": "Aa text",
     "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
-    "contrastDark": "This color is hard to see in dark mode. Pick a lighter one.",
     "noHotelHint": "Create or pick a hotel to edit its settings.",
     "logoSaved": "Logo saved.",
     "logoRemoved": "Logo removed.",
@@ -1209,7 +1204,6 @@
     "previewTitle": "Capture page preview",
     "previewName": "Your hotel",
     "contrastLight": "This color is hard to see on a light background. Pick a darker one.",
-    "contrastDark": "This color is hard to see on a dark background. Pick a lighter one.",
     "errors": {
       "displayName": "Enter the name guests will see.",
       "color": "Use a hex color like #0a7c66.",

@@ -7,7 +7,6 @@ import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { getLocale } from "next-intl/server"
 import { FeedbackButton } from "@/components/feedback-button"
-import { ThemeProvider } from "@/components/theme-provider"
 import { Umami } from "@/components/umami"
 import { siteUrl } from "@/lib/seo"
 import { SITE } from "@/lib/site"
@@ -51,7 +50,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {GUEST_PATHS.some((path) => pathname.startsWith(path)) ? (
           children
         ) : (
-          <ThemeProvider>
+          <>
             <Umami />
             <QueryProvider>
               <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
@@ -62,7 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <FeedbackButton />
             </QueryProvider>
             <ConsentBanner />
-          </ThemeProvider>
+          </>
         )}
       </body>
     </html>

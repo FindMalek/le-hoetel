@@ -15,7 +15,6 @@ import { LogOutIcon, MenuIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
-import { useTheme } from "next-themes"
 import { useState } from "react"
 import { setLocale } from "@/components/preferences-menu"
 import { type Me, signOut, UserAvatar } from "@/components/user-menu"
@@ -36,7 +35,6 @@ function MoreSheet({ me, items, active }: { me: Me; items: NavItem[]; active: bo
   const t = useTranslations("nav")
   const tShell = useTranslations("shell")
   const locale = useLocale()
-  const { theme, setTheme } = useTheme()
   const [open, setOpen] = useState(false)
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -72,27 +70,12 @@ function MoreSheet({ me, items, active }: { me: Me; items: NavItem[]; active: bo
         </nav>
         <div className="flex flex-col gap-4 border-t p-4">
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 text-muted-foreground text-sm">{tShell("theme")}</legend>
-            <div className="grid grid-cols-3 gap-2">
-              {(["light", "dark", "system"] as const).map((value) => (
-                <Button
-                  key={value}
-                  variant={(theme ?? "system") === value ? "secondary" : "outline"}
-                  aria-pressed={(theme ?? "system") === value}
-                  onClick={() => setTheme(value)}
-                >
-                  {tShell(value)}
-                </Button>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="flex flex-col gap-2">
             <legend className="mb-2 text-muted-foreground text-sm">{tShell("language")}</legend>
             <div className="grid grid-cols-3 gap-2">
               {LOCALES.map((value) => (
                 <Button
                   key={value}
-                  variant={locale === value ? "secondary" : "outline"}
+                  variant={locale === value ? "default" : "outline"}
                   aria-pressed={locale === value}
                   onClick={() => value !== locale && setLocale(value)}
                 >

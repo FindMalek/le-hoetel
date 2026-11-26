@@ -20,7 +20,7 @@ export async function Hero({ whatsappUrl }: { whatsappUrl: string | null }) {
           <p className="font-medium text-muted-foreground text-sm uppercase tracking-wide rtl:tracking-normal rtl:normal-case">
             {t("hero.eyebrow")}
           </p>
-          <h1 className="text-balance font-bold text-display tracking-tight rtl:leading-snug">{t("hero.title")}</h1>
+          <h1 className="text-balance font-display text-display">{t("hero.title")}</h1>
           <p className="max-w-2xl text-lg text-muted-foreground leading-relaxed">{t("hero.subtitle")}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <a href="#demo" className={cn(buttonVariants({ size: "lg" }), "min-h-12 px-6")}>
