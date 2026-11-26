@@ -23,12 +23,12 @@
     "shortcuts": "Press G then a letter to jump",
     "feedback": "Feedback",
     "feedbackTitle": "Send feedback",
-    "feedbackDescription": "Tell us what slowed you down or what you miss. It goes straight to the team.",
+    "feedbackDescription": "Tell us what slowed you down or what you miss. It is posted publicly on GitHub, so leave out names, contact details and guest information.",
     "feedbackPlaceholder": "What could be better?",
-    "feedbackEmail": "Email (optional)",
     "feedbackSend": "Send",
     "feedbackCancel": "Cancel",
     "feedbackThanks": "Thanks, we got it.",
+    "feedbackError": "Could not send your feedback. Try again later.",
     "breadcrumb": "Breadcrumb"
   },
   "home": {

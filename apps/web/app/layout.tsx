@@ -39,10 +39,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [locale, pathname, t] = await Promise.all([
+  const [locale, pathname, t, shell] = await Promise.all([
     getLocale(),
     headers().then((h) => h.get(PATHNAME_HEADER) ?? "/"),
     getTranslations("consentBanner"),
+    getTranslations("shell"),
   ])
   const { lang, dir } = htmlAttributes(isLocale(locale) ? locale : DEFAULT_LOCALE)
   return (
@@ -64,7 +65,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <div className="absolute inset-0 bg-dots" />
               </div>
               {children}
-              {NO_FEEDBACK_PATHS.includes(pathname) ? null : <FeedbackButton />}
+              {NO_FEEDBACK_PATHS.includes(pathname) ? null : (
+                <FeedbackButton
+                  labels={{
+                    open: shell("feedback"),
+                    description: shell("feedbackDescription"),
+                    placeholder: shell("feedbackPlaceholder"),
+                    send: shell("feedbackSend"),
+                    cancel: shell("feedbackCancel"),
+                    thanks: shell("feedbackThanks"),
+                    error: shell("feedbackError"),
+                  }}
+                />
+              )}
             </QueryProvider>
             <ConsentBanner
               labels={{

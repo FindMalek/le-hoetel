@@ -23,12 +23,12 @@
     "shortcuts": "اضغط G ثم حرفًا للانتقال",
     "feedback": "ملاحظات",
     "feedbackTitle": "إرسال ملاحظة",
-    "feedbackDescription": "أخبرنا بما أبطأك أو بما ينقصك. تصل مباشرة إلى الفريق.",
+    "feedbackDescription": "أخبرنا بما أبطأك أو بما ينقصك. تُنشر رسالتك علنًا على GitHub، فلا تذكر أسماء أو بيانات اتصال أو معلومات عن النزلاء.",
     "feedbackPlaceholder": "ما الذي يمكن تحسينه؟",
-    "feedbackEmail": "البريد الإلكتروني (اختياري)",
     "feedbackSend": "إرسال",
     "feedbackCancel": "إلغاء",
     "feedbackThanks": "شكرًا، وصلتنا ملاحظتك.",
+    "feedbackError": "تعذّر إرسال ملاحظتك. حاول مرة أخرى لاحقًا.",
     "breadcrumb": "مسار التنقل"
   },
   "home": {

@@ -29,7 +29,7 @@ const schema = z.object({
   /** Who hears about a new demo request. Defaults to `ADMIN_EMAIL`. */
   LEADS_NOTIFY_EMAIL: optional,
 
-  /** Public repo shown on the landing page (owner/name). */
+  /** Public repo (owner/name): stars on the landing page, issues from the feedback widget (token needs Issues: write). */
   GITHUB_REPO: optional,
   GITHUB_TOKEN: optional,
 

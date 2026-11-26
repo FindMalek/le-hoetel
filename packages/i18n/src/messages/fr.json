@@ -23,12 +23,12 @@
     "shortcuts": "Appuyez sur G puis une lettre pour y aller",
     "feedback": "Avis",
     "feedbackTitle": "Envoyer un avis",
-    "feedbackDescription": "Dites-nous ce qui vous a ralenti ou ce qui vous manque. Cela arrive directement à l'équipe.",
+    "feedbackDescription": "Dites-nous ce qui vous a ralenti ou ce qui vous manque. Votre message est publié sur GitHub, visible par tous : n'indiquez ni noms, ni coordonnées, ni informations sur les clients.",
     "feedbackPlaceholder": "Qu'est-ce qui pourrait être mieux ?",
-    "feedbackEmail": "E-mail (facultatif)",
     "feedbackSend": "Envoyer",
     "feedbackCancel": "Annuler",
     "feedbackThanks": "Merci, bien reçu.",
+    "feedbackError": "Impossible d'envoyer votre avis. Réessayez plus tard.",
     "breadcrumb": "Fil d'Ariane"
   },
   "home": {
