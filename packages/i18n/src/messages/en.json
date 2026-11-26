@@ -848,7 +848,7 @@
     "edit": "Edit",
     "remove": "Delete",
     "removeTitle": "Delete this offer?",
-    "removeBody": "“{title}” and its redemptions will be deleted. Guests lose their QR for it.",
+    "removeBody": "“{title}” and its {count, plural, =0 {redemptions} one {# redemption} other {# redemptions}} will be deleted. Guests lose their QR for it.{campaigns, plural, =0 {} one { # campaign will go out without it.} other { # campaigns will go out without it.}}",
     "cancel": "Cancel",
     "save": "Save",
     "saved": "Offer saved.",
@@ -868,10 +868,8 @@
     "fieldMax": "Maximum redemptions",
     "fieldMaxHint": "Empty means no limit.",
     "fieldActive": "Active",
-    "redeemed": "{count} redeemed",
-    "redeemedOf": "{count} of {max} redeemed",
-    "forever": "No end date",
-    "until": "Until {date}",
+    "redeemed": "<n></n> redeemed",
+    "redeemedOf": "<n></n> of <max></max> redeemed",
     "state": {
       "ready": "Active",
       "inactive": "Paused",
@@ -883,14 +881,6 @@
       "title": "What the guest sees",
       "titlePlaceholder": "Your offer title",
       "hint": "Shown in the guest language of your hotel, with a sample code."
-    },
-    "columns": {
-      "offer": "Offer",
-      "status": "Status",
-      "trigger": "Given to",
-      "redeemed": "Redeemed",
-      "valid": "Valid",
-      "actions": "Actions"
     },
     "trigger": {
       "welcome": "New guests",
@@ -930,7 +920,11 @@
     "fieldTextHint": "Up to {max} characters.",
     "optional": "Optional",
     "fieldActiveHint": "Pause it to stop guests from using it.",
-    "create": "Create offer"
+    "create": "Create offer",
+    "inCampaigns": "{count, plural, one {In <n></n> campaign} other {In <n></n> campaigns}}",
+    "between": "{from} to {until}",
+    "since": "From {from}, no end date",
+    "removeNamed": "Delete {title}"
   },
   "offer": {
     "invalidTitle": "Link not valid",
@@ -994,8 +988,6 @@
   "holidays": {
     "title": "Holiday messages",
     "description": "A short greeting on the days that matter to your guests. Off until you switch a holiday on.",
-    "saved": "Saved",
-    "next": "Next: {date}",
     "noDate": "No date known yet",
     "channelFor": "Channel for {name}",
     "switchFor": "Send {name} greeting",
@@ -1004,7 +996,14 @@
       "email": "Email only",
       "whatsapp": "WhatsApp only"
     },
-    "footnote": "Sent at 09:00 hotel time, only to guests who agreed to the channel. Islamic dates follow the astronomical calendar and can move by a day."
+    "footnote": "Sent at 09:00 hotel time, only to guests who agreed to the channel. Islamic dates follow the astronomical calendar and can move by a day.",
+    "savedOn": "Switched on. It goes out on the day.",
+    "savedOff": "Switched off",
+    "summary": "<on></on> of <total></total> greetings on",
+    "previewIn": "Preview in",
+    "inDays": "{count, plural, =0 {today} one {in <n></n> day} other {in <n></n> days}}",
+    "on": "On",
+    "off": "Off"
   },
   "landing": {
     "meta": {
@@ -1579,20 +1578,22 @@
     "new": "New campaign",
     "empty": "No campaigns yet",
     "emptyHint": "Write a message, pick who gets it, and send it or schedule it.",
-    "resultsLine": "{sent} of {total} sent",
+    "resultsLine": "<sent></sent> of <total></total> sent",
     "columns": {
       "name": "Name",
       "channel": "Channel",
       "status": "Status",
       "results": "Results",
-      "when": "When"
+      "when": "When",
+      "audience": "Audience"
     },
     "status": {
       "draft": "Draft",
       "scheduled": "Scheduled",
       "sending": "Sending",
       "sent": "Sent",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "failed": "Failed"
     },
     "channel": {
       "both": "Email and WhatsApp",
@@ -1604,38 +1605,48 @@
       "sent": "Sent",
       "delivered": "Delivered",
       "failed": "Failed",
-      "skipped": "Skipped"
+      "skipped": "Skipped",
+      "audience": "Audience today",
+      "skippedHint": "Skipped or still waiting"
     },
     "detail": {
       "title": "Campaign",
       "description": "Check the message, send a test to yourself, then send or schedule it.",
-      "actions": "Actions",
       "edit": "Edit",
       "delete": "Delete",
       "cancel": "Cancel campaign",
       "cancelTitle": "Cancel this campaign?",
-      "cancelBody": "Messages not sent yet will not go out.",
       "cancelled": "Campaign cancelled",
-      "keep": "Keep it",
       "messageTitle": "Message",
       "quietNote": "Messages only go out between 9:00 and 20:00 hotel time.",
       "schedule": "Schedule",
       "scheduleAt": "Send on",
       "scheduled": "Campaign scheduled",
       "sendNow": "Send now",
-      "startsAt": "Starts {date}",
       "testSend": "Send a test to me",
-      "testSent": "Test sent to {to}"
+      "testSent": "Test sent to {to}",
+      "sendTitle": "Send it",
+      "or": "or",
+      "sending": "Campaign is sending",
+      "deleted": "Campaign deleted",
+      "dangerTitle": "Stop or remove",
+      "cancelHint": "Stops the messages that have not gone out yet.",
+      "deleteHint": "Removes the campaign and its results.",
+      "state": {
+        "draft": "Not sent. Nothing goes out until you send or schedule it.",
+        "scheduled": "Starts {date}.",
+        "sending": "Sending: {done} of {total} handled.",
+        "sent": "Sent {date}.",
+        "failed": "No message got through. Check the email and WhatsApp setup.",
+        "cancelled": "Cancelled {date}."
+      }
     },
     "form": {
       "newTitle": "New campaign",
       "editTitle": "Edit campaign",
       "hint": "Only guests who gave consent for the channel receive it.",
-      "basics": "Basics",
-      "basicsHint": "The name is only for you.",
       "name": "Campaign name",
       "channel": "Channel",
-      "audience": "Who gets it",
       "audienceHint": "Leave everything empty to reach all guests.",
       "languages": "Languages",
       "countries": "Countries",
@@ -1645,20 +1656,101 @@
       "anyTime": "Any time",
       "lastDays": "Last {days} days",
       "reachLoading": "Counting guests…",
-      "reach": "{guests} guests, {email} by email, {whatsapp} on WhatsApp",
       "consentNote": "Guests who unsubscribed or never agreed are always left out.",
-      "message": "Message",
       "messageHint": "Write it in one or more languages. Each guest gets their own language.",
       "subject": "Subject",
       "body": "Message text",
-      "bodyHint": "Keep it short and friendly.",
+      "bodyHint": "Short and friendly works best. {count}/{max}",
       "offer": "Offer",
       "offerHint": "Attach an offer guests can redeem.",
       "noOffer": "No offer",
-      "needText": "Write the message in at least one language",
       "saveDraft": "Save draft",
-      "saving": "Saving…",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "steps": {
+        "audience": "Audience",
+        "channel": "Channel",
+        "message": "Message",
+        "send": "Send"
+      },
+      "stepHasError": "needs attention",
+      "reachTitle": "Can be reached today",
+      "reachSplit": "<email></email> by email, <whatsapp></whatsapp> on WhatsApp",
+      "channelHint": "Each guest only gets it on a channel they agreed to.",
+      "nameHint": "Only your team sees it.",
+      "writeIn": "Language",
+      "written": "written",
+      "counter": "{count}/{max}",
+      "when": {
+        "draft": "Save as draft",
+        "draftHint": "Nothing goes out. Send or schedule it later.",
+        "now": "Send now",
+        "nowHint": "Starts right away, between 9:00 and 20:00 hotel time.",
+        "later": "Schedule",
+        "laterHint": "Pick the day and time it starts."
+      },
+      "summary": {
+        "audience": "Audience",
+        "channel": "Channel",
+        "languages": "Languages",
+        "offer": "Offer",
+        "none": "None yet"
+      },
+      "back": "Back",
+      "next": "Next",
+      "reviewSend": "Send now",
+      "reviewSchedule": "Schedule",
+      "savedDraft": "Draft saved"
+    },
+    "guests": "{count, plural, one {<n></n> guest} other {<n></n> guests}}",
+    "counting": "Counting…",
+    "notSentYet": "Not sent yet",
+    "failedLine": "<n></n> failed",
+    "when": {
+      "sentOn": "Sent {date}",
+      "scheduledFor": "Planned for {date}",
+      "createdOn": "Created {date}"
+    },
+    "filterLabel": "Show campaigns",
+    "filter": {
+      "all": "All",
+      "draft": "Drafts",
+      "scheduled": "Scheduled",
+      "sent": "Done"
+    },
+    "filterEmpty": "No campaign in this list",
+    "preview": {
+      "title": "Preview",
+      "viewLabel": "Preview as",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "label": "The message as a guest gets it",
+      "subjectPlaceholder": "Your subject",
+      "bodyPlaceholder": "Your message shows here as you write it."
+    },
+    "guestCopy": {
+      "offer": "Your offer",
+      "unsubscribe": "Unsubscribe",
+      "stop": "Reply STOP to stop these messages."
+    },
+    "errors": {
+      "name": "Give the campaign a name.",
+      "subject": "Write a subject for this language.",
+      "body": "Write the message for this language.",
+      "needText": "Write the message in at least one language.",
+      "at": "Pick a date and time.",
+      "atPast": "Pick a time in the future.",
+      "audience": "No guest matches this audience yet. Widen it in the Audience step."
+    },
+    "confirm": {
+      "sendTitle": "Send to {count, plural, one {<n></n> guest} other {<n></n> guests}} now?",
+      "sendBody": "It goes out by {channel}, between 9:00 and 20:00 hotel time. Messages already sent cannot be taken back.",
+      "scheduleTitle": "Schedule for {count, plural, one {<n></n> guest} other {<n></n> guests}}?",
+      "scheduleBody": "It starts {date} by {channel}. The audience is counted again then, so the number can change. You can cancel until it is sent.",
+      "cancelBody": "{count, plural, =0 {Nothing waiting} one {# message waiting} other {# messages waiting}} by {channel} will not go out. Messages already sent stay sent.",
+      "deleteTitle": "Delete “{name}”?",
+      "deleteDraftBody": "It was set to reach {count, plural, one {# guest} other {# guests}} by {channel}. Nobody gets it and the draft is gone for good.",
+      "deleteBody": "It reached out to {count, plural, one {# guest} other {# guests}} by {channel}. The campaign and its results are deleted for good.",
+      "back": "Go back"
     }
   },
   "settings": {

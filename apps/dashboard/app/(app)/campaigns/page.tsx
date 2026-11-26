@@ -20,8 +20,8 @@ export default async function CampaignsPage() {
         title={t("title")}
         description={t("description")}
         action={
-          <Button className="h-11 md:h-9" render={<Link href="/campaigns/new" />} nativeButton={false}>
-            <PlusIcon />
+          <Button render={<Link href="/campaigns/new" />} nativeButton={false}>
+            <PlusIcon data-icon="inline-start" />
             {t("new")}
           </Button>
         }

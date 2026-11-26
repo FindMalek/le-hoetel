@@ -848,7 +848,7 @@
     "edit": "تعديل",
     "remove": "حذف",
     "removeTitle": "حذف هذا العرض؟",
-    "removeBody": "سيتم حذف «{title}» وعمليات استخدامه. سيفقد الضيوف الـQR الخاص به.",
+    "removeBody": "سيُحذف «{title}» و{count, plural, =0 {استخداماته} one {استخدام واحد} other {# استخدامات}}. يفقد النزلاء رمز QR الخاص به.{campaigns, plural, =0 {} one { ستُرسل حملة واحدة بدونه.} other { ستُرسل # حملات بدونه.}}",
     "cancel": "إلغاء",
     "save": "حفظ",
     "saved": "تم حفظ العرض.",
@@ -868,10 +868,8 @@
     "fieldMax": "الحد الأقصى للاستخدام",
     "fieldMaxHint": "فارغ يعني بلا حد.",
     "fieldActive": "نشط",
-    "redeemed": "تم استخدام {count}",
-    "redeemedOf": "تم استخدام {count} من {max}",
-    "forever": "بلا تاريخ انتهاء",
-    "until": "حتى {date}",
+    "redeemed": "استُخدم <n></n>",
+    "redeemedOf": "استُخدم <n></n> من <max></max>",
     "state": {
       "ready": "نشط",
       "inactive": "متوقف",
@@ -883,14 +881,6 @@
       "title": "ما يراه الضيف",
       "titlePlaceholder": "عنوان عرضك",
       "hint": "يظهر بلغة ضيوف الفندق مع رمز تجريبي."
-    },
-    "columns": {
-      "offer": "العرض",
-      "status": "الحالة",
-      "trigger": "يُمنح لـ",
-      "redeemed": "الاستخدامات",
-      "valid": "الصلاحية",
-      "actions": "الإجراءات"
     },
     "trigger": {
       "welcome": "الضيوف الجدد",
@@ -930,7 +920,11 @@
     "fieldTextHint": "حتى {max} حرفًا.",
     "optional": "اختياري",
     "fieldActiveHint": "أوقفها مؤقتًا لمنع الضيوف من استخدامها.",
-    "create": "إنشاء العرض"
+    "create": "إنشاء العرض",
+    "inCampaigns": "{count, plural, one {في حملة واحدة} other {في <n></n> حملات}}",
+    "between": "من {from} إلى {until}",
+    "since": "من {from}، بلا نهاية",
+    "removeNamed": "حذف {title}"
   },
   "offer": {
     "invalidTitle": "الرابط غير صالح",
@@ -994,8 +988,6 @@
   "holidays": {
     "title": "رسائل المناسبات",
     "description": "رسالة قصيرة في الأيام المهمة لضيوفكم. متوقفة حتى تفعّلوا مناسبة.",
-    "saved": "تم الحفظ",
-    "next": "التالي: {date}",
     "noDate": "التاريخ غير معروف بعد",
     "channelFor": "قناة {name}",
     "switchFor": "إرسال تهنئة {name}",
@@ -1004,7 +996,14 @@
       "email": "البريد فقط",
       "whatsapp": "واتساب فقط"
     },
-    "footnote": "تُرسل الساعة 09:00 بتوقيت الفندق، إلى الضيوف الذين وافقوا على القناة فقط. التواريخ الهجرية فلكية وقد تختلف بيوم."
+    "footnote": "تُرسل الساعة 09:00 بتوقيت الفندق، إلى الضيوف الذين وافقوا على القناة فقط. التواريخ الهجرية فلكية وقد تختلف بيوم.",
+    "savedOn": "تم التفعيل. تُرسل في يومها.",
+    "savedOff": "تم الإيقاف",
+    "summary": "<on></on> من <total></total> تهانٍ مفعّلة",
+    "previewIn": "المعاينة بـ",
+    "inDays": "{count, plural, =0 {اليوم} one {بعد يوم واحد} two {بعد يومين} few {بعد <n></n> أيام} other {بعد <n></n> يومًا}}",
+    "on": "مفعّل",
+    "off": "متوقف"
   },
   "landing": {
     "meta": {
@@ -1579,20 +1578,22 @@
     "new": "حملة جديدة",
     "empty": "لا توجد حملات بعد",
     "emptyHint": "اكتب رسالة، واختر من يستلمها، ثم أرسلها أو جدولها.",
-    "resultsLine": "تم إرسال {sent} من {total}",
+    "resultsLine": "أُرسل <sent></sent> من <total></total>",
     "columns": {
       "name": "الاسم",
       "channel": "القناة",
       "status": "الحالة",
       "results": "النتائج",
-      "when": "الموعد"
+      "when": "الموعد",
+      "audience": "الجمهور"
     },
     "status": {
       "draft": "مسودة",
       "scheduled": "مجدولة",
       "sending": "قيد الإرسال",
       "sent": "مرسلة",
-      "cancelled": "ملغاة"
+      "cancelled": "ملغاة",
+      "failed": "فشلت"
     },
     "channel": {
       "both": "البريد الإلكتروني وواتساب",
@@ -1604,38 +1605,48 @@
       "sent": "مرسلة",
       "delivered": "مستلمة",
       "failed": "فاشلة",
-      "skipped": "متجاوزة"
+      "skipped": "متجاوزة",
+      "audience": "الجمهور اليوم",
+      "skippedHint": "تم تخطيها أو في الانتظار"
     },
     "detail": {
       "title": "الحملة",
       "description": "راجع الرسالة، وأرسل لنفسك تجربة، ثم أرسل أو جدول.",
-      "actions": "الإجراءات",
       "edit": "تعديل",
       "delete": "حذف",
       "cancel": "إلغاء الحملة",
       "cancelTitle": "إلغاء هذه الحملة؟",
-      "cancelBody": "الرسائل التي لم تُرسل بعد لن تُرسل.",
       "cancelled": "تم إلغاء الحملة",
-      "keep": "إبقاؤها",
       "messageTitle": "الرسالة",
       "quietNote": "تُرسل الرسائل فقط بين 9:00 و20:00 بتوقيت الفندق.",
       "schedule": "جدولة",
       "scheduleAt": "الإرسال في",
       "scheduled": "تمت جدولة الحملة",
       "sendNow": "أرسل الآن",
-      "startsAt": "تبدأ {date}",
       "testSend": "أرسل لي تجربة",
-      "testSent": "تم إرسال التجربة إلى {to}"
+      "testSent": "تم إرسال التجربة إلى {to}",
+      "sendTitle": "الإرسال",
+      "or": "أو",
+      "sending": "الحملة قيد الإرسال",
+      "deleted": "تم حذف الحملة",
+      "dangerTitle": "إيقاف أو حذف",
+      "cancelHint": "يوقف الرسائل التي لم تُرسل بعد.",
+      "deleteHint": "يحذف الحملة ونتائجها.",
+      "state": {
+        "draft": "لم تُرسل. لا يُرسل شيء حتى ترسلها أو تجدولها.",
+        "scheduled": "تبدأ {date}.",
+        "sending": "قيد الإرسال: عولج {done} من {total}.",
+        "sent": "أُرسلت {date}.",
+        "failed": "لم تصل أي رسالة. تحقق من إعدادات البريد وواتساب.",
+        "cancelled": "أُلغيت {date}."
+      }
     },
     "form": {
       "newTitle": "حملة جديدة",
       "editTitle": "تعديل الحملة",
       "hint": "يستلمها فقط النزلاء الذين وافقوا على القناة.",
-      "basics": "الأساسيات",
-      "basicsHint": "الاسم ظاهر لك فقط.",
       "name": "اسم الحملة",
       "channel": "القناة",
-      "audience": "من يستلمها",
       "audienceHint": "اترك كل شيء فارغاً للوصول إلى جميع النزلاء.",
       "languages": "اللغات",
       "countries": "البلدان",
@@ -1645,20 +1656,101 @@
       "anyTime": "في أي وقت",
       "lastDays": "آخر {days} يوماً",
       "reachLoading": "جارٍ عدّ النزلاء…",
-      "reach": "{guests} نزيلاً، {email} عبر البريد، {whatsapp} عبر واتساب",
       "consentNote": "النزلاء الذين ألغوا الاشتراك أو لم يوافقوا يُستبعدون دائماً.",
-      "message": "الرسالة",
       "messageHint": "اكتبها بلغة أو أكثر. يستلم كل نزيل رسالته بلغته.",
       "subject": "الموضوع",
       "body": "نص الرسالة",
-      "bodyHint": "اجعلها قصيرة وودودة.",
+      "bodyHint": "الأفضل أن تكون قصيرة وودودة. {count}/{max}",
       "offer": "العرض",
       "offerHint": "أرفق عرضاً يمكن للنزيل استخدامه.",
       "noOffer": "بدون عرض",
-      "needText": "اكتب الرسالة بلغة واحدة على الأقل",
       "saveDraft": "حفظ المسودة",
-      "saving": "جارٍ الحفظ…",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "steps": {
+        "audience": "الجمهور",
+        "channel": "القناة",
+        "message": "الرسالة",
+        "send": "الإرسال"
+      },
+      "stepHasError": "تحتاج إلى تصحيح",
+      "reachTitle": "يمكن الوصول إليهم اليوم",
+      "reachSplit": "<email></email> عبر البريد، <whatsapp></whatsapp> عبر واتساب",
+      "channelHint": "لا يستلمها كل نزيل إلا عبر قناة وافق عليها.",
+      "nameHint": "لا يراه إلا فريقك.",
+      "writeIn": "اللغة",
+      "written": "مكتوبة",
+      "counter": "{count}/{max}",
+      "when": {
+        "draft": "حفظ كمسودة",
+        "draftHint": "لا يُرسل شيء. أرسلها أو جدولها لاحقًا.",
+        "now": "إرسال الآن",
+        "nowHint": "تبدأ فورًا، بين 9:00 و20:00 بتوقيت الفندق.",
+        "later": "جدولة",
+        "laterHint": "اختر يوم ووقت البدء."
+      },
+      "summary": {
+        "audience": "الجمهور",
+        "channel": "القناة",
+        "languages": "اللغات",
+        "offer": "العرض",
+        "none": "لا شيء بعد"
+      },
+      "back": "رجوع",
+      "next": "التالي",
+      "reviewSend": "إرسال الآن",
+      "reviewSchedule": "جدولة",
+      "savedDraft": "تم حفظ المسودة"
+    },
+    "guests": "{count, plural, zero {<n></n> نزيل} one {نزيل واحد} two {نزيلان} few {<n></n> نزلاء} many {<n></n> نزيلًا} other {<n></n> نزيل}}",
+    "counting": "جارٍ العدّ…",
+    "notSentYet": "لم تُرسل بعد",
+    "failedLine": "فشل <n></n>",
+    "when": {
+      "sentOn": "أُرسلت {date}",
+      "scheduledFor": "مجدولة في {date}",
+      "createdOn": "أُنشئت {date}"
+    },
+    "filterLabel": "عرض الحملات",
+    "filter": {
+      "all": "الكل",
+      "draft": "المسودات",
+      "scheduled": "المجدولة",
+      "sent": "المنتهية"
+    },
+    "filterEmpty": "لا توجد حملة في هذه القائمة",
+    "preview": {
+      "title": "معاينة",
+      "viewLabel": "المعاينة عبر",
+      "email": "البريد الإلكتروني",
+      "whatsapp": "واتساب",
+      "label": "الرسالة كما يستلمها النزيل",
+      "subjectPlaceholder": "الموضوع",
+      "bodyPlaceholder": "تظهر رسالتك هنا أثناء الكتابة."
+    },
+    "guestCopy": {
+      "offer": "عرضك",
+      "unsubscribe": "إلغاء الاشتراك",
+      "stop": "أرسل STOP لإيقاف هذه الرسائل."
+    },
+    "errors": {
+      "name": "أعطِ الحملة اسمًا.",
+      "subject": "اكتب موضوعًا لهذه اللغة.",
+      "body": "اكتب الرسالة لهذه اللغة.",
+      "needText": "اكتب الرسالة بلغة واحدة على الأقل.",
+      "at": "اختر تاريخًا ووقتًا.",
+      "atPast": "اختر وقتًا في المستقبل.",
+      "audience": "لا يطابق أي نزيل هذا الجمهور بعد. وسّعه في خطوة الجمهور."
+    },
+    "confirm": {
+      "sendTitle": "إرسال الآن إلى {count, plural, zero {<n></n> نزيل} one {نزيل واحد} two {نزيلين} few {<n></n> نزلاء} many {<n></n> نزيلًا} other {<n></n> نزيل}}؟",
+      "sendBody": "تُرسل عبر {channel} بين 9:00 و20:00 بتوقيت الفندق. لا يمكن استرجاع الرسائل المرسلة.",
+      "scheduleTitle": "جدولة لـ {count, plural, zero {<n></n> نزيل} one {نزيل واحد} two {نزيلين} few {<n></n> نزلاء} many {<n></n> نزيلًا} other {<n></n> نزيل}}؟",
+      "scheduleBody": "تبدأ {date} عبر {channel}. يُعاد عدّ الجمهور حينها، لذا قد يتغير العدد. يمكنك الإلغاء ما دامت لم تُرسل.",
+      "cancelBody": "{count, plural, =0 {لا شيء في الانتظار} one {رسالة واحدة في الانتظار} other {# رسائل في الانتظار}} عبر {channel} لن تُرسل. الرسائل المرسلة تبقى كما هي.",
+      "deleteTitle": "حذف «{name}»؟",
+      "deleteDraftBody": "كانت ستصل إلى {count, plural, one {نزيل واحد} other {# نزيل}} عبر {channel}. لن يستلمها أحد وستُحذف المسودة نهائيًا.",
+      "deleteBody": "تواصلت مع {count, plural, one {نزيل واحد} other {# نزيل}} عبر {channel}. ستُحذف الحملة ونتائجها نهائيًا.",
+      "back": "رجوع"
     }
   },
   "settings": {

@@ -1,39 +1,43 @@
 "use client"
 
 // i18n-used: campaigns
-import { CAMPAIGN_STATUSES, pickContent } from "@ritorno/common/campaigns"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@ritorno/ui/components/alert-dialog"
 import { Button } from "@ritorno/ui/components/button"
+import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
+import { Num } from "@ritorno/ui/components/num"
 import { Section } from "@ritorno/ui/components/section"
+import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { StatCard } from "@ritorno/ui/components/stat-card"
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import Link from "next/link"
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { CalendarClockIcon, SendIcon, Trash2Icon, XCircleIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
-import { CampaignStatusBadge } from "./campaigns-list"
+import { localInput } from "./campaign-form"
+import { CampaignPreview, type CampaignPreviewCopies } from "./campaign-preview"
+import { CampaignStatusBadge, campaignState, useAudience } from "./campaigns-list"
 
-void CAMPAIGN_STATUSES
+type Confirm = "send" | "schedule" | "cancel" | "delete"
 
-export function CampaignDetail({ id }: { id: string }) {
+export function CampaignDetail({
+  id,
+  hotelName,
+  defaultLanguage,
+  copies,
+}: {
+  id: string
+  hotelName: string
+  defaultLanguage: HotelLanguage
+  copies: CampaignPreviewCopies
+}) {
   const t = useTranslations("campaigns")
-  const locale = useLocale() as HotelLanguage
+  const locale = useLocale()
   const router = useRouter()
   const queryClient = useQueryClient()
   const { data: campaign } = useSuspenseQuery(
@@ -42,27 +46,37 @@ export function CampaignDetail({ id }: { id: string }) {
       refetchInterval: (query) => (["scheduled", "sending"].includes(query.state.data?.status ?? "") ? 5_000 : false),
     }),
   )
+  const audience = useAudience(campaign)
+  const { data: offers } = useQuery(orpc.offers.list.queryOptions())
+  const offerTitle = offers?.find((offer) => offer.id === campaign.offerId)?.title ?? null
+  const languages = HOTEL_LANGUAGES.filter((language) => campaign.content[language])
+  const [language, setLanguage] = useState<HotelLanguage>(
+    languages.find((value) => value === locale) ??
+      languages.find((value) => value === defaultLanguage) ??
+      languages[0] ??
+      "fr",
+  )
   const [at, setAt] = useState("")
-  const refresh = () => queryClient.invalidateQueries({ queryKey: orpc.campaigns.key() })
-  const onError = (error: Error) => toast.error(errorMessage(error))
-  const schedule = useMutation(
-    orpc.campaigns.schedule.mutationOptions({
-      onSuccess: () => {
-        toast.success(t("detail.scheduled"))
-        return refresh()
-      },
-      onError,
-    }),
-  )
-  const cancel = useMutation(
-    orpc.campaigns.cancel.mutationOptions({
-      onSuccess: () => {
-        toast.success(t("detail.cancelled"))
-        return refresh()
-      },
-      onError,
-    }),
-  )
+  const [atTouched, setAtTouched] = useState(false)
+  const [confirm, setConfirmKind] = useState<Confirm>("send")
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const setConfirm = (next: Confirm | null) => {
+    if (next) setConfirmKind(next)
+    setConfirmOpen(next !== null)
+  }
+
+  const done = (message: string) => () => {
+    toast.success(message)
+    setConfirm(null)
+    router.refresh()
+    return queryClient.invalidateQueries({ queryKey: orpc.campaigns.key() })
+  }
+  const onError = (error: Error) => {
+    setConfirm(null)
+    toast.error(errorMessage(error))
+  }
+  const schedule = useMutation(orpc.campaigns.schedule.mutationOptions({ onError }))
+  const cancel = useMutation(orpc.campaigns.cancel.mutationOptions({ onSuccess: done(t("detail.cancelled")), onError }))
   const test = useMutation(
     orpc.campaigns.testSend.mutationOptions({
       onSuccess: (result) => toast.success(t("detail.testSent", { to: result.to })),
@@ -70,135 +84,221 @@ export function CampaignDetail({ id }: { id: string }) {
     }),
   )
   const remove = useMutation(
-    orpc.campaigns.delete.mutationOptions({ onSuccess: () => router.push("/campaigns"), onError }),
+    orpc.campaigns.delete.mutationOptions({
+      onSuccess: () => {
+        toast.success(t("detail.deleted"))
+        void queryClient.invalidateQueries({ queryKey: orpc.campaigns.key() })
+        router.push("/campaigns")
+      },
+      onError,
+    }),
   )
 
   const { results } = campaign
   const pending = Math.max(results.targeted - results.sent - results.delivered - results.failed - results.skipped, 0)
-  const reached = results.sent + results.delivered
-  const languages = HOTEL_LANGUAGES.filter((language) => campaign.content[language])
-  const preview = pickContent(campaign.content, locale, languages[0] ?? "fr")
+  const state = campaignState(campaign)
   const isDraft = campaign.status === "draft"
   const running = campaign.status === "scheduled" || campaign.status === "sending"
+  const canDelete = isDraft || campaign.status === "cancelled"
+  const text = campaign.content[language] ?? campaign.content[languages[0] ?? "fr"] ?? { subject: "", body: "" }
+  const channel = t(`channel.${campaign.channel}`)
+  const num = (value: number) => <Num value={value} locale={locale} className="tabular-nums" />
+  const date = (value: Date | null) =>
+    value ? new Date(value).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" }) : ""
+  const atError = !at ? t("errors.at") : new Date(at).getTime() < Date.now() ? t("errors.atPast") : undefined
+  const noAudience = audience === 0
+
+  const confirmCopy: Record<Confirm, { title: React.ReactNode; body: string; label: string; destructive?: boolean }> = {
+    send: {
+      title: t.rich("confirm.sendTitle", { count: audience ?? 0, n: () => num(audience ?? 0) }),
+      body: t("confirm.sendBody", { channel }),
+      label: t("detail.sendNow"),
+    },
+    schedule: {
+      title: t.rich("confirm.scheduleTitle", { count: audience ?? 0, n: () => num(audience ?? 0) }),
+      body: t("confirm.scheduleBody", { channel, date: at ? date(new Date(at)) : "" }),
+      label: t("detail.schedule"),
+    },
+    cancel: {
+      title: t("detail.cancelTitle"),
+      body: t("confirm.cancelBody", { count: pending, channel }),
+      label: t("detail.cancel"),
+      destructive: true,
+    },
+    delete: {
+      title: t("confirm.deleteTitle", { name: campaign.name }),
+      body: isDraft
+        ? t("confirm.deleteDraftBody", { count: audience ?? 0, channel })
+        : t("confirm.deleteBody", { count: results.targeted, channel }),
+      label: t("detail.delete"),
+      destructive: true,
+    },
+  }
+  const confirmPending = schedule.isPending || cancel.isPending || remove.isPending
+  function onConfirm() {
+    if (confirm === "send" || confirm === "schedule") {
+      const message = confirm === "send" ? t("detail.sending") : t("detail.scheduled")
+      schedule.mutate({ id, at: confirm === "schedule" ? new Date(at) : null }, { onSuccess: done(message) })
+    } else if (confirm === "cancel") cancel.mutate({ id })
+    else remove.mutate({ id })
+  }
 
   return (
     <div className="flex flex-col gap-8">
-      <Section
-        title={campaign.name}
-        description={t(`channel.${campaign.channel}`)}
-        actions={<CampaignStatusBadge status={campaign.status} />}
-      >
-        {campaign.scheduledAt && campaign.status !== "draft" ? (
-          <p className="text-muted-foreground text-sm">
-            {t("detail.startsAt", {
-              date: new Date(campaign.scheduledAt).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" }),
+      <section aria-labelledby="campaign-state" className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <CampaignStatusBadge campaign={campaign} />
+          <p id="campaign-state" className="text-muted-foreground">
+            {t(`detail.state.${state}`, {
+              date: date(campaign.completedAt ?? campaign.scheduledAt),
+              done: results.targeted - pending,
+              total: results.targeted,
             })}
           </p>
-        ) : null}
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <StatCard label={t("results.targeted")} value={results.targeted} />
+        </div>
+        <div className={isDraft ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-4" : "grid grid-cols-2 gap-3 lg:grid-cols-4"}>
           <StatCard
-            label={t("results.sent")}
-            value={reached}
-            hint={results.delivered ? t("results.delivered", { count: results.delivered }) : undefined}
+            label={isDraft ? t("results.audience") : t("results.targeted")}
+            value={audience === null ? "…" : num(audience)}
+            hint={channel}
           />
-          <StatCard label={t("results.failed")} value={results.failed} />
-          <StatCard label={t("results.skipped")} value={results.skipped + pending} />
+          {isDraft ? null : (
+            <>
+              <StatCard
+                label={t("results.sent")}
+                value={num(results.sent + results.delivered)}
+                hint={results.delivered ? t("results.delivered", { count: results.delivered }) : undefined}
+              />
+              <StatCard label={t("results.failed")} value={num(results.failed)} />
+              <StatCard
+                label={t("results.skipped")}
+                value={num(results.skipped + pending)}
+                hint={t("results.skippedHint")}
+              />
+            </>
+          )}
         </div>
-      </Section>
+      </section>
 
-      <Section
-        title={t("detail.messageTitle")}
-        description={languages.map((language) => LOCALE_NAMES[language]).join(", ")}
-      >
-        <div className="flex max-w-xl flex-col gap-2 rounded-lg border p-4" dir={locale === "ar" ? "rtl" : "ltr"}>
-          <p className="font-medium">{preview.subject}</p>
-          <p className="whitespace-pre-line text-sm">{preview.body}</p>
-        </div>
-      </Section>
-
-      <Section title={t("detail.actions")} className="max-w-xl">
-        <div className="flex flex-col gap-3">
+      <div className={isDraft || running || canDelete ? "grid items-start gap-8 lg:grid-cols-5" : "max-w-3xl"}>
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-3">
+          <CampaignPreview
+            title={t("detail.messageTitle")}
+            extra={
+              languages.length > 1 ? (
+                <SegmentedControl
+                  label={t("form.writeIn")}
+                  value={language}
+                  onValueChange={setLanguage}
+                  options={languages.map((value) => ({ value, label: LOCALE_NAMES[value] }))}
+                />
+              ) : null
+            }
+            hotelName={hotelName}
+            channel={campaign.channel}
+            language={language}
+            subject={text.subject}
+            body={text.body}
+            offerTitle={offerTitle}
+            copies={copies}
+          />
           <Button
             type="button"
             variant="outline"
-            className="h-11 w-full md:h-9 md:w-fit"
-            disabled={test.isPending}
-            onClick={() => test.mutate({ id, language: locale })}
+            className="self-start"
+            loading={test.isPending}
+            onClick={() => test.mutate({ id, language })}
           >
             {t("detail.testSend")}
           </Button>
+        </div>
+
+        <div className="flex flex-col gap-6 lg:col-span-2">
           {isDraft ? (
-            <>
+            <Section
+              title={t("detail.sendTitle")}
+              description={t("detail.quietNote")}
+              className="rounded-xl border p-4 md:p-5"
+            >
+              {noAudience ? <p className="text-destructive text-sm">{t("errors.audience")}</p> : null}
               <Button
                 type="button"
-                className="h-11 w-full md:h-9 md:w-fit"
-                disabled={schedule.isPending}
-                onClick={() => schedule.mutate({ id, at: null })}
+                className="w-full"
+                disabled={noAudience || audience === null}
+                onClick={() => setConfirm("send")}
               >
+                <SendIcon data-icon="inline-start" className="rtl:-scale-x-100" />
                 {t("detail.sendNow")}
               </Button>
-              <p className="text-muted-foreground text-sm">{t("detail.quietNote")}</p>
-              <div className="flex flex-col gap-2 md:flex-row md:items-center">
-                <Input
-                  type="datetime-local"
-                  aria-label={t("detail.scheduleAt")}
-                  className="h-11 md:w-64"
-                  value={at}
-                  onChange={(event) => setAt(event.target.value)}
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="h-11 md:h-9"
-                  disabled={!at || schedule.isPending}
-                  onClick={() => schedule.mutate({ id, at: new Date(at) })}
-                >
-                  {t("detail.schedule")}
-                </Button>
+              <div className="flex items-center gap-3 text-muted-foreground text-xs" aria-hidden>
+                <span className="h-px flex-1 bg-border" />
+                {t("detail.or")}
+                <span className="h-px flex-1 bg-border" />
               </div>
+              <FormField id="campaign-at" label={t("detail.scheduleAt")} error={atTouched ? atError : undefined}>
+                {(aria) => (
+                  <Input
+                    {...aria}
+                    type="datetime-local"
+                    dir="ltr"
+                    min={localInput(new Date())}
+                    value={at}
+                    onChange={(event) => setAt(event.target.value)}
+                    onBlur={() => setAtTouched(true)}
+                  />
+                )}
+              </FormField>
               <Button
-                variant="ghost"
-                className="h-11 w-full md:h-9 md:w-fit"
-                render={<Link href={`/campaigns/${id}/edit`} />}
-                nativeButton={false}
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={noAudience || audience === null}
+                onClick={() => {
+                  setAtTouched(true)
+                  if (!atError) setConfirm("schedule")
+                }}
               >
-                {t("detail.edit")}
+                <CalendarClockIcon data-icon="inline-start" />
+                {t("detail.schedule")}
               </Button>
-            </>
+            </Section>
           ) : null}
-          {running ? (
-            <AlertDialog>
-              <AlertDialogTrigger
-                render={<Button type="button" variant="destructive" className="h-11 w-full md:h-9 md:w-fit" />}
-              >
-                {t("detail.cancel")}
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("detail.cancelTitle")}</AlertDialogTitle>
-                  <AlertDialogDescription>{t("detail.cancelBody")}</AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t("detail.keep")}</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => cancel.mutate({ id })}>{t("detail.cancel")}</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          ) : null}
-          {isDraft || campaign.status === "cancelled" ? (
-            <Button
-              type="button"
-              variant="ghost"
-              className="h-11 w-full text-destructive md:h-9 md:w-fit"
-              disabled={remove.isPending}
-              onClick={() => remove.mutate({ id })}
-            >
-              {t("detail.delete")}
-            </Button>
+
+          {running || canDelete ? (
+            <Section title={t("detail.dangerTitle")} className="rounded-xl border border-destructive/30 p-4 md:p-5">
+              {running ? (
+                <>
+                  <p className="text-muted-foreground text-sm">{t("detail.cancelHint")}</p>
+                  <Button type="button" variant="destructive" className="w-full" onClick={() => setConfirm("cancel")}>
+                    <XCircleIcon data-icon="inline-start" />
+                    {t("detail.cancel")}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-muted-foreground text-sm">{t("detail.deleteHint")}</p>
+                  <Button type="button" variant="destructive" className="w-full" onClick={() => setConfirm("delete")}>
+                    <Trash2Icon data-icon="inline-start" />
+                    {t("detail.delete")}
+                  </Button>
+                </>
+              )}
+            </Section>
           ) : null}
         </div>
-      </Section>
+      </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmCopy[confirm].title}
+        description={confirmCopy[confirm].body}
+        confirmLabel={confirmCopy[confirm].label}
+        cancelLabel={t("confirm.back")}
+        destructive={confirmCopy[confirm].destructive}
+        pending={confirmPending}
+        onConfirm={onConfirm}
+      />
     </div>
   )
 }
