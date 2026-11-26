@@ -414,6 +414,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
         <div className="flex flex-col gap-4">
           <InlineAlert tone={result.errors.length ? "warning" : "success"} title={t("doneTitle")}>
             {t("result", { created: result.created, merged: result.merged, failed: result.errors.length })}
+            {result.consentKept > 0 && <> {t("consentKept", { count: result.consentKept })}</>}
           </InlineAlert>
           <div className="flex flex-wrap gap-2">
             <Button size="lg" render={<Link href="/guests" />} nativeButton={false}>
