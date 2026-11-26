@@ -88,14 +88,20 @@ function OfferCard({
     <li className="flex flex-col gap-4 rounded-2xl border bg-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-balance break-words font-semibold text-h3">{offer.title}</h3>
+          <h3 className="text-balance break-words font-semibold text-h3">
+            <bdi>{offer.title}</bdi>
+          </h3>
           <bdi dir="ltr" className="self-start font-mono text-muted-foreground text-xs tracking-wider">
             {offer.promoCode}
           </bdi>
         </div>
         <StatusBadge tone={STATE_TONE[state]}>{t(`state.${state}`)}</StatusBadge>
       </div>
-      {offer.text ? <p className="line-clamp-2 text-pretty text-muted-foreground text-sm">{offer.text}</p> : null}
+      {offer.text ? (
+        <p className="line-clamp-2 text-pretty text-muted-foreground text-sm">
+          <bdi>{offer.text}</bdi>
+        </p>
+      ) : null}
       <ul className="flex flex-wrap gap-2 text-xs">
         <li className="inline-flex h-7 items-center gap-1.5 rounded-full bg-surface px-3">
           <TriggerIcon aria-hidden className="size-3.5" />

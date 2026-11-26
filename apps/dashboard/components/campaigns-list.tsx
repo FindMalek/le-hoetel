@@ -178,7 +178,6 @@ export function CampaignsList() {
       filters={
         <SegmentedControl
           label={t("filterLabel")}
-          className="max-w-full overflow-x-auto"
           value={filter}
           onValueChange={setFilter}
           options={FILTERS.map((value) => ({
