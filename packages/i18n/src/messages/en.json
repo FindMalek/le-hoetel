@@ -2095,7 +2095,10 @@
     "removed": "Member removed.",
     "revoke": "Revoke",
     "revokeTitle": "Revoke the invitation for {email}?",
-    "revokeBody": "The link stops working right away. You can invite them again later."
+    "revokeBody": "The link stops working right away. You can invite them again later.",
+    "notMember": "You are not a member of {hotel}",
+    "notMemberHint": "Only its members can invite or change people here. Its admin page lists them.",
+    "notMemberAction": "Open the admin page"
   },
   "usage": {
     "title": "WhatsApp usage",

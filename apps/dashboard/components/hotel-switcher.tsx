@@ -17,12 +17,12 @@ import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { HotelAvatar } from "@/components/hotel-avatar"
 
-export interface HotelChoice {
+interface HotelChoice {
   id: string
   name: string
 }
 
-export interface CurrentHotel {
+interface CurrentHotel {
   name: string
   logoKey: string | null
 }
@@ -30,22 +30,20 @@ export interface CurrentHotel {
 const CARD =
   "h-12 bg-sidebar-accent shadow-xs ring-1 ring-sidebar-border hover:bg-sidebar-accent group-data-[collapsible=icon]:ring-0 group-data-[collapsible=icon]:shadow-none"
 
-/** The hotel on screen, as a card under the logo. Several hotels, or the app admin, open a list to switch. */
-export function HotelSwitcher({
-  current,
-  hotels,
-  activeId,
-  isAdmin,
-}: {
+export interface HotelSwitcherProps {
   current: CurrentHotel | null
   hotels: HotelChoice[]
   activeId: string | null
   isAdmin: boolean
-}) {
+}
+
+/** The hotel on screen, as a card under the logo. Several hotels, or the app admin, open a list to switch. */
+export function HotelSwitcher({ current, hotels, activeId, isAdmin }: HotelSwitcherProps) {
   const t = useTranslations("hotel")
   const tNav = useTranslations("nav")
   const router = useRouter()
-  if (!current && !isAdmin) return null
+  // No `current` with several hotels: the active one is suspended, and the list is the way out.
+  if (!current && !isAdmin && hotels.length < 2) return null
 
   const label = (
     <>

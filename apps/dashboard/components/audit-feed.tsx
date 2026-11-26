@@ -173,13 +173,14 @@ export function AdminAuditFeed({ filter, ...list }: ListProps & { filter: AdminA
 
 /** Times are the hotel's clock, the same one the date filters use. */
 export function HotelAuditFeed({
+  hotelId,
   filter,
   timeZone,
   ...list
-}: ListProps & { filter: HotelAuditFilter; timeZone: string }) {
+}: ListProps & { hotelId: string; filter: HotelAuditFilter; timeZone: string }) {
   const t = useTranslations("adminAudit")
   const locale = useLocale()
-  const query = useInfiniteQuery(hotelAuditPages(orpc, filter))
+  const query = useInfiniteQuery(hotelAuditPages(orpc, hotelId, filter))
   const format = new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",

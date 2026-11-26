@@ -2095,7 +2095,10 @@
     "removed": "Membre retiré.",
     "revoke": "Révoquer",
     "revokeTitle": "Révoquer l'invitation de {email} ?",
-    "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard."
+    "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard.",
+    "notMember": "Vous n'êtes pas membre de {hotel}",
+    "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici. Sa page d'administration les liste.",
+    "notMemberAction": "Ouvrir la page d'administration"
   },
   "usage": {
     "title": "Consommation WhatsApp",
