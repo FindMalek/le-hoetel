@@ -4,14 +4,15 @@ import type { Metadata } from "next"
 import { connection } from "next/server"
 import { getLocale, getTranslations } from "next-intl/server"
 import { JsonLd } from "@/components/json-ld"
-import { DashboardPreview } from "@/components/landing/dashboard-preview"
 import { DemoSection } from "@/components/landing/demo-section"
 import { Faq, faqItems } from "@/components/landing/faq"
+import { Features } from "@/components/landing/features"
 import { Footer } from "@/components/landing/footer"
 import { Header } from "@/components/landing/header"
 import { Hero } from "@/components/landing/hero"
 import { HowItWorks } from "@/components/landing/how-it-works"
 import { Pricing } from "@/components/landing/pricing"
+import { ProductShot } from "@/components/landing/product-shot"
 import { Trust } from "@/components/landing/trust"
 import { siteUrl, websiteJsonLd } from "@/lib/seo"
 import { SITE } from "@/lib/site"
@@ -61,17 +62,18 @@ export default async function HomePage() {
           })),
         }}
       />
-      <Header />
-      <main className="flex-1">
-        <Hero whatsappUrl={whatsappUrl} />
-        <HowItWorks />
-        <DashboardPreview />
-        <Pricing />
+      <Header docsUrl={env.DOCS_URL} />
+      <main className="flex-1 bg-canvas">
+        <Hero />
+        <ProductShot />
+        <HowItWorks docsUrl={env.DOCS_URL} />
+        <Features />
         <Trust />
+        <Pricing />
         <Faq />
         <DemoSection whatsappUrl={whatsappUrl} />
       </main>
-      <Footer />
+      <Footer docsUrl={env.DOCS_URL} whatsappUrl={whatsappUrl} />
     </>
   )
 }

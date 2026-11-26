@@ -1,5 +1,5 @@
 import { cn } from "@ritorno/ui/lib/utils"
-import { Children, type ComponentProps, type ReactNode } from "react"
+import { Children, type ComponentProps, isValidElement, type ReactNode } from "react"
 
 const REVEAL_BUDGET_MS = 200
 const STAGGER_MS = 60
@@ -27,7 +27,9 @@ export function Display({
   ...props
 }: DisplayProps) {
   const parts = reveal ? words(children) : []
-  const count = parts.filter((part) => typeof part !== "string" || part.trim()).length
+  const count = parts.filter(
+    (part) => (typeof part !== "string" || part.trim()) && !(isValidElement(part) && part.type === "br"),
+  ).length
   const step = Math.min(STAGGER_MS, REVEAL_BUDGET_MS / Math.max(count - 1, 1))
   let index = 0
   return (
@@ -43,6 +45,8 @@ export function Display({
       {reveal
         ? parts.map((part, i) => {
             if (typeof part === "string" && !part.trim()) return part
+            // A line break stays outside the inline-block word spans, or it would break nothing.
+            if (isValidElement(part) && part.type === "br") return part
             const delay = `${Math.round(index++ * step)}ms`
             return (
               <span key={i} className="animate-word-rise" style={{ animationDelay: delay }}>
