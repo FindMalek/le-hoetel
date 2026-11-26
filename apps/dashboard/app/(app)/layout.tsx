@@ -7,6 +7,7 @@ import { BottomTabs } from "@/components/bottom-tabs"
 import { CommandPalette } from "@/components/command-palette"
 import { DemoBanner } from "@/components/demo-banner"
 import { FeedbackDialog } from "@/components/feedback-button"
+import { HotelSwitcher } from "@/components/hotel-switcher"
 import { InboxBell } from "@/components/inbox-bell"
 import { TopBar } from "@/components/top-bar"
 import { ViewingBanner } from "@/components/viewing-banner"
@@ -27,9 +28,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     viewedHotelId(),
   ])
   const current = hotel ? { name: hotel.displayName, logoKey: hotel.logoKey } : null
+  const switcher = { current, hotels, activeId, isAdmin: me.role === "admin" }
   // A new query cache per hotel on screen: switching, or the admin opening or leaving one, drops every cached row.
   return (
-    <QueryProvider key={hotel?.id ?? "none"}>
+    <QueryProvider key={hotel?.id ?? "none"} hotelId={hotel?.id ?? null}>
       <SidebarProvider className={SHELL_VARS}>
         <a
           href="#main"
@@ -37,10 +39,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         >
           {t("skip")}
         </a>
-        <AppSidebar me={me} current={current} hotels={hotels} activeHotelId={activeId} />
+        <AppSidebar me={me} switcher={switcher} />
         <SidebarInset id="main" className="min-w-0">
           <header className="sticky top-0 z-30 border-b bg-background pt-safe">
-            <TopBar me={me} hotelName={current?.name ?? null} bell={<InboxBell unread={unread} />} />
+            <TopBar
+              me={me}
+              hotelName={current?.name ?? null}
+              switcher={<HotelSwitcher {...switcher} />}
+              bell={<InboxBell unread={unread} />}
+            />
             {isDemoViewer(me.email) ? <DemoBanner /> : null}
             {viewedId && hotel ? <ViewingBanner hotelId={viewedId} hotelName={hotel.displayName} /> : null}
           </header>
