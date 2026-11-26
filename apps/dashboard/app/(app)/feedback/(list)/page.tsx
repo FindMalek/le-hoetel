@@ -54,11 +54,12 @@ export default async function FeedbackPage({ searchParams }: PageProps<"/feedbac
     )
   }
 
-  const [{ items, total, counts }, hotel] = await Promise.all([
-    call((api) => api.feedbackCases.list({ status, limit: PAGE_SIZE, offset: (current - 1) * PAGE_SIZE })),
-    call((api) => api.hotel.get()),
-  ])
-  const pages = pageWindow({ page: current, pageSize: PAGE_SIZE, total })
+  const load = (page: number) =>
+    call((api) => api.feedbackCases.list({ status, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE }))
+  const [asked, hotel] = await Promise.all([load(current), call((api) => api.hotel.get())])
+  const pages = pageWindow({ page: current, pageSize: PAGE_SIZE, total: asked.total })
+  // A page past the end (an old link, cases that moved on) shows the last one.
+  const { items, counts } = pages.page === current ? asked : await load(pages.page)
   const all = counts.new + counts.contacted + counts.resolved
   const date = (value: Date) => formatDate(value, locale, hotel.timezone)
   const comment = (value: string | null) => (

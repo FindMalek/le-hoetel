@@ -122,7 +122,13 @@ export default async function FeedbackCasePage({ params }: PageProps<"/feedback/
               : null
           }
         >
-          <FeedbackCaseForm key={item.updatedAt.toISOString()} id={item.id} status={item.status} notes={item.notes} />
+          <FeedbackCaseForm
+            key={item.updatedAt.toISOString()}
+            id={item.id}
+            status={item.status}
+            notes={item.notes}
+            updatedAt={item.updatedAt}
+          />
         </Section>
       </div>
     </>

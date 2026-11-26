@@ -1,7 +1,7 @@
 "use client"
 
 import { FEEDBACK_CASE_STATUSES, FEEDBACK_NOTES_MAX, type FeedbackCaseStatus } from "@ritorno/common/feedback-case"
-import { errorMessage } from "@ritorno/orpc/errors"
+import { errorMessage, isConflict } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { FormField } from "@ritorno/ui/components/form-field"
@@ -13,7 +13,12 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function FeedbackCaseForm(props: { id: string; status: FeedbackCaseStatus; notes: string | null }) {
+export function FeedbackCaseForm(props: {
+  id: string
+  status: FeedbackCaseStatus
+  notes: string | null
+  updatedAt: Date
+}) {
   const t = useTranslations("feedbackCases")
   const router = useRouter()
   const [status, setStatus] = useState(props.status)
@@ -24,7 +29,12 @@ export function FeedbackCaseForm(props: { id: string; status: FeedbackCaseStatus
         toast.success(t("saved"))
         router.refresh()
       },
-      onError: (error) => toast.error(errorMessage(error)),
+      onError: (error) => {
+        if (!isConflict(error)) return void toast.error(errorMessage(error))
+        // The refresh remounts the form with what the colleague saved.
+        toast.error(t("conflict"))
+        router.refresh()
+      },
     }),
   )
 
@@ -33,7 +43,7 @@ export function FeedbackCaseForm(props: { id: string; status: FeedbackCaseStatus
       className="flex flex-col gap-4 rounded-lg border bg-card p-4"
       onSubmit={(event) => {
         event.preventDefault()
-        save.mutate({ id: props.id, status, notes })
+        save.mutate({ id: props.id, updatedAt: props.updatedAt, status, notes })
       }}
     >
       <SegmentedControl

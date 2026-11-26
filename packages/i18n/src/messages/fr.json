@@ -2156,6 +2156,11 @@
     "notesHint": "Visibles par votre équipe uniquement. Supprimées avec le client.",
     "notesPlaceholder": "Qu'avez-vous convenu avec le client ?",
     "save": "Enregistrer",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "conflict": "Quelqu'un d'autre a modifié ce dossier. Il a été rechargé, vérifiez puis enregistrez à nouveau.",
+    "notFoundTitle": "Dossier introuvable",
+    "notFoundBody": "Il n'est pas dans {hotel}. Si l'alerte concernait un autre hôtel, changez d'hôtel dans le menu puis rouvrez le lien.",
+    "backToList": "Retour aux clients mécontents",
+    "loadingCase": "Chargement du dossier"
   }
 }

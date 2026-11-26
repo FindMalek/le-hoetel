@@ -42,11 +42,18 @@ export interface ExportedFeedback {
   status: string
   notes: string | null
   nps: number
+  comment: string | null
   submittedAt: Date
 }
 
 const feedbackLine = (item: ExportedFeedback): string =>
-  `${item.submittedAt.toISOString()} ${item.nps}/10 ${item.status}${item.notes ? ` ${item.notes}` : ""}`
+  [
+    `${item.submittedAt.toISOString()} ${item.nps}/10 ${item.status}`,
+    item.comment && `comment: ${item.comment}`,
+    item.notes && `notes: ${item.notes}`,
+  ]
+    .filter(Boolean)
+    .join(" ")
 
 /** One row per guest, with the feedback follow-up and the consent log (last column) folded into one cell each. The json export has them as proper rows. */
 export function guestsToCsv(

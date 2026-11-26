@@ -47,6 +47,9 @@ Unhappy guests are the second half of the dashboard Inbox: `/feedback`, also in 
 
 - The list shows the guest, score, comment, status and date, newest first, filtered by status (`new`, `contacted`, `resolved`) with a count on each.
 - A case shows the survey answer, call, email and guest profile buttons, the status and one shared staff note (2000 characters), with who saved it last.
+- A save sends the `updatedAt` it read. If a colleague saved in between, `feedbackCases.update` answers `CONFLICT`, and the page says so and reloads the case.
+- The alert link opens the case in the active hotel only. For another hotel the page says to switch hotel and open the link again.
+- A `?page` past the end shows the last page.
 - Every hotel role (owner, manager, staff) can read and update cases: it needs `guest: read` and `guest: update`.
 - API: `feedbackCases.list`, `feedbackCases.get`, `feedbackCases.update`, all scoped by the active hotel. Each update writes a `feedback-case.update` audit entry with the status, never the note text.
 - A deleted guest's case leaves the inbox and its note is erased. The survey answer stays, anonymous.

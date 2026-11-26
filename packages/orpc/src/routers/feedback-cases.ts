@@ -2,7 +2,7 @@ import { ORPCError } from "@orpc/server"
 import { FEEDBACK_CASE_STATUSES, FEEDBACK_NOTES_MAX } from "@ritorno/common/feedback-case"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { feedbackCases, guests, surveyResponses, user } from "@ritorno/db"
-import { and, count, desc, eq } from "drizzle-orm"
+import { and, count, desc, eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -139,12 +139,14 @@ export const feedbackCasesRouter = {
     .route({
       method: "PATCH",
       path: "/feedback-cases/{id}",
-      summary: "Set the status or the staff notes of a case",
+      summary: "Set the status or the staff notes of a case, unless it changed since it was read",
       tags: ["feedback"],
     })
     .input(
       z.object({
         id: z.uuid(),
+        /** The `updatedAt` the caller read: a newer row answers CONFLICT. */
+        updatedAt: z.coerce.date(),
         status: status.optional(),
         notes: z.string().trim().max(FEEDBACK_NOTES_MAX).optional(),
       }),
@@ -152,15 +154,35 @@ export const feedbackCasesRouter = {
     .output(caseDetail)
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
-      await loadCase(context.db, hotelId, input.id)
-      await context.db
-        .update(feedbackCases)
-        .set({
-          status: input.status,
-          notes: input.notes === undefined ? undefined : input.notes || null,
-          handledBy: context.user.id,
-        })
-        .where(and(eq(feedbackCases.id, input.id), eq(feedbackCases.hotelId, hotelId)))
+      await context.db.transaction(async (tx) => {
+        const on = ofGuests(hotelId)
+        const ofCase = and(eq(feedbackCases.id, input.id), eq(feedbackCases.hotelId, hotelId))
+        // Guest first, the order deletes take: a save can't write a note back after `eraseFeedbackNotes`.
+        const [locked] = await tx
+          .select({ id: guests.id })
+          .from(feedbackCases)
+          .innerJoin(surveyResponses, on.response)
+          .innerJoin(guests, on.guest)
+          .where(ofCase)
+          .for("update", { of: guests })
+        if (!locked) throw notFound()
+        const [saved] = await tx
+          .update(feedbackCases)
+          .set({
+            status: input.status,
+            notes: input.notes === undefined ? undefined : input.notes || null,
+            handledBy: context.user.id,
+          })
+          // A js date holds milliseconds, the column's default holds microseconds.
+          .where(
+            and(
+              ofCase,
+              sql`date_trunc('milliseconds', ${feedbackCases.updatedAt}) = ${input.updatedAt.toISOString()}::timestamptz`,
+            ),
+          )
+          .returning({ id: feedbackCases.id })
+        if (!saved) throw new ORPCError("CONFLICT", { message: "Someone else changed this case. Reload it." })
+      })
       // Never the note text: it can name the guest.
       await audit(context, {
         action: "feedback-case.update",

@@ -2156,6 +2156,11 @@
     "notesHint": "Only your team sees these. Deleted with the guest.",
     "notesPlaceholder": "What did you agree with the guest?",
     "save": "Save",
-    "saved": "Saved"
+    "saved": "Saved",
+    "conflict": "Someone else changed this case. It has been reloaded, check it and save again.",
+    "notFoundTitle": "Case not found",
+    "notFoundBody": "It is not in {hotel}. If the alert was for another hotel, switch hotel in the menu, then open the link again.",
+    "backToList": "Back to unhappy guests",
+    "loadingCase": "Loading the case"
   }
 }
