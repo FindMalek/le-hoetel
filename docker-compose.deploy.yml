@@ -60,7 +60,7 @@ x-next-public: &next-public
 
 x-next-env: &next-env
   <<: *next-public
-  API_URL: http://api:3001
+  API_URL: ${API_URL:-http://api:3001}
   API_PUBLIC_URL: ${API_PUBLIC_URL:?}
   WEB_URL: ${WEB_URL:?}
   DASHBOARD_URL: ${DASHBOARD_URL:?}

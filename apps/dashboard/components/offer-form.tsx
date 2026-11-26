@@ -142,7 +142,7 @@ export function OfferForm({
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
       <form onSubmit={submit} noValidate className="flex min-w-0 flex-col">
         <FormSection title={t("sections.offer.title")} description={t("sections.offer.description")}>
-          <FormField id="title" label={t("fieldTitle")} error={form.error("title")}>
+          <FormField id="title" label={t("fieldTitle")} error={form.error("title")} required>
             {(aria) => (
               <Input {...aria} {...bind("title")} maxLength={OFFER_TITLE_MAX} autoComplete="off" enterKeyHint="next" />
             )}
@@ -155,7 +155,13 @@ export function OfferForm({
           >
             {(aria) => <Textarea {...aria} {...bind("text")} rows={3} maxLength={OFFER_TEXT_MAX} />}
           </FormField>
-          <FormField id="promoCode" label={t("fieldCode")} hint={t("fieldCodeHint")} error={form.error("promoCode")}>
+          <FormField
+            id="promoCode"
+            label={t("fieldCode")}
+            hint={t("fieldCodeHint")}
+            error={form.error("promoCode")}
+            required
+          >
             {(aria) => (
               <Input
                 {...aria}
@@ -195,7 +201,7 @@ export function OfferForm({
 
         <FormSection title={t("sections.when.title")} description={t("sections.when.description")}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField id="validFrom" label={t("fieldFrom")} error={form.error("validFrom")}>
+            <FormField id="validFrom" label={t("fieldFrom")} error={form.error("validFrom")} required>
               {(aria) => <Input {...aria} {...bind("validFrom")} type="date" />}
             </FormField>
             <FormField

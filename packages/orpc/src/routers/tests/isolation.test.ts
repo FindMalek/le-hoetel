@@ -42,6 +42,7 @@ test("a hotel can't read, change, export or delete another hotel's guest, even k
     setConsent: () =>
       a.client.guests.setConsent({ guestId: guestB.id, channel: "whatsapp", granted: false, source: "staff" }),
     consentHistory: () => a.client.guests.consentHistory({ id: guestB.id }),
+    activity: () => a.client.guests.activity({ id: guestB.id }),
     export: () => a.client.guests.export({ id: guestB.id }),
     remove: () => a.client.guests.remove({ id: guestB.id }),
     markVisit: () => a.client.guests.markVisit({ id: guestB.id }),
@@ -114,6 +115,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     "remove",
     "removeAll",
     "consentHistory",
+    "activity",
     "import",
     "messages",
     "find",
@@ -138,6 +140,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     remove: () => app.anonymous.guests.remove({ id: crypto.randomUUID() }),
     removeAll: () => app.anonymous.guests.removeAll({ confirmCount: 0 }),
     messages: () => app.anonymous.guests.messages({ id: crypto.randomUUID() }),
+    activity: () => app.anonymous.guests.activity({ id: crypto.randomUUID() }),
     find: () => app.anonymous.guests.find({ q: "amel" }),
     markVisit: () => app.anonymous.guests.markVisit({ id: crypto.randomUUID() }),
     consentHistory: () => app.anonymous.guests.consentHistory({ id: crypto.randomUUID() }),
