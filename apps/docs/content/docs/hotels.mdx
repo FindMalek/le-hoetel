@@ -126,7 +126,7 @@ Sensitive actions are written to the append-only `audit_log` table. The action n
 
 | Who | Page | Sees |
 |---|---|---|
-| Owners and managers | **Activity log** (`/activity`, `audit.list`) | their hotel only: action, person, time on the hotel's clock. No IP or metadata, and platform admins who are not on the team, or who were signed in as a team member (`metadata.impersonatedBy`), show as "Ritorno team" |
+| Owners and managers | **Activity log** (`/activity`, `audit.list`) | their hotel only: action, person, time on the hotel's clock. The invoice export (`billing.export`) is left out, filters included. No IP or metadata, and platform admins who are not on the team, or who were signed in as a team member (`metadata.impersonatedBy`), show as "Ritorno team" |
 | App admins | **Audit log** (`/audit-log`, `admin.audit.list`) | every entry, with target and IP, filtered by hotel too |
 
 Staff cannot read it. Both filter by action, person and dates (kept in the url) and load 100 entries at a time as you scroll, with a `cursor` so new entries never shift the next page. An entry belongs to a hotel when its `metadata.hotelId` or its target is that hotel, so account actions (profile, ban, impersonation) only show to the admin.
