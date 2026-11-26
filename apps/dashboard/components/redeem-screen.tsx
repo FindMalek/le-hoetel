@@ -15,8 +15,8 @@ import { CameraIcon, CheckCircle2Icon, CircleAlertIcon, XCircleIcon } from "luci
 import { useLocale, useTranslations } from "next-intl"
 import { type FormEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
-import { redemptionsList } from "@/lib/lists"
-import { LoadMore } from "./load-more"
+import { redemptionStats, redemptionsList } from "@/lib/lists"
+import { LoadError, LoadMore } from "./load-more"
 import { canScanQr, QrScanner } from "./qr-scanner"
 
 type Tone = "good" | "warn" | "bad"
@@ -48,7 +48,6 @@ function buzz(good: boolean) {
 /** `timeZone` is the hotel's, so a validity date never shifts by a day near midnight. */
 export function RedeemScreen({ hotelId, timeZone }: { hotelId: string; timeZone?: string }) {
   const t = useTranslations("redeem")
-  const tList = useTranslations("loadMore")
   const locale = useLocale()
   const day = (value: Date) => formatDate(value, locale, timeZone)
   const clock = (value: Date) =>
@@ -61,7 +60,7 @@ export function RedeemScreen({ hotelId, timeZone }: { hotelId: string; timeZone?
     </time>
   )
   const queryClient = useQueryClient()
-  const stats = useQuery(orpc.offers.redemptionStats.queryOptions())
+  const stats = useQuery(redemptionStats(orpc, hotelId))
   const history = useInfiniteQuery(redemptionsList(orpc, hotelId))
   const rows = history.data?.pages.flatMap((page) => page.items) ?? []
   const [scanning, setScanning] = useState(false)
@@ -297,8 +296,10 @@ export function RedeemScreen({ hotelId, timeZone }: { hotelId: string; timeZone?
               </li>
             ))}
           </ul>
-        ) : history.isPending ? null : (
-          <p className="text-muted-foreground text-sm">{history.isError ? tList("failed") : t("noRecent")}</p>
+        ) : history.isPending ? null : history.isError && !history.data ? (
+          <LoadError onRetry={history.refetch} />
+        ) : (
+          <p className="text-muted-foreground text-sm">{t("noRecent")}</p>
         )}
         <LoadMore query={history} shown={rows.length} total={stats.data?.total} />
       </Section>

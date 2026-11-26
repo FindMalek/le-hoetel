@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server"
 import { FeedbackCasesList } from "@/components/feedback-cases-list"
 import { InboxTabs } from "@/components/inbox-tabs"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, currentHotel, getQueryClient, serverOrpc } from "@/lib/api"
 import { feedbackCasesList } from "@/lib/lists"
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,12 +20,14 @@ const first = (value: string | string[] | undefined) => (Array.isArray(value) ? 
 export default async function FeedbackPage({ searchParams }: PageProps<"/feedback">) {
   const raw = await searchParams
   const status = FEEDBACK_CASE_STATUSES.find((value) => value === first(raw.status))
-  const [t, tInbox, { activeId }] = await Promise.all([
+  const [t, tInbox, { activeId }, hotel] = await Promise.all([
     getTranslations("feedbackCases"),
     getTranslations("inbox"),
     call((api) => api.hotel.mine()),
+    currentHotel(),
   ])
-  if (!activeId) {
+  const hotelId = hotel?.id ?? activeId
+  if (!hotelId) {
     return (
       <>
         <PageHeader title={tInbox("title")} />
@@ -38,11 +40,7 @@ export default async function FeedbackPage({ searchParams }: PageProps<"/feedbac
   }
 
   const queryClient = getQueryClient()
-  const options = feedbackCasesList(serverOrpc, activeId, { status })
-  const [data, hotel] = await Promise.all([
-    call(() => queryClient.fetchInfiniteQuery(options)),
-    call((api) => api.hotel.get()),
-  ])
+  const data = await call(() => queryClient.fetchInfiniteQuery(feedbackCasesList(serverOrpc, hotelId, { status })))
 
   return (
     <>
@@ -50,7 +48,7 @@ export default async function FeedbackPage({ searchParams }: PageProps<"/feedbac
       <div className="flex flex-col gap-4 p-4 md:p-6">
         <InboxTabs current="/feedback" />
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <FeedbackCasesList hotelId={activeId} status={status} timeZone={hotel.timezone} />
+          <FeedbackCasesList hotelId={hotelId} status={status} timeZone={hotel?.timezone} />
         </HydrationBoundary>
       </div>
     </>

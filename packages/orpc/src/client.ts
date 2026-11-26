@@ -1,7 +1,7 @@
 import { createORPCClient } from "@orpc/client"
 import { RPCLink } from "@orpc/client/fetch"
 import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins"
-import type { AppRouterClient } from "./routers"
+import type { AppRouterClient, CallContext } from "./routers"
 
 export type { AppRouterClient }
 
@@ -13,9 +13,12 @@ export interface ORPCClientOptions {
 }
 
 export function createORPCClientUtils({ url, getHeaders }: ORPCClientOptions) {
-  const link = new RPCLink({
+  const link = new RPCLink<CallContext>({
     url,
-    headers: async () => (getHeaders ? await getHeaders() : {}),
+    headers: async ({ context }) => ({
+      ...(getHeaders ? await getHeaders() : {}),
+      ...(context.hotelId ? { "x-hotel-id": context.hotelId } : {}),
+    }),
     plugins: [new SimpleCsrfProtectionLinkPlugin()],
   })
   return { link, client: createORPCClient<AppRouterClient>(link) }

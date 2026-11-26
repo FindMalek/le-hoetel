@@ -14,7 +14,7 @@ import { connection } from "next/server"
 import { getLocale, getTranslations } from "next-intl/server"
 import { MessagesList } from "@/components/messages-list"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, currentHotel, getQueryClient, serverOrpc } from "@/lib/api"
 import { messagesList } from "@/lib/lists"
 import { MessageFilterSelect } from "./message-filter-select"
 
@@ -60,12 +60,8 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
     days: filters.days ? Number(filters.days) : undefined,
   }
   const queryClient = getQueryClient()
-  const [{ activeId }, balance, hotel] = await Promise.all([
-    call((api) => api.hotel.mine()),
-    call((api) => api.hotel.balance.get()).catch(() => null),
-    call((api) => api.hotel.get()).catch(() => null),
-  ])
-  const hotelId = activeId ?? ""
+  const [balance, hotel] = await Promise.all([call((api) => api.hotel.balance.get()).catch(() => null), currentHotel()])
+  const hotelId = hotel?.id ?? ""
   const allowed = await call(() => queryClient.fetchInfiniteQuery(messagesList(serverOrpc, hotelId, query))).then(
     () => true,
     (error) => {

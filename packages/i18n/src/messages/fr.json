@@ -1759,10 +1759,7 @@
         "delete": "Scan WhatsApp supprimé"
       }
     },
-    "loadMore": "Voir plus",
     "loading": "Chargement des entrées",
-    "loadFailed": "Impossible de charger le journal.",
-    "retry": "Réessayer",
     "hotel": {
       "title": "Journal d'activité",
       "description": "Ce que votre équipe et Ritorno ont fait sur cet hôtel, du plus récent au plus ancien.",
@@ -2250,6 +2247,7 @@
     "more": "Voir plus",
     "retry": "Réessayer",
     "failed": "Impossible de charger la suite.",
+    "loadFailed": "Impossible de charger la liste.",
     "shown": "{shown} sur {total} affichés"
   }
 }

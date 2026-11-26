@@ -1,8 +1,9 @@
 import type { orpc } from "@ritorno/orpc/react"
 
 /**
- * The long lists, built the same way on the server (prefetch) and in the browser so the cache hydrates. Every key
- * ends with the hotel id: the browser cache outlives a hotel switch and must not show another hotel's rows.
+ * The long lists, built the same way on the server (prefetch) and in the browser so the cache hydrates. `hotelId`
+ * is the hotel the page was rendered for: it is part of the key and sent with every page, so a hotel switched in
+ * another tab can never add its rows under this one's.
  */
 type Api = typeof orpc
 
@@ -10,7 +11,7 @@ const PAGE_SIZE = 25
 const first = undefined as string | undefined
 const next = (page: { nextCursor: string | null }) => page.nextCursor ?? undefined
 
-function forHotel<T extends { queryKey: readonly unknown[] }>(options: T, hotelId: string): T {
+export function forHotel<T extends { queryKey: readonly unknown[] }>(options: T, hotelId: string): T {
   return { ...options, queryKey: [...options.queryKey, hotelId] as unknown as T["queryKey"] }
 }
 
@@ -25,6 +26,7 @@ export const guestsList = (api: Api, hotelId: string, filters: GuestFilters) =>
       initialPageParam: first,
       getNextPageParam: next,
       staleTime: 60_000,
+      context: { hotelId },
     }),
     hotelId,
   )
@@ -37,6 +39,7 @@ export const messagesList = (api: Api, hotelId: string, filters: MessageFilters)
       initialPageParam: first,
       getNextPageParam: next,
       staleTime: 15_000,
+      context: { hotelId },
     }),
     hotelId,
   )
@@ -48,6 +51,7 @@ export const feedbackCasesList = (api: Api, hotelId: string, filters: CaseFilter
       initialPageParam: first,
       getNextPageParam: next,
       staleTime: 30_000,
+      context: { hotelId },
     }),
     hotelId,
   )
@@ -59,6 +63,11 @@ export const redemptionsList = (api: Api, hotelId: string) =>
       initialPageParam: first,
       getNextPageParam: next,
       staleTime: 30_000,
+      context: { hotelId },
     }),
     hotelId,
   )
+
+/** The counts above the redemptions list, so both are of one hotel. */
+export const redemptionStats = (api: Api, hotelId: string) =>
+  forHotel(api.offers.redemptionStats.queryOptions({ context: { hotelId } }), hotelId)

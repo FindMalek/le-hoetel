@@ -1759,10 +1759,7 @@
         "delete": "Deleted a WhatsApp scan"
       }
     },
-    "loadMore": "Load more",
     "loading": "Loading entries",
-    "loadFailed": "The log could not be loaded.",
-    "retry": "Try again",
     "hotel": {
       "title": "Activity log",
       "description": "What your team and Ritorno did on this hotel, newest first.",
@@ -2250,6 +2247,7 @@
     "more": "Load more",
     "retry": "Try again",
     "failed": "Could not load more.",
+    "loadFailed": "Could not load this list.",
     "shown": "{shown} of {total} shown"
   }
 }

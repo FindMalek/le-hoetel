@@ -277,4 +277,6 @@ test("paging by cursor neither skips nor repeats guests added in the same millis
 
   expect(seen).toHaveLength(times.length)
   expect(new Set(seen).size).toBe(times.length)
+  const impossible = `2026-02-30 10:00:00+00|${seen[0]}`
+  await expect(mine.client.guests.list({ cursor: impossible })).rejects.toMatchObject({ code: "BAD_REQUEST" })
 })

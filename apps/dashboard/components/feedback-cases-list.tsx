@@ -13,16 +13,15 @@ import { ChevronRightIcon, SmileIcon } from "lucide-react"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { CaseStatusBadge, ScoreBadge } from "@/components/feedback-case-badges"
-import { LoadMore } from "@/components/load-more"
+import { LoadError, LoadMore } from "@/components/load-more"
 import { feedbackCasesList } from "@/lib/lists"
 
 const listHref = (status: FeedbackCaseStatus | undefined) => (status ? `/feedback?status=${status}` : "/feedback")
 
-type FeedbackCasesListProps = { hotelId: string; status?: FeedbackCaseStatus; timeZone: string }
+type FeedbackCasesListProps = { hotelId: string; status?: FeedbackCaseStatus; timeZone?: string }
 
 export function FeedbackCasesList({ hotelId, status, timeZone }: FeedbackCasesListProps) {
   const t = useTranslations("feedbackCases")
-  const tList = useTranslations("loadMore")
   const locale = useLocale()
   const list = useInfiniteQuery(feedbackCasesList(orpc, hotelId, { status }))
   const items = list.data?.pages.flatMap((page) => page.items) ?? []
@@ -99,8 +98,8 @@ export function FeedbackCasesList({ hotelId, status, timeZone }: FeedbackCasesLi
           ) : null
         }
         empty={
-          list.isError ? (
-            <PageState kind="error" title={tList("failed")} />
+          list.isError && !list.data ? (
+            <LoadError onRetry={list.refetch} />
           ) : all > 0 ? (
             <PageState kind="empty" icon={<SmileIcon />} title={t("noMatchTitle")} description={t("noMatchBody")} />
           ) : (

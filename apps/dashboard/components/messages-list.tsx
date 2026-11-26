@@ -5,14 +5,13 @@ import { HOTEL_EMAIL_KEYS, type MessageStatus } from "@ritorno/common/message"
 import { orpc } from "@ritorno/orpc/react"
 import { DataList } from "@ritorno/ui/components/data-list"
 import type { DataColumn } from "@ritorno/ui/components/data-table"
-import { PageState } from "@ritorno/ui/components/page-state"
 import { StatusBadge, type StatusTone } from "@ritorno/ui/components/status-badge"
 import { formatDate } from "@ritorno/ui/lib/date"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { MailIcon, MessageCircleIcon } from "lucide-react"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
-import { LoadMore } from "@/components/load-more"
+import { LoadError, LoadMore } from "@/components/load-more"
 import { MessagePreview } from "@/components/message-preview"
 import { messagesList } from "@/lib/lists"
 
@@ -43,7 +42,6 @@ type MessagesListProps = {
 
 export function MessagesList({ hotelId, query, timeZone, filtered, filters, empty }: MessagesListProps) {
   const t = useTranslations("messages")
-  const tList = useTranslations("loadMore")
   const locale = useLocale()
   const list = useInfiniteQuery(messagesList(orpc, hotelId, query))
   const rows = list.data?.pages.flatMap((page) => page.items) ?? []
@@ -153,7 +151,7 @@ export function MessagesList({ hotelId, query, timeZone, filtered, filters, empt
         columns={columns}
         card={card}
         getRowKey={(row) => row.id}
-        empty={list.isError ? <PageState kind="error" title={tList("failed")} /> : empty}
+        empty={list.isError && !list.data ? <LoadError onRetry={list.refetch} /> : empty}
         linkComponent={Link}
       />
       <LoadMore query={list} shown={rows.length} total={total} />

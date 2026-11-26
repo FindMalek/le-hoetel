@@ -80,7 +80,9 @@ Guests, messages, unhappy guest cases and redemptions page by cursor, hotel scop
 
 - api: `limit` and `cursor` in, `nextCursor` out (`null` at the end). Use `packages/orpc/src/lib/cursor.ts`, which keeps the timestamp's microseconds so rows are not skipped
 - dashboard: the query options live in `apps/dashboard/lib/lists.ts`. The server prefetches the first page, the browser uses `useInfiniteQuery`, and `LoadMore` (`components/load-more.tsx`) fetches the next one near the end of the list
-- every list key ends with the hotel id, so switching hotel never shows cached rows of another
+- the hotel is the one the data comes from: `currentHotel()` in `lib/api.ts`, not `hotel.mine().activeId`, which ignores the hotel an admin opened. These list keys end with it and every page sends it as `x-hotel-id`, so a switch in another tab fails the next page instead of mixing hotels (the proxy keeps a header the browser sent). The activity log does not send it yet
+- the app layout gives each hotel its own query cache, so no query shows another hotel's cached rows after a switch
+- a first page that fails shows `LoadError` with a retry. The audit logs use the same `LoadMore`
 - stale times: guests 60 s, unhappy guests and redemptions 30 s, messages 15 s (delivery statuses move)
 - a mutation that changes a guest or a case calls `useRefreshLists()`
 

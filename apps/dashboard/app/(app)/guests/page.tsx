@@ -11,7 +11,7 @@ import { getTranslations } from "next-intl/server"
 import { GuestFilters } from "@/components/guest-filters"
 import { GuestList } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, currentHotel, getQueryClient, serverOrpc } from "@/lib/api"
 import { guestsList } from "@/lib/lists"
 
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)
@@ -33,7 +33,8 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
   const values = parseSearch(await searchParams)
   const { q, returning, ...filters } = values
   const t = await getTranslations("guests")
-  const { activeId, role } = await call((api) => api.hotel.mine())
+  const [{ activeId, role }, hotel] = await Promise.all([call((api) => api.hotel.mine()), currentHotel()])
+  const hotelId = hotel?.id ?? activeId
   const canImport = role ? hotelRoles[role].authorize({ guest: ["import"] }).success : false
   const addButton = (
     <Button render={<Link href="/guests/new" />} nativeButton={false}>
@@ -45,9 +46,9 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
     <PageHeader
       title={t("title")}
       description={t("description")}
-      action={activeId ? addButton : null}
+      action={hotelId ? addButton : null}
       secondaryActions={
-        activeId &&
+        hotelId &&
         canImport && (
           <Button variant="outline" render={<Link href="/guests/import" />} nativeButton={false}>
             <UploadIcon data-icon="inline-start" />
@@ -57,7 +58,7 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
       }
     />
   )
-  if (!activeId) {
+  if (!hotelId) {
     return (
       <>
         {header}
@@ -75,7 +76,7 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
 
   const query = { ...filters, q: q || undefined, returning: returning ? true : undefined }
   const queryClient = getQueryClient()
-  await call(() => queryClient.prefetchInfiniteQuery(guestsList(serverOrpc, activeId, query)))
+  await call(() => queryClient.fetchInfiniteQuery(guestsList(serverOrpc, hotelId, query)))
   const filtered = Object.values(values).some(Boolean)
 
   const empty = filtered ? (
@@ -110,7 +111,7 @@ export default async function GuestsPage({ searchParams }: PageProps<"/guests">)
       <div className="p-4 md:p-6">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <GuestList
-            hotelId={activeId}
+            hotelId={hotelId}
             query={query}
             filtered={filtered}
             filters={<GuestFilters values={values} />}

@@ -6,14 +6,13 @@ import { LOCALE_NAMES } from "@ritorno/i18n"
 import { orpc } from "@ritorno/orpc/react"
 import { DataList } from "@ritorno/ui/components/data-list"
 import type { DataColumn } from "@ritorno/ui/components/data-table"
-import { PageState } from "@ritorno/ui/components/page-state"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { formatDate } from "@ritorno/ui/lib/date"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { ChevronRightIcon, MailIcon, MessageCircleIcon, RepeatIcon } from "lucide-react"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
-import { LoadMore } from "@/components/load-more"
+import { LoadError, LoadMore } from "@/components/load-more"
 import { guestsList } from "@/lib/lists"
 
 /** Two recorded visits or more: the front desk greets them as a returning guest. */
@@ -95,7 +94,6 @@ type GuestListProps = {
 
 export function GuestList({ hotelId, query, filtered, filters, empty }: GuestListProps) {
   const t = useTranslations("guests")
-  const tList = useTranslations("loadMore")
   const list = useInfiniteQuery(guestsList(orpc, hotelId, query))
   const guests = list.data?.pages.flatMap((page) => page.items) ?? []
   const total = list.data?.pages.at(-1)?.total ?? 0
@@ -151,7 +149,7 @@ export function GuestList({ hotelId, query, filtered, filters, empty }: GuestLis
         rows={guests}
         loading={list.isPending ? { label: t("title") } : undefined}
         getRowKey={(guest) => guest.id}
-        empty={list.isError ? <PageState kind="error" title={tList("failed")} /> : empty}
+        empty={list.isError && !list.data ? <LoadError onRetry={list.refetch} /> : empty}
         linkComponent={Link}
         card={(guest) => (
           <Link href={`/guests/${guest.id}`} className="-m-4 flex min-h-11 items-center gap-3 p-4">

@@ -11,7 +11,8 @@ import { HistoryIcon, SearchXIcon } from "lucide-react"
 import type { Route } from "next"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
-import { type ReactNode, useEffect, useRef } from "react"
+import type { ReactNode } from "react"
+import { LoadError, LoadMore } from "@/components/load-more"
 import { LocalDate } from "@/components/local-date"
 import {
   type AdminAuditFilter,
@@ -28,6 +29,7 @@ interface FeedState<T> {
   data?: { pages: { entries: T[] }[] }
   isPending: boolean
   isError: boolean
+  isFetching: boolean
   isFetchingNextPage: boolean
   isFetchNextPageError: boolean
   hasNextPage: boolean
@@ -46,33 +48,6 @@ type FeedProps<T> = ListProps & {
   query: FeedState<T>
   columns: DataColumn<T>[]
   card: (entry: T) => ReactNode
-}
-
-/** Loads the next page when the end of the list scrolls into view. The button does the same by hand. */
-function LoadMore({ query }: { query: FeedState<unknown> }) {
-  const t = useTranslations("adminAudit")
-  const ref = useRef<HTMLDivElement>(null)
-  const { hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage } = query
-  const auto = hasNextPage && !isFetchingNextPage && !isFetchNextPageError
-
-  useEffect(() => {
-    if (!auto || !ref.current) return
-    const observer = new IntersectionObserver(([entry]) => entry?.isIntersecting && fetchNextPage(), {
-      rootMargin: "200px",
-    })
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [auto, fetchNextPage])
-
-  if (!hasNextPage) return null
-  return (
-    <div ref={ref} className="flex flex-col items-center gap-2" aria-live="polite">
-      {isFetchNextPageError ? <p className="text-destructive text-small">{t("loadFailed")}</p> : null}
-      <Button variant="outline" className="max-sm:w-full" disabled={isFetchingNextPage} onClick={() => fetchNextPage()}>
-        {isFetchingNextPage ? t("loading") : isFetchNextPageError ? t("retry") : t("loadMore")}
-      </Button>
-    </div>
-  )
 }
 
 function Feed<T extends { id: string }>({ caption, query, columns, card, filters, filtered, resetHref }: FeedProps<T>) {
@@ -98,15 +73,7 @@ function Feed<T extends { id: string }>({ caption, query, columns, card, filters
     return (
       <div className="flex flex-col gap-4">
         {filters}
-        <PageState
-          kind="error"
-          title={t("loadFailed")}
-          action={
-            <Button variant="outline" onClick={() => query.refetch()}>
-              {t("retry")}
-            </Button>
-          }
-        />
+        <LoadError onRetry={query.refetch} />
       </div>
     )
   }
@@ -123,7 +90,7 @@ function Feed<T extends { id: string }>({ caption, query, columns, card, filters
         empty={empty}
         card={card}
       />
-      <LoadMore query={query} />
+      <LoadMore query={query} shown={rows.length} />
     </div>
   )
 }
