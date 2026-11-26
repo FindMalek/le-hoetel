@@ -91,6 +91,7 @@ export function CaptureForm(props: {
   perk: ReactNode
   whatsapp: ReactNode
   copy: CaptureCopy
+  preview?: boolean
 }) {
   const { copy } = props
   const [status, setStatus] = useState<Status>("idle")
@@ -116,6 +117,7 @@ export function CaptureForm(props: {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (props.preview) return
     setTried(true)
     if (nameBad) {
       nameRef.current?.focus()
@@ -302,7 +304,7 @@ export function CaptureForm(props: {
               {error}
             </p>
           ) : null}
-          <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
+          <Button type="submit" size="lg" loading={status === "sending"} disabled={props.preview} className="w-full">
             {status === "sending" ? copy.sending : copy.submit}
           </Button>
           <p className="text-center text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.submitHint}</p>

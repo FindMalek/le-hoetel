@@ -1,5 +1,15 @@
 import { expect, test } from "bun:test"
-import { captureUrl, newShortCode, normalizeShortCode, parseSpots, QR_SPOTS_MAX, qrFileName, staffLabel } from "../qr"
+import {
+  captureUrl,
+  newShortCode,
+  normalizeShortCode,
+  parseSpots,
+  printWarnings,
+  QR_SPOTS_MAX,
+  qrFileName,
+  spotsBetween,
+  staffLabel,
+} from "../qr"
 
 test("spots: ranges expand, lists split, repeats and blanks go", () => {
   expect(parseSpots("101-103, T1\nT1,, Pool")).toEqual({ spots: ["101", "102", "103", "T1", "Pool"], cut: false })
@@ -39,4 +49,20 @@ test("short codes avoid look-alike characters and can be typed in lower case", (
   const codes = Array.from({ length: 200 }, newShortCode).join("")
   expect(codes).toMatch(/^[2-9BCDFGHJKMNP-TV-Z]{1600}$/)
   expect(normalizeShortCode(" ab3k7m ")).toBe("AB3K7M")
+})
+
+test("a range of saved spots reads in number order, either way round", () => {
+  const saved = ["9", "10", "101", "102", "110", "T1"]
+  expect(spotsBetween(saved, "10", "102")).toEqual(["10", "101", "102"])
+  expect(spotsBetween(saved, "102", "10")).toEqual(["10", "101", "102"])
+  expect(spotsBetween(saved, "110", "")).toEqual(["110", "T1"])
+})
+
+test("warns before printing: no offer, an offer ending soon, no logo", () => {
+  const now = new Date("2026-01-01T00:00:00Z")
+  const hotel = { logoKey: "logo.png" }
+  expect(printWarnings(hotel, null, now)).toEqual(["noOffer"])
+  expect(printWarnings(hotel, { validUntil: new Date("2026-01-20T00:00:00Z") }, now)).toEqual(["offerExpires"])
+  expect(printWarnings(hotel, { validUntil: new Date("2026-06-01T00:00:00Z") }, now)).toEqual([])
+  expect(printWarnings({ logoKey: null }, { validUntil: null }, now)).toEqual(["noLogo"])
 })

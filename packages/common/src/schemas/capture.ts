@@ -52,6 +52,15 @@ export const shortLinkSchema = z.object({
 
 export const qrCodeSchema = z.object({ location: z.string().nullable(), url: z.string(), svg: z.string() })
 
+export const testLinkInputSchema = z.object({
+  source: z.enum(Object.keys(CAPTURE_SOURCES) as [CaptureSource, ...CaptureSource[]]),
+  location: z.string().trim().min(1).max(CAPTURE_LOCATION_MAX).optional(),
+  language: z.enum(HOTEL_LANGUAGES),
+})
+
+export const printOfferSchema = welcomeOfferSchema.extend({ validUntil: z.date().nullable() }).nullable()
+export type PrintOffer = z.infer<typeof printOfferSchema>
+
 /** The places a hotel keeps a list of: each room and table has its own code. The front desk needs none. */
 export const SPOT_SOURCES = ["room", "table"] as const satisfies readonly CaptureSource[]
 export type SpotSource = (typeof SPOT_SOURCES)[number]

@@ -77,3 +77,9 @@ test("a hotel requests a demo from the landing page", async ({ page }) => {
   await page.locator("form").getByRole("button", { name: "Request a demo" }).click()
   await expect(page.getByRole("status").getByText("Thank you, Sami")).toBeVisible()
 })
+
+test("the hotel's try-out of the QR page cannot send anything", async ({ page }) => {
+  await page.goto(`${URLS.web}/h/dar-zitouna?lang=en&src=room&loc=12&preview=1`)
+  await expect(page.getByText("Nothing is saved or counted.")).toBeVisible()
+  await expect(page.getByRole("button", { name: "Join" })).toBeDisabled()
+})
