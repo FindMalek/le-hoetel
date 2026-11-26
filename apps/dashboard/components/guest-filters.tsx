@@ -46,7 +46,7 @@ function Chip({ href, active, children }: { href: string; active: boolean; child
       href={href as never}
       replace
       scroll={false}
-      aria-pressed={active}
+      aria-current={active ? "true" : undefined}
       className={cn(
         chip,
         active

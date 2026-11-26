@@ -66,12 +66,14 @@ Sign in, sign up, forgot password, reset password and accept invitation share on
 - phone: `PhoneInput` with the dial code select. Default `+216`. Normalize and validate in the api
 - consent: separate unchecked `Checkbox` per channel (email, whatsapp), each with its own wording, never pre checked
 - success and failure use a toast (`toast.success`, `toast.error`) unless the user must act, then an `InlineAlert`
+- while the analytics consent card is open on a phone, `StickyFormActions` stops sticking: the actions, the card and the tabs stacked would cover the form
 - on a phone the save button is a `StickyFormActions` at the bottom; long forms are split into `FormSection`s
 
 ### Lists and tables
 
 - mobile: a list of cards or `Item` rows, one tap target per row. Do not shrink a table to fit
 - desktop: a table with start aligned text, numbers end aligned. `DataList` does both layouts
+- a filter form with more than two fields starts folded behind a "Filters" button on a phone, so the list is on the first screen (`AuditFilters`)
 - search and filters above the list. Long lists load more on scroll with a "load more" button as the fallback (see below), never a page without one
 
 ### Long lists and caching
@@ -85,6 +87,14 @@ Guests, messages, unhappy guest cases and redemptions page by cursor, hotel scop
 - a first page that fails shows `LoadError` with a retry. The audit logs use the same `LoadMore`
 - stale times: guests 60 s, unhappy guests and redemptions 30 s, messages 15 s (delivery statuses move)
 - a mutation that changes a guest or a case calls `useRefreshLists()`
+
+### Server pages and refused data
+
+`prefetchQuery` swallows errors, and the client `useSuspenseQuery` then fetches during the server render, where there is no browser client: the page stays a skeleton for ever. When a role can be refused, use `fetchQuery` inside `call`, catch `isForbidden` and render `PageState kind="forbidden"` (see the campaigns page).
+
+### Text written by people
+
+Offer titles and texts and guest comments can be in another language than the page. Wrap them in `<bdi>` so their punctuation stays on the right side in Arabic.
 
 ### Overlays
 

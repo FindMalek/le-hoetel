@@ -54,8 +54,14 @@ export default async function Page({ params, searchParams }: PageProps<"/o/[toke
       <div className="grid gap-6 pb-6">
         <div className="grid justify-items-start gap-3">
           <StatusBadge tone="success">{t("state.ready")}</StatusBadge>
-          <h2 className="text-balance font-semibold text-h3 tracking-tight">{page.offer.title}</h2>
-          {page.offer.text ? <p className="text-pretty text-muted-foreground">{page.offer.text}</p> : null}
+          <h2 className="text-balance font-semibold text-h3 tracking-tight">
+            <bdi>{page.offer.title}</bdi>
+          </h2>
+          {page.offer.text ? (
+            <p className="text-pretty text-muted-foreground">
+              <bdi>{page.offer.text}</bdi>
+            </p>
+          ) : null}
         </div>
         <div className="grid justify-items-center gap-4 rounded-card border p-5">
           {/* biome-ignore lint/performance/noImgElement: an inline svg made by the api for this code */}

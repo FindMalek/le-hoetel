@@ -62,7 +62,9 @@ export async function HomeAttention({ alerts, unread, timeZone }: HomeAttentionP
               >
                 {alert.name}
               </Link>
-              <p className="line-clamp-2 text-muted-foreground text-small">{alert.comment ?? t("noComment")}</p>
+              <p className="line-clamp-2 text-muted-foreground text-small">
+                <bdi>{alert.comment ?? t("noComment")}</bdi>
+              </p>
               <p className="text-caption text-muted-foreground">
                 {t("answered")} {formatDate(alert.createdAt, locale, timeZone)}
               </p>

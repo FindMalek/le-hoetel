@@ -57,9 +57,9 @@ function Choice<Value extends string>({
     <div className="grid gap-1.5">
       <span className="text-muted-foreground text-xs">{label}</span>
       <Tabs value={value} onValueChange={(next) => onChange(next as Value)}>
-        <TabsList className="h-11 max-w-full flex-wrap">
+        <TabsList className="max-w-full flex-wrap justify-start group-data-horizontal/tabs:h-auto">
           {options.map((option) => (
-            <TabsTrigger key={option.value} value={option.value} className="min-h-9 px-3">
+            <TabsTrigger key={option.value} value={option.value} className="h-auto min-h-11 flex-none px-3">
               {option.label}
             </TabsTrigger>
           ))}

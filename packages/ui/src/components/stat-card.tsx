@@ -33,8 +33,8 @@ function StatCard({ label, value, hint, icon, delta, link, className }: StatCard
   const Arrow = delta ? DELTA[delta.direction].icon : null
   return (
     <div className={cn("flex flex-col gap-2 rounded-card border bg-card p-5 md:gap-3 md:p-6", className)}>
-      <div className="flex items-center justify-between gap-2 text-caption text-muted-foreground">
-        <span className="truncate">{label}</span>
+      <div className="flex items-start justify-between gap-2 text-caption text-muted-foreground">
+        <span className="min-w-0 break-words">{label}</span>
         {icon ? <span className="shrink-0 [&_svg:not([class*='size-'])]:size-4">{icon}</span> : null}
       </div>
       <div className="text-h1 tabular-nums">
