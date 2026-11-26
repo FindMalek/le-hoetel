@@ -33,7 +33,9 @@ export const captureInputSchema = z.object({
   birthday: guestFields.birthday.nullish(),
   source: z.enum(Object.keys(CAPTURE_SOURCES) as [CaptureSource, ...CaptureSource[]]),
   location: z.string().trim().max(CAPTURE_LOCATION_MAX).nullish(),
-  consents: z.object({ email: z.boolean(), whatsapp: z.boolean() }),
+  /** Only stored with the `profile` consent. */
+  stayCheckOut: z.iso.date().nullish(),
+  consents: z.object({ email: z.boolean(), whatsapp: z.boolean(), profile: z.boolean().default(false) }),
   /** Hidden field no person fills: any value means a bot. */
   website: z.string().max(200).nullish(),
 })

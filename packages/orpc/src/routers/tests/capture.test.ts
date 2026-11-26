@@ -47,6 +47,28 @@ test("a guest scanning a QR code lands in that hotel only, with source, spot and
   )
 })
 
+test("the departure date is only kept with the guest's profile consent", async () => {
+  const owner = await app.signUp("capture-stay@ritorno.test")
+  const hotelId = await app.createHotel("capture-stay", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const send = (phone: string, profile: boolean) =>
+    app.anonymous.public.capture({
+      slug: "capture-stay",
+      ...scan,
+      phone,
+      stayCheckOut: "2026-06-17",
+      consents: { ...scan.consents, profile },
+    })
+
+  await send("20 111 111", true)
+  await send("20 222 222", false)
+
+  const { items } = await client.guests.list({})
+  const byPhone = Object.fromEntries(items.map((guest) => [guest.phoneE164, guest]))
+  expect(byPhone["+21620111111"]).toMatchObject({ stayCheckOut: "2026-06-17", consents: { profile: true } })
+  expect(byPhone["+21620222222"]).toMatchObject({ stayCheckOut: null, consents: { profile: false } })
+})
+
 test("scanning again with empty toggles keeps the guest's consents and extras", async () => {
   const owner = await app.signUp("capture-rescan@ritorno.test")
   const hotelId = await app.createHotel("capture-rescan", owner)

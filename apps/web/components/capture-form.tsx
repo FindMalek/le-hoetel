@@ -10,6 +10,7 @@ import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
 import { captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
 import { ConsentToggle } from "./consent-toggle"
+import { type DepartureCopy, DepartureField } from "./departure-field"
 
 export interface CaptureCopy {
   name: string
@@ -18,6 +19,7 @@ export interface CaptureCopy {
   phoneError: string
   dialCode: string
   language: string
+  departure: DepartureCopy
   optionalTitle: string
   optionalHint: string
   birthday: string
@@ -233,6 +235,8 @@ export function CaptureForm(props: {
             ))}
           </div>
         </fieldset>
+
+        <DepartureField copy={copy.departure} className={CONTROL} />
 
         <fieldset className="grid gap-3">
           <legend className="font-medium text-sm">{copy.consentTitle}</legend>

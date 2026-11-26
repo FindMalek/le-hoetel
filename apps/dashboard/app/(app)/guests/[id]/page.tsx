@@ -103,7 +103,9 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
       : []),
     ...(guest.stayCheckIn
       ? [{ label: t("stay"), value: <GuestDate value={guest.stayCheckIn} to={guest.stayCheckOut ?? undefined} /> }]
-      : []),
+      : guest.stayCheckOut
+        ? [{ label: t("checkOut"), value: <GuestDate value={guest.stayCheckOut} /> }]
+        : []),
     ...(guest.nextDestination ? [{ label: t("next"), value: guest.nextDestination }] : []),
   ]
 

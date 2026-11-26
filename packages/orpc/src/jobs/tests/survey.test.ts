@@ -25,7 +25,7 @@ const notification = {
 
 const CAPTURED = new Date("2026-06-10T09:00:00Z")
 
-async function guestCaptured(slug: string) {
+async function guestCaptured(slug: string, source: "staff" | "qr_table" = "staff") {
   const owner = await app.signUp(`${slug}@ritorno.test`)
   const hotelId = await app.createHotel(slug, owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
@@ -34,7 +34,7 @@ async function guestCaptured(slug: string) {
     phone: "+21620444444",
     language: "fr",
     email: "amel@example.test",
-    source: "staff",
+    source,
     consents: { email: true, whatsapp: false, profile: false },
   })
   await app.services.db.update(guests).set({ createdAt: CAPTURED }).where(eq(guests.id, guest.id))
@@ -47,21 +47,34 @@ const runAt = (at: string) => {
   return job.run({}, { db: app.services.db, now: () => new Date(at), jobId: "t" })
 }
 
-test("the survey goes out 24 hours after capture, outside quiet hours, once", async () => {
+test("with no check-out the survey waits 8 days after capture, outside quiet hours, once", async () => {
   const { guestId } = await guestCaptured("survey-once")
   sent.length = 0
 
-  await runAt("2026-06-11T08:00:00Z")
-  expect(sent).toHaveLength(0)
-
-  await runAt("2026-06-11T20:30:00Z")
-  expect(sent).toHaveLength(0)
-
   await runAt("2026-06-11T10:00:00Z")
-  await runAt("2026-06-11T11:00:00Z")
+  await runAt("2026-06-18T08:00:00Z")
+  expect(sent).toHaveLength(0)
+
+  await runAt("2026-06-18T20:30:00Z")
+  expect(sent).toHaveLength(0)
+
+  await runAt("2026-06-18T10:00:00Z")
+  await runAt("2026-06-18T11:00:00Z")
   expect(sent).toHaveLength(1)
   const [invite] = await app.services.db.select().from(surveyInvites).where(eq(surveyInvites.guestId, guestId))
   expect(invite?.sentAt).not.toBeNull()
+})
+
+test("a table guest is only surveyed once a check-out is known", async () => {
+  const { guestId } = await guestCaptured("survey-table", "qr_table")
+  sent.length = 0
+
+  await runAt("2026-06-18T10:00:00Z")
+  expect(sent).toHaveLength(0)
+
+  await app.services.db.update(guests).set({ stayCheckOut: "2026-06-18" }).where(eq(guests.id, guestId))
+  await runAt("2026-06-19T12:00:00Z")
+  expect(sent).toHaveLength(1)
 })
 
 test("an imported guest is surveyed only after a real check-out inside the survey window", async () => {

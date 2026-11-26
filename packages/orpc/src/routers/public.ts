@@ -258,6 +258,8 @@ export const publicRouter = {
         return { ok: true as const }
       }
       await enforceKey(context.rateLimiter, `public.capture:hotel:${hotel.id}`, RATE_LIMITS.captureHotel)
+      // The profile consent on this form is only asked for the departure date, so neither is kept without the other.
+      const stayCheckOut = input.consents.profile ? input.stayCheckOut : null
       const guest = guestCreateSchema.safeParse({
         name: input.name,
         phone: input.phone,
@@ -266,7 +268,8 @@ export const publicRouter = {
         birthday: input.birthday,
         source: CAPTURE_SOURCES[input.source],
         captureLocation: input.location,
-        consents: { ...input.consents, profile: false },
+        stayCheckOut,
+        consents: { ...input.consents, profile: !!stayCheckOut },
       })
       if (!guest.success) {
         throw new ORPCError("BAD_REQUEST", { message: guest.error.issues[0]?.message ?? "Check your details." })

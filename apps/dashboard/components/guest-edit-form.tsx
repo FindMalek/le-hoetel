@@ -27,6 +27,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
   const [language, setLanguage] = useState<HotelLanguage>(guest.language)
   const [email, setEmail] = useState(guest.email ?? "")
   const [birthday, setBirthday] = useState(guest.birthday ?? "")
+  const [checkOut, setCheckOut] = useState(guest.stayCheckOut ?? "")
   const [touched, setTouched] = useState<Touched>({})
   const back = `/guests/${guest.id}`
   const today = new Date().toISOString().slice(0, 10)
@@ -71,6 +72,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
       language,
       email: email.trim() || null,
       birthday: birthday || null,
+      ...(guest.consents.profile ? { stayCheckOut: checkOut || null } : {}),
     })
   }
 
@@ -118,6 +120,22 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
               value={birthday}
               onChange={(event) => setBirthday(event.target.value)}
               onBlur={() => touch("birthday")}
+            />
+          )}
+        </FormField>
+        <FormField
+          label={t("checkOut")}
+          optional={t("optional")}
+          hint={t(guest.consents.profile ? "checkOutHint" : "checkOutNeedsConsent")}
+        >
+          {(aria) => (
+            <Input
+              {...aria}
+              type="date"
+              dir="ltr"
+              disabled={!guest.consents.profile}
+              value={checkOut}
+              onChange={(event) => setCheckOut(event.target.value)}
             />
           )}
         </FormField>
