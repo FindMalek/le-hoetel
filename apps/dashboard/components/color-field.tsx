@@ -10,6 +10,9 @@ const HEX = /^#[0-9a-fA-F]{6}$/
 
 export const isHexColor = (value: string): boolean => HEX.test(value)
 
+/** blue-700 and blue-500 of the theme as hex: the native picker and the placeholder only take hex. */
+export const COLOR_DEFAULTS = { primary: "#0059c2", accent: "#0984ff" } as const
+
 /** A hex color with the system picker, a live sample with its readable text color, and a warning when it is too faint on the page or a surface. */
 export function ColorField({
   id,
@@ -28,7 +31,7 @@ export function ColorField({
   onChange: (value: string) => void
   onBlur: () => void
   error?: string
-  fallback: string
+  fallback: (typeof COLOR_DEFAULTS)[keyof typeof COLOR_DEFAULTS]
 }) {
   const t = useTranslations("hotelSettings")
   const color = HEX.test(value) ? value : null
@@ -80,7 +83,7 @@ export function ColorField({
       </FormField>
       {issues.length > 0 ? (
         <p role="status" className="flex items-start gap-1.5 text-sm">
-          <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <TriangleAlertIcon className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
           {t("contrastLight")}
         </p>
       ) : null}

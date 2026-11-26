@@ -1,7 +1,6 @@
 "use client"
 
 import { orgClient } from "@ritorno/auth/orgs"
-import { Badge } from "@ritorno/ui/components/badge"
 import { Button } from "@ritorno/ui/components/button"
 import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
@@ -10,20 +9,36 @@ import { FormField } from "@ritorno/ui/components/form-field"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
 import { ListSkeleton } from "@ritorno/ui/components/loading-state"
-import { RadioGroup, RadioGroupItem } from "@ritorno/ui/components/radio-group"
 import { Section } from "@ritorno/ui/components/section"
 import { Select } from "@ritorno/ui/components/select"
-import { RotateCwIcon, SendIcon, UsersIcon, XIcon } from "lucide-react"
+import { StatusBadge } from "@ritorno/ui/components/status-badge"
+import { formatDate } from "@ritorno/ui/lib/date"
+import { CrownIcon, RotateCwIcon, SendIcon, ShieldIcon, UserIcon, UsersIcon, XIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useForm } from "@/lib/use-form"
-import { LocalDate } from "./local-date"
 
 const ASSIGNABLE = ["manager", "staff"] as const
 type Assignable = (typeof ASSIGNABLE)[number]
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+type Role = "owner" | "manager" | "staff"
+const ROLE_ICONS = { owner: CrownIcon, manager: ShieldIcon, staff: UserIcon } as const
+
+function RoleBadge({ role }: { role: string }) {
+  const t = useTranslations("team")
+  const known = (role in ROLE_ICONS ? role : "staff") as Role
+  const Icon = ROLE_ICONS[known]
+  return (
+    <StatusBadge tone={known === "owner" ? "info" : "neutral"} icon={<Icon />}>
+      {t(`roles.${known}`)}
+    </StatusBadge>
+  )
+}
+
+type Invitation = { id: string; email: string }
 
 type Member = {
   id: string
@@ -86,24 +101,16 @@ function InviteForm({ onSent }: { onSent: () => void }) {
           />
         )}
       </FormField>
-      <fieldset className="flex flex-col gap-2">
-        <legend className="mb-1 font-medium text-sm">{t("role")}</legend>
-        <RadioGroup value={role} onValueChange={(next) => setRole(next as Assignable)} className="gap-2">
-          {ASSIGNABLE.map((value) => (
-            <label
-              key={value}
-              htmlFor={`role-${value}`}
-              className="flex min-h-11 cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors has-[[data-checked]]:border-primary has-[[data-checked]]:bg-primary/5"
-            >
-              <RadioGroupItem id={`role-${value}`} value={value} className="mt-0.5" />
-              <span className="flex flex-col gap-0.5">
-                <span className="font-medium text-sm">{t(`roles.${value}`)}</span>
-                <span className="text-muted-foreground text-sm">{t(`roleHelp.${value}`)}</span>
-              </span>
-            </label>
-          ))}
-        </RadioGroup>
-      </fieldset>
+      <FormField id="invite-role" label={t("role")} hint={t(`roleHelp.${role}`)}>
+        {(aria) => (
+          <Select
+            {...aria}
+            value={role}
+            onValueChange={(next) => setRole(next as Assignable)}
+            options={ASSIGNABLE.map((value) => ({ value, label: t(`roles.${value}`) }))}
+          />
+        )}
+      </FormField>
       <Button type="submit" loading={pending}>
         <SendIcon data-icon="inline-start" className="rtl:-scale-x-100" />
         {t("sendInvite")}
@@ -112,8 +119,10 @@ function InviteForm({ onSent }: { onSent: () => void }) {
   )
 }
 
-export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolean }) {
+export function TeamBoard({ meId, canManage, timeZone }: { meId: string; canManage: boolean; timeZone?: string }) {
   const t = useTranslations("team")
+  const locale = useLocale()
+  const [revoking, setRevoking] = useState<Invitation | null>(null)
   const router = useRouter()
   const { data: active, isPending, error, refetch } = orgClient.useActiveOrganization()
   const [removing, setRemoving] = useState<Member | null>(null)
@@ -154,7 +163,7 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
   const roleCell = (member: Member) => {
     const role = topRole(member.role)
     if (!canManage || role === "owner" || member.userId === meId) {
-      return <Badge variant={role === "owner" ? "default" : "secondary"}>{t(`roles.${role as "owner"}`)}</Badge>
+      return <RoleBadge role={role} />
     }
     return (
       <Select
@@ -242,8 +251,13 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
                       {invitation.email}
                     </span>
                     <span className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm">
-                      <Badge variant="outline">{t(`roles.${topRole(invitation.role ?? "staff") as "staff"}`)}</Badge>
-                      {t("expires")} <LocalDate value={new Date(invitation.expiresAt)} />
+                      <RoleBadge role={topRole(invitation.role ?? "staff")} />
+                      <span>
+                        {t("expires")}{" "}
+                        <time dateTime={new Date(invitation.expiresAt).toISOString()}>
+                          {formatDate(new Date(invitation.expiresAt), locale, timeZone)}
+                        </time>
+                      </span>
                     </span>
                   </div>
                   {canManage ? (
@@ -270,17 +284,11 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
                       <Button
                         variant="ghost"
                         size="sm"
-                        disabled={busy === `cancel-${invitation.id}`}
-                        onClick={() =>
-                          run(
-                            `cancel-${invitation.id}`,
-                            orgClient.organization.cancelInvitation({ invitationId: invitation.id }),
-                            t("cancelled"),
-                          )
-                        }
+                        className="text-destructive"
+                        onClick={() => setRevoking({ id: invitation.id, email: invitation.email })}
                       >
                         <XIcon data-icon="inline-start" />
-                        {t("cancel")}
+                        {t("revoke")}
                       </Button>
                     </div>
                   ) : null}
@@ -321,6 +329,25 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
           if (!removing) return
           await run(removing.id, orgClient.organization.removeMember({ memberIdOrEmail: removing.id }), t("removed"))
           setRemoving(null)
+        }}
+      />
+      <ConfirmDialog
+        open={revoking !== null}
+        onOpenChange={(open) => !open && setRevoking(null)}
+        title={t("revokeTitle", { email: revoking?.email ?? "" })}
+        description={t("revokeBody")}
+        confirmLabel={t("revoke")}
+        cancelLabel={t("cancelAction")}
+        destructive
+        pending={busy === `cancel-${revoking?.id}`}
+        onConfirm={async () => {
+          if (!revoking) return
+          await run(
+            `cancel-${revoking.id}`,
+            orgClient.organization.cancelInvitation({ invitationId: revoking.id }),
+            t("cancelled"),
+          )
+          setRevoking(null)
         }}
       />
     </div>

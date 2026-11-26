@@ -27,7 +27,7 @@ The guest link is `/o/<token>` on the web app (`offerPageUrl` in `@ritorno/commo
 
 ## The staff redemption screen
 
-**Redeem** (`/redeem`) is built for a phone at the desk. Staff scan the guest's QR with the phone camera (the browser's `BarcodeDetector`, read in `qr-scanner.tsx`) or type the code, then see the offer, the guest's first name only and the validity. One tap marks it redeemed with who and when. Safari and Firefox have no `BarcodeDetector` yet, so there the screen only offers the typed code.
+**Redeem** (`/redeem`) is built for a phone at the desk. Staff scan the guest's QR with the phone camera (the browser's `BarcodeDetector`, read in `qr-scanner.tsx`) or type the code, then see the offer, the guest's first name only and the validity. One tap marks it redeemed with who and when. The answer fills the screen: green when the code can be or just was redeemed, amber when it is real but not usable now (already used, expired, not started, paused, used up), red for another hotel's code or an unknown one, each with one line saying what to tell the guest. Safari and Firefox have no `BarcodeDetector` yet, so there the screen only offers the typed code.
 
 A code can be a guest's code (`AB3D-EF7H`) or the offer's promo code. A promo code is not bound to a guest, so it can be redeemed many times, up to `max_redemptions`. `offers.lookup` and `offers.redeem` answer with a status, never an error:
 

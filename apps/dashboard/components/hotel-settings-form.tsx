@@ -1,6 +1,7 @@
 "use client"
 
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
+import { QUIET_HOURS } from "@ritorno/common/hotel-time"
 import type { Hotel } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
@@ -10,16 +11,18 @@ import { FormField } from "@ritorno/ui/components/form-field"
 import { FormSection } from "@ritorno/ui/components/form-section"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
+import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { Select } from "@ritorno/ui/components/select"
-import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation } from "@tanstack/react-query"
+import { CheckIcon, ClockIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { useState } from "react"
 import { useForm } from "@/lib/use-form"
 import { BrandPreview, type PreviewCopies } from "./brand-preview"
-import { ColorField, isHexColor } from "./color-field"
+import { COLOR_DEFAULTS, ColorField, isHexColor } from "./color-field"
 import { HotelLogo } from "./hotel-logo"
+import { TelegramAlerts } from "./telegram-alerts"
 
 const TIMEZONES = [
   "Africa/Tunis",
@@ -38,134 +41,180 @@ const TIMEZONES = [
 ]
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const PHONE = /^\+[1-9]\d{7,14}$/
+const HTTPS = /^https:\/\/\S+\.\S+/
+const THRESHOLDS = Array.from({ length: 11 }, (_, score) => score)
 
-interface Values extends Record<string, unknown> {
-  displayName: string
-  primaryColor: string
-  accentColor: string
-  defaultLanguage: HotelLanguage
-  timezone: string
-  replyToEmail: string
-  address: string
-  googleReviewUrl: string
-  managerWhatsapp: string
-  managerTelegram: string
+type HotelPatch = Partial<
+  Pick<
+    Hotel,
+    | "displayName"
+    | "primaryColor"
+    | "accentColor"
+    | "defaultLanguage"
+    | "timezone"
+    | "replyToEmail"
+    | "address"
+    | "googleReviewUrl"
+    | "lowScoreThreshold"
+  >
+>
+type Errors<V> = Partial<Record<keyof V, string>>
+type Alerts = { linked: boolean; botConfigured: boolean }
+
+const useHotelUpdate = () => useMutation(orpc.hotel.update.mutationOptions())
+
+interface SectionState {
+  dirty: boolean
+  update: ReturnType<typeof useHotelUpdate>
+  submit: (event: React.FormEvent) => void
+  discard: () => void
 }
 
-const valuesOf = (hotel: Hotel): Values => ({
-  displayName: hotel.displayName,
-  primaryColor: hotel.primaryColor ?? "",
-  accentColor: hotel.accentColor ?? "",
-  defaultLanguage: hotel.defaultLanguage,
-  timezone: hotel.timezone,
-  replyToEmail: hotel.replyToEmail ?? "",
-  address: hotel.address ?? "",
-  googleReviewUrl: hotel.googleReviewUrl ?? "",
-  managerWhatsapp: hotel.managerWhatsapp ?? "",
-  managerTelegram: hotel.managerTelegram ?? "",
-})
-
-export function HotelSettingsForm({
-  hotel,
-  copies,
-  readOnly,
-}: {
-  hotel: Hotel
-  copies: PreviewCopies
-  readOnly: boolean
-}) {
-  const t = useTranslations("hotelSettings")
+/** One section of the settings: its own form and its own save, so a typo in one never blocks another. */
+function useSection<V extends Record<string, unknown>>(
+  initial: V,
+  validate: (values: V) => Errors<V>,
+  toPatch: (values: V) => HotelPatch,
+) {
   const router = useRouter()
-  const initial = valuesOf(hotel)
-  const form = useForm<Values>(initial, (v) => {
-    const errors: Partial<Record<keyof Values, string>> = {}
-    if (!v.displayName.trim()) errors.displayName = t("errors.required")
-    if (v.primaryColor && !isHexColor(v.primaryColor)) errors.primaryColor = t("errors.color")
-    if (v.accentColor && !isHexColor(v.accentColor)) errors.accentColor = t("errors.color")
-    if (v.replyToEmail && !EMAIL.test(v.replyToEmail)) errors.replyToEmail = t("errors.email")
-    if (v.googleReviewUrl && !/^https:\/\/\S+\.\S+/.test(v.googleReviewUrl)) errors.googleReviewUrl = t("errors.https")
-    if (v.managerWhatsapp && !PHONE.test(v.managerWhatsapp.replace(/[\s-]/g, "")))
-      errors.managerWhatsapp = t("errors.phone")
-    return errors
-  })
-  const { values } = form
-  const dirty = (Object.keys(initial) as (keyof Values)[]).some((key) => initial[key] !== values[key])
-
-  const update = useMutation(
-    orpc.hotel.update.mutationOptions({
-      onSuccess: () => {
-        toast.success(t("saved"))
-        router.refresh()
-      },
-      onError: (error) => toast.error(errorMessage(error)),
-    }),
-  )
-
+  const form = useForm<V>(initial, validate)
+  const [base, setBase] = useState(initial)
+  const update = useHotelUpdate()
+  const dirty = (Object.keys(base) as (keyof V)[]).some((key) => base[key] !== form.values[key])
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
     if (!form.submit()) return
-    update.mutate({
-      displayName: values.displayName.trim(),
-      primaryColor: values.primaryColor || null,
-      accentColor: values.accentColor || null,
-      defaultLanguage: values.defaultLanguage,
-      timezone: values.timezone,
-      replyToEmail: values.replyToEmail.trim() || null,
-      address: values.address.trim() || null,
-      googleReviewUrl: values.googleReviewUrl.trim() || null,
-      managerWhatsapp: values.managerWhatsapp.replace(/[\s-]/g, "") || null,
-      managerTelegram: values.managerTelegram.trim() || null,
+    const sent = form.values
+    update.mutate(toPatch(sent), {
+      onSuccess: () => {
+        setBase(sent)
+        router.refresh()
+      },
     })
   }
+  const discard = () => {
+    update.reset()
+    form.reset(base)
+  }
+  const state: SectionState = { dirty, update, submit, discard }
+  return { form, state }
+}
 
-  const text = (key: keyof Values) => ({
-    name: String(key),
-    value: values[key] as string,
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => form.set(key, event.target.value as never),
+function SectionForm({
+  state,
+  readOnly,
+  children,
+}: {
+  state: SectionState
+  readOnly: boolean
+  children: React.ReactNode
+}) {
+  const t = useTranslations("hotelSettings")
+  const { dirty, update, submit, discard } = state
+  return (
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+      <fieldset disabled={readOnly} className="contents">
+        {children}
+      </fieldset>
+      {update.isError ? <InlineAlert tone="error">{errorMessage(update.error)}</InlineAlert> : null}
+      {readOnly || !(dirty || update.isPending || update.isSuccess) ? null : (
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+          <p role="status" className="flex min-h-5 items-center gap-1.5 text-muted-foreground text-sm sm:me-auto">
+            {update.isSuccess && !dirty ? (
+              <>
+                <CheckIcon aria-hidden className="size-4 text-success" />
+                {t("savedInline")}
+              </>
+            ) : dirty ? (
+              t("unsaved")
+            ) : null}
+          </p>
+          {dirty ? (
+            <Button type="button" variant="ghost" disabled={update.isPending} onClick={discard}>
+              {t("discard")}
+            </Button>
+          ) : null}
+          <Button type="submit" loading={update.isPending} disabled={!dirty}>
+            {t("save")}
+          </Button>
+        </div>
+      )}
+    </form>
+  )
+}
+
+function textProps<V extends Record<string, unknown>>(form: ReturnType<typeof useForm<V>>, key: keyof V & string) {
+  return {
+    name: key,
+    value: form.values[key] as string,
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => form.set(key, event.target.value as V[typeof key]),
     onBlur: () => form.blur(key),
-  })
+  }
+}
 
+function BrandSection({ hotel, copies, readOnly }: { hotel: Hotel; copies: PreviewCopies; readOnly: boolean }) {
+  const t = useTranslations("hotelSettings")
+  const { form, state } = useSection(
+    {
+      displayName: hotel.displayName,
+      primaryColor: hotel.primaryColor ?? "",
+      accentColor: hotel.accentColor ?? "",
+      defaultLanguage: hotel.defaultLanguage,
+    },
+    (v) => ({
+      ...(v.displayName.trim() ? {} : { displayName: t("errors.required") }),
+      ...(v.primaryColor && !isHexColor(v.primaryColor) ? { primaryColor: t("errors.color") } : {}),
+      ...(v.accentColor && !isHexColor(v.accentColor) ? { accentColor: t("errors.color") } : {}),
+    }),
+    (v) => ({
+      displayName: v.displayName.trim(),
+      primaryColor: v.primaryColor || null,
+      accentColor: v.accentColor || null,
+      defaultLanguage: v.defaultLanguage,
+    }),
+  )
+  const { values } = form
   const draft = {
     name: values.displayName.trim() || hotel.name,
     logoSrc: hotel.logoKey ? `/api/files/${hotel.logoKey}` : null,
     primaryColor: isHexColor(values.primaryColor) ? values.primaryColor : null,
     accentColor: isHexColor(values.accentColor) ? values.accentColor : null,
-    address: values.address.trim() || null,
+    address: hotel.address,
     language: values.defaultLanguage,
   }
-  const timezones = TIMEZONES.includes(values.timezone) ? TIMEZONES : [values.timezone, ...TIMEZONES]
-
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
-      <form onSubmit={submit} noValidate className="flex min-w-0 flex-col">
-        {readOnly ? (
-          <InlineAlert tone="info" className="mb-6">
-            {t("readOnly")}
-          </InlineAlert>
-        ) : null}
+    <section
+      aria-labelledby="brand-title"
+      className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_24rem]"
+    >
+      <div className="flex min-w-0 max-w-2xl flex-col gap-6">
+        <div className="flex flex-col gap-1">
+          <h2 id="brand-title" className="font-heading font-semibold text-h3">
+            {t("sections.brand.title")}
+          </h2>
+          <p className="text-pretty text-muted-foreground text-sm">{t("sections.brand.description")}</p>
+        </div>
         <fieldset disabled={readOnly} className="contents">
-          <FormSection title={t("sections.identity.title")} description={t("sections.identity.description")}>
-            <FormField
-              id="displayName"
-              label={t("displayName")}
-              hint={t("displayNameHint")}
-              error={form.error("displayName")}
-            >
-              {(aria) => (
-                <Input
-                  {...aria}
-                  {...text("displayName")}
-                  maxLength={80}
-                  autoComplete="organization"
-                  enterKeyHint="next"
-                />
-              )}
-            </FormField>
-            <HotelLogo name={values.displayName || hotel.name} logoKey={hotel.logoKey} />
-          </FormSection>
-
-          <FormSection title={t("sections.brand.title")} description={t("sections.brand.description")}>
+          <HotelLogo name={draft.name} logoKey={hotel.logoKey} />
+        </fieldset>
+        <SectionForm state={state} readOnly={readOnly}>
+          <FormField
+            id="displayName"
+            label={t("displayName")}
+            hint={t("displayNameHint")}
+            error={form.error("displayName")}
+          >
+            {(aria) => (
+              <Input
+                {...aria}
+                {...textProps(form, "displayName")}
+                maxLength={80}
+                autoComplete="organization"
+                enterKeyHint="next"
+              />
+            )}
+          </FormField>
+          <div className="grid gap-4 md:grid-cols-2">
             <ColorField
               id="primaryColor"
               label={t("primaryColor")}
@@ -174,7 +223,7 @@ export function HotelSettingsForm({
               onChange={(next) => form.set("primaryColor", next)}
               onBlur={() => form.blur("primaryColor")}
               error={form.error("primaryColor")}
-              fallback="#0a7c66"
+              fallback={COLOR_DEFAULTS.primary}
             />
             <ColorField
               id="accentColor"
@@ -184,138 +233,181 @@ export function HotelSettingsForm({
               onChange={(next) => form.set("accentColor", next)}
               onBlur={() => form.blur("accentColor")}
               error={form.error("accentColor")}
-              fallback="#f2b134"
+              fallback={COLOR_DEFAULTS.accent}
             />
-            <BrandPreview draft={draft} copies={copies} className="lg:hidden" />
-          </FormSection>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="font-medium text-sm">{t("defaultLanguage")}</span>
+            <SegmentedControl
+              label={t("defaultLanguage")}
+              block
+              disabled={readOnly}
+              value={values.defaultLanguage}
+              onValueChange={(next) => form.set("defaultLanguage", next)}
+              options={HOTEL_LANGUAGES.map((value) => ({ value, label: LOCALE_NAMES[value] }))}
+            />
+            <p className="text-muted-foreground text-sm">{t("defaultLanguageHint")}</p>
+          </div>
+        </SectionForm>
+      </div>
+      <BrandPreview draft={draft} copies={copies} className="lg:sticky lg:top-20" />
+    </section>
+  )
+}
 
-          <FormSection title={t("sections.language.title")} description={t("sections.language.description")}>
-            <FormField id="defaultLanguage" label={t("defaultLanguage")} hint={t("defaultLanguageHint")}>
-              {(aria) => (
-                <Select
-                  {...aria}
-                  value={values.defaultLanguage}
-                  onValueChange={(value) => form.set("defaultLanguage", value)}
-                  options={HOTEL_LANGUAGES.map((value) => ({ value, label: LOCALE_NAMES[value] }))}
-                />
-              )}
-            </FormField>
-            <FormField id="timezone" label={t("timezone")} hint={t("timezoneHint")}>
-              {(aria) => (
-                <Select
-                  {...aria}
-                  value={values.timezone}
-                  onValueChange={(value) => form.set("timezone", value)}
-                  options={timezones.map((zone) => ({ value: zone, label: zone.replace("_", " ") }))}
-                />
-              )}
-            </FormField>
-          </FormSection>
+function MessagingSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean }) {
+  const t = useTranslations("hotelSettings")
+  const { form, state } = useSection(
+    { replyToEmail: hotel.replyToEmail ?? "", address: hotel.address ?? "", timezone: hotel.timezone },
+    (v) => (v.replyToEmail && !EMAIL.test(v.replyToEmail.trim()) ? { replyToEmail: t("errors.email") } : {}),
+    (v) => ({ replyToEmail: v.replyToEmail.trim() || null, address: v.address.trim() || null, timezone: v.timezone }),
+  )
+  const timezones = TIMEZONES.includes(form.values.timezone) ? TIMEZONES : [form.values.timezone, ...TIMEZONES]
+  const hour = (value: number) => `${String(value).padStart(2, "0")}:00`
+  return (
+    <FormSection title={t("sections.messaging.title")} description={t("sections.messaging.description")}>
+      <SectionForm state={state} readOnly={readOnly}>
+        <FormField
+          id="replyToEmail"
+          label={t("replyTo")}
+          hint={t("replyToHint")}
+          error={form.error("replyToEmail")}
+          optional={t("optional")}
+        >
+          {(aria) => (
+            <Input
+              {...aria}
+              {...textProps(form, "replyToEmail")}
+              type="email"
+              dir="ltr"
+              inputMode="email"
+              autoComplete="off"
+              enterKeyHint="next"
+            />
+          )}
+        </FormField>
+        <FormField id="address" label={t("address")} hint={t("addressHint")} optional={t("optional")}>
+          {(aria) => (
+            <Input
+              {...aria}
+              {...textProps(form, "address")}
+              maxLength={200}
+              autoComplete="street-address"
+              enterKeyHint="next"
+            />
+          )}
+        </FormField>
+        <FormField id="timezone" label={t("timezone")} hint={t("timezoneHint")}>
+          {(aria) => (
+            <Select
+              {...aria}
+              value={form.values.timezone}
+              onValueChange={(value) => form.set("timezone", value)}
+              options={timezones.map((zone) => ({ value: zone, label: zone.replace("_", " ") }))}
+            />
+          )}
+        </FormField>
+        <div className="flex items-start gap-3 rounded-xl bg-surface p-4 text-sm">
+          <ClockIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+          <div className="flex flex-col gap-1">
+            <span className="font-medium">{t("quietHours")}</span>
+            <span className="text-pretty text-muted-foreground">
+              {t.rich("quietHoursText", {
+                from: () => <bdi dir="ltr">{hour(QUIET_HOURS.from)}</bdi>,
+                until: () => <bdi dir="ltr">{hour(QUIET_HOURS.until)}</bdi>,
+              })}
+            </span>
+          </div>
+        </div>
+      </SectionForm>
+    </FormSection>
+  )
+}
 
-          <FormSection title={t("sections.contact.title")} description={t("sections.contact.description")}>
-            <FormField
-              id="replyToEmail"
-              label={t("replyTo")}
-              hint={t("replyToHint")}
-              error={form.error("replyToEmail")}
-            >
-              {(aria) => (
-                <Input
-                  {...aria}
-                  {...text("replyToEmail")}
-                  type="email"
-                  dir="ltr"
-                  inputMode="email"
-                  autoComplete="off"
-                  enterKeyHint="next"
-                />
-              )}
-            </FormField>
-            <FormField id="address" label={t("address")} hint={t("addressHint")} error={form.error("address")}>
-              {(aria) => (
-                <Input
-                  {...aria}
-                  {...text("address")}
-                  maxLength={200}
-                  autoComplete="street-address"
-                  enterKeyHint="next"
-                />
-              )}
-            </FormField>
-            <FormField
-              id="googleReviewUrl"
-              label={t("reviewUrl")}
-              hint={t("reviewUrlHint")}
-              error={form.error("googleReviewUrl")}
-            >
-              {(aria) => (
-                <Input
-                  {...aria}
-                  {...text("googleReviewUrl")}
-                  type="url"
-                  dir="ltr"
-                  inputMode="url"
-                  placeholder="https://"
-                  autoComplete="off"
-                  enterKeyHint="next"
-                />
-              )}
-            </FormField>
-          </FormSection>
+function AlertsSection({ hotel, alerts, readOnly }: { hotel: Hotel; alerts: Alerts | null; readOnly: boolean }) {
+  const t = useTranslations("hotelSettings")
+  const { form, state } = useSection(
+    { lowScoreThreshold: String(hotel.lowScoreThreshold) },
+    () => ({}),
+    (v) => ({ lowScoreThreshold: Number(v.lowScoreThreshold) }),
+  )
+  return (
+    <FormSection title={t("sections.alerts.title")} description={t("sections.alerts.description")}>
+      {alerts ? <TelegramAlerts {...alerts} readOnly={readOnly} /> : null}
+      <SectionForm state={state} readOnly={readOnly}>
+        <FormField id="lowScoreThreshold" label={t("threshold")} hint={t("thresholdHint")}>
+          {(aria) => (
+            <Select
+              {...aria}
+              value={form.values.lowScoreThreshold}
+              onValueChange={(value) => form.set("lowScoreThreshold", value)}
+              options={THRESHOLDS.map((score) => ({ value: String(score), label: t("thresholdOption", { score }) }))}
+            />
+          )}
+        </FormField>
+      </SectionForm>
+    </FormSection>
+  )
+}
 
-          <FormSection title={t("sections.alerts.title")} description={t("sections.alerts.description")}>
-            <FormField
-              id="managerWhatsapp"
-              label={t("whatsapp")}
-              hint={t("whatsappHint")}
-              error={form.error("managerWhatsapp")}
-            >
-              {(aria) => (
-                <Input
-                  {...aria}
-                  {...text("managerWhatsapp")}
-                  type="tel"
-                  dir="ltr"
-                  inputMode="tel"
-                  placeholder="+216 20 123 456"
-                  autoComplete="off"
-                  enterKeyHint="next"
-                />
-              )}
-            </FormField>
-            <FormField id="managerTelegram" label={t("telegram")} hint={t("telegramHint")} optional={t("optional")}>
-              {(aria) => (
-                <Input
-                  {...aria}
-                  {...text("managerTelegram")}
-                  dir="ltr"
-                  maxLength={80}
-                  autoComplete="off"
-                  enterKeyHint="done"
-                />
-              )}
-            </FormField>
-          </FormSection>
-        </fieldset>
-        {readOnly ? null : (
-          <StickyFormActions>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={!dirty || update.isPending}
-              onClick={() => form.reset(initial)}
-            >
-              {t("discard")}
-            </Button>
-            <Button type="submit" loading={update.isPending} disabled={!dirty}>
-              {t("save")}
-            </Button>
-          </StickyFormActions>
-        )}
-      </form>
-      <aside className="sticky top-20 max-lg:hidden">
-        <BrandPreview draft={draft} copies={copies} />
-      </aside>
+function ReviewSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean }) {
+  const t = useTranslations("hotelSettings")
+  const { form, state } = useSection(
+    { googleReviewUrl: hotel.googleReviewUrl ?? "" },
+    (v) =>
+      v.googleReviewUrl.trim() && !HTTPS.test(v.googleReviewUrl.trim()) ? { googleReviewUrl: t("errors.https") } : {},
+    (v) => ({ googleReviewUrl: v.googleReviewUrl.trim() || null }),
+  )
+  return (
+    <FormSection title={t("sections.review.title")} description={t("sections.review.description")}>
+      <SectionForm state={state} readOnly={readOnly}>
+        <FormField
+          id="googleReviewUrl"
+          label={t("reviewUrl")}
+          hint={t("reviewUrlHint")}
+          error={form.error("googleReviewUrl")}
+          optional={t("optional")}
+        >
+          {(aria) => (
+            <Input
+              {...aria}
+              {...textProps(form, "googleReviewUrl")}
+              type="url"
+              dir="ltr"
+              inputMode="url"
+              placeholder="https://g.page/r/…"
+              autoComplete="off"
+              enterKeyHint="done"
+            />
+          )}
+        </FormField>
+      </SectionForm>
+    </FormSection>
+  )
+}
+
+/** Hotel settings as independent sections: each one saves only its own fields. */
+export function HotelSettingsForm({
+  hotel,
+  copies,
+  alerts,
+  readOnly,
+}: {
+  hotel: Hotel
+  copies: PreviewCopies
+  alerts: Alerts | null
+  readOnly: boolean
+}) {
+  const t = useTranslations("hotelSettings")
+  return (
+    <div className="flex flex-col gap-10">
+      {readOnly ? <InlineAlert tone="info">{t("readOnly")}</InlineAlert> : null}
+      <BrandSection hotel={hotel} copies={copies} readOnly={readOnly} />
+      <div className="flex flex-col border-t pt-6">
+        <MessagingSection hotel={hotel} readOnly={readOnly} />
+        <AlertsSection hotel={hotel} alerts={alerts} readOnly={readOnly} />
+        <ReviewSection hotel={hotel} readOnly={readOnly} />
+      </div>
     </div>
   )
 }

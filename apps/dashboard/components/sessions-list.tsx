@@ -1,16 +1,17 @@
 "use client"
 
 import { authClient } from "@ritorno/auth/client"
-import { Badge } from "@ritorno/ui/components/badge"
 import { Button } from "@ritorno/ui/components/button"
+import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { ListSkeleton } from "@ritorno/ui/components/loading-state"
+import { StatusBadge } from "@ritorno/ui/components/status-badge"
+import { formatDate } from "@ritorno/ui/lib/date"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { LaptopIcon, SmartphoneIcon } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { LaptopIcon, LogOutIcon, SmartphoneIcon } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
-import { LocalDate } from "./local-date"
 
 const KEY = ["auth", "sessions"]
 
@@ -42,9 +43,11 @@ function describeAgent(agent: string | null | undefined): { label: string; mobil
 
 export function SessionsList() {
   const t = useTranslations("settings")
+  const locale = useLocale()
   const queryClient = useQueryClient()
   const current = authClient.useSession()
   const [busy, setBusy] = useState<string | null>(null)
+  const [confirmAll, setConfirmAll] = useState(false)
   const sessions = useQuery({
     queryKey: KEY,
     queryFn: async () => {
@@ -53,6 +56,16 @@ export function SessionsList() {
       return data
     },
   })
+
+  async function signOutEverywhere() {
+    setBusy("all")
+    const { error } = await authClient.revokeSessions()
+    if (error) {
+      setBusy(null)
+      return void toast.error(error.message ?? t("errors.generic"))
+    }
+    window.location.assign("/sign-in")
+  }
 
   async function revoke(key: string, call: Promise<{ error: { message?: string } | null }>, done: string) {
     setBusy(key)
@@ -95,10 +108,10 @@ export function SessionsList() {
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="flex flex-wrap items-center gap-2 font-medium">
                   {label || t("unknownDevice")}
-                  {isCurrent ? <Badge variant="secondary">{t("thisDevice")}</Badge> : null}
+                  {isCurrent ? <StatusBadge tone="success">{t("thisDevice")}</StatusBadge> : null}
                 </span>
                 <span className="text-muted-foreground text-sm">
-                  {t("lastActive")} <LocalDate value={new Date(session.updatedAt)} time />
+                  {t("lastActive")} {formatDate(new Date(session.updatedAt), locale)}
                 </span>
               </div>
               {isCurrent ? null : (
@@ -118,16 +131,33 @@ export function SessionsList() {
           )
         })}
       </ul>
-      {others.length > 0 ? (
-        <Button
-          variant="outline"
-          className="self-start max-md:w-full"
-          loading={busy === "others"}
-          onClick={() => revoke("others", authClient.revokeOtherSessions(), t("othersEnded"))}
-        >
-          {t("endOthers")}
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        {others.length > 0 ? (
+          <Button
+            variant="outline"
+            className="max-sm:w-full"
+            loading={busy === "others"}
+            onClick={() => revoke("others", authClient.revokeOtherSessions(), t("othersEnded"))}
+          >
+            {t("endOthers")}
+          </Button>
+        ) : null}
+        <Button variant="ghost" className="text-destructive max-sm:w-full" onClick={() => setConfirmAll(true)}>
+          <LogOutIcon data-icon="inline-start" className="rtl:-scale-x-100" />
+          {t("signOutEverywhere")}
         </Button>
-      ) : null}
+      </div>
+      <ConfirmDialog
+        open={confirmAll}
+        onOpenChange={setConfirmAll}
+        title={t("signOutEverywhereTitle")}
+        description={t("signOutEverywhereBody")}
+        confirmLabel={t("signOutEverywhere")}
+        cancelLabel={t("cancel")}
+        destructive
+        pending={busy === "all"}
+        onConfirm={signOutEverywhere}
+      />
     </div>
   )
 }
