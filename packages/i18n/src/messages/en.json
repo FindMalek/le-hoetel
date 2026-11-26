@@ -68,6 +68,7 @@
       "description": "Six small steps. Each one checks itself when it is done.",
       "progress": "{done} of {total}",
       "todo": "To do",
+      "done": "Done",
       "logo": {
         "title": "Add your logo",
         "body": "Guests see it first on the sign-up page."

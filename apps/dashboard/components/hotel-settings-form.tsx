@@ -194,9 +194,11 @@ function BrandSection({ hotel, copies, readOnly }: { hotel: Hotel; copies: Previ
           </h2>
           <p className="text-pretty text-muted-foreground text-sm">{t("sections.brand.description")}</p>
         </div>
-        <fieldset disabled={readOnly} className="contents">
-          <HotelLogo name={draft.name} logoKey={hotel.logoKey} />
-        </fieldset>
+        <div id="logo" className="scroll-mt-20">
+          <fieldset disabled={readOnly} className="contents">
+            <HotelLogo name={draft.name} logoKey={hotel.logoKey} />
+          </fieldset>
+        </div>
         <SectionForm state={state} readOnly={readOnly}>
           <FormField
             id="displayName"
@@ -214,7 +216,7 @@ function BrandSection({ hotel, copies, readOnly }: { hotel: Hotel; copies: Previ
               />
             )}
           </FormField>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div id="colors" className="grid scroll-mt-20 gap-4 md:grid-cols-2">
             <ColorField
               id="primaryColor"
               label={t("primaryColor")}
@@ -394,7 +396,12 @@ function ReviewSection({ hotel, readOnly }: { hotel: Hotel; readOnly: boolean })
     (v) => ({ googleReviewUrl: v.googleReviewUrl.trim() || null }),
   )
   return (
-    <FormSection title={t("sections.review.title")} description={t("sections.review.description")}>
+    <FormSection
+      id="google-review"
+      className="scroll-mt-20"
+      title={t("sections.review.title")}
+      description={t("sections.review.description")}
+    >
       <SectionForm state={state} readOnly={readOnly}>
         <FormField
           id="googleReviewUrl"
