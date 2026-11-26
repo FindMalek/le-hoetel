@@ -5,6 +5,7 @@
   },
   "shell": {
     "skip": "انتقل إلى المحتوى",
+    "demoViewOnly": "عرض تجريبي للقراءة فقط",
     "search": "بحث",
     "searchPlaceholder": "ابحث أو انتقل إلى…",
     "noResults": "لا توجد نتائج.",

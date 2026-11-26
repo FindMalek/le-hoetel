@@ -5,6 +5,7 @@
   },
   "shell": {
     "skip": "Aller au contenu",
+    "demoViewOnly": "Démo en lecture seule",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher ou aller à…",
     "noResults": "Aucun résultat.",
