@@ -128,8 +128,18 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
       </FormSection>
 
       <FormSection title={t("dangerTitle")} description={t("dangerDescription")}>
-        <div className="flex flex-col gap-3 rounded-lg border p-4">
+        <div className="flex flex-col gap-4 rounded-xl border border-destructive/40 p-4">
           <p className="text-sm">{t("deleteAllText", { count })}</p>
+          <dl className="grid gap-4 text-sm sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <dt className="font-medium">{t("deletedTitle")}</dt>
+              <dd className="text-pretty text-muted-foreground">{t("deletedList")}</dd>
+            </div>
+            <div className="flex flex-col gap-1">
+              <dt className="font-medium">{t("keptTitle")}</dt>
+              <dd className="text-pretty text-muted-foreground">{t("keptList")}</dd>
+            </div>
+          </dl>
           <Button
             variant="outline"
             className="w-fit text-destructive"

@@ -1,5 +1,5 @@
 import { hotelRoles } from "@ritorno/auth/access"
-import { EmptyState } from "@ritorno/ui/components/empty-state"
+import { PageState } from "@ritorno/ui/components/page-state"
 import { LockIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { connection } from "next/server"
@@ -28,7 +28,7 @@ export default async function GuestDataPage() {
         {hotel && allowed ? (
           <GuestDataPanel hotelName={hotel.displayName} />
         ) : (
-          <EmptyState icon={<LockIcon />} title={t("forbiddenTitle")} description={t("forbidden")} />
+          <PageState kind="forbidden" icon={<LockIcon />} title={t("forbiddenTitle")} description={t("forbidden")} />
         )}
       </div>
     </>

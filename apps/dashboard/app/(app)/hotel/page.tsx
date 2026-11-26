@@ -1,11 +1,10 @@
 import { isForbidden } from "@ritorno/orpc/errors"
-import { EmptyState } from "@ritorno/ui/components/empty-state"
+import { PageState } from "@ritorno/ui/components/page-state"
 import { HotelIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { HotelSettingsForm } from "@/components/hotel-settings-form"
 import { PageHeader } from "@/components/page-header"
-import { TelegramAlerts } from "@/components/telegram-alerts"
 import { call } from "@/lib/api"
 import { getPreviewCopies } from "@/lib/preview-copy"
 
@@ -26,16 +25,14 @@ export default async function HotelPage() {
       <PageHeader title={t("title")} description={t("description")} />
       <div className="p-4 md:p-6">
         {hotel ? (
-          <>
-            <HotelSettingsForm hotel={hotel} copies={await getPreviewCopies()} readOnly={mine.role === "staff"} />
-            {alerts ? (
-              <div className="mt-6 border-t pt-6">
-                <TelegramAlerts {...alerts} readOnly={mine.role === "staff"} />
-              </div>
-            ) : null}
-          </>
+          <HotelSettingsForm
+            hotel={hotel}
+            copies={await getPreviewCopies()}
+            alerts={alerts}
+            readOnly={mine.role === "staff"}
+          />
         ) : (
-          <EmptyState icon={<HotelIcon />} title={t("noHotel")} description={t("noHotelHint")} />
+          <PageState kind="empty" icon={<HotelIcon />} title={t("noHotel")} description={t("noHotelHint")} />
         )}
       </div>
     </>
