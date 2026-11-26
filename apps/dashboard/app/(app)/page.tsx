@@ -1,33 +1,26 @@
-import { hotelRoles } from "@ritorno/auth/access"
 import { firstName } from "@ritorno/common/utils"
 import { nextEnv } from "@ritorno/env/next"
 import { isForbidden } from "@ritorno/orpc/errors"
 import { Badge } from "@ritorno/ui/components/badge"
 import { Button } from "@ritorno/ui/components/button"
+import { ChartCard } from "@ritorno/ui/components/chart-card"
+import { DataList } from "@ritorno/ui/components/data-list"
 import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
+import { Num } from "@ritorno/ui/components/num"
+import { PageState } from "@ritorno/ui/components/page-state"
 import { Section } from "@ritorno/ui/components/section"
-import { StatCard } from "@ritorno/ui/components/stat-card"
-import {
-  BuildingIcon,
-  ChevronRightIcon,
-  ExternalLinkIcon,
-  GiftIcon,
-  QrCodeIcon,
-  SendIcon,
-  ShieldCheckIcon,
-  SmileIcon,
-  UploadIcon,
-  UserPlusIcon,
-  UsersIcon,
-} from "lucide-react"
-import type { Route } from "next"
+import { StatCard, type StatDelta } from "@ritorno/ui/components/stat-card"
+import { StatusBadge } from "@ritorno/ui/components/status-badge"
+import { formatDate } from "@ritorno/ui/lib/date"
+import { formatDelta, formatNumber } from "@ritorno/ui/lib/number"
+import { BuildingIcon, ChevronRightIcon, ExternalLinkIcon, QrCodeIcon, UserPlusIcon, UsersIcon } from "lucide-react"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
+import { CapturedChart } from "@/components/captured-chart"
 import { CopyLink } from "@/components/copy-link"
 import { FirstRunChecklist } from "@/components/first-run-checklist"
-import { GuestFinder } from "@/components/guest-finder"
-import { LocalDate } from "@/components/local-date"
+import { HomeAttention } from "@/components/home-attention"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
 
@@ -59,26 +52,27 @@ async function NoHotelHome({ name }: { name: string }) {
 async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: string; slug: string } }) {
   const t = await getTranslations("home")
   const tLang = await getTranslations("home.languages")
-  const tMetrics = await getTranslations("metrics")
-  const tFinder = await getTranslations("guests.finder")
-  const [{ role }, overview, { items }] = await Promise.all([
+  const locale = await getLocale()
+  const [{ role }, overview, trend, inbox, { items }] = await Promise.all([
     call((api) => api.hotel.mine()),
     call((api) => api.overview.get()),
+    call((api) => api.metrics.get({ days: 7 })),
+    call((api) => api.inbox.list()),
     call((api) => api.guests.list({ limit: 5 })),
   ])
   const manager = role === "owner" || role === "manager"
-  const canImport = role ? hotelRoles[role].authorize({ guest: ["import"] }).success : false
   const captureUrl = `${nextEnv().WEB_URL}/h/${hotel.slug}`
-  const { guests, messagesSent, offersRedeemed } = overview
-  const rate = guests.total ? Math.round((guests.consented / guests.total) * 100) : null
-
-  const actions = [
-    { href: "/guests/new", label: t("actions.add"), body: t("actions.addBody"), icon: <UserPlusIcon /> },
-    { href: "/qr-codes", label: t("actions.qr"), body: t("actions.qrBody"), icon: <QrCodeIcon /> },
-    ...(canImport
-      ? [{ href: "/guests/import", label: t("actions.import"), body: t("actions.importBody"), icon: <UploadIcon /> }]
-      : []),
-  ] as const
+  const { lastWeek } = overview
+  const count = (value: number) => formatNumber(value, locale)
+  const change = (current: number, previous: number): StatDelta | undefined => {
+    if (!current && !previous) return undefined
+    const diff = Math.round((current - previous) * 10) / 10
+    return {
+      direction: diff > 0 ? "up" : diff < 0 ? "down" : "flat",
+      value: formatDelta(diff, locale, { maximumFractionDigits: 1 }),
+    }
+  }
+  const score = lastWeek.survey
 
   const columns: DataColumn<(typeof items)[number]>[] = [
     {
@@ -93,94 +87,91 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
     {
       id: "phone",
       header: t("phone"),
-      cell: (guest) => (
-        <bdi dir="ltr" className="tabular-nums">
-          {guest.phoneE164}
-        </bdi>
-      ),
+      cell: (guest) => <Num value={guest.phoneE164} className="tabular-nums" />,
       showFrom: "md",
     },
     {
       id: "language",
       header: t("language"),
-      cell: (guest) => <Badge variant="secondary">{tLang(guest.language)}</Badge>,
+      cell: (guest) => <StatusBadge icon={null}>{tLang(guest.language)}</StatusBadge>,
     },
-    { id: "added", header: t("added"), cell: (guest) => <LocalDate value={guest.createdAt} />, align: "end" },
+    {
+      id: "added",
+      header: t("added"),
+      cell: (guest) => formatDate(guest.createdAt, locale),
+      align: "end",
+    },
   ]
   return (
     <>
-      <PageHeader title={t("greeting", { name })} description={t("hotelDescription", { hotel: hotel.displayName })} />
-      <div className="flex flex-col gap-10 p-4 md:p-6">
-        {manager && <FirstRunChecklist state={overview.checklist} />}
-
-        <Section title={tFinder("label")}>
-          <GuestFinder />
+      <PageHeader
+        title={t("greeting", { name })}
+        description={t("hotelDescription", { hotel: hotel.displayName })}
+        action={
+          <Button render={<Link href="/guests/new" />} nativeButton={false}>
+            <UserPlusIcon data-icon="inline-start" />
+            {t("addGuest")}
+          </Button>
+        }
+      />
+      <div className="flex flex-col gap-8 p-4 md:gap-10 md:p-6">
+        <Section title={t("attention.title")}>
+          <HomeAttention alerts={overview.alerts} unread={inbox.unread} />
         </Section>
 
+        {manager && <FirstRunChecklist state={overview.checklist} />}
+
         <Section
-          title={t("pulse.title")}
-          description={t("pulse.description")}
+          title={t("week.title")}
+          description={t("week.description")}
           actions={
             <Button variant="ghost" size="sm" render={<Link href="/metrics" />} nativeButton={false}>
-              {tMetrics("title")}
+              {t("week.more")}
               <ChevronRightIcon data-icon="inline-end" className="rtl:rotate-180" />
             </Button>
           }
         >
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 md:gap-4">
-            <StatCard
-              label={t("pulse.newGuests")}
-              value={guests.week}
-              hint={t("pulse.today", { count: guests.today })}
-              icon={<UsersIcon />}
-            />
-            <StatCard
-              label={t("pulse.consent")}
-              value={rate === null ? "–" : `${rate}%`}
-              hint={t("pulse.consentHint", { consented: guests.consented, total: guests.total })}
-              icon={<ShieldCheckIcon />}
-            />
-            <StatCard
-              label={t("pulse.messages")}
-              value={messagesSent.week}
-              hint={t("pulse.today", { count: messagesSent.today })}
-              icon={<SendIcon />}
-            />
-            <StatCard
-              label={t("pulse.offers")}
-              value={offersRedeemed.week}
-              hint={t("pulse.today", { count: offersRedeemed.today })}
-              icon={<GiftIcon />}
-            />
+          <div className="grid gap-3 md:gap-4 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 lg:col-span-3">
+              <StatCard
+                label={t("week.guests")}
+                value={count(lastWeek.guests.current)}
+                delta={change(lastWeek.guests.current, lastWeek.guests.previous)}
+              />
+              <StatCard
+                label={t("week.returning")}
+                value={count(lastWeek.returning.current)}
+                delta={change(lastWeek.returning.current, lastWeek.returning.previous)}
+              />
+              <StatCard
+                label={t("week.score")}
+                value={score.current === null ? "–" : formatNumber(score.current, locale)}
+                delta={
+                  score.current !== null && score.previous !== null ? change(score.current, score.previous) : undefined
+                }
+                hint={
+                  score.responses
+                    ? t("week.scoreHint", { count: score.responses, shown: count(score.responses) })
+                    : t("week.scoreEmpty")
+                }
+              />
+              <StatCard
+                label={t("week.offers")}
+                value={count(lastWeek.offersRedeemed.current)}
+                delta={change(lastWeek.offersRedeemed.current, lastWeek.offersRedeemed.previous)}
+              />
+            </div>
+            <ChartCard
+              className="lg:col-span-2"
+              title={t("week.trend")}
+              description={t("week.trendBody")}
+              isEmpty={trend.captured.total === 0}
+              empty={<p className="py-6 text-center text-muted-foreground text-small">{t("week.trendEmpty")}</p>}
+            >
+              <CapturedChart compact points={trend.captured.points} bySource={trend.captured.bySource} />
+            </ChartCard>
           </div>
         </Section>
-
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-8">
-          <Section title={t("unhappy.title")} description={t("unhappy.description")}>
-            <EmptyState icon={<SmileIcon />} title={t("unhappy.emptyTitle")} description={t("unhappy.emptyBody")} />
-          </Section>
-          <Section title={t("actions.title")}>
-            <ul className="flex flex-col divide-y rounded-lg border bg-card">
-              {actions.map((action) => (
-                <li key={action.href}>
-                  <Link
-                    href={action.href as Route}
-                    className="flex min-h-16 items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
-                  >
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted [&_svg]:size-5">
-                      {action.icon}
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="font-medium text-sm">{action.label}</span>
-                      <span className="text-muted-foreground text-xs">{action.body}</span>
-                    </span>
-                    <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Section>
-        </div>
 
         <Section
           title={t("latest")}
@@ -193,20 +184,35 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
             ) : null
           }
         >
-          <DataTable
+          <DataList
             caption={t("tableCaption")}
             columns={columns}
             rows={items}
             getRowKey={(guest) => guest.id}
+            card={(guest) => (
+              <Link href={`/guests/${guest.id}`} className="-m-4 flex items-center justify-between gap-3 p-4">
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="truncate font-medium">{guest.name}</span>
+                  <Num value={guest.phoneE164} className="text-muted-foreground text-small tabular-nums" />
+                </span>
+                <span className="flex shrink-0 flex-col items-end gap-1 text-caption text-muted-foreground">
+                  <StatusBadge icon={null}>{tLang(guest.language)}</StatusBadge>
+                  {formatDate(guest.createdAt, locale)}
+                </span>
+              </Link>
+            )}
+            linkComponent={Link}
             empty={
-              <EmptyState
-                decorated
+              <PageState
+                kind="empty"
+                firstRun
                 icon={<UsersIcon />}
                 title={t("emptyTitle")}
                 description={t("emptyBody")}
                 action={
-                  <Button render={<Link href="/guests/new" />} nativeButton={false}>
-                    {t("actions.add")}
+                  <Button render={<Link href="/qr-codes" />} nativeButton={false}>
+                    <QrCodeIcon data-icon="inline-start" />
+                    {t("emptyAction")}
                   </Button>
                 }
               />

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { hotelSettings, messages } from "@ritorno/db"
+import { feedbackCases, guestVisits, hotelSettings, messages, surveyResponses } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../../testing"
 
@@ -68,4 +68,46 @@ test("the overview counts one hotel's guests, consent and messages, and the chec
   })
   expect(await mine.client.guests.messages({ id: first.id })).toHaveLength(2)
   await expect(other.client.guests.messages({ id: first.id })).rejects.toMatchObject({ code: "NOT_FOUND" })
+})
+
+test("last week compares with the week before, and only this hotel's unhandled low scores are alerts", async () => {
+  const mine = await hotelOwner("overview-week")
+  const other = await hotelOwner("overview-week-other")
+  const add = (client: typeof mine.client, phone: string) =>
+    client.guests.create({
+      name: "Sami Trabelsi",
+      phone,
+      language: "ar",
+      source: "staff",
+      consents: { email: false, whatsapp: false, profile: false },
+    })
+  const sami = await add(mine.client, "+21620222221")
+  const stranger = await add(other.client, "+21620222222")
+  const daysAgo = (days: number) => new Date(Date.now() - days * 864e5)
+  await app.services.db.insert(guestVisits).values([
+    { hotelId: mine.hotelId, guestId: sami.id, source: "staff", at: daysAgo(20) },
+    { hotelId: mine.hotelId, guestId: sami.id, source: "staff", at: daysAgo(10) },
+    { hotelId: mine.hotelId, guestId: sami.id, source: "staff", at: daysAgo(2) },
+  ])
+  const respond = (hotelId: string, guestId: string, nps: number, days: number) =>
+    app.services.db
+      .insert(surveyResponses)
+      .values({ hotelId, guestId, inviteId: crypto.randomUUID(), nps, language: "ar", submittedAt: daysAgo(days) })
+      .returning()
+      .then(([row]) => row!)
+  const low = await respond(mine.hotelId, sami.id, 3, 1)
+  const handled = await respond(mine.hotelId, sami.id, 9, 9)
+  const elsewhere = await respond(other.hotelId, stranger.id, 2, 1)
+  await app.services.db.insert(feedbackCases).values([
+    { hotelId: mine.hotelId, responseId: low.id, status: "new" },
+    { hotelId: mine.hotelId, responseId: handled.id, status: "resolved" },
+    { hotelId: other.hotelId, responseId: elsewhere.id, status: "new" },
+  ])
+
+  const { lastWeek, alerts } = await mine.client.overview.get()
+  expect(lastWeek.returning).toEqual({ current: 1, previous: 1 })
+  expect(lastWeek.survey).toEqual({ current: 3, previous: 9, responses: 1 })
+  expect(lastWeek.guests).toEqual({ current: 1, previous: 0 })
+  expect(alerts.open).toBe(1)
+  expect(alerts.items).toMatchObject([{ guestId: sami.id, nps: 3, phoneE164: "+21620222221" }])
 })
