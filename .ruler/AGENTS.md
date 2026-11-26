@@ -78,6 +78,7 @@ One issue = one worktree = one branch = one PR:
 - Mock only external boundaries (network, time, third-party APIs), never your own modules
 - Tests run against a real Postgres (`pnpm db:up`, then `pnpm test`). `createTestDb()` from `@ritorno/db/testing` gives a fresh migrated database, and `createTestApp()` from `@ritorno/orpc/testing` the real services plus `signUp()` for signed-in clients. Only run the files you touched while iterating (`bun test path/to/file.test.ts`)
 - A test for module code lives in that module's paths, so it is removed with it
+- Test files live in a `tests/` folder inside the module they cover, never next to the source file
 - `pnpm test:e2e` is the Playwright smoke test of web, dashboard and api
 
 ## LLM entry points
