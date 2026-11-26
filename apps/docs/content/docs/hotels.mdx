@@ -43,7 +43,7 @@ Consent from a CSV is deliberately strict: it is only granted when the consent c
 
 ## Isolation is tested
 
-One hotel can never read, change, export or delete another hotel's guests. `packages/orpc/src/routers/isolation.test.ts` calls every guest procedure of hotel A with an id of hotel B (always a plain "not found"), checks lists, search and the hotel export, the `x-hotel-id` header, removed members, and fails when a new guest procedure is added without being covered. `apps/e2e/tests/isolation.spec.ts` repeats the core of it over http against the running api.
+One hotel can never read, change, export or delete another hotel's guests. `packages/orpc/src/routers/tests/isolation.test.ts` calls every guest procedure of hotel A with an id of hotel B (always a plain "not found"), checks lists, search and the hotel export, the `x-hotel-id` header, removed members, and fails when a new guest procedure is added without being covered. `apps/e2e/tests/isolation.spec.ts` repeats the core of it over http against the running api.
 
 Guest procedures (`guests.*`): `list`, `get`, `create` (adds or merges by phone), `update`, `setConsent`, `consentHistory`, `export` (one guest), `exportAll` (the hotel), `remove`. Export and delete need the owner or manager role, and both write an audit row without personal data.
 

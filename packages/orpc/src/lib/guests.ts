@@ -95,13 +95,11 @@ export async function withConsents(
 
 export type GuestInput = z.output<typeof guestCreateSchema>
 
-/** Staff and imports must not undo what a guest agreed to: from them only a first answer or a "yes" counts. */
-const OVERRIDES_CONSENT = new Set<ConsentSource>(["qr_room", "qr_table", "qr_front_desk"])
-
 /**
  * One phone is one guest per hotel. A new phone creates the guest. A known phone merges into the existing guest:
  * name, email, birthday, country and city only fill gaps, language and stay details take the latest value, and
- * consent answers go through `recordConsent`. A "no" from staff or a csv never withdraws an existing "yes".
+ * consent answers go through `recordConsent`. A merge only adds consent, never withdraws it or clears extras:
+ * anyone who knows a phone can rescan the public QR form. Withdrawal is unsubscribe, STOP or `setConsent`.
  */
 export async function upsertGuest(
   tx: Tx,
@@ -153,11 +151,8 @@ export async function upsertGuest(
       )
   for (const channel of CONSENT_CHANNELS) {
     const granted = consents[channel]
-    if (!granted && current[channel] && !OVERRIDES_CONSENT.has(fields.source)) continue
+    if (!granted && current[channel]) continue
     await recordConsent(tx, { hotelId, guestId: id, channel, granted, source: fields.source, at })
-  }
-  if (!created && !consents.profile && current.profile !== false && OVERRIDES_CONSENT.has(fields.source)) {
-    await clearExtras(tx, hotelId, id)
   }
   return { id, merged: !created }
 }
