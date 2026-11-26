@@ -68,6 +68,7 @@
       "description": "Six petites étapes. Chacune se coche toute seule.",
       "progress": "{done} sur {total}",
       "todo": "À faire",
+      "done": "Terminé",
       "logo": {
         "title": "Ajoutez votre logo",
         "body": "Vos clients le voient en premier sur la page d'inscription."
