@@ -33,7 +33,7 @@
   },
   "home": {
     "greeting": "Bonjour {name}",
-    "hotelDescription": "Voici où en est {hotel}.",
+    "hotelDescription": "Voici où en est {hotel} aujourd'hui.",
     "adminDescription": "Tous les hôtels de la plateforme en un coup d'œil.",
     "guests": "Clients",
     "hotels": "Hôtels",
@@ -66,36 +66,10 @@
     "noAccessTitle": "Vous ne faites pas encore partie d'un hôtel",
     "noAccessBody": "Demandez à votre responsable de vous inviter. L'invitation arrive par e-mail, ouvrez-la pour rejoindre l'hôtel.",
     "seeAll": "Tout voir",
-    "pulse": {
-      "title": "Aujourd'hui et cette semaine",
-      "description": "Les 7 derniers jours, avec aujourd'hui sur chaque carte.",
-      "newGuests": "Nouveaux clients",
-      "consent": "Joignables",
-      "consentHint": "{consented} clients sur {total} ont dit oui",
-      "messages": "Messages envoyés",
-      "offers": "Offres utilisées",
-      "today": "{count} aujourd'hui"
-    },
-    "unhappy": {
-      "title": "Clients mécontents",
-      "description": "Les clients à qui parler avant qu'ils ne laissent un avis.",
-      "emptyTitle": "Rien à signaler",
-      "emptyBody": "Les enquêtes de satisfaction ne sont pas encore en ligne. Dès que vos clients y répondent, les mécontents apparaissent ici en premier."
-    },
-    "actions": {
-      "title": "Actions rapides",
-      "add": "Ajouter un client",
-      "addBody": "À la réception, en quelques secondes",
-      "qr": "Imprimer un QR code",
-      "qrBody": "Pour les chambres, les tables et la réception",
-      "import": "Importer un CSV",
-      "importBody": "Reprenez vos clients depuis un tableur"
-    },
     "checklist": {
       "title": "Préparez l'arrivée de vos premiers clients",
       "description": "Six petites étapes. Chacune se coche toute seule.",
       "progress": "{done} sur {total}",
-      "done": "Fait",
       "todo": "À faire",
       "logo": {
         "title": "Ajoutez votre logo",
@@ -121,6 +95,33 @@
         "title": "Envoyez-vous un e-mail de test",
         "body": "Voyez exactement ce que reçoivent vos clients."
       }
+    },
+    "addGuest": "Ajouter un client",
+    "emptyAction": "Obtenir un QR code",
+    "attention": {
+      "title": "À traiter maintenant",
+      "clearTitle": "Tout est à jour",
+      "clearBody": "Aucun client mécontent n'attend votre appel et votre boîte est lue.",
+      "noComment": "Aucun commentaire.",
+      "answered": "Répondu le",
+      "call": "Appeler",
+      "callGuest": "Appeler {name}",
+      "more": "{count, plural, one {<n>{shown}</n> autre client mécontent} other {<n>{shown}</n> autres clients mécontents}} en attente.",
+      "unread": "{count, plural, one {<n>{shown}</n> notification non lue} other {<n>{shown}</n> notifications non lues}}"
+    },
+    "week": {
+      "title": "7 derniers jours",
+      "description": "Comparés aux 7 jours précédents.",
+      "more": "Toutes les statistiques",
+      "guests": "Nouveaux clients",
+      "returning": "Clients revenus",
+      "score": "Note des enquêtes",
+      "scoreHint": "Sur 10, {count, plural, one {pour # réponse} other {pour {shown} réponses}}",
+      "scoreEmpty": "Aucune réponse cette semaine.",
+      "offers": "Offres utilisées",
+      "trend": "Nouveaux clients par jour",
+      "trendBody": "Chaque inscription : QR codes, équipe et imports.",
+      "trendEmpty": "Pas encore de nouveau client cette semaine."
     }
   },
   "auth": {
@@ -244,11 +245,12 @@
   "guests": {
     "title": "Clients",
     "description": "Toutes les personnes qui ont partagé leurs coordonnées avec votre hôtel.",
-    "search": "Rechercher par nom, téléphone ou e-mail",
+    "search": "Rechercher par nom ou téléphone",
     "reset": "Effacer les filtres",
     "filter": {
       "source": "Source",
-      "any": "Toutes les sources"
+      "any": "Toutes les sources",
+      "returning": "Fidèles"
     },
     "consent": {
       "email": "E-mail",
@@ -263,7 +265,6 @@
       "staff": "Équipe",
       "csv": "Import CSV"
     },
-    "total": "{count, plural, one {# client} other {# clients}}",
     "columns": {
       "guest": "Client",
       "phone": "Téléphone",
@@ -285,7 +286,6 @@
       "description": "Demandez à l'équipe Ritorno de vous ajouter à votre hôtel."
     },
     "loading": "Chargement des clients",
-    "page": "Page {page} sur {pages}",
     "previous": "Précédent",
     "next": "Suivant",
     "addButton": "Ajouter un client",
@@ -337,7 +337,6 @@
       "confirmHint": "Le consentement n'est enregistré que si la colonne dit true, yes, oui ou 1, et seulement si vous confirmez. Les autres sont ajoutés sans consentement marketing.",
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
-      "result": "{created} ajoutés, {merged} mis à jour, {failed} en échec",
       "consentKept": "{count, plural, one {# client avait retiré son consentement : il reste retiré.} other {# clients avaient retiré leur consentement : il reste retiré.}}",
       "download": "Télécharger le rapport d'erreurs",
       "errorColumn": "erreur",
@@ -356,7 +355,6 @@
       "tryAgain": "Rien n'a été perdu. Réessayez.",
       "mapHint": "Nous avons associé ce que nous avons pu. Vérifiez chaque colonne, le nom et le téléphone sont obligatoires.",
       "detected": "Détectée",
-      "required": "Obligatoire",
       "optional": "Facultatif",
       "continue": "Continuer",
       "back": "Retour",
@@ -378,16 +376,17 @@
       "noConsentColumn": "Votre fichier n'a pas de colonne de consentement : tout le monde est ajouté sans consentement marketing. Vous pourrez le demander plus tard.",
       "unconfirmed": "Sans votre confirmation, tout le monde est ajouté sans consentement marketing.",
       "doneTitle": "Import terminé",
-      "viewGuests": "Voir les clients"
-    },
-    "pagination": "Pages",
-    "density": {
-      "label": "Hauteur des lignes",
-      "comfortable": "Lignes aérées",
-      "compact": "Lignes compactes"
+      "viewGuests": "Voir les clients",
+      "previewTitle": "Premières lignes",
+      "previewMore": "{count, plural, one {Et # autre ligne.} other {Et # autres lignes.}}",
+      "summary": {
+        "created": "ajoutés",
+        "merged": "déjà là, mis à jour",
+        "failed": "ignorés",
+        "kept": "désinscrits avant, accord laissé retiré"
+      }
     },
     "detail": {
-      "subtitle": "Client, parle {language}",
       "contact": "Contact",
       "phone": "Téléphone",
       "email": "E-mail",
@@ -431,7 +430,29 @@
       "deleteConfirm": "Supprimer définitivement",
       "cancel": "Annuler",
       "deleted": "Client supprimé.",
-      "error": "Une erreur est survenue. Réessayez."
+      "error": "Une erreur est survenue. Réessayez.",
+      "edit": "Modifier",
+      "firstStay": "Premier séjour",
+      "stays": "Séjours",
+      "noStays": "Aucun séjour enregistré.",
+      "offers": "Offres utilisées",
+      "noOffers": "Aucune offre utilisée.",
+      "surveys": "Réponses au questionnaire",
+      "noSurveys": "Aucune réponse pour l'instant.",
+      "nps": "Recommanderait : {score}/10",
+      "rating": {
+        "rooms": "Chambres {value}/5",
+        "cleanliness": "Propreté {value}/5",
+        "service": "Service {value}/5"
+      },
+      "neverAsked": "Jamais demandé",
+      "history": "{count, plural, one {Journal du consentement, # changement} other {Journal du consentement, # changements}}",
+      "grant": "Enregistrer l'accord",
+      "grantTitle": "Enregistrer l'accord {channel} ?",
+      "grantBody": "Lisez ce texte au client. Confirmez seulement s'il accepte. Le changement est ajouté au journal du consentement.",
+      "grantConfirm": "Le client accepte",
+      "grantedToast": "Accord enregistré.",
+      "deleteType": "Tapez {name} pour confirmer"
     },
     "finder": {
       "label": "Trouver un client",
@@ -449,6 +470,21 @@
       "language": "Langue",
       "lastOffer": "Dernière offre utilisée",
       "consents": "Contact autorisé"
+    },
+    "range": "<from></from>–<to></to> sur <total></total> clients",
+    "returning": "{count, plural, one {Fidèle, # séjour} other {Fidèle, # séjours}}",
+    "edit": {
+      "title": "Modifier le client",
+      "description": "Corrigez le nom, la langue ou les coordonnées. Le consentement se change sur la fiche du client.",
+      "email": "E-mail",
+      "birthday": "Date de naissance",
+      "optional": "(facultatif)",
+      "emailNeeded": "Ce client a accepté les e-mails. Retirez cet accord avant de supprimer l'adresse.",
+      "birthdayInvalid": "Choisissez une vraie date de naissance.",
+      "submit": "Enregistrer",
+      "cancel": "Annuler",
+      "saved": "Client mis à jour.",
+      "error": "Les changements n'ont pas été enregistrés. Réessayez."
     }
   },
   "guestData": {
@@ -1835,35 +1871,46 @@
   },
   "metrics": {
     "title": "Statistiques",
-    "description": "Ce que votre liste de clients et vos messages apportent à l'hôtel.",
+    "description": "Ce que votre liste de clients, vos messages et vos enquêtes apportent à l'hôtel.",
     "forbidden": "Les statistiques ne sont pas disponibles pour votre rôle.",
     "periodLabel": "Période",
     "period": {
-      "days": "{count} jours"
+      "days": "{shown} jours"
     },
     "captured": {
       "title": "Clients captés",
-      "description": "{count, plural, one {# nouveau client} other {# nouveaux clients}} sur la période, selon la façon dont ils ont rejoint.",
+      "description": "{count, plural, one {<n>{shown}</n> nouveau client} other {<n>{shown}</n> nouveaux clients}} sur la période, selon la façon dont ils ont rejoint.",
       "summary": "{count, plural, one {# client capté} other {# clients captés}}.",
       "emptyTitle": "Aucun nouveau client sur la période",
-      "emptyBody": "Imprimez un QR code pour une chambre ou une table et les clients apparaîtront ici.",
+      "emptyBody": "Les clients apparaissent ici quand ils scannent votre QR code ou quand l'équipe les ajoute. Imprimez un code pour la réception, une chambre ou une table.",
       "emptyAction": "Obtenir un QR code"
     },
-    "outcomes": {
-      "title": "Ce que ça rapporte",
-      "description": "Consentement, messages et offres pour les clients de la période.",
-      "consentWhatsapp": "Consentement WhatsApp",
-      "consentEmail": "Consentement email",
-      "consentHint": "{count} sur {total} nouveaux clients",
-      "messages": "Messages envoyés",
-      "delivered": "{rate} délivrés",
-      "offers": "Offres utilisées",
-      "redemption": "{rate} sur {issued} envoyées",
-      "reviews": "Avis demandés",
-      "reviewsHint": "Clients qui ont ouvert le lien d'avis Google.",
-      "survey": "Note moyenne",
-      "surveyHint": "{count, plural, one {# réponse} other {# réponses}}, {unhappy} mécontents",
-      "surveyEmpty": "Aucune réponse au sondage pour l'instant."
+    "reach": {
+      "title": "Portée",
+      "description": "Qui accepte d'avoir de vos nouvelles, et ce qui est arrivé.",
+      "whatsapp": "Accord WhatsApp",
+      "email": "Accord e-mail",
+      "consentHint": "<n>{count}</n> sur <n>{total}</n> nouveaux clients",
+      "consentEmpty": "Aucun nouveau client sur la période.",
+      "delivered": "Messages remis",
+      "deliveredHint": "<n>{rate}</n> des <n>{sent}</n> envoyés",
+      "messagesEmpty": "Rien d'envoyé. Lancez une campagne vers les clients qui ont dit oui.",
+      "failed": "Messages en échec",
+      "failedHint": "Ouvrez le client pour vérifier le numéro ou l'e-mail.",
+      "failedNone": "Aucun échec sur la période."
+    },
+    "results": {
+      "title": "Résultats",
+      "description": "Offres utilisées, ressenti des clients et avis.",
+      "redemption": "Offres utilisées",
+      "redemptionHint": "<n>{count}</n> sur <n>{issued}</n> offres",
+      "redemptionEmpty": "Aucune offre envoyée sur la période. Créez-en une dans Offres.",
+      "survey": "Note des enquêtes",
+      "surveyHint": "Sur 10 pour {count, plural, one {<n>{shown}</n> réponse} other {<n>{shown}</n> réponses}}, <n>{unhappy}</n> mécontents",
+      "surveyEmpty": "Pas encore de réponse. Les clients reçoivent l'enquête après leur séjour.",
+      "reviews": "Clics vers les avis",
+      "reviewsHint": "Clients satisfaits qui ont ouvert votre lien d'avis Google.",
+      "reviewsEmpty": "Les clients satisfaits sont invités à laisser un avis Google. Ajoutez votre lien dans les réglages de l'hôtel."
     }
   }
 }

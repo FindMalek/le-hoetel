@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { isWhatsappCapable, parsePhone } from "../phone"
+import { formatPhone, isWhatsappCapable, parsePhone } from "../phone"
 
 test("every way of writing the same Tunisian mobile gives one E.164 number", () => {
   const forms = [
@@ -23,4 +23,9 @@ test("international numbers keep their country, junk and short numbers are refus
 test("a Tunisian landline is valid but not WhatsApp capable", () => {
   expect(parsePhone("71 123 456")).toMatchObject({ e164: "+21671123456", whatsappCapable: false })
   expect(isWhatsappCapable("+21698123456")).toBe(true)
+})
+
+test("a stored number is shown grouped, anything unparseable as stored", () => {
+  expect(formatPhone("+21696818091")).toBe("+216 96 818 091")
+  expect(formatPhone("not a phone")).toBe("not a phone")
 })

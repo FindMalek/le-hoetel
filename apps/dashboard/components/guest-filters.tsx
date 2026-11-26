@@ -13,7 +13,15 @@ import {
 } from "@ritorno/ui/components/dropdown-menu"
 import { Input } from "@ritorno/ui/components/input"
 import { cn } from "@ritorno/ui/lib/utils"
-import { ChevronDownIcon, SearchIcon, XIcon } from "lucide-react"
+import {
+  ChevronDownIcon,
+  MailIcon,
+  MessageCircleIcon,
+  RepeatIcon,
+  SearchIcon,
+  UserRoundCheckIcon,
+  XIcon,
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -24,6 +32,7 @@ export interface GuestFilterValues {
   consent?: string
   source?: string
   language?: string
+  returning?: string
 }
 
 type Key = keyof GuestFilterValues
@@ -50,6 +59,8 @@ function Chip({ href, active, children }: { href: string; active: boolean; child
   )
 }
 
+const CONSENT_ICONS = { email: MailIcon, whatsapp: MessageCircleIcon, profile: UserRoundCheckIcon, none: null } as const
+
 /** The url holds the filters, so a view can be shared and survives a refresh. Chips are links, search waits for a pause in typing. */
 export function GuestFilters({ values }: { values: GuestFilterValues }) {
   const t = useTranslations("guests")
@@ -57,7 +68,7 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
   const pathname = usePathname()
   const [pending, startTransition] = useTransition()
   const [query, setQuery] = useState(values.q ?? "")
-  const active = Boolean(values.q || values.consent || values.source || values.language)
+  const active = Boolean(values.q || values.consent || values.source || values.language || values.returning)
 
   const href = (patch: Partial<Record<Key, string | undefined>>) => {
     const next = { ...values, ...patch }
@@ -102,15 +113,24 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
           aria-label={t("search")}
           enterKeyHint="search"
           autoComplete="off"
-          className="ps-9"
+          className="h-11 bg-background ps-9"
         />
       </form>
       <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
-        {GUEST_CONSENT_FILTERS.map((value) => (
-          <Chip key={value} href={toggle("consent", value)} active={values.consent === value}>
-            {t(`consent.${value}`)}
-          </Chip>
-        ))}
+        <Chip href={toggle("returning", "1")} active={values.returning === "1"}>
+          <RepeatIcon className="size-4" aria-hidden />
+          {t("filter.returning")}
+        </Chip>
+        <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
+        {GUEST_CONSENT_FILTERS.map((value) => {
+          const Icon = CONSENT_ICONS[value]
+          return (
+            <Chip key={value} href={toggle("consent", value)} active={values.consent === value}>
+              {Icon && <Icon className="size-4" aria-hidden />}
+              {t(`consent.${value}`)}
+            </Chip>
+          )
+        })}
         <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
         {LOCALES.map((value) => (
           <Chip key={value} href={toggle("language", value)} active={values.language === value}>

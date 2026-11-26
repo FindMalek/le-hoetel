@@ -33,7 +33,7 @@
   },
   "home": {
     "greeting": "Hello {name}",
-    "hotelDescription": "Here is how {hotel} is doing.",
+    "hotelDescription": "Here is how {hotel} is doing today.",
     "adminDescription": "Every hotel on the platform at a glance.",
     "guests": "Guests",
     "hotels": "Hotels",
@@ -66,36 +66,10 @@
     "noAccessTitle": "You are not part of a hotel yet",
     "noAccessBody": "Ask your hotel manager to invite you. The invitation arrives by email, open it to join.",
     "seeAll": "See all",
-    "pulse": {
-      "title": "Today and this week",
-      "description": "The last 7 days, with today on each card.",
-      "newGuests": "New guests",
-      "consent": "Can be messaged",
-      "consentHint": "{consented} of {total} guests said yes",
-      "messages": "Messages sent",
-      "offers": "Offers redeemed",
-      "today": "{count} today"
-    },
-    "unhappy": {
-      "title": "Unhappy guests",
-      "description": "Guests who need a word from you before they leave a review.",
-      "emptyTitle": "Nothing to flag",
-      "emptyBody": "Satisfaction surveys are not live yet. Once guests answer them, anyone unhappy shows up here first."
-    },
-    "actions": {
-      "title": "Quick actions",
-      "add": "Add a guest",
-      "addBody": "At the front desk, in a few seconds",
-      "qr": "Print a QR code",
-      "qrBody": "For rooms, tables and the front desk",
-      "import": "Import a CSV",
-      "importBody": "Bring guests from a spreadsheet"
-    },
     "checklist": {
       "title": "Get ready for your first guests",
       "description": "Six small steps. Each one checks itself when it is done.",
       "progress": "{done} of {total}",
-      "done": "Done",
       "todo": "To do",
       "logo": {
         "title": "Add your logo",
@@ -121,6 +95,33 @@
         "title": "Send yourself a test email",
         "body": "See exactly what guests receive."
       }
+    },
+    "addGuest": "Add a guest",
+    "emptyAction": "Get a QR code",
+    "attention": {
+      "title": "Needs you now",
+      "clearTitle": "All caught up",
+      "clearBody": "No unhappy guest is waiting for a call and your inbox is read.",
+      "noComment": "No comment left.",
+      "answered": "Answered",
+      "call": "Call",
+      "callGuest": "Call {name}",
+      "more": "{count, plural, one {<n>{shown}</n> more unhappy guest} other {<n>{shown}</n> more unhappy guests}} waiting too.",
+      "unread": "{count, plural, one {<n>{shown}</n> unread notification} other {<n>{shown}</n> unread notifications}}"
+    },
+    "week": {
+      "title": "Last 7 days",
+      "description": "Compared with the 7 days before.",
+      "more": "All metrics",
+      "guests": "New guests",
+      "returning": "Returning guests",
+      "score": "Survey score",
+      "scoreHint": "Out of 10, {count, plural, one {from # answer} other {from {shown} answers}}",
+      "scoreEmpty": "No survey answers this week.",
+      "offers": "Offers redeemed",
+      "trend": "New guests per day",
+      "trendBody": "Every sign-up, from QR codes, staff and imports.",
+      "trendEmpty": "No new guests this week yet."
     }
   },
   "auth": {
@@ -244,11 +245,12 @@
   "guests": {
     "title": "Guests",
     "description": "Everyone who shared their details with your hotel.",
-    "search": "Search by name, phone or email",
+    "search": "Search by name or phone",
     "reset": "Clear filters",
     "filter": {
       "source": "Source",
-      "any": "Any source"
+      "any": "Any source",
+      "returning": "Returning"
     },
     "consent": {
       "email": "Email",
@@ -263,7 +265,6 @@
       "staff": "Staff",
       "csv": "CSV import"
     },
-    "total": "{count, plural, one {# guest} other {# guests}}",
     "columns": {
       "guest": "Guest",
       "phone": "Phone",
@@ -285,7 +286,6 @@
       "description": "Ask the Ritorno team to add you to your hotel."
     },
     "loading": "Loading guests",
-    "page": "Page {page} of {pages}",
     "previous": "Previous",
     "next": "Next",
     "addButton": "Add guest",
@@ -337,7 +337,6 @@
       "confirmHint": "Consent is only recorded when the consent column says true, yes, oui or 1, and only if you confirm. Everyone else is added without marketing consent.",
       "needColumns": "Choose the name and phone columns to continue.",
       "submit": "Import {count, plural, one {# guest} other {# guests}}",
-      "result": "{created} added, {merged} updated, {failed} failed",
       "consentKept": "{count, plural, one {# guest had opted out earlier, so their consent stayed withdrawn.} other {# guests had opted out earlier, so their consent stayed withdrawn.}}",
       "download": "Download error report",
       "errorColumn": "error",
@@ -356,7 +355,6 @@
       "tryAgain": "Nothing was lost. Try again.",
       "mapHint": "We matched what we could. Check each one, name and phone are needed.",
       "detected": "Detected",
-      "required": "Required",
       "optional": "Optional",
       "continue": "Continue",
       "back": "Back",
@@ -378,16 +376,17 @@
       "noConsentColumn": "Your file has no consent column, so everyone is added without marketing consent. You can ask them later.",
       "unconfirmed": "Without your confirmation, everyone is added without marketing consent.",
       "doneTitle": "Import finished",
-      "viewGuests": "View guests"
-    },
-    "pagination": "Pages",
-    "density": {
-      "label": "Row height",
-      "comfortable": "Comfortable rows",
-      "compact": "Compact rows"
+      "viewGuests": "View guests",
+      "previewTitle": "First rows",
+      "previewMore": "{count, plural, one {And # more row.} other {And # more rows.}}",
+      "summary": {
+        "created": "added",
+        "merged": "already here, updated",
+        "failed": "skipped",
+        "kept": "opted out before, consent kept withdrawn"
+      }
     },
     "detail": {
-      "subtitle": "Guest, speaks {language}",
       "contact": "Contact",
       "phone": "Phone",
       "email": "Email",
@@ -431,7 +430,29 @@
       "deleteConfirm": "Delete permanently",
       "cancel": "Cancel",
       "deleted": "Guest deleted.",
-      "error": "Something went wrong. Try again."
+      "error": "Something went wrong. Try again.",
+      "edit": "Edit",
+      "firstStay": "First stay",
+      "stays": "Stays",
+      "noStays": "No stay recorded yet.",
+      "offers": "Offers used",
+      "noOffers": "No offer used yet.",
+      "surveys": "Survey answers",
+      "noSurveys": "No survey answer yet.",
+      "nps": "Would recommend: {score}/10",
+      "rating": {
+        "rooms": "Rooms {value}/5",
+        "cleanliness": "Cleanliness {value}/5",
+        "service": "Service {value}/5"
+      },
+      "neverAsked": "Never asked",
+      "history": "{count, plural, one {Consent log, # change} other {Consent log, # changes}}",
+      "grant": "Record consent",
+      "grantTitle": "Record {channel} consent?",
+      "grantBody": "Read this to the guest. Confirm only if they say yes. The change is added to the consent log.",
+      "grantConfirm": "The guest agrees",
+      "grantedToast": "Consent recorded.",
+      "deleteType": "Type {name} to confirm"
     },
     "finder": {
       "label": "Find a guest",
@@ -449,6 +470,21 @@
       "language": "Language",
       "lastOffer": "Last offer used",
       "consents": "Can contact"
+    },
+    "range": "<from></from>–<to></to> of <total></total> guests",
+    "returning": "{count, plural, one {Returning, # stay} other {Returning, # stays}}",
+    "edit": {
+      "title": "Edit guest",
+      "description": "Fix the name, language or contact details. Consent is changed on the guest page.",
+      "email": "Email",
+      "birthday": "Birthday",
+      "optional": "(optional)",
+      "emailNeeded": "This guest agreed to emails. Withdraw that consent before removing the email.",
+      "birthdayInvalid": "Pick a real birthday.",
+      "submit": "Save changes",
+      "cancel": "Cancel",
+      "saved": "Guest updated.",
+      "error": "The changes could not be saved. Try again."
     }
   },
   "guestData": {
@@ -1835,35 +1871,46 @@
   },
   "metrics": {
     "title": "Metrics",
-    "description": "What your guest list and messages are doing for the hotel.",
+    "description": "What your guest list, messages and surveys bring the hotel.",
     "forbidden": "Metrics are not available for your role.",
     "periodLabel": "Period",
     "period": {
-      "days": "{count} days"
+      "days": "{shown} days"
     },
     "captured": {
       "title": "Guests captured",
-      "description": "{count, plural, one {# new guest} other {# new guests}} in this period, by how they joined.",
+      "description": "{count, plural, one {<n>{shown}</n> new guest} other {<n>{shown}</n> new guests}} in this period, by how they joined.",
       "summary": "{count, plural, one {# guest} other {# guests}} captured.",
       "emptyTitle": "No new guests in this period",
-      "emptyBody": "Print a QR code for a room or a table and guests start showing up here.",
+      "emptyBody": "Guests appear here when they scan your QR code or when staff add them. Print a code for the front desk, a room or a table.",
       "emptyAction": "Get a QR code"
     },
-    "outcomes": {
-      "title": "What it brings",
-      "description": "Consent, messages and offers for guests of this period.",
-      "consentWhatsapp": "WhatsApp consent",
-      "consentEmail": "Email consent",
-      "consentHint": "{count} of {total} new guests",
-      "messages": "Messages sent",
-      "delivered": "{rate} delivered",
-      "offers": "Offers redeemed",
-      "redemption": "{rate} of {issued} sent",
-      "reviews": "Reviews requested",
-      "reviewsHint": "Guests who tapped the Google review link.",
-      "survey": "Average score",
-      "surveyHint": "{count, plural, one {# answer} other {# answers}}, {unhappy} unhappy",
-      "surveyEmpty": "No survey answers yet."
+    "reach": {
+      "title": "Reach",
+      "description": "Who agreed to hear from you, and what arrived.",
+      "whatsapp": "WhatsApp consent",
+      "email": "Email consent",
+      "consentHint": "<n>{count}</n> of <n>{total}</n> new guests",
+      "consentEmpty": "No new guests in this period.",
+      "delivered": "Messages delivered",
+      "deliveredHint": "<n>{rate}</n> of <n>{sent}</n> sent",
+      "messagesEmpty": "Nothing sent yet. Start a campaign to reach guests who said yes.",
+      "failed": "Messages failed",
+      "failedHint": "Open the guest to check the phone number or email.",
+      "failedNone": "Nothing failed in this period."
+    },
+    "results": {
+      "title": "Results",
+      "description": "Offers used, how guests felt, and reviews.",
+      "redemption": "Offer redemption",
+      "redemptionHint": "<n>{count}</n> of <n>{issued}</n> offers used",
+      "redemptionEmpty": "No offer sent in this period. Create one in Offers.",
+      "survey": "Survey score",
+      "surveyHint": "Out of 10 from {count, plural, one {<n>{shown}</n> answer} other {<n>{shown}</n> answers}}, <n>{unhappy}</n> unhappy",
+      "surveyEmpty": "No answers yet. Guests get the survey after their stay.",
+      "reviews": "Review link clicks",
+      "reviewsHint": "Happy guests who tapped your Google review link.",
+      "reviewsEmpty": "Happy survey guests are asked for a Google review. Add your link in Hotel settings."
     }
   }
 }

@@ -133,13 +133,35 @@ export const guestListInputSchema = z.object({
   consent: z.enum(GUEST_CONSENT_FILTERS).optional(),
   source: z.enum(GUEST_SOURCES).optional(),
   language: z.enum(HOTEL_LANGUAGES).optional(),
+  /** Guests with at least two recorded visits. */
+  returning: z.boolean().optional(),
   limit: z.number().int().min(1).max(GUEST_LIST_MAX).default(50),
   offset: z.number().int().min(0).default(0),
 })
 
 export const guestUpsertResultSchema = guestSchema.extend({ merged: z.boolean() })
 
-export const guestListSchema = z.object({ items: z.array(guestSchema), total: z.number() })
+export const guestListSchema = z.object({
+  items: z.array(guestSchema.extend({ visits: z.number().int() })),
+  total: z.number(),
+})
+
+/** What happened with one guest at the hotel, newest first: stays, offers used and survey answers. */
+export const guestActivitySchema = z.object({
+  stays: z.array(z.object({ id: z.uuid(), source: z.enum(GUEST_SOURCES), at: z.date() })),
+  offers: z.array(z.object({ id: z.uuid(), title: z.string(), at: z.date() })),
+  surveys: z.array(
+    z.object({
+      id: z.uuid(),
+      nps: z.number().int(),
+      ratingRooms: z.number().int().nullable(),
+      ratingCleanliness: z.number().int().nullable(),
+      ratingService: z.number().int().nullable(),
+      comment: z.string().nullable(),
+      at: z.date(),
+    }),
+  ),
+})
 
 export const consentSetSchema = z.object({
   guestId: z.uuid(),
@@ -222,6 +244,8 @@ export function guestFromImportRow(row: GuestImportRow, options: Omit<z.infer<ty
 }
 
 export type Guest = z.infer<typeof guestSchema>
+export type GuestListItem = z.infer<typeof guestListSchema>["items"][number]
+export type GuestActivity = z.infer<typeof guestActivitySchema>
 
 export const guestExportSchema = z.object({
   exportedAt: z.date(),

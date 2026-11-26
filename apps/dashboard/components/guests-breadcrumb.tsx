@@ -9,7 +9,8 @@ import {
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 
-export async function GuestsBreadcrumb({ current }: { current: string }) {
+/** Guests, then `current`. With `href` and `page`, `current` becomes a link and `page` the last crumb. */
+export async function GuestsBreadcrumb({ current, href, page }: { current: string; href?: string; page?: string }) {
   const t = await getTranslations("guests")
   return (
     <Breadcrumb>
@@ -19,8 +20,20 @@ export async function GuestsBreadcrumb({ current }: { current: string }) {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>{current}</BreadcrumbPage>
+          {href && page ? (
+            <BreadcrumbLink render={<Link href={href as never} />}>{current}</BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>{current}</BreadcrumbPage>
+          )}
         </BreadcrumbItem>
+        {href && page ? (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{page}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        ) : null}
       </BreadcrumbList>
     </Breadcrumb>
   )
