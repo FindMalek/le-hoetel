@@ -773,9 +773,6 @@ importers:
       '@ritorno/logger':
         specifier: workspace:*
         version: link:../logger
-      '@ritorno/webhooks':
-        specifier: workspace:*
-        version: link:../webhooks
       react:
         specifier: 'catalog:'
         version: 19.3.0

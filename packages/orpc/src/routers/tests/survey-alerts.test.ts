@@ -14,7 +14,6 @@ afterAll(() => app.close())
 
 const emails: SendEmailInput[] = []
 const notification = {
-  sendTelegram: async () => ({ channel: "telegram", sent: true }),
   sendEmail: async (input: SendEmailInput) => {
     emails.push(input)
     return { channel: "email", sent: true }

@@ -23,10 +23,6 @@ export const hotelSettings = pgTable("hotel_settings", {
   /** A survey score at or below this opens a feedback case and alerts the manager. */
   lowScoreThreshold: smallint("low_score_threshold").notNull().default(6),
   managerWhatsapp: text("manager_whatsapp"),
-  managerTelegram: text("manager_telegram"),
-  telegramChatId: text("telegram_chat_id"),
-  telegramLinkCode: text("telegram_link_code"),
-  telegramLinkExpiresAt: timestamp("telegram_link_expires_at", { withTimezone: true }),
   plan: hotelPlan("plan").notNull().default("starter"),
   status: hotelStatus("status").notNull().default("pilot"),
   pilotEndsAt: timestamp("pilot_ends_at", { withTimezone: true }),

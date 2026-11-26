@@ -9,12 +9,6 @@ export function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(left, right)
 }
 
-/** Providers that send the shared secret as-is in a header (Telegram). */
-export function verifySecretHeader(request: Request, header: string, secret: string | undefined): boolean {
-  if (!secret) return false
-  return safeEqual(request.headers.get(header) ?? "", secret)
-}
-
 export function hmacSha256(secret: string | Uint8Array, payload: string, encoding: "hex" | "base64" = "hex"): string {
   return createHmac("sha256", secret).update(payload).digest(encoding)
 }

@@ -13,14 +13,12 @@
     "check-types": "tsc --noEmit",
     "test": "bun test",
     "domain": "bun src/setup/domain.ts",
-    "telegram:setup": "bun --env-file=../../.env src/setup/telegram.ts",
     "whatsapp:setup": "bun --env-file=../../.env src/setup/whatsapp.ts"
   },
   "dependencies": {
     "@ritorno/common": "workspace:*",
     "@ritorno/i18n": "workspace:*",
     "@ritorno/logger": "workspace:*",
-    "@ritorno/webhooks": "workspace:*",
     "@kapso/whatsapp-cloud-api": "catalog:",
     "@opencoredev/email-sdk": "catalog:",
     "@react-email/components": "catalog:",

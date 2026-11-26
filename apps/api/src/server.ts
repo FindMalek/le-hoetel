@@ -6,7 +6,6 @@ import { SimpleCsrfProtectionHandlerPlugin } from "@orpc/server/plugins"
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4"
 import type { Auth } from "@ritorno/auth"
 import { appRouter, clientIp, createContext, RATE_LIMITS, type Services } from "@ritorno/orpc"
-import { linkTelegramChat } from "@ritorno/orpc/manager-alerts"
 import { applyKapsoEvent, applyResendEvent, type KapsoPayload, type ResendEvent } from "@ritorno/orpc/messages"
 import { handleInboundWhatsApp, unsubscribeAll } from "@ritorno/orpc/unsubscribe"
 import { isPublicKey } from "@ritorno/storage"
@@ -32,7 +31,6 @@ type Interceptors = NonNullable<NonNullable<ConstructorParameters<typeof RPCHand
  *   /unsubscribe/<token>  POST: one tap unsubscribe from a mail client's List-Unsubscribe header (RFC 8058)
  *   /resend/webhook  Resend delivery, bounce and complaint events (svix signature checked)
  *   /whatsapp/webhook  Kapso status events and inbound messages, STOP replies included (signature header checked)
- *   /telegram/webhook  Telegram bot updates (secret header checked)
  *   /health       for Dokploy and uptime checks
  */
 export function createServer(services: Services & { auth: Auth }, opts: { publicUrl: string }) {
@@ -113,11 +111,6 @@ export function createServer(services: Services & { auth: Auth }, opts: { public
         else await applyKapsoEvent(services.db, event, payload)
       }
       return Response.json({ ok: true })
-    }
-    if (pathname === "/telegram/webhook" && request.method === "POST") {
-      return services.notification.handleTelegramWebhook(request, (code, chatId) =>
-        linkTelegramChat(services.db, code, chatId, services.now()),
-      )
     }
     if (pathname.startsWith("/files/")) {
       if (!services.storage) return Response.json({ message: "Storage is not configured." }, { status: 404 })

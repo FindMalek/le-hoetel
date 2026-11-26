@@ -760,27 +760,11 @@
     "thresholdOption": "{score} ou moins"
   },
   "managerAlerts": {
-    "title": "Telegram",
-    "linked": "Connecté. Les alertes arrivent dans votre discussion Telegram.",
-    "notLinked": "Pas encore connecté.",
-    "notConfigured": "Les alertes Telegram ne sont pas encore activées sur la plateforme. Nous vous envoyons vos alertes par e-mail pour l'instant.",
-    "connect": "Connecter Telegram",
-    "reconnect": "Connecter une autre discussion",
-    "step": "Ouvrez le lien et appuyez sur Démarrer dans Telegram. Le code ne marche qu'une fois, pendant 15 minutes.",
-    "open": "Ouvrir Telegram",
-    "code": "Code : {code}",
+    "title": "E-mail",
+    "description": "Les alertes sont envoyées à votre adresse de réponse, ou à un propriétaire si aucune n'est définie.",
     "testButton": "Envoyer une alerte test",
-    "testTelegram": "Test envoyé sur Telegram.",
-    "testEmail": "Test envoyé par e-mail, Telegram n'est pas connecté.",
-    "testNone": "Aucune discussion Telegram ni e-mail où envoyer.",
-    "disconnect": "Déconnecter",
-    "disconnected": "Telegram déconnecté.",
-    "refresh": "J'ai appuyé sur Démarrer",
-    "badge": {
-      "connected": "Connecté",
-      "notConnected": "Non connecté",
-      "unavailable": "Indisponible"
-    }
+    "testSent": "Alerte test envoyée par e-mail.",
+    "testNone": "Aucune adresse e-mail où envoyer."
   },
   "qrCodes": {
     "title": "Codes QR",
