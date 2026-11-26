@@ -58,6 +58,7 @@ if (env.SEED === "demo") {
     ownerId: adminId,
     hashPassword: (await auth.$context).password.hash,
     demoPassword: env.DEMO_PASSWORD,
+    viewerPassword: env.DEMO_VIEWER_PASSWORD,
     deployEnv: env.DEPLOY_ENV,
     databaseUrl: env.DATABASE_URL,
     storage,

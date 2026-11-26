@@ -28,7 +28,19 @@ No `.env` is needed: `pnpm dev` reads the Infisical `dev` environment, see [secr
 
 Logos are uploaded only when the `S3_*` keys are set, otherwise a hotel shows its initial.
 
-Accounts are on `@demo.ritorno.test`: a super admin `admin@`, and per hotel `owner.<slug>@`, `manager.<slug>@`, `reception.<slug>@` and `service.<slug>@`, for example `owner.sunset-bay@demo.ritorno.test`. They share the password `DEMO_PASSWORD` (default `demo-ritorno-2026`).
+Accounts are on `@demo.ritorno.test`: a super admin `admin@`, and per hotel `owner.<slug>@`, `manager.<slug>@`, `reception.<slug>@` and `service.<slug>@`, for example `owner.sunset-bay@demo.ritorno.test`. They share the password `DEMO_PASSWORD` (default `demo-ritorno-2026`), except the sales viewer below.
+
+### Sales viewer
+
+`sales@demo.ritorno.test` is the account to open [in a sales meeting](/docs/pitch#opening-the-demo-hotel). It sees Sunset Bay Resort like a manager and can change nothing, so a prospect holding the phone cannot break the demo:
+
+- it has its own password, `DEMO_VIEWER_PASSWORD`. A deployed env without it has no sales viewer; locally it defaults to `demo-ritorno-2026`
+- the api refuses it every signed-in procedure that is not declared `GET`, except the `POST`s that only read (QR codes, campaign reach, email preview, offer code lookup). A new read only `POST` goes in `DEMO_VIEWER_READS` (`packages/orpc/src/procedures.ts`)
+- exports (guests and account data) are refused, so no copy of the list lands on that phone. A new export procedure is covered as long as its name starts with `export`
+- auth refuses it every write except sign in, sign out and picking its hotel, so nobody can change the password or invite someone
+- the dashboard shows a view only banner
+
+Public guest pages (capture, survey, unsubscribe) need no account and still save what is typed. Nobody can sign up with a demo address, even one with a pending seeded invitation.
 
 ### Nothing can reach a person
 

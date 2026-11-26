@@ -1,3 +1,4 @@
+import { isDemoRecipient } from "@ritorno/common/demo"
 import type { Db } from "@ritorno/db"
 import * as schema from "@ritorno/db/schema"
 import { betterAuth } from "better-auth"
@@ -8,6 +9,7 @@ import { organization } from "better-auth/plugins/organization"
 import { and, asc, eq, gt } from "drizzle-orm"
 import { ac, hotelRoles } from "./access"
 import { auditHooks } from "./audit"
+import { refuseDemoViewerWrites } from "./demo-viewer"
 
 export interface AuthConfig {
   db: Db
@@ -54,7 +56,7 @@ export function createAuth(config: AuthConfig) {
     rateLimit: {
       customRules: { "/sign-in/email": { window: 60, max: 20 }, "/sign-in/social": { window: 60, max: 20 } },
     },
-    hooks: audit.hooks,
+    hooks: { ...audit.hooks, before: refuseDemoViewerWrites },
     databaseHooks: {
       user: {
         create: {
@@ -62,7 +64,8 @@ export function createAuth(config: AuthConfig) {
           // link). Server calls (env admin, seed, tests) and the admin plugin's create-user carry no outside request.
           before: async (created, ctx) => {
             if (!ctx?.request || ctx.path === "/admin/create-user") return
-            if (await hasPendingInvitation(config.db, created.email)) return
+            // Never a demo address: the seeded invitations have public emails and ids, so anyone could claim one.
+            if (!isDemoRecipient(created.email) && (await hasPendingInvitation(config.db, created.email))) return
             throw new APIError("FORBIDDEN", { code: "INVITATION_REQUIRED", message: "Sign up is by invitation only." })
           },
         },

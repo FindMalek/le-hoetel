@@ -4,6 +4,16 @@ export const DEFAULT_DEMO_PASSWORD = "demo-ritorno-2026"
 
 export const DEMO_SUPER_ADMIN_EMAIL = `admin@${DEMO_EMAIL_DOMAIN}`
 
+/**
+ * The account to hand around in a sales meeting: a member of one demo hotel that can look but not change anything.
+ * The api and auth refuse its writes, so a prospect holding the phone can't break the demo. Only the seed creates it.
+ */
+export const DEMO_VIEWER_EMAIL = `sales@${DEMO_EMAIL_DOMAIN}`
+
+export function isDemoViewer(email: string): boolean {
+  return email.toLowerCase() === DEMO_VIEWER_EMAIL
+}
+
 export const DEMO_HOTEL_SLUGS = ["dar-zitouna", "sunset-bay", "villa-mimosa", "riad-dattier"] as const
 export type DemoHotelSlug = (typeof DEMO_HOTEL_SLUGS)[number]
 

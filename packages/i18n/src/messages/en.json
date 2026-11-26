@@ -5,6 +5,7 @@
   },
   "shell": {
     "skip": "Skip to content",
+    "demoViewOnly": "View only demo: changes are off",
     "search": "Search",
     "searchPlaceholder": "Search or jump to…",
     "noResults": "Nothing found.",
