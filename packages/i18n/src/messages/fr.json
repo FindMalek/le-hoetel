@@ -1608,7 +1608,11 @@
       "messages": "Messages envoyés",
       "messagesHint": "{delivered} délivrés, {failed} échoués",
       "lowBalance": "Crédit WhatsApp bas",
-      "lowBalanceHint": "Hôtels ouverts sous le seuil de crédit"
+      "lowBalanceHint": "Hôtels ouverts sous le seuil de crédit",
+      "consent": "Taux de consentement",
+      "consentHint": "{count, plural, one {# client a accepté} other {# clients ont accepté}} l'e-mail ou WhatsApp",
+      "activeHotels": "Hôtels actifs",
+      "activeHotelsHint": "Hôtels ouverts avec une visite client sur les 7 derniers jours"
     },
     "funnel": {
       "title": "Entonnoir du pilote",
@@ -1626,6 +1630,16 @@
       "lowBalance": "Crédit bas : {amount}",
       "none": "Tous les hôtels vont bien",
       "noneHint": "Rien à suivre pour le moment."
+    },
+    "success": {
+      "title": "Réussite du pilote",
+      "description": "Hôtels ouverts, du plus grand nombre de clients au plus petit. Un jour actif compte au moins une visite client.",
+      "guests": "Clients",
+      "newGuests": "{count, plural, one {# nouveau en 7 jours} other {# nouveaux en 7 jours}}",
+      "consent": "Taux de consentement",
+      "activeDays": "Jours actifs sur 7",
+      "none": "Aucun hôtel ouvert",
+      "noneHint": "Les hôtels suspendus ne sont pas comptés."
     }
   },
   "adminUsers": {
