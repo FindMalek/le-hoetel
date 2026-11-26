@@ -46,7 +46,7 @@ Run the `release` workflow by hand with an older tag. It points the production c
 
 ## Backups
 
-Each environment runs a `backup` service next to its database (`docker/backup`, same postgres major as the `postgres` service, so `pg_dump` always matches the server). Every day at 03:00 UTC it runs `pg_dump -Fc` and uploads `backups/<DEPLOY_ENV>/<db>-<timestamp>.dump` to `S3_BUCKET`, with the same `S3_*` keys as the api, then deletes dumps older than 14 days. The logs show the object name and size only. Without `S3_BUCKET` and the S3 keys it logs that backups are off and idles.
+Each environment runs a `backup` service next to its database (`docker/backup`, same postgres major as the `postgres` service, so `pg_dump` always matches the server). Every day at 03:00 UTC it runs `pg_dump -Fc` and uploads `backups/<DEPLOY_ENV>/<db>-<timestamp>.dump` to `S3_BUCKET`, with the same `S3_*` keys as the api. The dump must be non-empty and readable by `pg_restore --list` before it is uploaded, and the uploaded size must match. Only after that it deletes dumps older than 14 days, always keeping the newest 3. A failed step logs `backup: failed: <step>`, uploads and deletes nothing, and the next run is the next day. The logs show object names and sizes only. Without `S3_BUCKET` and the S3 keys it logs that backups are off and idles.
 
 A backup on demand, for example before a risky migration:
 
@@ -58,13 +58,13 @@ When you change the postgres image, change `docker/backup/Dockerfile` in the sam
 
 ## Restore a backup
 
-`db-restore` (`scripts/db-restore.sh`, shipped in the backup image) downloads a dump and runs `pg_restore --clean --if-exists --no-owner` into the database you name. Always restore into a scratch database first and check it.
+`db-restore` (`scripts/db-restore.sh`, shipped in the backup image) downloads a dump and runs `pg_restore --clean --if-exists --no-owner` into the database you name, on the environment's postgres. It takes a database name, not a url: the connection and password come from the container's `PG*` env, so nothing secret shows in `ps`. With a terminal (`docker exec -it`) it asks you to type the database name. In production it refuses unless you pass `--prod`. Always restore into a scratch database first and check it.
 
 1. On the server, find the backup container of the environment: `docker ps --filter name=backup`.
 2. List the dumps with their size and date: `docker exec <backup container> db-restore list`.
 3. Create a scratch database: `docker exec <postgres container> psql -U <POSTGRES_USER> -c 'create database restore_check'`.
-4. Restore into it: `docker exec <backup container> sh -c 'db-restore latest "postgres://$PGUSER:$PGPASSWORD@postgres:5432/restore_check"'`. Pass a dump name such as `ritorno-2026-11-26T030000Z.dump` instead of `latest` for an older day.
+4. Restore into it: `docker exec -it <backup container> db-restore latest restore_check` (production: `db-restore --prod latest restore_check`). Pass a dump name such as `ritorno-2026-11-26T030000Z.dump` instead of `latest` for an older day.
 5. Check it: `docker exec <postgres container> psql -U <POSTGRES_USER> -d restore_check -c 'select count(*) from guest'` and compare with what you expect.
 6. To replace the live database: stop the `api` and `worker` services in Dokploy, run step 4 with the live database name instead of `restore_check`, start them again and check `/health`. Then drop the scratch database.
 
-Tested locally with docker compose: postgres 17, the backup image and `rclone serve s3` as the bucket. A dump was uploaded, a planted dump dated 2020 was pruned, and `db-restore latest` brought back every row into a fresh database and again over a changed one.
+Tested locally with docker compose: postgres 17, the backup image and `rclone serve s3` as the bucket. A dump was uploaded and old planted dumps were pruned down to the newest 3. A failing `pg_dump` (wrong password) uploaded and pruned nothing. `db-restore latest` brought back every row into a fresh database and again over a changed one, and refused with `DEPLOY_ENV=production` until `--prod` was passed.
