@@ -8,6 +8,7 @@ import { organization } from "better-auth/plugins/organization"
 import { and, asc, eq, gt } from "drizzle-orm"
 import { ac, hotelRoles } from "./access"
 import { auditHooks } from "./audit"
+import { refuseDemoViewerWrites } from "./demo-viewer"
 
 export interface AuthConfig {
   db: Db
@@ -54,7 +55,7 @@ export function createAuth(config: AuthConfig) {
     rateLimit: {
       customRules: { "/sign-in/email": { window: 60, max: 20 }, "/sign-in/social": { window: 60, max: 20 } },
     },
-    hooks: audit.hooks,
+    hooks: { ...audit.hooks, before: refuseDemoViewerWrites },
     databaseHooks: {
       user: {
         create: {

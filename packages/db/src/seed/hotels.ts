@@ -8,6 +8,7 @@ import {
   DEMO_EMAIL_DOMAIN,
   DEMO_HOTEL_SLUGS,
   DEMO_PHONE_RANGES,
+  DEMO_VIEWER_EMAIL,
   type DemoHotelSlug,
   demoOwnerEmail,
 } from "@ritorno/common/demo"
@@ -365,5 +366,23 @@ export function buildHotelScenario(now: Date, passwordHash: string, seed = 20261
       })
     }
   }
+  const joinedAt = ago(30)
+  addUser({
+    id: "demo-sales-viewer",
+    name: "Sales Demo",
+    email: DEMO_VIEWER_EMAIL,
+    emailVerified: true,
+    createdAt: joinedAt,
+    updatedAt: joinedAt,
+  })
+  // A manager sees every screen of the hotel; `isDemoViewer` is what stops the writes.
+  out.members.push({
+    id: "demo-member-sales-viewer",
+    organizationId: demoHotelId("sunset-bay"),
+    userId: "demo-sales-viewer",
+    role: "manager",
+    createdAt: joinedAt,
+  })
+
   return out
 }
