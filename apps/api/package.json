@@ -31,6 +31,7 @@
     "drizzle-orm": "catalog:"
   },
   "devDependencies": {
+    "@ritorno/common": "workspace:*",
     "@ritorno/config": "workspace:*",
     "@types/bun": "catalog:",
     "typescript": "catalog:"
