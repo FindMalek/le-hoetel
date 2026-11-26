@@ -1,3 +1,5 @@
+import { Display } from "@ritorno/ui/brand/display"
+import { PixelSky } from "@ritorno/ui/brand/pixel-sky"
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
@@ -16,7 +18,18 @@ export default async function Page(props: Props) {
   const MDX = page.data.body
   return (
     <DocsPage toc={page.data.toc}>
-      <DocsTitle>{page.data.title}</DocsTitle>
+      {slug?.length ? (
+        <DocsTitle className="font-display text-h1 font-normal sm:text-display">{page.data.title}</DocsTitle>
+      ) : (
+        <>
+          <div className="relative -mx-4 mb-6 h-28 overflow-hidden sm:mx-0 sm:h-36 sm:rounded-card">
+            <PixelSky animated={false} />
+          </div>
+          <Display className="max-w-2xl">
+            Everything we decided, and <em>why</em>
+          </Display>
+        </>
+      )}
       <DocsDescription>{page.data.description}</DocsDescription>
       <PageActions markdownPath={markdownPath(page.url)} markdownUrl={`${SITE.url}${markdownPath(page.url)}`} />
       <DocsBody>
