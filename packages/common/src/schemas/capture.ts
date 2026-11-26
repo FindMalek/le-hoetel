@@ -51,6 +51,25 @@ export const qrCodesInputSchema = z.object({
 
 export const qrCodeSchema = z.object({ location: z.string().nullable(), url: z.string(), svg: z.string() })
 
+/** The places a hotel keeps a list of: each room and table has its own code. The front desk needs none. */
+export const SPOT_SOURCES = ["room", "table"] as const satisfies readonly CaptureSource[]
+export type SpotSource = (typeof SPOT_SOURCES)[number]
+
+export const spotSchema = z.object({
+  source: z.enum(SPOT_SOURCES),
+  name: z.string().trim().min(1).max(CAPTURE_LOCATION_MAX),
+})
+export type Spot = z.infer<typeof spotSchema>
+
+export const spotsAddInputSchema = z.object({
+  source: z.enum(SPOT_SOURCES),
+  /** A comma would split a name apart again in the print url. */
+  names: z
+    .array(spotSchema.shape.name.regex(/^[^,]*$/))
+    .min(1)
+    .max(100),
+})
+
 export const captureStatSchema = z.object({
   source: z.enum(Object.values(CAPTURE_SOURCES) as [GuestSource, ...GuestSource[]]),
   location: z.string().nullable(),

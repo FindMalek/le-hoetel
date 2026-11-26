@@ -1,10 +1,12 @@
 import { HOTEL_LANGUAGES, HOTEL_PLANS, HOTEL_STATUSES } from "@ritorno/common/hotel"
-import { boolean, date, pgEnum, pgTable, smallint, text, timestamp } from "drizzle-orm/pg-core"
+import { SPOT_SOURCES } from "@ritorno/common/schemas"
+import { boolean, date, pgEnum, pgTable, primaryKey, smallint, text, timestamp } from "drizzle-orm/pg-core"
 import { organization } from "./orgs"
 
 export const hotelLanguage = pgEnum("hotel_language", HOTEL_LANGUAGES)
 export const hotelPlan = pgEnum("hotel_plan", HOTEL_PLANS)
 export const hotelStatus = pgEnum("hotel_status", HOTEL_STATUSES)
+export const spotSource = pgEnum("spot_source", SPOT_SOURCES)
 
 /** One row per hotel (organization): branding and operating config, never code per hotel. */
 export const hotelSettings = pgTable("hotel_settings", {
@@ -35,3 +37,17 @@ export const hotelSettings = pgTable("hotel_settings", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 })
+
+/** The rooms and tables a hotel prints codes for. The code itself only needs the url, so removing one breaks nothing. */
+export const captureSpots = pgTable(
+  "capture_spots",
+  {
+    hotelId: text("hotel_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    source: spotSource("source").notNull(),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.hotelId, t.source, t.name] })],
+)

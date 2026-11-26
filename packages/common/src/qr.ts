@@ -1,6 +1,14 @@
 import { CAPTURE_LOCATION_MAX, type CaptureSource } from "./schemas/capture"
 
 export const QR_SPOTS_MAX = 100
+/** Rooms and tables one hotel can save. */
+export const HOTEL_SPOTS_MAX = 500
+/** The logo's white pad as a share of the code's width. Covers about 5% of it, and error level H recovers 30%. */
+export const QR_LOGO_RATIO = 0.22
+
+/** The tiny label printed by a code so staff know where it goes: `383` for a room, `T4` for table 4. */
+export const staffLabel = (source: CaptureSource, location: string | null): string | null =>
+  location && source === "table" && /^\d+$/.test(location) ? `T${location}` : location
 
 /**
  * What a manager types for one kind of spot: names or numbers split by commas or lines, and number ranges

@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server"
 import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
 import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
-import { captureUrl } from "@ritorno/common/qr"
+import { captureUrl, HOTEL_SPOTS_MAX } from "@ritorno/common/qr"
 import {
   adminHotelDetailSchema,
   adminHotelSchema,
@@ -16,8 +16,11 @@ import {
   logoUploadSchema,
   qrCodeSchema,
   qrCodesInputSchema,
+  spotSchema,
+  spotsAddInputSchema,
 } from "@ritorno/common/schemas"
 import {
+  captureSpots,
   guestConsents,
   guests,
   hotelBalance,
@@ -29,7 +32,7 @@ import {
   user,
 } from "@ritorno/db"
 import { hotelPublicPrefix } from "@ritorno/storage"
-import { and, asc, count, countDistinct, eq, gte, inArray, like, lt, max, ne, sql } from "drizzle-orm"
+import { and, asc, count, countDistinct, eq, gte, inArray, like, lt, max, ne, or, sql } from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -114,7 +117,7 @@ export const hotelRouter = {
       return Promise.all(
         spots.map(async (location) => {
           const url = captureUrl(context.config.webUrl, slug, input.source, location)
-          return { location, url, svg: await qrSvg(url, { type: "svg", margin: 2, errorCorrectionLevel: "M" }) }
+          return { location, url, svg: await qrSvg(url, { type: "svg", margin: 2, errorCorrectionLevel: "H" }) }
         }),
       )
     }),
@@ -148,6 +151,64 @@ export const hotelRouter = {
         await audit(context, { action: "hotel.update", targetId: hotelId, metadata: { fields: Object.keys(input) } })
       }
       return loadHotel(context.db, hotelId)
+    }),
+}
+
+const listSpots = (db: Context["db"], hotelId: string) =>
+  db
+    .select({ source: captureSpots.source, name: captureSpots.name })
+    .from(captureSpots)
+    .where(eq(captureSpots.hotelId, hotelId))
+    // numbers in number order: 2 before 10
+    .orderBy(captureSpots.source, sql`length(${captureSpots.name})`, captureSpots.name)
+
+/** Open to every role: placing codes on doors and tables is front desk work. */
+export const captureSpotsRouter = {
+  list: hotelProcedure
+    .route({ method: "GET", path: "/hotel/spots", summary: "The saved rooms and tables", tags: ["hotel"] })
+    .output(z.array(spotSchema))
+    .handler(({ context }) => listSpots(context.db, context.hotel.hotelId)),
+
+  add: hotelProcedure
+    .route({ method: "POST", path: "/hotel/spots", summary: "Save rooms or tables, in bulk", tags: ["hotel"] })
+    .input(spotsAddInputSchema)
+    .output(z.array(spotSchema))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const saved = await listSpots(context.db, hotelId)
+      const known = new Set(saved.filter((spot) => spot.source === input.source).map((spot) => spot.name))
+      const fresh = [...new Set(input.names)].filter((name) => !known.has(name))
+      if (saved.length + fresh.length > HOTEL_SPOTS_MAX) {
+        throw new ORPCError("UNPROCESSABLE_CONTENT", {
+          message: `A hotel can save ${HOTEL_SPOTS_MAX} rooms and tables.`,
+        })
+      }
+      if (fresh.length) {
+        await context.db
+          .insert(captureSpots)
+          .values(fresh.map((name) => ({ hotelId, source: input.source, name })))
+          .onConflictDoNothing()
+      }
+      return listSpots(context.db, hotelId)
+    }),
+
+  remove: hotelProcedure
+    .route({ method: "DELETE", path: "/hotel/spots", summary: "Forget saved rooms or tables", tags: ["hotel"] })
+    .input(z.object({ spots: z.array(spotSchema).min(1).max(HOTEL_SPOTS_MAX) }))
+    .output(z.array(spotSchema))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      await context.db
+        .delete(captureSpots)
+        .where(
+          and(
+            eq(captureSpots.hotelId, hotelId),
+            or(
+              ...input.spots.map((spot) => and(eq(captureSpots.source, spot.source), eq(captureSpots.name, spot.name))),
+            ),
+          ),
+        )
+      return listSpots(context.db, hotelId)
     }),
 }
 

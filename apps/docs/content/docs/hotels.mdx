@@ -31,6 +31,30 @@ Health is the first problem found, by `hotelHealth` in `packages/common/src/hote
 
 `hotel_settings` has one row per hotel, created with the organization: display name, logo key, two colors, reply-to, default language (`en`, `fr`, `ar`, default `fr`), timezone (default `Africa/Tunis`), Google review link, manager WhatsApp contact. Owners and managers edit it with `hotel.update` and the logo with `hotel.logo.*` on the **Hotel** page, split into sections that each save only their own fields: Brand (logo, name, two colors with the contrast warning and a live preview, guest language), Messaging (reply-to, address, timezone, the fixed quiet hours), Alerts (a test alert by email and the low score threshold) and Google review. Staff see the page read only. The manager WhatsApp contact column is not edited there: alerts go by email only. Plan, status and pilot end date are `admin.hotels.update` only.
 
+## Rooms and tables
+
+Every room and table has its own code: the url carries the hotel slug, `src` and the spot in `loc`, so a capture is stored with its spot. On **QR codes**, generating for rooms or tables also saves them (`hotel.spots.add`, table `capture_spots`). The field takes names, lists and number ranges (`101-120`, `1-12`), at most 100 at a time and 500 per hotel. Every role, staff included, can add and remove them. Removing one only takes it off the list: a printed code keeps working.
+
+Every printed code has the hotel logo in its middle (the first letter of the hotel's name without a logo) and, next to it, a tiny label for staff: `383` for a room, `T4` for table `4`. Codes are made with error correction level H so the logo does not stop them from scanning. The SVG and PNG downloads on the page are the plain code.
+
+**Cut sheet.** The saved list prints at `/print/qr-sheet`: A4, 20 stickers of 45 x 52 mm per page with a 39 mm code, and crop marks in the margins. Print all of them or the ticked ones (`?room=101,102&table=4`).
+
+## Printable QR kit
+
+On **QR codes**, **Open print kit** opens `/print/qr-kit` for the codes on screen: one page per spot.
+
+| Piece | Source | Paper |
+|---|---|---|
+| Room card | `room` | A6 portrait |
+| Table tent | `table` | A5 portrait, folded in half into two A6 faces |
+| Front desk sign | `desk` | A5 portrait |
+
+The page takes `piece`, `lang` (`en`, `fr`, `ar`, default the hotel's guest language) and `spots` (same format as the form). Switching piece drops the spots and gives one code without a spot.
+
+Each page carries the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language, whatever the card's language, so reprint when the welcome offer, the branding or the slug changes. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
+
+The PDF comes from the browser's own print dialog (**Save as PDF**), not a PDF library: the browser already shapes Arabic and lays out right to left with the app's fonts, the QR stays vector, and nothing is added to the app. `@page` sets the paper size and everything sits inside a white margin of at least 7 mm, so no bleed is needed and a print shop can trim on the page edge. Chrome and Edge follow the page size on their own. In a browser that ignores it, pick the paper by hand.
+
 ## Hotel scoped procedures
 
 Use `hotelProcedure` for anything about a hotel. It puts `context.hotel` (`hotelId`, `role`, `superAdmin`) on the call, and every query filters on `context.hotel.hotelId`, never on an id from the input. Narrow it with `can({ guest: ["export"] })`. It refuses a suspended hotel, so only a read-only export should use `hotelExportProcedure` instead.
