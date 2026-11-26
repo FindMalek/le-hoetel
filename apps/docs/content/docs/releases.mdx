@@ -8,7 +8,7 @@ One version for the whole monorepo, tagged `vX.Y.Z`, starting at `0.1.0`.
 ## Flow
 
 1. every merge to `main` deploys **staging** (`staging.yml`, after `ci` is green). It never deploys production by itself
-2. once staging proves the new commit live (`/health` reports its sha), `staging.yml` calls `release.yml`. [release-please](https://github.com/googleapis/release-please) opens or updates one **release PR**, `chore(main): release X.Y.Z`, with the next version in `package.json` and `.release-please-manifest.json` and the notes in `CHANGELOG.md`
+2. once staging proves the new commit live (api `/health` and web, dashboard and docs `/api/version` report its sha), `staging.yml` calls `release.yml`. [release-please](https://github.com/googleapis/release-please) opens or updates one **release PR**, `chore(main): release X.Y.Z`, with the next version in `package.json` and `.release-please-manifest.json` and the notes in `CHANGELOG.md`
 3. to ship, check staging, then squash merge the release PR (subject is the PR title, empty body)
 4. `ci` runs on the merge commit, staging deploys it, then release-please tags `vX.Y.Z` on exactly that commit, creates the GitHub release, deploys **production** from the tag and starts the `languine` translations
 5. optional: run the `release email` workflow by hand. It sends the notes of the GitHub release. `dry_run` is `true` by default and only prints the email. Setting it to `false` sends a Resend broadcast to `RESEND_AUDIENCE_ID`. It never runs by itself and only repo admins and maintainers can run it

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { parseEnv } from "./parse"
+import { parseEnv, phone } from "./parse"
 
 const optional = z.string().optional()
 
@@ -66,7 +66,7 @@ const schema = z.object({
   KAPSO_API_KEY: optional,
   KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,
-  WHATSAPP_NOTIFY_TO: optional,
+  WHATSAPP_NOTIFY_TO: phone.optional(),
   WHATSAPP_TEMPLATE_NAME: z.string().default("app_notification"),
   WHATSAPP_TEMPLATE_LANGUAGE: z.string().default("en_US"),
 

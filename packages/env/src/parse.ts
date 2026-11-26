@@ -1,4 +1,7 @@
-import type { z } from "zod"
+import { z } from "zod"
+
+/** Phone numbers are typed by people: spaces never matter. */
+export const phone = z.string().transform((value) => value.replace(/\s/g, ""))
 
 /** Parses process.env against a schema; empty strings count as unset, so `.env.example` defaults stay optional. */
 export function parseEnv<T extends z.ZodType>(
