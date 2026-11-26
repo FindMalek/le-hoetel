@@ -15,6 +15,14 @@ A hotel is a better-auth organization. Guests are not auth users: they are rows 
 
 The app admin (user role `admin`) sees every hotel: a call can name any hotel with the `x-hotel-id` header and then acts as its owner. For everyone else the header can only repeat their own hotel, a different one is refused. Roles and their permissions live in `packages/auth/src/access.ts`.
 
+The dashboard only mirrors these (`apps/dashboard/lib/viewer.ts`), the api is what refuses:
+
+- the menu, command palette and phone tabs list the hotel pages the role on the hotel on screen can open. Staff do not see Import, Campaigns, Holidays, Hotel, Guest data, Activity log or Usage
+- with no hotel on screen, only Home, Inbox and Account stay (plus the platform pages for the app admin)
+- a staff member typing a campaign address gets "not for your role"
+- the platform pages (`/admin/*`, `/users`, `/audit-log`) are a 404 for everyone but the app admin (`requireAdmin`)
+- a page whose data could not be loaded shows the error screen: prefetch what a `useSuspenseQuery` reads with `fetchQuery`, which throws, never `prefetchQuery`
+
 Hotels are created by the app admin, never self-served. In the dashboard, admins open **Hotels** (`/admin/hotels`), fill the name, slug, owner email and optional colors and language, and `admin.hotels.create` creates the organization with its `hotel_settings` and emails the owner an invitation (`role: owner`). The owner joins by accepting it. The accept page reads the invitation with `me.invitation`, not better-auth's `getInvitation`, which refuses once the inviter has left the hotel (the admin leaves as soon as the invite is made). An invitation is only good while its sender is a member of the hotel or an app admin, and is not banned (`inviterMayInvite` in `packages/auth`, checked on read and on accept). The same page lists every hotel (`admin.hotels.list`) with guest count, owner count and a health badge.
 
 Deleting a hotel and changing its name or slug only go through the admin procedures. `admin.hotels.update` takes `name` and `slug` (same format as on create, refused with `CONFLICT` when another hotel has it), and the admin hotel page asks to confirm a new slug. Printed `/q/<code>` codes keep working ([short links](#short-links-behind-the-codes)), but links shared by hand and `/h/<old slug>` codes printed before short links stop working. `admin.hotels.remove` deletes. better-auth's own `/api/auth/organization/delete` is off and `/api/auth/organization/update` refuses `name` and `slug`, so an owner or manager can't do either.

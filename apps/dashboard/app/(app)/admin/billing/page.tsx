@@ -5,11 +5,12 @@ import { getTranslations } from "next-intl/server"
 import { PlanForm } from "@/components/admin-billing-forms"
 import { InvoiceExport, InvoiceList } from "@/components/admin-invoices"
 import { PageHeader } from "@/components/page-header"
-import { call } from "@/lib/api"
+import { call, requireAdmin } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Billing" }
 
 export default async function AdminBillingPage() {
+  await requireAdmin()
   const [t, tHotel, plans, invoices] = await Promise.all([
     getTranslations("adminBilling"),
     getTranslations("adminHotel"),

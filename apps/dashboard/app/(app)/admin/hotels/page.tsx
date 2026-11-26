@@ -5,11 +5,12 @@ import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { AdminHotelsBoard } from "@/components/admin-hotels-board"
 import { PageHeader } from "@/components/page-header"
-import { call } from "@/lib/api"
+import { call, requireAdmin } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Hotels" }
 
 export default async function AdminHotelsPage() {
+  await requireAdmin()
   const [t, hotels] = await Promise.all([getTranslations("adminHotels"), call((api) => api.admin.hotels.list())])
   return (
     <>

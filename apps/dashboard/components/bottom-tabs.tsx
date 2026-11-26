@@ -6,7 +6,8 @@ import type { Route } from "next"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { activeHref } from "@/lib/nav"
+import { activeHref, visibleNav } from "@/lib/nav"
+import type { Viewer } from "@/lib/viewer"
 
 // i18n-used: shell.tabs
 
@@ -19,13 +20,16 @@ const TABS = [
 ] as const satisfies { href: Route; label: string; icon: typeof HomeIcon; primary?: boolean }[]
 
 /** The daily front desk tasks under the thumb, with adding a guest in the middle. The rest sits in the top bar's "More". */
-export function BottomTabs({ unread }: { unread: number }) {
+export function BottomTabs({ viewer, unread }: { viewer: Viewer; unread: number }) {
   const pathname = usePathname()
   const t = useTranslations("nav")
   const tShell = useTranslations("shell")
+  const pages = new Set<string>(visibleNav(viewer).map((item) => item.href))
+  // Adding a guest has no menu entry of its own: it goes with the guest list.
+  const tabs = TABS.filter((tab) => pages.has(tab.href === "/guests/new" ? "/guests" : tab.href))
   // Unhappy guests are the other half of the Inbox, so they keep its tab lit.
   const active = activeHref(
-    TABS.map((tab) => tab.href),
+    tabs.map((tab) => tab.href),
     ["/feedback", "/whatsapp"].some((tab) => pathname.startsWith(tab)) ? "/inbox" : pathname,
   )
   return (
@@ -34,7 +38,7 @@ export function BottomTabs({ unread }: { unread: number }) {
       data-bottom-tabs
       className="fixed inset-x-0 bottom-0 z-40 flex border-border border-t bg-background pb-safe md:hidden"
     >
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const current = tab.href === active
         if ("primary" in tab)
           return (

@@ -20,15 +20,16 @@ const SHELL_VARS =
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("shell")
-  const [me, { unread }, { hotels, activeId }, hotel, viewedId] = await Promise.all([
+  const [me, { unread }, mine, hotel, viewedId] = await Promise.all([
     call((api) => api.me.get()),
     call((api) => api.inbox.list()),
     call((api) => api.hotel.mine()),
     call((api) => api.hotel.get().catch(() => null)),
     viewedHotelId(),
   ])
+  const viewer = { admin: me.role === "admin", role: hotel ? mine.role : null }
   const current = hotel ? { name: hotel.displayName, logoKey: hotel.logoKey } : null
-  const switcher = { current, hotels, activeId, isAdmin: me.role === "admin" }
+  const switcher = { current, hotels: mine.hotels, activeId: mine.activeId, isAdmin: me.role === "admin" }
   // A new query cache per hotel on screen: switching, or the admin opening or leaving one, drops every cached row.
   return (
     <QueryProvider key={hotel?.id ?? "none"} hotelId={hotel?.id ?? null}>
@@ -39,11 +40,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         >
           {t("skip")}
         </a>
-        <AppSidebar me={me} switcher={switcher} />
+        <AppSidebar me={me} viewer={viewer} switcher={switcher} />
         <SidebarInset id="main" className="min-w-0">
           <header className="sticky top-0 z-30 border-b bg-background pt-safe">
             <TopBar
               me={me}
+              viewer={viewer}
               hotelName={current?.name ?? null}
               switcher={<HotelSwitcher {...switcher} />}
               bell={<InboxBell unread={unread} />}
@@ -53,8 +55,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </header>
           <div className="mx-auto w-full max-w-6xl flex-1 pb-nav">{children}</div>
         </SidebarInset>
-        <BottomTabs unread={unread} />
-        <CommandPalette role={me.role} />
+        <BottomTabs viewer={viewer} unread={unread} />
+        <CommandPalette viewer={viewer} />
         <FeedbackDialog />
       </SidebarProvider>
     </QueryProvider>

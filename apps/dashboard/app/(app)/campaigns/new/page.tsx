@@ -2,19 +2,23 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { CampaignForm } from "@/components/campaign-form"
+import { CampaignsForbidden } from "@/components/campaigns-forbidden"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, getQueryClient, hotelRole, serverOrpc } from "@/lib/api"
 import { getCampaignPreviewCopies } from "@/lib/preview-copy"
+import { allows } from "@/lib/viewer"
 
 export const metadata: Metadata = { title: "New campaign" }
 
 export default async function NewCampaignPage() {
   const t = await getTranslations("campaigns")
+  if (!allows(await hotelRole(), { campaign: ["create"] })) return <CampaignsForbidden />
   const queryClient = getQueryClient()
+  // `fetchQuery`, not `prefetchQuery`: a swallowed failure leaves the suspense query loading forever.
   const [hotel, copies] = await Promise.all([
     call((api) => api.hotel.get()),
     getCampaignPreviewCopies(),
-    queryClient.prefetchQuery(serverOrpc.offers.list.queryOptions()),
+    call(() => queryClient.fetchQuery(serverOrpc.offers.list.queryOptions())),
   ])
   return (
     <>
