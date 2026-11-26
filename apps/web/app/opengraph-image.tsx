@@ -18,7 +18,6 @@ export default async function OpengraphImage() {
   const [arabic, latin] = rtl ? await Promise.all([font("cairo-arabic-700.woff"), font("cairo-latin-700.woff")]) : []
   return new ImageResponse(
     <OgCard
-      name={SITE.name}
       title={rtl ? t("title") : SITE.name}
       description={rtl ? undefined : t("title")}
       colors={SITE.og}

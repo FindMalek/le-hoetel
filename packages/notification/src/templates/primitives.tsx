@@ -1,4 +1,4 @@
-import { Body, Button, Container, Head, Hr, Html, Link, Preview, Section, Text } from "@react-email/components"
+import { Body, Button, Container, Head, Hr, Html, Img, Link, Preview, Section, Text } from "@react-email/components"
 import { DEFAULT_LOCALE, htmlAttributes, type Locale } from "@ritorno/i18n/config"
 import type { CSSProperties, ReactNode } from "react"
 import { BRAND } from "../brand"
@@ -41,6 +41,7 @@ export function Layout({
 }) {
   const { lang, dir } = htmlAttributes(locale)
   const host = appUrl?.replace(/^https?:\/\//, "").replace(/\/$/, "")
+  const logo = appUrl ? `${appUrl.replace(/\/$/, "")}/brand/email-logo.png` : undefined
   return (
     <Html lang={lang} dir={dir} style={{ backgroundColor: light.background }} className="e-bg">
       <Head>
@@ -66,25 +67,27 @@ export function Layout({
               ...base,
               margin: "0 0 24px",
               fontSize: 22,
-              lineHeight: "28px",
+              lineHeight: "32px",
               fontWeight: 700,
               letterSpacing: "-0.03em",
             }}
           >
+            {logo ? (
+              <Img
+                src={logo}
+                alt=""
+                width={32}
+                height={32}
+                style={{
+                  display: "inline-block",
+                  width: 32,
+                  height: 32,
+                  verticalAlign: "-9px",
+                  [dir === "rtl" ? "marginLeft" : "marginRight"]: 10,
+                }}
+              />
+            ) : null}
             {BRAND.name}
-            <span
-              className="e-pr"
-              style={{
-                display: "inline-block",
-                width: 8,
-                height: 20,
-                marginLeft: 4,
-                verticalAlign: "-3px",
-                backgroundColor: light.primary,
-              }}
-            >
-              &nbsp;
-            </span>
           </Text>
           {children}
           <Section style={{ padding: "24px 0 0" }}>

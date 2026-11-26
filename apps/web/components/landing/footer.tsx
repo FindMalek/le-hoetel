@@ -1,8 +1,8 @@
 import { localizedPath } from "@ritorno/i18n"
 import { LocaleSwitcher } from "@ritorno/i18n/switcher"
+import { Logo } from "@ritorno/ui/brand/logo"
 import { getLocale, getTranslations } from "next-intl/server"
 import { SITE } from "@/lib/site"
-import { Mark } from "./header"
 import { CONTAINER } from "./section"
 
 export async function Footer() {
@@ -16,10 +16,7 @@ export async function Footer() {
     <footer className="border-t bg-background">
       <div className={`${CONTAINER} flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between`}>
         <div className="grid gap-1">
-          <p className="flex items-center gap-2 font-semibold tracking-tight">
-            <Mark className="size-5 text-primary" />
-            {SITE.name}
-          </p>
+          <Logo size={28} label={SITE.name} />
           <p className="text-muted-foreground text-sm">{t("tagline")}</p>
         </div>
         <nav className="flex flex-wrap items-center gap-x-6 text-muted-foreground text-sm">

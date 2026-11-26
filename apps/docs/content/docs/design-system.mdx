@@ -79,3 +79,10 @@ Inputs are 16 px on mobile (iOS zooms below that). Arabic text gets taller line 
 ## Components
 
 All in `@ritorno/ui/components/*`, shadcn on Base UI with the RTL migration. Add one with `pnpm ui:add <component>`, then check it against [component patterns](/docs/component-patterns). Loading is a skeleton with the shape of the content, empty is `EmptyState` with one next action, errors are `InlineAlert` or a toast.
+
+## Logo
+
+`Logo` from `@ritorno/ui/brand/logo`: `variant` is `mark`, `wordmark` or `lockup` (default), `size` is the tile side in px. The mark is a white Newsreader italic R on a blue tile (`#0a84ff`) with a dithered sky band; up to 48 px it is a solid tile with a heavier R. The wordmark takes `currentColor`. The lockup always reads mark then wordmark, left to right, in every language; only its place in the page follows the direction. Its accessible name is "Ritorno".
+
+The glyphs are outlined, so no font is needed. The SVGs in `packages/ui/assets/logo` are the source; `pnpm logo:build` turns them into the favicon (16, 32, 48), apple icon, PWA and maskable icons (R shrunk into the 80% safe zone), the email logo and an OG base image, and copies them into each app (`app/icon.svg`, `app/favicon.ico`, `app/apple-icon.png`, `public/brand/*`). Never edit the copies.
+

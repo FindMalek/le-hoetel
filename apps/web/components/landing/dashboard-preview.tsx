@@ -1,7 +1,7 @@
+import { Logo } from "@ritorno/ui/brand/logo"
 import { cn } from "@ritorno/ui/lib/utils"
 import { PhoneIcon, TriangleAlertIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import { Mark } from "./header"
 import { Section } from "./section"
 
 const BARS = ["h-10", "h-14", "h-12", "h-20", "h-16", "h-24", "h-28"]
@@ -24,7 +24,7 @@ export async function DashboardPreview() {
       <div role="img" aria-label={t("label")} className="overflow-hidden rounded-xl border bg-card shadow-sm">
         <div className="flex items-center justify-between gap-3 border-b px-4 py-3 md:px-6">
           <div className="flex items-center gap-2 font-medium text-sm">
-            <Mark className="size-4 text-primary" />
+            <Logo variant="mark" size={16} label="" />
             Dar Zitouna
             <span className="text-muted-foreground">/ {t("week")}</span>
           </div>
