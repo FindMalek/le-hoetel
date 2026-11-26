@@ -6,7 +6,7 @@ import {
   type ConsentSource,
   type GuestSource,
 } from "@ritorno/common/consent"
-import { isSameLocalDay } from "@ritorno/common/hotel-time"
+import { isSameLocalDay, localTime } from "@ritorno/common/hotel-time"
 import { GUEST_MERGE_FIELDS, type Guest, type GuestUpsertResult, type guestCreateSchema } from "@ritorno/common/schemas"
 import {
   consentEvents,
@@ -146,6 +146,20 @@ export async function recordVisit(
 
 export type GuestInput = z.output<typeof guestCreateSchema>
 
+/**
+ * Anyone who knows a phone can rescan, so a rescan never moves a check-out still ahead (staff may have set it), and
+ * never puts one before the arrival.
+ */
+function rescannedCheckOut(
+  current: typeof guests.$inferSelect,
+  typed: string | null | undefined,
+  today: string,
+): string | null {
+  const ahead = !!current.stayCheckOut && current.stayCheckOut >= today
+  const beforeArrival = !!typed && !!current.stayCheckIn && typed < current.stayCheckIn
+  return !typed || ahead || beforeArrival ? current.stayCheckOut : typed
+}
+
 type MergeReport = Pick<GuestUpsertResult, "changed" | "kept">
 
 function compareMerge(
@@ -161,8 +175,8 @@ function compareMerge(
 
 /**
  * One phone is one guest per hotel. A new phone creates the guest. A known phone merges into the existing guest:
- * name, email, birthday, country and city only fill gaps, language and stay details take the latest value, and
- * consent answers go through `recordConsent`. A merge only adds consent, never withdraws it or clears extras:
+ * name, email, birthday, country and city only fill gaps, language and stay details take the latest value (but see
+ * `rescannedCheckOut` for a public rescan), and consent answers go through `recordConsent`. A merge only adds consent, never withdraws it or clears extras:
  * anyone who knows a phone can rescan the public QR form. Withdrawal is unsubscribe, STOP or `setConsent`.
  * A csv row never re-grants a channel the guest withdrew (a "no" after an earlier "yes"): an old list must not
  * override an unsubscribe, only the guest can opt in again. `consentKept` reports such a row.
@@ -198,7 +212,9 @@ export async function upsertGuest(
       city: existing!.city ?? fields.city,
       language: fields.language,
       stayCheckIn: fields.stayCheckIn ?? existing!.stayCheckIn,
-      stayCheckOut: fields.stayCheckOut ?? existing!.stayCheckOut,
+      stayCheckOut: staffUserId
+        ? (fields.stayCheckOut ?? existing!.stayCheckOut)
+        : rescannedCheckOut(existing!, fields.stayCheckOut, localTime(at, await timezoneOf(tx, hotelId)).date),
       nextDestination: fields.nextDestination ?? existing!.nextDestination,
     }
     await tx.update(guests).set(merged).where(hotelGuest(hotelId, id))

@@ -4,6 +4,8 @@ import { TOKEN_NAMESPACE } from "./constants"
 
 export const SURVEY_INVITE_DAYS = 14
 export const SURVEY_HOURS_AFTER_STAY = 24
+/** Longer than a week's stay, so a guest with no known check-out is not asked while still there. */
+export const SURVEY_DAYS_WITHOUT_CHECKOUT = 8
 export const DEFAULT_LOW_SCORE_THRESHOLD = 6
 export const SURVEY_COMMENT_MAX = 1000
 
