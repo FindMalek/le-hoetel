@@ -1424,7 +1424,7 @@
     "logoOpen": "Ouvrir l'identité comme cet hôtel",
     "people": "Propriétaires et membres",
     "peopleHint": "Qui peut se connecter à cet hôtel, et les invitations en attente.",
-    "noPeople": "Personne pour l'instant. Invitez le propriétaire depuis la page équipe de l'hôtel une fois ouvert.",
+    "noPeople": "Personne pour le moment.",
     "invited": "Invité",
     "inviteExpires": "Expire le {date}",
     "pilotPlan": "Pilote et offre",
@@ -2104,7 +2104,7 @@
     "revokeTitle": "Révoquer l'invitation de {email} ?",
     "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard.",
     "notMember": "Vous n'êtes pas membre de {hotel}",
-    "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici. Sa page d'administration les liste.",
+    "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici.",
     "notMemberAction": "Ouvrir la page d'administration"
   },
   "usage": {

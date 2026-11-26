@@ -80,7 +80,7 @@ On a phone the same switcher sits at the top of the "More" sheet. One hotel is o
 - switching hotels (any successful `set-active` through the dashboard's `/api` proxy) also ends the app admin's "acting as" view, whose cookie would otherwise keep winning
 - `hotel.mine` answers `activeId` and `role` for the hotel the app admin named with `x-hotel-id`, so role gates match the data
 - the browser sends the hotel on screen as `x-hotel-id` on every call (`QueryProvider hotelId`), so a tab left open on the previous hotel is refused (`FORBIDDEN`) instead of acting on the new one. The team page names its hotel to better-auth the same way
-- the **Team** page needs a membership: an app admin acting as a hotel they do not belong to gets a link to its admin page
+- changing the team needs a membership: an app admin acting as a hotel they do not belong to sees its members and pending invitations read only (`admin.hotels.get`) with a link to its admin page. **Guest data** and **Import** treat them as the owner, like the api
 
 The guest list (`/guests`) reads `guests.list`, which only returns the active hotel's guests. Filters live in the url (`q`, `consent`, `source`, `language`, `returning`), so a search can be shared. One search box matches the name, the email or the phone digits (`20 123 456` finds `+21620123456`). `consent=none` means no email and no WhatsApp consent, `returning=1` keeps guests with two visits or more, and each row carries its visit count for the returning badge. On phones each guest is a card, from `md` up it is a table.
 
