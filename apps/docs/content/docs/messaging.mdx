@@ -59,17 +59,19 @@ Automations are pg-boss jobs built by `createMessageJobs` (`packages/orpc/src/jo
 
 Every automatic send first claims a row in `automation_sends` (unique per guest, `kind`, `period` and channel). A retry, a second enqueue or a second worker finds the row and sends nothing. `kind` is the automation, `period` repeats it (empty for once, the year for yearly).
 
+`claimAndSend` in `packages/orpc/src/lib/automations.ts` does the claim and the send for every automation. A failure that cannot have sent anything (429, or a connect error such as `ECONNREFUSED`) is retried up to three times in all, 2 then 4 seconds apart, while the claim is held, so no other worker sends it too. A 5xx or a timeout may mean the provider accepted the message, so it is only retried for email: every try carries the same Resend `Idempotency-Key` (`automation-send:<claim id>`) and Resend drops a repeat. Kapso has no such key, so on WhatsApp those stay failed. Any other failure (a 4xx, a bad template, no recipient) is not retried, and a send still failing after the third try stays failed. Each try is its own row in `messages`. The retries live here and not in pg-boss: a job rerun finds the claim and sends nothing. Sends are paced 250 ms apart in the welcome, birthday, holiday, survey and campaign jobs, so a provider never sees a burst. Like campaigns, the birthday and holiday jobs run every minute and send at most 20 messages per hotel per run to guests without a claim yet, so a run stays short and the next minute picks up the rest; pg-boss fails a run still active after 10 minutes (`expireInSeconds`).
+
 | Job | When | Who |
 | --- | --- | --- |
-| `welcome-guest` | queued right after a guest is saved from the QR page, staff quick add or csv import | the channels the guest agreed to, once per guest and channel |
-| `birthday-guests` | every hour, which handles each hotel from 09:00 to 20:59 in its own timezone | guests whose birthday is today and who agreed to a channel, once per year |
-| `holiday-guests` | every hour, same window | guests who agreed to a channel the hotel picked for a holiday it switched on, one holiday message per channel and day |
+| `welcome-guest` | queued right after a guest is saved from the QR page or staff quick add, never for a csv import (an old list would get a burst of welcomes) | the channels the guest agreed to, once per guest and channel. From the QR page also at most once per guest every 30 days and 60 per hotel per hour |
+| `birthday-guests` | every minute, one batch per hotel from 09:00 to 20:59 in its own timezone | guests whose birthday is today and who agreed to a channel, once per year |
+| `holiday-guests` | every minute, same window | guests who agreed to a channel the hotel picked for a holiday it switched on, one holiday message per channel and day |
 
 The welcome carries the hotel's newest active offer with the `welcome` trigger that can be redeemed right now, with the guest's own code and the page link (`triggerOffer` in `packages/orpc/src/lib/automations.ts`). Without one it goes out without an offer. A failed queue never fails the sign-up.
 
 ### Birthday
 
-pg-boss cron runs in UTC, hotels do not, so the job runs hourly and each hotel is handled on its first run after 09:00 local time (never in quiet hours, 21:00 to 08:00). A worker that was down at 09:00 still sends the same day. The claim (`kind` `birthday`, `period` the hotel's local year) keeps it to one message a year per guest and channel. Someone born on 29 February is celebrated on 28 February in a year without one. The message carries the hotel's newest redeemable `birthday` offer; a hotel without one sends nothing. Local time helpers: `@ritorno/common/hotel-time`.
+pg-boss cron runs in UTC, hotels do not, so the job runs every minute and sends each hotel's batch from 09:00 local time (never in quiet hours, 21:00 to 08:00). A worker that was down at 09:00 still sends the same day. The claim (`kind` `birthday`, `period` the hotel's local year) keeps it to one message a year per guest and channel. Someone born on 29 February is celebrated on 28 February in a year without one. The message carries the hotel's newest redeemable `birthday` offer; a hotel without one sends nothing. Local time helpers: `@ritorno/common/hotel-time`.
 
 ### Holidays
 

@@ -166,7 +166,7 @@ async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: 
                 <li key={action.href}>
                   <Link
                     href={action.href as Route}
-                    className="flex min-h-16 items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-inset"
+                    className="flex min-h-16 items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset"
                   >
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted [&_svg]:size-5">
                       {action.icon}

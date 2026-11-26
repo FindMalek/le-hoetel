@@ -2,7 +2,6 @@ import { LocaleSwitcher } from "@ritorno/i18n/switcher"
 import { Logo } from "@ritorno/ui/brand/logo"
 import { ZelligePattern } from "@ritorno/ui/components/zellige-pattern"
 import { getTranslations } from "next-intl/server"
-import { ThemeToggle } from "@/components/theme-toggle"
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("auth")
@@ -19,10 +18,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <div className="flex min-h-dvh flex-col px-4 pt-safe pb-safe">
         <header className="flex items-center justify-between py-3">
           <Logo className="lg:invisible" />
-          <div className="flex items-center gap-1">
-            <LocaleSwitcher mode="cookie" />
-            <ThemeToggle />
-          </div>
+          <LocaleSwitcher mode="cookie" />
         </header>
         <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-8">{children}</main>
       </div>

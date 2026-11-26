@@ -1,83 +1,84 @@
 ---
 title: Design system
-description: Brand tokens, fonts, type scale, spacing and the components built on them.
+description: Light only Ritorno tokens, fonts, type scale, radius, shadow and motion.
 ---
 
-Mobile first: most guests scan a QR code on a cheap Android phone, hotel staff use the dashboard on a phone or a desktop. Both must be fast and comfortable.
+Light only, one blue, ink for actions. Mobile first: guests scan a QR code on a cheap Android phone, staff use the dashboard on a phone or a desktop.
 
-## Tokens
+Tokens live in `packages/ui/src/styles/theme.css` (values) and `globals.css` (Tailwind mapping, type scale, utilities). Never hard code a color, never add a per component token, never add a dark variant: there is no `.dark` and no theme switch.
 
-The brand tokens live in `packages/ui/src/styles/theme.css` (`:root` and `.dark`) and are the Ritorno brand as given in the kickoff prompt. Never edit them per component and never hard code a color. Hotels override `--primary` and one accent at runtime through their branding config, so every color in the UI must come from a token (`bg-primary`, `text-muted-foreground`, `border-border`).
+## Color
 
-### Hotel branding at runtime
+| Token | Hex | Use |
+| --- | --- | --- |
+| `background`, `card`, `popover` | #ffffff | pages, cards |
+| `surface` (= `muted`, `secondary`, `sidebar`) | #f4f4f3 | sidebar, table header, skeletons, panels |
+| `canvas` | #f0f0ef | landing below the hero, footer |
+| `border`, `input` | #e4e4e2 | every border |
+| `foreground`, `primary`, `ink-900` | #0b0b0c | text, the black pill action |
+| `muted-foreground`, `ink-500` | #6b6b70 | secondary text (4.8:1 on surface) |
+| `ink-400` | #8e8e93 | icons only, never text |
+| `navy` | #0b1f3a | text on the sky |
+| `blue-50` to `blue-900` | brand `blue-500` #0a84ff | `accent` is `blue-50`, `ring` is `blue-600`, links `blue-700` |
+| `success`, `warning`, `destructive`, `info` | #1a7f37, #a15c00, #d1242f, `blue-700` | text and icons, each with a `*-soft` fill |
+| `chart-1` to `chart-5` | `blue-500`, `navy`, #0e8a80, #c26a00, #6e56cf | one series is `chart-1` |
+| `sky-1` to `sky-4`, `cloud` | #0a84ff to #dcefff | PixelSky only |
 
-A hotel's `primary_color` and `accent_color` become css variables through `brandStyle` (`@ritorno/common/color`): `--primary` with `--primary-foreground`, and `--brand-accent` with `--brand-accent-foreground` (`bg-brand-accent`, `text-brand-accent-foreground`). The foreground is black or white, whichever has more contrast, so text on a brand color always passes AA (4.5:1). The dashboard layout sets them on the app shell, the public capture page does the same. A color that is under 3:1 against the light or dark page background (WCAG 1.4.11, `brandContrastIssues`) is not blocked: the admin create form and the hotel settings page show a warning under the field.
+Contrast rules:
 
-- `globals.css` maps the tokens to Tailwind (`@theme inline`), holds the type scale, the `coarse` variant and a few utilities
-- `--radius` is `0.625rem`. Controls and cards use `rounded-lg`, small items (menu rows, kbd, tooltip) `rounded-md`, badges `rounded-full`
-- dark mode is the `.dark` class set by `next-themes`; test both themes for every new screen
+- body text is `foreground` or `muted-foreground`, on white, surface or canvas
+- `blue-500` is for icons and text of 24 px or more, never a button. Small blue text is `blue-600` or `blue-700`
+- buttons are ink with white text. Status is never color only: pair it with an icon or a word
+
+### Hotel branding
+
+Our own UI keeps ink as `--primary`. A hotel's `primary_color` and `accent_color` become `--primary` and `--brand-accent` (with a black or white foreground, whichever reads better) through `brandStyle` (`@ritorno/common/color`), only on guest pages (`/h`, `/s`, `/u`, `/r`, `/o`), emails and the dashboard previews (`hotel-previews`, `offer-card-preview`, `brand-preview`). The dashboard shell never takes hotel colors. `brandContrastIssues` flags a color under 3:1 (WCAG 1.4.11) against `PAGE_BACKGROUNDS` (`page` white, `surface` #f4f4f3); the admin and settings forms show a warning, they do not block.
 
 ## Fonts
 
-| Role | Font | Why |
+All `next/font/google`, self hosted, `display: "swap"`, declared in each app's `app/fonts.ts`.
+
+| Role | Font | Loading |
 | --- | --- | --- |
-| Latin (en, fr) | Inter, variable | one file for every weight (about 48 KB for the `latin` subset, covers French accents), very readable at small sizes on low density screens, tabular and lining numbers |
-| Arabic (ar) | Cairo, variable | one file for every weight (about 31 KB, `arabic` subset), clean modern naskh/kufi hybrid, renders well at 14 to 16 px on low end Android, ships with Latin digits that match Inter |
-| Mono | JetBrains Mono | codes and ids only, never preloaded |
+| UI (`font-sans`) | Geist, variable | preloaded |
+| Display en, fr (`font-display`) | Newsreader italic, variable `opsz` and `wght` | preloaded on web only |
+| Mono (`font-mono`) | Geist Mono | not preloaded |
+| Arabic body | Noto Sans Arabic, variable | not preloaded |
+| Arabic display | Noto Naskh Arabic, upright | not preloaded |
 
-Decisions:
-
-- both are loaded with `next/font/google`, `display: "swap"` and only the subsets we need. Each file is self hosted, so there is no request to Google at runtime
-- variable fonts beat several static weights: one request instead of three or four, and the file sizes above are the whole cost
-- the browser downloads a font file only when a character from its `unicode-range` is on screen. So French and English pages never download Cairo, and the Arabic font is not preloaded (`preload: false`). Arabic pages pay one small swap
-- `--font-sans` is `var(--font-latin), var(--font-arabic), system-ui`. Mixed text (an Arabic sentence with a Latin hotel name) picks the right font per character with no extra code
-- we chose Cairo over IBM Plex Sans Arabic and Noto Kufi Arabic because those ship as separate static weights (more requests) or as larger files, and Cairo stays legible at body size on 720p phones
-- numbers stay Western digits (`0-9`), the habit in Tunisia and what Inter and Cairo both draw
-- Arabic text gets a taller line height (`:lang(ar)` in `globals.css`), because Arabic marks need the room
-
-Each app declares the fonts in `app/fonts.ts` (`next/font` must run inside the app) and sets `fontVariables` on `<html>`. The `lang` and `dir` attributes on `<html>` are owned by the i18n routing.
+- `fonts.ts` sets `--font-geist`, `--font-geist-mono`, `--font-newsreader`, `--font-noto-sans-arabic`, `--font-noto-naskh-arabic`. `globals.css` builds the Tailwind families from them: `font-sans`, `font-serif`, `font-mono`, `font-arabic`, `font-arabic-serif`
+- `font-sans` switches on `lang`: Geist first in en and fr, Noto Sans Arabic first in ar. Mixed text still picks a font per character
+- `font-display` is the serif voice: Newsreader italic under `:lang(en)` and `:lang(fr)`, upright Noto Naskh Arabic 600 with a 1.35 line height under `:lang(ar)`. `font-synthesis: none` is set, so there is never a fake slant or bold. Arabic emphasis is weight or `blue-700`, not italic
+- the serif is for the landing, the logo and the auth panel. Inside the app everything is Geist
+- digits stay Western (`0-9`); use `tabular-nums` for numbers in tables and stats
 
 ## Type scale
 
-Defined in `globals.css`, usable as Tailwind classes:
+| Class | Size | Line height | Font |
+| --- | --- | --- | --- |
+| `text-display-xl` | 48 to 112 px fluid | 0.95 | with `font-display`, landing hero only |
+| `text-display` | 40 to 72 px fluid | 1.0 | with `font-display` |
+| `text-h1` | 28 to 40 px fluid | 1.15 | Geist 600, page title |
+| `text-h2` | 22 to 30 px fluid | 1.2 | Geist 600, section title |
+| `text-h3` | 20 px | 1.3 | Geist 600, card title |
+| `text-lead` | 18 px | 1.6 | intro paragraph |
+| `text-body` | 16 px | 1.6 | default, forms |
+| `text-small` | 14 px | 1.5 | secondary text, tables |
+| `text-caption` | 12 px | 1.4 | chips, hints, legal |
 
-| Class | Size | Use |
-| --- | --- | --- |
-| `text-display` | 36 to 56 px fluid | landing hero only |
-| `text-h1` | 28 to 40 px fluid | page title |
-| `text-h2` | 22 to 30 px fluid | section title |
-| `text-h3` | 20 px | card or dialog title |
-| `text-body` | 16 px | default, forms |
-| `text-small` | 14 px | secondary text, dense tables |
-| `text-caption` | 12 px | badges, hints, legal |
+Inputs are 16 px on mobile (iOS zooms below that). Arabic text gets taller line heights and no letter spacing (`globals.css`).
 
-Form inputs are 16 px on mobile (below that iOS zooms the page on focus) and 14 px from `md`.
+## Space, radius, shadow, motion
 
-## Spacing and touch targets
-
-- spacing is Tailwind's 4 px scale. Page padding is `px-4` on mobile, `md:px-6` after; stack with `gap-*`, avoid margin between siblings
-- every control a thumb can hit is at least 44 px (`h-11`, token `--spacing-touch`). Button, input, select, tabs, switch and menu rows already follow it
-- compact variants (`size="sm"`, `xs`, icon buttons) are small with a mouse and grow to 44 px on touch screens through the `coarse:` variant (`@media (pointer: coarse)`). Do not rebuild that per screen
-- checkboxes and radios are 20 px with a 44 px hit area, put them inside a `Field` with a label so the label is tappable
-- keep 8 px between two tap targets
-- use `pb-safe` and `pt-safe` for bars pinned to a screen edge (iPhone notch and home indicator)
+- container `max-w-6xl px-4 md:px-6`, landing sections `py-20 md:py-28 lg:py-36`, Tailwind's 4 px scale, `gap-*` over margins
+- every tappable control is 44 px (`h-11`, `--spacing-touch`, the `coarse:` variant grows compact controls on touch)
+- radius: `--radius` 12 px, `rounded-input` 10 px, `rounded-card` 20 px, `rounded-panel` 28 px, `rounded-browser` 14 px, `rounded-phone` 40 px, buttons and chips `rounded-full`
+- shadow: `shadow-xs` (secondary pill, active sidebar row), `shadow-md` (floating nav, popovers), `shadow-device` (browser and phone frames). App cards use a border, no shadow
+- motion: `--duration-fast` 120 ms, `--duration-base` 200 ms, `--duration-slow` 400 ms, `--duration-slower` 600 ms; `ease-out` is `cubic-bezier(0.22, 1, 0.36, 1)`, `ease-in-out` `cubic-bezier(0.65, 0, 0.35, 1)`. `prefers-reduced-motion` turns animation off globally
 
 ## Components
 
-All in `@ritorno/ui/components/*`, built on shadcn with Base UI, with the RTL migration applied (`"rtl": true` in `components.json`). Add more with `pnpm ui:add <component>`, then check it against the rules in [component patterns](/docs/component-patterns).
-
-| Need | Component |
-| --- | --- |
-| actions | `button` (variants, sizes, `loading`) |
-| text input | `input`, `textarea`, `input-group` |
-| choice | `checkbox`, `radio-group`, `switch`, `select` |
-| form layout and errors | `field` (`Field`, `FieldLabel`, `FieldDescription`, `FieldError`), `label` |
-| phone number | `phone-input` (dial code and number, shell only, validate in the api) |
-| overlays | `dialog`, `alert-dialog`, `sheet` (`start`, `end`, `top`, `bottom`), `dropdown-menu`, `tooltip` |
-| navigation | `tabs`, `breadcrumb`, `sidebar` |
-| data | `table`, `card`, `badge`, `avatar`, `item` |
-| feedback | `sonner` toasts, `alert`, `spinner` |
-| states | `empty-state`, `loading-state` (`ListSkeleton`, `CardSkeleton`), `skeleton` |
+All in `@ritorno/ui/components/*`, shadcn on Base UI with the RTL migration. Add one with `pnpm ui:add <component>`, then check it against [component patterns](/docs/component-patterns). Loading is a skeleton with the shape of the content, empty is `EmptyState` with one next action, errors are `InlineAlert` or a toast.
 
 ## Logo
 
@@ -85,13 +86,3 @@ All in `@ritorno/ui/components/*`, built on shadcn with Base UI, with the RTL mi
 
 The glyphs are outlined, so no font is needed. The SVGs in `packages/ui/assets/logo` are the source; `pnpm logo:build` turns them into the favicon (16, 32, 48), apple icon, PWA and maskable icons (R shrunk into the 80% safe zone), the email logo and an OG base image, and copies them into each app (`app/icon.svg`, `app/favicon.ico`, `app/apple-icon.png`, `public/brand/*`). Never edit the copies.
 
-## Empty and loading states
-
-- loading: show a skeleton with the shape of the final content (`ListSkeleton`, `CardSkeleton`, `Skeleton`), never a blank page and never a lone spinner for a whole page. A spinner is for a pending button (`<Button loading>`) or a short inline wait
-- skeletons carry `role="status"` and a screen reader label, passed in by the caller so it is translated
-- empty: use `EmptyState` with an icon, a one line title, a sentence that says what to do next, and one primary action. An empty list is an onboarding moment, not an error
-- error: `Alert` with `variant="destructive"` for a block, a toast for a transient failure. Say what happened and what to try, never expose raw errors
-
-## Dark mode
-
-Tokens switch under `.dark`. Rules: no `bg-white` or `text-black`, use `bg-background` and `text-foreground`; images and logos must work on both backgrounds; borders come from `border-border`, which turns into a translucent white in dark mode.

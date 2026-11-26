@@ -4,7 +4,6 @@ import { buttonVariants } from "@ritorno/ui/components/button"
 import { cn } from "@ritorno/ui/lib/utils"
 import { getTranslations } from "next-intl/server"
 import { SITE } from "@/lib/site"
-import { ThemeToggle } from "../theme-toggle"
 import { CONTAINER } from "./section"
 
 export async function Header() {
@@ -28,7 +27,6 @@ export async function Header() {
         </nav>
         <div className="flex items-center gap-1">
           <LocaleSwitcher mode="path" />
-          <ThemeToggle />
           <a href="#demo" className={cn(buttonVariants(), "ms-2 hidden min-h-9 sm:inline-flex")}>
             {t("demo")}
           </a>

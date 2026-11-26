@@ -45,6 +45,22 @@ test("a guest scanning a QR code lands in that hotel only, with source, spot and
   )
 })
 
+test("scanning again with empty toggles keeps the guest's consents and extras", async () => {
+  const owner = await app.signUp("capture-rescan@ritorno.test")
+  const hotelId = await app.createHotel("capture-rescan", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  await app.anonymous.public.capture({ slug: "capture-rescan", ...scan })
+  const id = (await client.guests.list({})).items[0]!.id
+  await client.guests.setConsent({ guestId: id, channel: "profile", granted: true, source: "staff" })
+  await client.guests.update({ id, city: "Lyon" })
+  const before = await client.guests.consentHistory({ id })
+
+  await app.anonymous.public.capture({ slug: "capture-rescan", ...scan, consents: { email: false, whatsapp: false } })
+
+  expect(await client.guests.get({ id })).toMatchObject({ city: "Lyon", consents: { whatsapp: true, profile: true } })
+  expect(await client.guests.consentHistory({ id })).toHaveLength(before.length)
+})
+
 test("the public hotel only shows branding, an unknown slug is not found, email consent needs an email", async () => {
   const owner = await app.signUp("capture-brand@ritorno.test")
   await app.createHotel("capture-brand", owner)

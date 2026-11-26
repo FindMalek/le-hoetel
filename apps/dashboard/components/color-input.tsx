@@ -8,12 +8,11 @@ import { useState } from "react"
 export interface ColorLabels {
   sample: string
   contrastLight: string
-  contrastDark: string
 }
 
 const HEX = /^#[0-9a-fA-F]{6}$/
 
-/** A hex color input with a live sample (readable text color included) and a warning when the color is too faint on the light or dark page. */
+/** A hex color input with a live sample (readable text color included) and a warning when the color is too faint on the page or a surface. */
 export function ColorInput({
   name,
   label,
@@ -53,8 +52,7 @@ export function ColorInput({
           </span>
         )}
       </div>
-      {issues.includes("light") && <FieldDescription role="alert">{labels.contrastLight}</FieldDescription>}
-      {issues.includes("dark") && <FieldDescription role="alert">{labels.contrastDark}</FieldDescription>}
+      {issues.length > 0 && <FieldDescription role="alert">{labels.contrastLight}</FieldDescription>}
     </Field>
   )
 }

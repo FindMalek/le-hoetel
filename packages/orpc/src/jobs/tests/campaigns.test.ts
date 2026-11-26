@@ -48,7 +48,7 @@ async function hotel(slug: string) {
 
 const runAt = (iso: string, batchSize = 20) => {
   const services = { ...app.services, notification: notification as unknown as typeof app.services.notification }
-  const job = createMessageJobs(services, { campaignPauseMs: 0, campaignBatchSize: batchSize }).find(
+  const job = createMessageJobs(services, { pauseMs: 0, batchSize }).find(
     (candidate) => candidate.name === CAMPAIGN_JOB,
   )!
   return job.run({}, { db: app.services.db, now: () => new Date(iso), jobId: "t" })

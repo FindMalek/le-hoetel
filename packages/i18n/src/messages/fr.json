@@ -9,10 +9,6 @@
     "searchPlaceholder": "Rechercher ou aller à…",
     "noResults": "Aucun résultat.",
     "goTo": "Aller à",
-    "theme": "Thème",
-    "light": "Clair",
-    "dark": "Sombre",
-    "system": "Système",
     "language": "Langue",
     "account": "Compte",
     "signOut": "Se déconnecter",
@@ -21,7 +17,7 @@
     "unread": "{count} notifications non lues",
     "mainNav": "Navigation principale",
     "tabs": "Navigation rapide",
-    "appearance": "Apparence et langue",
+    "appearance": "Langue et compte",
     "loading": "Chargement…"
   },
   "home": {
@@ -629,7 +625,6 @@
     "save": "Enregistrer",
     "sample": "Aa texte",
     "contrastLight": "Cette couleur se voit mal sur fond clair. Choisissez-en une plus foncée.",
-    "contrastDark": "Cette couleur se voit mal en mode sombre. Choisissez-en une plus claire.",
     "noHotelHint": "Créez ou choisissez un hôtel pour modifier ses réglages.",
     "logoSaved": "Logo enregistré.",
     "logoRemoved": "Logo supprimé.",
@@ -1209,7 +1204,6 @@
     "previewTitle": "Aperçu de la page d'inscription",
     "previewName": "Votre hôtel",
     "contrastLight": "Cette couleur est difficile à lire sur fond clair. Choisissez-en une plus foncée.",
-    "contrastDark": "Cette couleur est difficile à lire sur fond sombre. Choisissez-en une plus claire.",
     "errors": {
       "displayName": "Saisissez le nom que verront les clients.",
       "color": "Utilisez une couleur hexadécimale comme #0a7c66.",

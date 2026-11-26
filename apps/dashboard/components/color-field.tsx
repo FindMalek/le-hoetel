@@ -10,7 +10,7 @@ const HEX = /^#[0-9a-fA-F]{6}$/
 
 export const isHexColor = (value: string): boolean => HEX.test(value)
 
-/** A hex color with the system picker, a live sample with its readable text color, and a warning when it is too faint on the light or dark page. */
+/** A hex color with the system picker, a live sample with its readable text color, and a warning when it is too faint on the page or a surface. */
 export function ColorField({
   id,
   label,
@@ -39,7 +39,7 @@ export function ColorField({
         {(aria) => (
           <div className="flex items-center gap-2">
             <label
-              className="relative grid size-11 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-lg border bg-(--swatch) focus-within:ring-1 focus-within:ring-ring"
+              className="relative grid size-11 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-lg border bg-(--swatch) focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-surface"
               // the swatch shows the color being typed
               // oxlint-disable-next-line shadcn/no-inline-styles
               style={{ "--swatch": color ?? "transparent" } as React.CSSProperties}
@@ -78,12 +78,12 @@ export function ColorField({
           </div>
         )}
       </FormField>
-      {issues.map((mode) => (
-        <p key={mode} role="status" className="flex items-start gap-1.5 text-sm">
+      {issues.length > 0 ? (
+        <p role="status" className="flex items-start gap-1.5 text-sm">
           <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
-          {mode === "light" ? t("contrastLight") : t("contrastDark")}
+          {t("contrastLight")}
         </p>
-      ))}
+      ) : null}
     </div>
   )
 }
