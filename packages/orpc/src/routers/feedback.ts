@@ -31,7 +31,7 @@ export const feedbackRouter = {
         })
       }
       // The ip in `x-forwarded-for` can be forged, so the public repo also has one cap for everyone.
-      await enforceKey(context.rateLimiter, "feedback.send:all", RATE_LIMITS.feedbackAll)
+      await enforceKey(context.rateLimiter, "feedback.all", RATE_LIMITS.feedbackAll)
       try {
         await createFeedbackIssue(
           { repo: githubRepo, token: githubToken },
