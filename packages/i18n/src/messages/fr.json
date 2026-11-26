@@ -318,6 +318,7 @@
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
       "result": "{created} ajoutés, {merged} mis à jour, {failed} en échec",
+      "consentKept": "{count, plural, one {# client avait retiré son consentement : il reste retiré.} other {# clients avaient retiré leur consentement : il reste retiré.}}",
       "download": "Télécharger le rapport d'erreurs",
       "errorColumn": "erreur",
       "lineColumn": "ligne",

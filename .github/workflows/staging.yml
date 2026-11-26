@@ -35,6 +35,7 @@ jobs:
           TARGET: staging
           REF: main
           DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+          GITHUB_TOKEN: ${{ github.token }}
           DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
           DOKPLOY_STAGING_COMPOSE_ID: ${{ vars.DOKPLOY_STAGING_COMPOSE_ID }}
           STAGING_API_URL: ${{ vars.STAGING_API_URL }}

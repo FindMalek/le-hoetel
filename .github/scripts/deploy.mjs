@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process"
 import { appendFileSync } from "node:fs"
 import { formatDotenv, infisicalConfigured, parseDotenv, pullSecrets } from "./secrets-lib.mjs"
 
@@ -17,6 +18,25 @@ if (!env.DOKPLOY_URL || !env.DOKPLOY_TOKEN || !composeId) {
   process.exit(0)
 }
 if (!ref) throw new Error("REF is required for production")
+
+// The commit Dokploy will build for `ref`, so the wait below can tell the new api from the old one.
+async function resolveSha(ref) {
+  if (env.GITHUB_REPOSITORY) {
+    const res = await fetch(
+      `https://api.github.com/repos/${env.GITHUB_REPOSITORY}/commits/${encodeURIComponent(ref)}`,
+      {
+        headers: {
+          accept: "application/vnd.github.sha",
+          ...(env.GITHUB_TOKEN && { authorization: `Bearer ${env.GITHUB_TOKEN}` }),
+        },
+      },
+    )
+    if (!res.ok) throw new Error(`could not resolve ${ref} to a commit (${res.status})`)
+    return (await res.text()).trim()
+  }
+  return execFileSync("git", ["rev-parse", `${ref}^{commit}`], { encoding: "utf8" }).trim()
+}
+const sha = await resolveSha(ref)
 
 const base = env.DOKPLOY_URL.replace(/\/+$/, "")
 async function dokploy(path, body, method = "POST") {
@@ -51,6 +71,7 @@ const computed = {
   MESSAGING_LIVE: prod ? "true" : "false",
   ALLOW_PREVIEW_ORIGINS: prod ? "false" : "true",
   S3_PREFIX: prod ? "" : "staging/",
+  GIT_SHA: sha,
 }
 
 // The staging and production volumes were created before the rename and hold this role and database. Used only when
@@ -72,19 +93,22 @@ const update = {
 }
 await dokploy("compose.update", update)
 await dokploy("compose.deploy", { composeId, title: `${target} ${ref}` })
-summary(`${target} deploy started for \`${ref}\``)
+summary(`${target} deploy started for \`${ref}\` (${sha.slice(0, 7)})`)
 
 if (!apiUrl) process.exit(0)
+let last = "no answer"
 for (let i = 0; i < 60; i++) {
-  const ok = await fetch(`${apiUrl.replace(/\/+$/, "")}/health`).then(
-    (r) => r.ok,
-    () => false,
+  const health = await fetch(`${apiUrl.replace(/\/+$/, "")}/health`).then(
+    async (r) => ({ status: r.status, body: await r.json().catch(() => ({})) }),
+    () => null,
   )
-  if (ok) {
-    summary(`${target} api healthy`)
+  if (health?.status === 200 && health.body.sha === sha) {
+    summary(`${target} api healthy on ${sha.slice(0, 7)}`)
     process.exit(0)
   }
+  if (health) last = `status ${health.status}, sha ${health.body.sha ?? "none"}`
   await new Promise((r) => setTimeout(r, 20_000))
 }
-summary(`${target} api not healthy after 20 minutes`)
+summary(`${target} api did not report ${sha.slice(0, 7)} on /health after 20 minutes (last: ${last})`)
+console.error(`timed out waiting for ${apiUrl}/health to report ${sha} (last: ${last})`)
 process.exit(1)

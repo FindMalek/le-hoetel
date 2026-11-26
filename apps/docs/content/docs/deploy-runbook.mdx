@@ -16,7 +16,7 @@ Each environment is one Dokploy compose service built from `docker-compose.deplo
 | `ALLOW_PREVIEW_ORIGINS` | `true` | `false` |
 | `S3_PREFIX` | `staging/` | empty |
 
-All hosts are under `findmalek.engineer`. Health: the api answers `/health`, every image ships a docker `HEALTHCHECK`, the deploy job waits for the api `/health`.
+All hosts are under `findmalek.engineer`. Health: the api answers `/health` with the commit it was built from (`sha`, the `GIT_SHA` build arg), every image ships a docker `HEALTHCHECK`, and the deploy job resolves the deployed ref to a commit and waits until `/health` reports that `sha`. After 20 minutes it fails and prints the last status and `sha` it saw. The worker starts once the api is healthy, so migrations have run.
 
 ## Secrets
 

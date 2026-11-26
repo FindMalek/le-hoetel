@@ -12,9 +12,18 @@ x-env: &env
   ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
   SEED: ${SEED:-none}
   DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+  LOG_LEVEL: ${LOG_LEVEL:-}
+  GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+  GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+  GITHUB_REPO: ${GITHUB_REPO:-}
+  GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+  LEADS_NOTIFY_EMAIL: ${LEADS_NOTIFY_EMAIL:-}
+  UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL:-}
+  UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN:-}
   MESSAGING_LIVE: ${MESSAGING_LIVE:-false}
   ALLOW_PREVIEW_ORIGINS: ${ALLOW_PREVIEW_ORIGINS:-false}
   S3_ENDPOINT: ${S3_ENDPOINT:-}
+  S3_REGION: ${S3_REGION:-}
   S3_BUCKET: ${S3_BUCKET:-}
   S3_PREFIX: ${S3_PREFIX:-}
   S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
@@ -26,10 +35,38 @@ x-env: &env
   KAPSO_WEBHOOK_SECRET: ${KAPSO_WEBHOOK_SECRET:-}
   WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID:-}
   WHATSAPP_BUSINESS_ACCOUNT_ID: ${WHATSAPP_BUSINESS_ACCOUNT_ID:-}
+  WHATSAPP_NOTIFY_TO: ${WHATSAPP_NOTIFY_TO:-}
+  WHATSAPP_TEMPLATE_NAME: ${WHATSAPP_TEMPLATE_NAME:-}
+  WHATSAPP_TEMPLATE_LANGUAGE: ${WHATSAPP_TEMPLATE_LANGUAGE:-}
+  TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+  TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+  TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-}
+  TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:-}
+  AI_MODEL: ${AI_MODEL:-}
+  GROQ_API_KEY: ${GROQ_API_KEY:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
   GLITCHTIP_DSN: ${GLITCHTIP_DSN:-}
   OPENOBSERVE_URL: ${OPENOBSERVE_URL:-}
+  OPENOBSERVE_ORG: ${OPENOBSERVE_ORG:-}
   OPENOBSERVE_USER: ${OPENOBSERVE_USER:-}
   OPENOBSERVE_PASSWORD: ${OPENOBSERVE_PASSWORD:-}
+
+# Inlined into client code by `next build`, so web and dashboard get them as build args and as runtime env.
+x-next-public: &next-public
+  NEXT_PUBLIC_GLITCHTIP_DSN: ${NEXT_PUBLIC_GLITCHTIP_DSN:-}
+  NEXT_PUBLIC_UMAMI_URL: ${NEXT_PUBLIC_UMAMI_URL:-}
+  NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${NEXT_PUBLIC_UMAMI_WEBSITE_ID:-}
+
+x-next-env: &next-env
+  <<: *next-public
+  API_URL: http://api:3001
+  API_PUBLIC_URL: ${API_PUBLIC_URL:?}
+  WEB_URL: ${WEB_URL:?}
+  DASHBOARD_URL: ${DASHBOARD_URL:?}
+  DOCS_URL: ${DOCS_URL:?}
+  LOG_LEVEL: ${LOG_LEVEL:-}
+  WHATSAPP_CONTACT_NUMBER: ${WHATSAPP_CONTACT_NUMBER:-}
 
 services:
   postgres:
@@ -53,6 +90,8 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
       target: runner
+      args:
+        GIT_SHA: ${GIT_SHA:-}
     environment:
       <<: *env
       JOBS_WORKER: "false"
@@ -68,10 +107,13 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
       target: worker
+      args:
+        GIT_SHA: ${GIT_SHA:-}
     environment:
       <<: *env
+    # The api runs the migrations on start, the worker waits for them.
     depends_on:
-      postgres:
+      api:
         condition: service_healthy
 
   web:
@@ -79,12 +121,10 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        <<: *next-public
     environment:
-      API_URL: http://api:3001
-      API_PUBLIC_URL: ${API_PUBLIC_URL:?}
-      WEB_URL: ${WEB_URL:?}
-      DASHBOARD_URL: ${DASHBOARD_URL:?}
-      DOCS_URL: ${DOCS_URL:?}
+      <<: *next-env
     expose:
       - "3000"
     depends_on:
@@ -96,12 +136,10 @@ services:
     build:
       context: .
       dockerfile: apps/dashboard/Dockerfile
+      args:
+        <<: *next-public
     environment:
-      API_URL: http://api:3001
-      API_PUBLIC_URL: ${API_PUBLIC_URL:?}
-      WEB_URL: ${WEB_URL:?}
-      DASHBOARD_URL: ${DASHBOARD_URL:?}
-      DOCS_URL: ${DOCS_URL:?}
+      <<: *next-env
     expose:
       - "3002"
     depends_on:

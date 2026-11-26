@@ -318,6 +318,7 @@
       "needColumns": "Choose the name and phone columns to continue.",
       "submit": "Import {count, plural, one {# guest} other {# guests}}",
       "result": "{created} added, {merged} updated, {failed} failed",
+      "consentKept": "{count, plural, one {# guest had opted out earlier, so their consent stayed withdrawn.} other {# guests had opted out earlier, so their consent stayed withdrawn.}}",
       "download": "Download error report",
       "errorColumn": "error",
       "lineColumn": "line",

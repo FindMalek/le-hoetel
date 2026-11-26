@@ -183,6 +183,8 @@ export const guestImportInputSchema = z.object({
 export const guestImportResultSchema = z.object({
   created: z.number(),
   merged: z.number(),
+  /** Rows whose consent "yes" was ignored because the guest had withdrawn that channel. */
+  consentKept: z.number(),
   errors: z.array(z.object({ line: z.number(), message: z.string() })),
 })
 
