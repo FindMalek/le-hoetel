@@ -100,13 +100,15 @@ export type GuestInput = z.output<typeof guestCreateSchema>
  * name, email, birthday, country and city only fill gaps, language and stay details take the latest value, and
  * consent answers go through `recordConsent`. A merge only adds consent, never withdraws it or clears extras:
  * anyone who knows a phone can rescan the public QR form. Withdrawal is unsubscribe, STOP or `setConsent`.
+ * A csv row never re-grants a channel the guest withdrew (a "no" after an earlier "yes"): an old list must not
+ * override an unsubscribe, only the guest can opt in again. `consentKept` reports such a row.
  */
 export async function upsertGuest(
   tx: Tx,
   hotelId: string,
   input: GuestInput,
   at: Date,
-): Promise<{ id: string; merged: boolean }> {
+): Promise<{ id: string; merged: boolean; consentKept: boolean }> {
   const { consents, phone, ...fields } = input
   const [created] = await tx
     .insert(guests)
@@ -149,12 +151,41 @@ export async function upsertGuest(
             .where(and(eq(guestConsents.hotelId, hotelId), eq(guestConsents.guestId, id)))
         ).map((row) => [row.channel, row.granted]),
       )
+  const withdrawn =
+    fields.source === "csv" ? await withdrawnChannels(tx, hotelId, id, current) : new Set<ConsentChannel>()
+  let consentKept = false
   for (const channel of CONSENT_CHANNELS) {
     const granted = consents[channel]
     if (!granted && current[channel]) continue
+    if (granted && withdrawn.has(channel)) {
+      consentKept = true
+      continue
+    }
     await recordConsent(tx, { hotelId, guestId: id, channel, granted, source: fields.source, at })
   }
-  return { id, merged: !created }
+  return { id, merged: !created, consentKept }
+}
+
+async function withdrawnChannels(
+  tx: Tx,
+  hotelId: string,
+  guestId: string,
+  current: Partial<Record<ConsentChannel, boolean>>,
+): Promise<Set<ConsentChannel>> {
+  const off = CONSENT_CHANNELS.filter((channel) => current[channel] === false)
+  if (!off.length) return new Set()
+  const everGranted = await tx
+    .selectDistinct({ channel: consentEvents.channel })
+    .from(consentEvents)
+    .where(
+      and(
+        eq(consentEvents.hotelId, hotelId),
+        eq(consentEvents.guestId, guestId),
+        eq(consentEvents.granted, true),
+        inArray(consentEvents.channel, off),
+      ),
+    )
+  return new Set(everGranted.map((row) => row.channel))
 }
 
 export const clearExtras = (db: Db | Tx, hotelId: string, guestId: string) =>

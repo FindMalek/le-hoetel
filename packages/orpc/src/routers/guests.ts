@@ -197,7 +197,7 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       const { rows, ...options } = input
-      const result: z.infer<typeof guestImportResultSchema> = { created: 0, merged: 0, errors: [] }
+      const result: z.infer<typeof guestImportResultSchema> = { created: 0, merged: 0, consentKept: 0, errors: [] }
       for (const row of rows) {
         const parsed = guestCreateSchema.safeParse(guestFromImportRow(row, options))
         if (!parsed.success) {
@@ -206,10 +206,11 @@ export const guestsRouter = {
           continue
         }
         try {
-          const { id, merged } = await context.db.transaction((tx) =>
+          const { merged, consentKept } = await context.db.transaction((tx) =>
             upsertGuest(tx, hotelId, parsed.data, context.now()),
           )
           // No welcome on import: an old list would get a burst of welcomes for stays long past.
+          if (consentKept) result.consentKept++
           if (merged) result.merged++
           else result.created++
         } catch {
