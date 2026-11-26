@@ -11,7 +11,8 @@ import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { formatDate } from "@ritorno/ui/lib/date"
 import { cn } from "@ritorno/ui/lib/utils"
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CameraIcon, CheckCircle2Icon, CircleAlertIcon, XCircleIcon } from "lucide-react"
+import { CameraIcon, CheckCircle2Icon, CircleAlertIcon, Undo2Icon, UserRoundIcon, XCircleIcon } from "lucide-react"
+import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { type FormEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -80,6 +81,18 @@ export function RedeemScreen({ hotelId, timeZone }: { hotelId: string; timeZone?
     orpc.offers.redeem.mutationOptions({
       onSuccess: (done) => {
         show(done)
+        return queryClient.invalidateQueries({ queryKey: orpc.offers.key() })
+      },
+      onError,
+    }),
+  )
+
+  const undo = useMutation(
+    orpc.offers.undoRedeem.mutationOptions({
+      onSuccess: () => {
+        toast.success(t("undone"))
+        setResult(null)
+        lookup.mutate({ code })
         return queryClient.invalidateQueries({ queryKey: orpc.offers.key() })
       },
       onError,
@@ -173,6 +186,30 @@ export function RedeemScreen({ hotelId, timeZone }: { hotelId: string; timeZone?
               onClick={() => redeem.mutate({ code })}
             >
               {t("redeem")}
+            </Button>
+          ) : null}
+          {result.guestId ? (
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-14 text-base"
+              render={<Link href={`/guests/${result.guestId}`} />}
+              nativeButton={false}
+            >
+              <UserRoundIcon data-icon="inline-start" />
+              {t("viewGuest")}
+            </Button>
+          ) : null}
+          {done && result.redemptionId ? (
+            <Button
+              variant="ghost"
+              size="lg"
+              className="h-11"
+              loading={undo.isPending}
+              onClick={() => result.redemptionId && undo.mutate({ id: result.redemptionId })}
+            >
+              <Undo2Icon data-icon="inline-start" />
+              {t("undo")}
             </Button>
           ) : null}
           <Button

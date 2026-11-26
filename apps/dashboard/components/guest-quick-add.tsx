@@ -3,7 +3,7 @@
 import { consentWording } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { parsePhone } from "@ritorno/common/phone"
-import { guestCreateSchema } from "@ritorno/common/schemas"
+import { type GuestUpsertResult, guestCreateSchema } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
@@ -14,12 +14,14 @@ import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
 import { PhoneInput } from "@ritorno/ui/components/phone-input"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
-import { type FormEvent, useRef, useState } from "react"
+import { useFormatter, useTranslations } from "next-intl"
+import { type FormEvent, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
+import { MarkVisitButton } from "@/components/mark-visit-button"
+import { useDebounced } from "@/lib/use-debounced"
 import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 type Touched = Partial<Record<"name" | "phone" | "email", boolean>>
@@ -35,12 +37,21 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const [whatsapp, setWhatsapp] = useState(false)
   const [emailConsent, setEmailConsent] = useState(false)
   const [touched, setTouched] = useState<Touched>({})
-  const [last, setLast] = useState<{ id: string; merged: boolean } | null>(null)
+  const [last, setLast] = useState<GuestUpsertResult | null>(null)
 
   const number = `${dialCode} ${phone}`
   const parsed = parsePhone(number)
   const canWhatsapp = parsed?.whatsappCapable ?? true
   const hasEmail = email.trim() !== ""
+
+  const lookup = useDebounced(parsed?.e164 ?? "")
+  const found = useQuery({ ...orpc.guests.find.queryOptions({ input: { q: lookup } }), enabled: lookup !== "" })
+  const known = found.data?.find((guest) => guest.phoneE164 === parsed?.e164)
+  // the form's default language must not overwrite the one the guest already has
+  const knownLanguage = known?.language
+  useEffect(() => {
+    if (knownLanguage) setLanguage(knownLanguage)
+  }, [knownLanguage])
 
   const problems = {
     name: name.trim() ? null : t("nameRequired"),
@@ -56,7 +67,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
       onSuccess: (guest) => {
         void refreshLists()
         toast.success(guest.merged ? t("merged") : t("added"))
-        setLast({ id: guest.id, merged: guest.merged })
+        setLast(guest)
         setName("")
         setPhone("")
         setEmail("")
@@ -96,7 +107,9 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
               {t("view")}
             </Button>
           }
-        />
+        >
+          {last.merged ? <MergeSummary result={last} /> : null}
+        </InlineAlert>
       )}
       <FieldGroup>
         <FormField id="quick-phone" label={t("phone")} required error={shown("phone")}>
@@ -116,6 +129,9 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
             </div>
           )}
         </FormField>
+        <div aria-live="polite" className="empty:hidden">
+          {known && <KnownGuest guest={known} />}
+        </div>
         <FormField id="quick-name" label={t("name")} required error={shown("name")}>
           {(aria) => (
             <Input
@@ -211,5 +227,54 @@ function ConsentBox({
         </span>
       </span>
     </Label>
+  )
+}
+
+function KnownGuest({ guest }: { guest: { id: string; name: string; visits: number; visitedToday: boolean } }) {
+  const t = useTranslations("guests.add")
+  const tFinder = useTranslations("guests.finder")
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+      <div className="flex flex-col gap-0.5">
+        <p className="text-muted-foreground text-sm">{t("known")}</p>
+        <Link
+          href={`/guests/${guest.id}`}
+          className="flex min-h-11 items-center font-medium underline underline-offset-4"
+        >
+          <span dir="auto" className="truncate">
+            {guest.name}
+          </span>
+        </Link>
+        <p className="text-sm">
+          {guest.visits >= 2 ? tFinder("welcomeBack", { count: guest.visits }) : tFinder("firstStay")}
+        </p>
+      </div>
+      <MarkVisitButton guestId={guest.id} visitedToday={guest.visitedToday} />
+    </div>
+  )
+}
+
+// i18n-used: guests.add.fields.name
+// i18n-used: guests.add.fields.language
+// i18n-used: guests.add.fields.email
+// i18n-used: guests.add.fields.birthday
+// i18n-used: guests.add.fields.country
+// i18n-used: guests.add.fields.city
+// i18n-used: guests.add.fields.stayCheckIn
+// i18n-used: guests.add.fields.stayCheckOut
+// i18n-used: guests.add.fields.nextDestination
+// i18n-used: guests.add.fields.emailConsent
+// i18n-used: guests.add.fields.whatsappConsent
+// i18n-used: guests.add.fields.profileConsent
+function MergeSummary({ result }: { result: GuestUpsertResult }) {
+  const t = useTranslations("guests.add")
+  const format = useFormatter()
+  const names = (fields: GuestUpsertResult["changed"]) => format.list(fields.map((field) => t(`fields.${field}`)))
+  return (
+    <span className="flex flex-col">
+      <span>{result.changed.length ? t("changed", { fields: names(result.changed) }) : t("unchanged")}</span>
+      {result.kept.length > 0 && <span>{t("kept", { fields: names(result.kept) })}</span>}
+      <span>{result.visitRecorded ? t("visitSaved") : t("visitCounted")}</span>
+    </span>
   )
 }
