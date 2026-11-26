@@ -18,7 +18,7 @@ export async function Hero() {
         <span className="h-[calc(var(--sky-cell)*2)] bg-dither-75" />
       </div>
       <div data-sky-clear className="flex max-w-5xl flex-col items-center">
-        <Display size="xl" reveal className="max-w-5xl">
+        <Display size="xl" className="max-w-5xl">
           {t.rich("title", { em: (chunks) => <em>{chunks}</em>, br: () => <br className="max-lg:hidden" /> })}
         </Display>
         <p className="mt-6 max-w-md text-pretty text-lead text-muted-foreground">{t("lead")}</p>

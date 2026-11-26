@@ -1,0 +1,26 @@
+name: dokploy-rename
+
+# Renames the Dokploy project and the staging and production compose services to Ritorno (display names only).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rename:
+    name: dokploy rename
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node .github/scripts/dokploy-rename.mjs
+        env:
+          DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+          DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
+          DOKPLOY_STAGING_COMPOSE_ID: ${{ vars.DOKPLOY_STAGING_COMPOSE_ID }}
+          DOKPLOY_PRODUCTION_COMPOSE_ID: ${{ vars.DOKPLOY_PRODUCTION_COMPOSE_ID }}

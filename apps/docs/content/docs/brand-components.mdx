@@ -55,12 +55,12 @@ After changing `pixel-sky-grid.ts`, run `pnpm -F @ritorno/ui sky:poster` to rewr
 
 ## Display
 
-Serif display line: Newsreader italic in en and fr, upright Noto Naskh Arabic 600 in ar (no fake slant). `size="xl"` is `text-display-xl` for the hero, the default is `text-display`. Wrap the emphasis word in `<em>`, it turns `blue-600`. `reveal` makes each word rise 8 px and unblur with a 60 ms stagger, done by 600 ms; it is CSS only and the reduced motion rule renders the words in place.
+Serif display line: Newsreader italic in en and fr, upright Noto Naskh Arabic 600 in ar (no fake slant). `size="xl"` is `text-display-xl` for the hero, the default is `text-display`. Wrap the emphasis word in `<em>`, it turns `blue-600`. `reveal` makes each word rise 8 px and unblur with a 60 ms stagger, done by 600 ms; it is CSS only and the reduced motion rule renders the words in place. Never use it on the LCP heading: the words start transparent, so Lighthouse counts the paint only once they land (the landing h1 renders without it).
 
 <DisplayExample />
 
 ```tsx title="Display"
-<Display as="h1" size="xl" reveal>
+<Display as="h2" reveal>
   Every guest, <em>welcomed</em> back by name
 </Display>
 ```
