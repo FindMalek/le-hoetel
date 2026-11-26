@@ -12,7 +12,14 @@ export function scrubEvent(event: ErrorEvent): ErrorEvent {
   for (const exception of event.exception?.values ?? []) exception.value = text(exception.value)
   if (event.message) event.message = text(event.message)
   if (event.extra) event.extra = redact(event.extra) as ErrorEvent["extra"]
-  if (event.request) event.request = { ...event.request, data: undefined, cookies: undefined, query_string: undefined }
+  if (event.request)
+    event.request = {
+      ...event.request,
+      data: undefined,
+      cookies: undefined,
+      headers: undefined,
+      query_string: undefined,
+    }
   event.breadcrumbs = event.breadcrumbs?.map((crumb) => ({
     ...crumb,
     message: text(crumb.message),

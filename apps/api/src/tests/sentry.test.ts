@@ -11,10 +11,16 @@ test("an error report loses the query params and any phone or email before it le
       ],
     },
     extra: { guest: { phone: "+21620123456", email: "amel@example.test" } },
+    request: {
+      url: "/rpc/guests/create",
+      headers: { cookie: "session=secret-cookie" },
+      cookies: { session: "secret-cookie" },
+    },
   })
 
   const sent = JSON.stringify(event)
   expect(sent).toContain('Failed query: insert into \\"guests\\"')
   expect(sent).not.toContain("Amel")
   expect(sent).not.toContain("123")
+  expect(sent).not.toContain("secret-cookie")
 })

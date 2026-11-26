@@ -10,7 +10,10 @@ let app: TestApp
 beforeAll(async () => {
   app = await createTestApp()
 })
-afterAll(() => app.close())
+afterAll(() => {
+  logger.configure({ write: (line) => process.stdout.write(`${line}\n`) })
+  return app.close()
+})
 
 test("a failed insert is logged as its error class and code, without the guest's phone or name", async () => {
   const lines: string[] = []

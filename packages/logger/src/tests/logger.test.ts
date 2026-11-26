@@ -45,3 +45,19 @@ test("guest phone, email and name never reach a log line", () => {
   expect(entry.hostname).toBe("api-1")
   expect(JSON.stringify(entry)).not.toMatch(/Ada|2161234|ada@/)
 })
+
+test("phone numbers inside text are masked in every common Tunisian shape, ordinary numbers stay", () => {
+  for (const phone of [
+    "+216 20 123 456",
+    "+21620123456",
+    "00216 20 123 456",
+    "20 123 456",
+    "20.123.456",
+    "20 12 34 56",
+    "20123456",
+  ]) {
+    expect(redact(`call ${phone} now`)).toBe(`call ${REDACTED} now`)
+  }
+  const ordinary = "order 4521 on 2026-11-26T10:00:00.000Z for 1 500 TND, 12.50 eur, id 1732600000000, year 2026"
+  expect(redact(ordinary)).toBe(ordinary)
+})

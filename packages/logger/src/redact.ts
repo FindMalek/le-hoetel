@@ -1,13 +1,20 @@
 const SECRET_KEY = /pass(word)?|secret|token|authorization|cookie|api[-_]?key|credential|session|dsn/i
 const PII_KEY = /phone|mobile|msisdn|whatsapp|e[-_]?mail|^(first|last|full|given|family|guest|display|user)?[-_]?name$/i
 const EMAIL_VALUE = /[\w.+-]+@[\w-]+\.[\w.-]+/g
-// An international number (`+216 20 123 456`) or a bare run of 8+ digits. Dates and short ids stay readable.
-const PHONE_VALUE = /\+\d(?:[\s().-]?\d){6,15}|(?<![\w-])\d{8,15}(?![\w-])/g
+// International (`+216 20 123 456`, `00216 20123456`) or a Tunisian local number (`20 123 456`, `20.123.456`,
+// `20 12 34 56`, `20123456`). Local numbers start with 2-9 and stand alone, so years, dates, amounts and epoch ids stay.
+const PHONE_VALUE = new RegExp(
+  [
+    String.raw`(?:\+|\b00)\d(?:[\s().-]?\d){6,15}`,
+    String.raw`(?<![\w.,-])(?:216)?[2-9]\d(?:[\s.]?\d{3}){2}(?![\w,-]|\.\d)`,
+    String.raw`(?<![\w.,-])[2-9]\d(?:[\s.]\d{2}){3}(?![\w,-]|\.\d)`,
+  ].join("|"),
+  "g",
+)
 const MAX_DEPTH = 6
 
 export const REDACTED = "[redacted]"
 
-/** Copies `value` with every secret or guest data (phone, email, name) key blanked, email addresses inside strings masked and errors flattened, so a log line can't leak a credential. */
 /** Masks email addresses and phone numbers inside free text, e.g. an error message. */
 export const maskText = (text: string): string => text.replace(EMAIL_VALUE, REDACTED).replace(PHONE_VALUE, REDACTED)
 
@@ -25,6 +32,7 @@ export function errorSummary(error: unknown): { name: string; code?: string } {
   }
 }
 
+/** Copies `value` with every secret or guest data (phone, email, name) key blanked, email addresses inside strings masked and errors flattened, so a log line can't leak a credential. */
 export function redact(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
   if (value instanceof Error) {
     if (isQueryError(value)) return errorSummary(value)
