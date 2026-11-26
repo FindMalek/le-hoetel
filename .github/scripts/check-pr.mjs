@@ -1,9 +1,18 @@
-// Fails a pull request that carries AI attribution, skips its issue link, or has commits off the house format.
-// Env: BASE_SHA, HEAD_SHA, PR_TITLE, PR_BODY, PR_AUTHOR.
+// Fails a pull request that carries AI attribution, skips its issue link, or has a title or commits off the house
+// format. The title becomes the squash subject on main, which release-please reads.
+// Env: BASE_SHA, HEAD_SHA, PR_TITLE, PR_BODY, PR_AUTHOR, HEAD_REF, FROM_FORK.
 import { execFileSync } from "node:child_process"
-import { AI_IDENTITY, AI_TEXT_PATTERNS, COMMIT_RE, ISSUE_LINK_RE, isBot, MAX_SUBJECT_WORDS } from "./policy.mjs"
+import {
+  AI_IDENTITY,
+  AI_TEXT_PATTERNS,
+  COMMIT_RE,
+  ISSUE_LINK_RE,
+  isBot,
+  isReleasePr,
+  MAX_SUBJECT_WORDS,
+} from "./policy.mjs"
 
-const { BASE_SHA, HEAD_SHA, PR_TITLE = "", PR_BODY = "", PR_AUTHOR = "" } = process.env
+const { BASE_SHA, HEAD_SHA, PR_TITLE = "", PR_BODY = "", PR_AUTHOR = "", HEAD_REF, FROM_FORK } = process.env
 const problems = []
 const fail = (message) => problems.push(message)
 
@@ -47,9 +56,12 @@ function main() {
     for (const name of aiTextProblems(text)) fail(`${label}: ${name}`)
   }
 
-  if (!bot && !ISSUE_LINK_RE.test(`${PR_TITLE}\n${PR_BODY}`)) {
+  if (!bot && !isReleasePr(HEAD_REF, FROM_FORK) && !ISSUE_LINK_RE.test(`${PR_TITLE}\n${PR_BODY}`)) {
     fail("PR body needs an issue link like `closes #12`")
   }
+
+  const titleProblem = bot ? null : subjectProblem(PR_TITLE)
+  if (titleProblem) fail(`PR title "${PR_TITLE}" ${titleProblem}`)
 
   for (const commit of commits()) {
     for (const name of aiTextProblems(commit.message)) fail(`${commit.sha}: ${name}`)

@@ -26,7 +26,10 @@ jobs:
     env:
       HAS_TAILSCALE: ${{ secrets.TS_OAUTH_CLIENT_ID != '' }}
     timeout-minutes: 35
-    if: github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft
+    if: >
+      github.event.pull_request.head.repo.full_name == github.repository
+      && !github.event.pull_request.draft
+      && !startsWith(github.event.pull_request.head.ref, 'release-please--')
     steps:
       - uses: actions/checkout@v7
         with:

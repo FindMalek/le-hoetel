@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "pull-request-header": "next release: merging this tags the version and deploys production",
+  "pull-request-footer": "see the releases docs page before merging",
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "ritorno",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "include-component-in-tag": false
+    }
+  }
+}

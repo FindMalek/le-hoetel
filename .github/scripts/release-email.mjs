@@ -1,15 +1,21 @@
 import { readFileSync } from "node:fs"
 
 const { VERSION, DRY_RUN = "true", RESEND_API_KEY, RESEND_AUDIENCE_ID, RELEASE_EMAIL_FROM } = process.env
-const raw = readFileSync(`docs/releases/${VERSION}.md`, "utf8").replace(/^---[\s\S]*?---\n/, "")
+// release-please notes carry commit links, markdown links and bold scopes: readers of the email get plain text.
+const raw = readFileSync(`docs/releases/${VERSION}.md`, "utf8")
+  .replace(/^---[\s\S]*?---\n/, "")
+  .replace(/ \(\[[0-9a-f]{7,40}\]\([^)]*\)\)/g, "")
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+  .replace(/\*\*/g, "")
+  .replace(/^\* /gm, "- ")
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;")
 const html = raw
   .split("\n")
   .map((l) =>
     l.startsWith("# ")
       ? `<h1>${esc(l.slice(2))}</h1>`
-      : l.startsWith("## ")
-        ? `<h2>${esc(l.slice(3))}</h2>`
+      : /^###? /.test(l)
+        ? `<h2>${esc(l.replace(/^###? /, ""))}</h2>`
         : l.startsWith("- ")
           ? `<p>• ${esc(l.slice(2))}</p>`
           : l

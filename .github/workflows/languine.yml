@@ -1,13 +1,16 @@
 name: languine
 
 # Translates the English messages into fr and ar and opens one pull request for review.
-# Runs when a release is published, or by hand from the Actions tab.
+# Runs when release.yml cuts a release, or by hand from the Actions tab.
 # Skips cleanly until the self hosted Languine secrets exist:
 #   LANGUINE_API_KEY, LANGUINE_BASE_URL (secrets), LANGUINE_PROJECT_ID (optional, else languine.json)
 
 on:
-  release:
-    types: [published]
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
   workflow_dispatch:
 
 concurrency:
@@ -82,7 +85,7 @@ jobs:
       - name: open the pull request
         if: steps.translate.outputs.changed == 'true'
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ inputs.tag }}
         run: |
           branch="i18n/${RELEASE_TAG:-manual-$GITHUB_RUN_ID}"
           git config user.name "github-actions[bot]"

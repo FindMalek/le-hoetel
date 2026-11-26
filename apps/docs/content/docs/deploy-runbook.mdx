@@ -9,7 +9,7 @@ Each environment is one Dokploy compose service built from `docker-compose.deplo
 
 | | staging | production |
 | --- | --- | --- |
-| trigger | every merge to `main` | published release (tag) |
+| trigger | every merge to `main` | merged release PR (tag) |
 | hosts | `staging-ritorno`, `app-staging-ritorno`, `api-staging-ritorno`, `docs-staging-ritorno` | `ritorno`, `app-ritorno`, `api-ritorno`, `docs-ritorno` |
 | `SEED` | `demo` | `none` |
 | `MESSAGING_LIVE` | `false` | `true` (a channel still needs its provider keys) |
@@ -40,9 +40,13 @@ To move an environment to `ritorno`: dump the database with `pg_dump --no-owner`
 
 The Ritorno hosts are added next to the old ones, nothing is removed. Once DNS for the new hosts points to the server, run the `dokploy-domains` workflow (or `TARGET=staging node .github/scripts/dokploy-domains.mjs` with the Dokploy env) for staging and production. Remove the old domains in Dokploy only after the new ones answer.
 
+## Releasing
+
+Merging to `main` deploys staging only. Production deploys when the release PR is merged, see [releases](/docs/releases).
+
 ## Rollback
 
-Run the `release` workflow by hand with an older tag. It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
+Run the `release` workflow by hand with `tag` set to an older tag (or to the current one to only redeploy). It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
 
 ## Backups
 

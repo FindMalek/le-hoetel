@@ -6,7 +6,8 @@ on:
     branches: [main]
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # one group per main commit: the release gate needs ci on the release commit, a later merge must not cancel it
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: true
 
 permissions:
@@ -60,6 +61,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm i18n:check
       - run: pnpm env:check
+      - run: node --test .github/scripts/*.test.mjs
       - name: Migrations match the schema
         run: |
           pnpm db:generate
