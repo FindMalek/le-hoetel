@@ -135,9 +135,6 @@ catalogs:
     next-intl:
       specifier: 4.14.9
       version: 4.14.9
-    next-themes:
-      specifier: 0.4.6
-      version: 0.4.6
     oxlint:
       specifier: 1.88.0
       version: 1.88.0
@@ -320,9 +317,6 @@ importers:
       next-intl:
         specifier: 'catalog:'
         version: 4.14.9(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -507,9 +501,6 @@ importers:
       next-intl:
         specifier: 'catalog:'
         version: 4.14.9(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: 'catalog:'
         version: 19.3.0
@@ -898,9 +889,6 @@ importers:
       lucide-react:
         specifier: 'catalog:'
         version: 1.59.0(@types/react@19.3.0)(react@19.3.0)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: 'catalog:'
         version: 19.3.0

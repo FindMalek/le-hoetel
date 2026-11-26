@@ -40,9 +40,11 @@ async function hotel(slug: string) {
   return { hotelId, client, add }
 }
 
-const runAt = (iso: string) => {
+const runAt = (iso: string, batchSize?: number) => {
   const services = { ...app.services, notification: notification as unknown as typeof app.services.notification }
-  const job = createMessageJobs(services).find((candidate) => candidate.name === HOLIDAY_JOB)!
+  const job = createMessageJobs(services, { pauseMs: 0, batchSize }).find(
+    (candidate) => candidate.name === HOLIDAY_JOB,
+  )!
   return job.run({}, { db: app.services.db, now: () => new Date(iso), jobId: "t" })
 }
 
@@ -67,6 +69,21 @@ test("a switched on holiday greets consented guests on the chosen channel, once,
   expect(await rowsFor(emailGuest)).toMatchObject([{ channel: "email", templateKey: "message", status: "sent" }])
   expect(await rowsFor(whatsappGuest)).toHaveLength(0)
   expect(await rowsFor(nobody)).toHaveLength(0)
+})
+
+test("each run sends one batch per hotel and the next run picks up the guests not reached yet", async () => {
+  const { client, add } = await hotel("holiday-batch")
+  const ids = await Promise.all(
+    ["+21620700011", "+21620700012", "+21620700013"].map((phone) => add(phone, { email: true, whatsapp: false })),
+  )
+  await client.holidays.update({ key: "ramadan_start", enabled: true, channel: "email" })
+  const reached = async () => (await Promise.all(ids.map(rowsFor))).filter((rows) => rows.length).length
+
+  await runAt("2026-02-18T10:00:00Z", 2)
+  expect(await reached()).toBe(2)
+
+  await runAt("2026-02-18T10:01:00Z", 2)
+  expect(await reached()).toBe(3)
 })
 
 test("a holiday the hotel did not switch on sends nothing", async () => {

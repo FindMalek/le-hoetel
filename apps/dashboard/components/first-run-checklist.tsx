@@ -54,7 +54,7 @@ export async function FirstRunChecklist({ state }: { state: Checklist }) {
             <li key={step.key}>
               <Link
                 href={step.href}
-                className="-mx-2 flex min-h-12 items-center gap-3 rounded-md px-2 py-2 transition-colors duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+                className="-mx-2 flex min-h-12 items-center gap-3 rounded-md px-2 py-2 transition-colors duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface focus-visible:outline-none"
               >
                 <span
                   aria-hidden

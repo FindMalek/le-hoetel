@@ -11,6 +11,7 @@ const greet = defineJob({
   cron: "*/5 * * * *",
   scheduleData: { name: "cron" },
   retry: { limit: 2, delaySeconds: 10, backoff: true },
+  expireInSeconds: 300,
   handler: async ({ name }) => {
     handled.push(name)
   },
@@ -40,14 +41,15 @@ function fakeBoss() {
 
 const options = { db: {} as Db, jobs: [greet] }
 
-test("enqueue checks the payload, applies the retry policy and the worker runs the parsed job", async () => {
+test("enqueue checks the payload, applies the retry policy and expiry and the worker runs the parsed job", async () => {
   const { boss, calls, run } = fakeBoss()
   const jobs = createJobs({ ...options, boss })
   await jobs.start()
 
   expect(await jobs.enqueue("greet", { name: "ada" })).toEqual({ ok: true, id: "job-1" })
-  expect(calls.sent[0]).toEqual(["greet", { name: "ada" }, { retryLimit: 2, retryDelay: 10, retryBackoff: true }])
-  expect(calls.scheduled[0]?.slice(0, 3)).toEqual(["greet", "*/5 * * * *", { name: "cron" }])
+  const jobOptions = { retryLimit: 2, retryDelay: 10, retryBackoff: true, expireInSeconds: 300 }
+  expect(calls.sent[0]).toEqual(["greet", { name: "ada" }, jobOptions])
+  expect(calls.scheduled[0]).toEqual(["greet", "*/5 * * * *", { name: "cron" }, jobOptions])
 
   await run({ name: "ada" })
   expect(handled).toEqual(["ada"])

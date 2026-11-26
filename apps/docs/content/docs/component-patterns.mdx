@@ -8,7 +8,7 @@ These are the rules for any UI change. They are also summarized in the agent rul
 ## Rules
 
 1. **Mobile first.** Write the layout for 360 px wide, then add `md:` and `lg:`. The desktop version must be as good: use the extra width for columns, tables and side panels, not for stretching a phone layout
-2. **Tokens only.** Colors, radius and fonts come from the theme. No hex, `rgb()`, `bg-white`, `text-black`, and no arbitrary values like `w-[317px]` or `text-[10px]` (the lint warns about them). Hotels re-theme `--primary`, so a hard coded color breaks branding
+2. **Tokens only, light only.** Colors, radius, shadows and fonts come from the theme. No hex, `rgb()`, `bg-white`, `text-black`, no `dark:` classes, and no arbitrary values like `w-[317px]` or `text-[10px]` (the lint warns about them). Guest pages re-theme `--primary` with the hotel color, so a hard coded color breaks branding
 3. **Logical properties only.** Arabic is right to left. Use `ms-` `me-` `ps-` `pe-` `start-` `end-` `text-start` `text-end` `border-s` `border-e` `rounded-s` `rounded-e` `inset-x`. Never `ml-` `mr-` `pl-` `pr-` `left-` `right-` `text-left` `text-right`. Icons that point (arrows, chevrons) get `rtl:rotate-180`. Phone numbers, emails and codes are shown `dir="ltr"`
 4. **44 px touch targets.** Anything tappable is 44 px tall and wide, or becomes so on touch (`coarse:` variant), with 8 px between targets. Use the shared components, they already follow it
 5. **16 px inputs on mobile.** Never set `text-sm` on a mobile input, iOS zooms the page
@@ -16,7 +16,8 @@ These are the rules for any UI change. They are also summarized in the agent rul
 7. **Every string is translated.** No literal text in components, use the `next-intl` messages in en, fr and ar. Labels for spinners and skeletons are passed by the caller
 8. **Every async surface has states.** Loading skeleton, empty state, error state. See below
 9. **Fast.** Server components by default, no client component for static content, images sized and lazy, no extra font. Think about a 3G phone with a cheap CPU
-10. **Test both themes and both directions** (light, dark, ltr, rtl) before you hand off a UI change
+10. **Ink actions, one blue.** The primary action is the black pill (`bg-primary`), blue is for links (`text-blue-700`), focus and accents, never a button fill. No serif inside the app: `font-display` is for the landing, the logo and the auth panel
+11. **Test both directions** (ltr in en or fr, rtl in ar) at phone and desktop width before you hand off a UI change
 
 ## Patterns
 
@@ -24,7 +25,7 @@ These are the rules for any UI change. They are also summarized in the agent rul
 
 - one column on mobile with `px-4` and `gap-4` or `gap-6`; from `md`, a page header plus content in a max width container
 - primary action reachable by thumb: a full width `Button` at the bottom on guest pages, in the page header on desktop
-- dashboard navigation is the collapsible `Sidebar` on desktop (hotel switcher on top, user menu at the bottom) and a bottom tab bar on phones (the tabbed pages from `apps/dashboard/lib/nav.ts`, then a "More" sheet with the rest, theme, language and sign out). Add a page to `NAV` once and the sidebar, the tab bar, the top bar title and the command palette (cmd+k) all pick it up
+- dashboard navigation is the collapsible `Sidebar` on desktop (hotel switcher on top, user menu at the bottom) and a bottom tab bar on phones (the tabbed pages from `apps/dashboard/lib/nav.ts`, then a "More" sheet with the rest, language and sign out). Add a page to `NAV` once and the sidebar, the tab bar, the top bar title and the command palette (cmd+k) all pick it up
 
 ### Page building blocks
 
@@ -89,4 +90,4 @@ if (!items.length)
 
 ### Hotel branding
 
-Hotel colors only change `--primary` (and one accent). Use `bg-primary text-primary-foreground` pairs, never `bg-primary` with a fixed text color. The admin panel warns when a hotel color fails contrast.
+Hotel colors only change `--primary` (and one accent), and only on guest pages, emails and the dashboard previews; the dashboard shell stays ink. Use `bg-primary text-primary-foreground` pairs, never `bg-primary` with a fixed text color. The admin panel warns when a hotel color fails contrast on the page or a surface.

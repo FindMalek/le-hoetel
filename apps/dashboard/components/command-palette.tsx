@@ -10,10 +10,9 @@ import {
   CommandItem,
   CommandList,
 } from "@ritorno/ui/components/command"
-import { LanguagesIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
+import { LanguagesIcon, LogOutIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { visibleNav } from "@/lib/nav"
 
@@ -26,7 +25,6 @@ export function CommandPalette({ role }: { role: string | null }) {
   const router = useRouter()
   const t = useTranslations("shell")
   const tNav = useTranslations("nav")
-  const { setTheme } = useTheme()
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -60,20 +58,6 @@ export function CommandPalette({ role }: { role: string | null }) {
               {tNav(item.label)}
             </CommandItem>
           ))}
-        </CommandGroup>
-        <CommandGroup heading={t("theme")}>
-          <CommandItem value={`theme ${t("light")}`} onSelect={run(() => setTheme("light"))}>
-            <SunIcon />
-            {t("light")}
-          </CommandItem>
-          <CommandItem value={`theme ${t("dark")}`} onSelect={run(() => setTheme("dark"))}>
-            <MoonIcon />
-            {t("dark")}
-          </CommandItem>
-          <CommandItem value={`theme ${t("system")}`} onSelect={run(() => setTheme("system"))}>
-            <MonitorIcon />
-            {t("system")}
-          </CommandItem>
         </CommandGroup>
         <CommandGroup heading={t("language")}>
           {LOCALES.map((locale) => (

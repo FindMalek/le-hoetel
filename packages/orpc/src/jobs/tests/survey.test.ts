@@ -2,7 +2,7 @@ import { afterAll, beforeAll, expect, test } from "bun:test"
 import { signSurveyToken } from "@ritorno/common/survey"
 import { guests, hotelSettings, surveyInvites, surveyResponses } from "@ritorno/db"
 import type { SendEmailInput } from "@ritorno/notification"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../../testing"
 import { createMessageJobs } from "../index"
 import { SURVEY_JOB } from "../survey"
@@ -62,6 +62,30 @@ test("the survey goes out 24 hours after capture, outside quiet hours, once", as
   expect(sent).toHaveLength(1)
   const [invite] = await app.services.db.select().from(surveyInvites).where(eq(surveyInvites.guestId, guestId))
   expect(invite?.sentAt).not.toBeNull()
+})
+
+test("an imported guest is surveyed only after a real check-out inside the survey window", async () => {
+  const owner = await app.signUp("survey-csv@ritorno.test")
+  const hotelId = await app.createHotel("survey-csv", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  await client.guests.import({
+    rows: [
+      { line: 2, name: "No stay", phone: "20 777 777", email: "nostay@example.test", consent: "yes" },
+      { line: 3, name: "Stayed", phone: "20 888 888", email: "stayed@example.test", consent: "yes" },
+    ],
+    defaultLanguage: "fr",
+    confirmConsent: true,
+  })
+  await app.services.db.update(guests).set({ createdAt: CAPTURED }).where(eq(guests.hotelId, hotelId))
+  await app.services.db
+    .update(guests)
+    .set({ stayCheckOut: "2026-06-10" })
+    .where(and(eq(guests.hotelId, hotelId), eq(guests.name, "Stayed")))
+  sent.length = 0
+
+  await runAt("2026-06-11T13:00:00Z")
+
+  expect(sent.map((message) => message.to)).toEqual(["stayed@example.test"])
 })
 
 test("a survey is answered once per invite and expires after 14 days", async () => {

@@ -26,6 +26,8 @@ export interface JobDefinition<S extends z.ZodType> {
   cron?: string
   scheduleData?: z.input<S>
   retry?: RetryPolicy
+  /** Seconds a run may stay active before pg-boss fails it (and retries it). pg-boss defaults to 900. */
+  expireInSeconds?: number
 }
 
 export interface Job<S extends z.ZodType = z.ZodType> {
@@ -35,6 +37,7 @@ export interface Job<S extends z.ZodType = z.ZodType> {
   cron?: string
   scheduleData?: z.input<S>
   retry: RetryPolicy
+  expireInSeconds?: number
   /** Parses the payload, then runs the handler. A payload that no longer fits the schema throws. */
   run: (raw: unknown, context: JobContext) => Promise<void>
 }
@@ -50,6 +53,7 @@ export function defineJob<S extends z.ZodType>(definition: JobDefinition<S>): Jo
     cron: definition.cron,
     scheduleData: definition.scheduleData,
     retry: definition.retry ?? DEFAULT_RETRY,
+    expireInSeconds: definition.expireInSeconds,
     run: (raw, context) => definition.handler(definition.payload.parse(raw), context),
   }
 }

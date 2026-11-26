@@ -1,7 +1,7 @@
 import type { Db } from "@ritorno/db"
 import { PgBoss } from "pg-boss"
 import type { z } from "zod"
-import type { Job, RetryPolicy } from "./define"
+import type { Job } from "./define"
 import { JOBS } from "./jobs"
 
 export { defineJob, type Job, type JobContext, type JobDefinition, type RetryPolicy } from "./define"
@@ -37,6 +37,7 @@ interface RetryOptions {
   retryLimit: number
   retryDelay: number
   retryBackoff: boolean
+  expireInSeconds?: number
 }
 
 /** The slice of pg-boss used here, which is also what tests fake. */
@@ -50,10 +51,11 @@ export interface Boss {
   getQueues(names: string[]): Promise<{ name: string; queuedCount: number; activeCount: number; failedCount: number }[]>
 }
 
-const retryOptions = (retry: RetryPolicy): RetryOptions => ({
+const jobOptions = ({ retry, expireInSeconds }: Job): RetryOptions => ({
   retryLimit: retry.limit,
   retryDelay: retry.delaySeconds,
   retryBackoff: retry.backoff,
+  ...(expireInSeconds ? { expireInSeconds } : {}),
 })
 
 export interface JobsOptions {
@@ -74,7 +76,7 @@ export function createJobs(options: JobsOptions): JobsRunner {
     if (!job) return { ok: false, error: `Unknown job "${name}".` }
     const parsed = job.schema.safeParse(payload)
     if (!parsed.success) return { ok: false, error: parsed.error.issues.map((issue) => issue.message).join(", ") }
-    return { ok: true, id: await boss.send(job.name, parsed.data as object, retryOptions(job.retry)) }
+    return { ok: true, id: await boss.send(job.name, parsed.data as object, jobOptions(job)) }
   }
 
   return {
@@ -106,7 +108,7 @@ export function createJobs(options: JobsOptions): JobsRunner {
         await boss.work(job.name, async (batch) => {
           for (const { id, data } of batch) await job.run(data, { db, now, jobId: id })
         })
-        if (job.cron) await boss.schedule(job.name, job.cron, job.scheduleData ?? {}, retryOptions(job.retry))
+        if (job.cron) await boss.schedule(job.name, job.cron, job.scheduleData ?? {}, jobOptions(job))
       }
     },
     stop: (timeoutMs = 8_000) => boss.stop({ graceful: true, timeout: timeoutMs }),

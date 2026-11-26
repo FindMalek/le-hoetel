@@ -20,7 +20,7 @@ export function LanguageChoice({
         {HOTEL_LANGUAGES.map((option) => (
           <label
             key={option}
-            className="flex h-11 cursor-pointer items-center justify-center rounded-lg border border-input text-sm transition-colors duration-150 has-checked:border-primary has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:ring-2 has-focus-visible:ring-ring/50"
+            className="flex h-11 cursor-pointer items-center justify-center rounded-lg border border-input text-sm transition-colors duration-150 has-checked:border-primary has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-focus-visible:ring-offset-surface"
           >
             <input
               type="radio"
