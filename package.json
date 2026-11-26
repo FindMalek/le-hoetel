@@ -21,6 +21,7 @@
     "db:studio": "turbo db:studio -F @ritorno/db",
     "bump-deps": "pnpm update --recursive --latest",
     "ui:add": "pnpm --filter @ritorno/ui exec shadcn add",
+    "logo:build": "pnpm --filter @ritorno/ui logo:build",
     "dev:email": "turbo dev -F email",
     "email:export": "turbo export -F email",
     "dev:worker": "bun --watch --env-file=.env apps/api/src/worker.ts",
@@ -28,6 +29,7 @@
     "dev:secrets": "infisical run --env=dev -- turbo dev",
     "env:check": "node scripts/env-check.mjs",
     "secrets:pull": "node .github/scripts/secrets-pull.mjs",
+    "preview:creds": "node .github/scripts/preview-creds.mjs",
     "i18n:check": "bun packages/i18n/src/check-cli.ts"
   },
   "devDependencies": {

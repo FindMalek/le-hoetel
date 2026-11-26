@@ -1,4 +1,5 @@
 import { type APIRequestContext, expect, test } from "@playwright/test"
+import { DEFAULT_DEMO_PASSWORD, DEMO_SUPER_ADMIN_EMAIL } from "@ritorno/common/demo"
 import postgres from "postgres"
 import { e2eDatabaseUrl, URLS } from "../env"
 
@@ -17,16 +18,13 @@ function remember(jar: Jar, response: { headersArray: () => { name: string; valu
   }
 }
 
-async function signUp(request: APIRequestContext, label: string) {
-  const email = `iso-${label}-${run}@example.com`
-  const jar: Jar = new Map()
+async function signUp(request: APIRequestContext, email: string) {
   const response = await request.post(`${URLS.api}/auth/sign-up/email`, {
     headers: { origin: URLS.dashboard },
-    data: { email, password: PASSWORD, name: label },
+    data: { email, password: PASSWORD, name: email.split("@")[0] },
   })
   expect(response.status()).toBe(200)
-  remember(jar, response)
-  return { email, jar }
+  return response
 }
 
 const call = (
@@ -51,23 +49,16 @@ const guest = (phone: string, name: string) => ({
 })
 
 test("one hotel can never read, change, export or delete another hotel's guests over http", async ({ request }) => {
-  const admin = await signUp(request, "admin")
-  const ownerA = await signUp(request, "owner-a")
-  const ownerB = await signUp(request, "owner-b")
-
-  const sql = postgres(e2eDatabaseUrl(), { max: 1, onnotice: () => {} })
-  try {
-    await sql`update "user" set role = 'admin' where email = ${admin.email}`
-  } finally {
-    await sql.end()
-  }
-  // The session is cookie cached: sign in again so it carries the new role.
+  const admin: { jar: Jar } = { jar: new Map() }
   const login = await request.post(`${URLS.api}/auth/sign-in/email`, {
     headers: { origin: URLS.dashboard },
-    data: { email: admin.email, password: PASSWORD },
+    data: { email: DEMO_SUPER_ADMIN_EMAIL, password: DEFAULT_DEMO_PASSWORD },
   })
-  admin.jar.clear()
+  expect(login.status()).toBe(200)
   remember(admin.jar, login)
+  // Sign up is by invitation only: each owner signs up once their hotel's invitation exists.
+  const ownerA = { email: `iso-owner-a-${run}@example.com`, jar: new Map() as Jar }
+  const ownerB = { email: `iso-owner-b-${run}@example.com`, jar: new Map() as Jar }
 
   const hotels: Record<string, string> = {}
   for (const [key, owner] of [
@@ -81,6 +72,7 @@ test("one hotel can never read, change, export or delete another hotel's guests 
     })
     expect(created.status()).toBe(200)
     hotels[key] = (await created.json()).id
+    remember(owner.jar, await signUp(request, owner.email))
     const db = postgres(e2eDatabaseUrl(), { max: 1, onnotice: () => {} })
     const [invite] = await db`select id from invitation where organization_id = ${String(hotels[key])}`
     await db.end()

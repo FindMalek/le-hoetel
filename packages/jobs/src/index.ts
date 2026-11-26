@@ -65,10 +65,20 @@ export interface JobsOptions {
   jobs?: readonly Job[]
   /** Run the worker and the cron scheduler in this process. Off means this process only enqueues. */
   worker?: boolean
+  /** Told about every failed run before pg-boss retries it. Defaults to an error log with the job name and id only. */
+  onFailure?: (failure: JobFailure) => void
 }
 
+export interface JobFailure {
+  name: string
+  id: string
+  error: unknown
+}
+
+const logFailure = ({ name, id }: JobFailure) => console.error("job failed", { job: name, jobId: id })
+
 export function createJobs(options: JobsOptions): JobsRunner {
-  const { boss, db, now = () => new Date(), jobs = JOBS, worker = true } = options
+  const { boss, db, now = () => new Date(), jobs = JOBS, worker = true, onFailure = logFailure } = options
   const byName = new Map(jobs.map((job) => [job.name, job]))
 
   async function enqueue(name: string, payload: unknown): Promise<EnqueueResult> {
@@ -106,7 +116,14 @@ export function createJobs(options: JobsOptions): JobsRunner {
       if (!worker) return
       for (const job of jobs) {
         await boss.work(job.name, async (batch) => {
-          for (const { id, data } of batch) await job.run(data, { db, now, jobId: id })
+          for (const { id, data } of batch) {
+            try {
+              await job.run(data, { db, now, jobId: id })
+            } catch (error) {
+              onFailure({ name: job.name, id, error })
+              throw error
+            }
+          }
         })
         if (job.cron) await boss.schedule(job.name, job.cron, job.scheduleData ?? {}, jobOptions(job))
       }

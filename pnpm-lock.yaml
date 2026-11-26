@@ -819,6 +819,9 @@ importers:
       '@ritorno/jobs':
         specifier: workspace:*
         version: link:../jobs
+      '@ritorno/logger':
+        specifier: workspace:*
+        version: link:../logger
       '@ritorno/notification':
         specifier: workspace:*
         version: link:../notification
@@ -926,6 +929,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@24.19.2)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -7445,8 +7451,7 @@ snapshots:
     dependencies:
       hono: 4.13.13
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.5':
     optionalDependencies:
@@ -12012,7 +12017,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
       '@types/node': 24.19.2
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:

@@ -4,6 +4,7 @@ import { connectBoss, createJobs, JOBS, type JobsRunner } from "@ritorno/jobs"
 import type { Notifier } from "@ritorno/notification"
 import { createMessageJobs } from "@ritorno/orpc/jobs"
 import { serviceConfig } from "./config"
+import { captureJobFailure } from "./sentry"
 
 /** Connects pg-boss to the app database, or trigger.dev when `TRIGGER_SECRET_KEY` is set. With `worker` off this process only enqueues. */
 export async function startJobs(
@@ -21,7 +22,13 @@ export async function startJobs(
     now: () => new Date(),
     notification: options.notification,
   })
-  const jobs = createJobs({ boss, db, worker: options.worker, jobs: [...JOBS, ...messageJobs] })
+  const jobs = createJobs({
+    boss,
+    db,
+    worker: options.worker,
+    jobs: [...JOBS, ...messageJobs],
+    onFailure: ({ name, id, error }) => captureJobFailure(name, id, error),
+  })
   await jobs.start()
   return jobs
 }

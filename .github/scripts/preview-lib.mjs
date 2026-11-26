@@ -54,9 +54,16 @@ export function stagingUrl(app, domain = "findmalek.engineer") {
   return `https://${STAGING_HOSTS[app]}.${domain}`
 }
 
+// Bump to rotate every preview secret. v1 because earlier values were posted in public PR comments.
+export const PREVIEW_SECRET_VERSION = 1
+
 // Same password for every account of a preview, stable across pushes, derived so nothing has to be stored.
+// Never print the result in a PR comment or job summary: the repo is public. `pnpm preview:creds <pr>` shows it.
 export function previewSecret(token, pr, label, length = 20) {
-  return createHash("sha256").update(`${token}:${pr}:${label}`).digest("hex").slice(0, length)
+  return createHash("sha256")
+    .update(`${token}:v${PREVIEW_SECRET_VERSION}:${pr}:${label}`)
+    .digest("hex")
+    .slice(0, length)
 }
 
 export function previewDb(pr, token, host) {
@@ -64,7 +71,7 @@ export function previewDb(pr, token, host) {
 }
 
 // rows: [{ app, status, url, inspectUrl, updatedAt, error }], state: { app: applicationId, _db?: internal host }
-// extra: { creds: { ownerEmail, adminEmail, password }, db, whodbUrl, tools: [{ name, url }], note }
+// extra: { creds: { ownerEmail, adminEmail }, db, whodbUrl, tools: [{ name, url }], note }. Never pass a secret.
 export function renderComment({ pr, sha, rows, state = {}, extra = {} }) {
   const lines = [
     `<!-- ${MARKER} ${JSON.stringify(state)} -->`,
@@ -88,8 +95,10 @@ export function renderComment({ pr, sha, rows, state = {}, extra = {} }) {
       "",
       "<details><summary>Demo logins (fake data, messaging is log only)</summary>",
       "",
-      `- hotel owner: \`${c.ownerEmail}\` / \`${c.password}\``,
-      `- super admin: \`${c.adminEmail}\` / \`${c.password}\``,
+      `- hotel owner: \`${c.ownerEmail}\``,
+      `- super admin: \`${c.adminEmail}\``,
+      "",
+      `Maintainers get the password with \`DOKPLOY_TOKEN=... pnpm preview:creds ${pr}\`, see the previews docs.`,
       "",
       "</details>",
     )
@@ -100,10 +109,10 @@ export function renderComment({ pr, sha, rows, state = {}, extra = {} }) {
       "",
       `<details><summary>Database (own postgres for this PR)</summary>`,
       "",
-      `Open [WhoDB](${extra.whodbUrl}), pick Postgres and enter:`,
+      `Open [WhoDB](${extra.whodbUrl}) on the tailnet, pick Postgres and enter:`,
       "",
       `- host \`${d.host}\`, port \`${d.port}\``,
-      `- database \`${d.database}\`, user \`${d.user}\`, password \`${d.password}\``,
+      `- database \`${d.database}\`, user \`${d.user}\`, password from \`pnpm preview:creds ${pr}\``,
       "",
       "</details>",
     )

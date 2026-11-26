@@ -2,9 +2,10 @@ import type { Db } from "@ritorno/db"
 import * as schema from "@ritorno/db/schema"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { APIError } from "better-auth/api"
 import { admin, magicLink } from "better-auth/plugins"
 import { organization } from "better-auth/plugins/organization"
-import { asc, eq } from "drizzle-orm"
+import { and, asc, eq, gt } from "drizzle-orm"
 import { ac, hotelRoles } from "./access"
 import { auditHooks } from "./audit"
 
@@ -24,6 +25,21 @@ export interface AuthConfig {
   sendInvitation?: (invite: { email: string; inviter: string; role: string; url: string }) => Promise<unknown>
 }
 
+async function hasPendingInvitation(db: Db, email: string): Promise<boolean> {
+  const [row] = await db
+    .select({ id: schema.invitation.id })
+    .from(schema.invitation)
+    .where(
+      and(
+        eq(schema.invitation.email, email.toLowerCase()),
+        eq(schema.invitation.status, "pending"),
+        gt(schema.invitation.expiresAt, new Date()),
+      ),
+    )
+    .limit(1)
+  return Boolean(row)
+}
+
 const quiet = (task: Promise<unknown>) => task.catch((error) => console.error("[auth] email failed", error))
 
 export function createAuth(config: AuthConfig) {
@@ -34,6 +50,17 @@ export function createAuth(config: AuthConfig) {
     baseURL: config.dashboardUrl,
     hooks: audit.hooks,
     databaseHooks: {
+      user: {
+        create: {
+          // No open sign up: over http only an invited email gets an account (any method: password, github, magic
+          // link). Server calls (env admin, seed, tests) and the admin plugin's create-user carry no outside request.
+          before: async (created, ctx) => {
+            if (!ctx?.request || ctx.path === "/admin/create-user") return
+            if (await hasPendingInvitation(config.db, created.email)) return
+            throw new APIError("FORBIDDEN", { code: "INVITATION_REQUIRED", message: "Sign up is by invitation only." })
+          },
+        },
+      },
       session: {
         create: {
           ...audit.databaseHooks.session.create,
@@ -71,7 +98,14 @@ export function createAuth(config: AuthConfig) {
         roles: hotelRoles,
         // A hotel is onboarded by the app admin (admin.hotels.create), never self-served.
         allowUserToCreateOrganization: (user) => user.role === "admin",
+        // Deleting a hotel or changing its slug (printed on QR codes) or name only goes through the admin procedures.
+        disableOrganizationDeletion: true,
         organizationHooks: {
+          beforeUpdateOrganization: async ({ organization: patch }) => {
+            if (patch.slug !== undefined || patch.name !== undefined) {
+              throw new APIError("FORBIDDEN", { message: "Only the app admin can rename a hotel or change its slug." })
+            }
+          },
           afterCreateOrganization: async ({ organization: created }) => {
             await config.db
               .insert(schema.hotelSettings)

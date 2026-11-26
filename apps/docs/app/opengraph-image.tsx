@@ -8,7 +8,7 @@ export const contentType = "image/png"
 
 export default function OpengraphImage() {
   return new ImageResponse(
-    <OgCard name={`${SITE.name} docs`} title="Documentation" description={SITE.tagline} colors={SITE.og} />,
+    <OgCard suffix="docs" title="Documentation" description={SITE.tagline} colors={SITE.og} />,
     size,
   )
 }

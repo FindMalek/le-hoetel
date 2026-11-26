@@ -21,8 +21,8 @@ Hostnames are `pr-<N>-<app>.preview-ritorno.findmalek.engineer`, staging apps ar
 
 - its **own postgres** container (database `ritorno`), removed when the PR closes
 - `SEED=demo`, `MESSAGING_LIVE=false` (log only, nothing is ever sent), `DEPLOY_ENV=pr-<N>` so storage keys live under the `pr-<N>/` prefix and OpenObserve traces go to the stream `pr-<N>`
-- demo logins in the comment: the hotel owner `owner.dar-zitouna@demo.ritorno.test` and the super admin, with a password derived per PR (fake data only)
-- the database login for [WhoDB](https://whodb-ritorno.findmalek.engineer), one shared container. The postgres host is internal, only WhoDB (same Dokploy network) can reach it
+- demo logins: the comment shows the hotel owner `owner.dar-zitouna@demo.ritorno.test` and the super admin email, never the password (see [signing in](#signing-in))
+- the database host for [WhoDB](https://whodb-ritorno.findmalek.engineer), one shared container. The postgres host is internal, only WhoDB (same Dokploy network) can reach it
 - links to OpenObserve, Umami and GlitchTip only when `OPENOBSERVE_PUBLIC_URL`, `UMAMI_URL` (with `UMAMI_API_TOKEN`) or `GLITCHTIP_URL` (with `GLITCHTIP_API_TOKEN`) are set in the repo, otherwise nothing is shown
 
 ## The tradeoff
@@ -33,7 +33,19 @@ Reusing staging is cheaper and faster (no build, no database) but not isolated.
 - the preview frontend talks to the staging api from another origin. The staging api needs `ALLOW_PREVIEW_ORIGINS=true`, which trusts `*.preview-ritorno.findmalek.engineer` and `*.findmalek.engineer` for sign in. Never set it in production
 - sign in redirects built by the api use the staging dashboard url, so after login you may land on staging instead of the preview. Open the preview url again, the session cookie belongs to the preview origin
 - a PR that changes the api gets full isolation, so put the api change and the frontend change in the same PR when you need to test them together
-- WhoDB can reach every database on the Dokploy network if you know its host and password. The preview password is derived and visible in the PR comment, which is fine for demo data and not for anything else
+- WhoDB can reach every database on the Dokploy network if you know its host and password, so it must only be reachable on the tailnet, never on a public domain
+
+## Signing in
+
+The repo is public, so the PR comment and the job summary never hold a password. Every password of a preview is derived from `DOKPLOY_TOKEN`, the PR number and `PREVIEW_SECRET_VERSION` in `.github/scripts/preview-lib.mjs`. A maintainer with the token computes them locally:
+
+```bash
+DOKPLOY_TOKEN=... pnpm preview:creds 123
+```
+
+It prints the password shared by the demo owner and the super admin, and the postgres password to enter in WhoDB with the host from the comment.
+
+Older comments printed the passwords. Each preview run edits its sticky comment, but GitHub keeps the edit history, so treat those values as leaked. Bumping `PREVIEW_SECRET_VERSION` rotates every derived secret: the next run of an open PR sets new passwords and recreates its postgres (demo data only). Bump it again whenever a derived value leaks.
 
 ## Needed in the repo
 

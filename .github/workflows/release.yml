@@ -1,71 +1,78 @@
 name: release
 
-# release-please keeps a release PR open on main (version, CHANGELOG.md, docs/releases/<version>.md).
-# Merging it tags a release, and a published release deploys production.
-# Manual run with `tag` redeploys any older tag (rollback).
+# Manual. Run from the Actions tab on main: bumps the last vX.Y.Z tag, writes notes from the PRs merged since
+# (grouped by type:* label), tags, creates the GitHub release and deploys production from the tag.
+# dry_run (default) only prints the version and the notes. A release published by hand also deploys.
+# Rollback: set `tag` to an older tag, nothing is released and that tag is redeployed.
 # Needs the same Dokploy variables as staging plus DOKPLOY_PRODUCTION_COMPOSE_ID and PRODUCTION_API_URL.
 
 on:
-  push:
-    branches: [main]
   release:
     types: [published]
   workflow_dispatch:
     inputs:
+      bump:
+        description: version part to bump
+        type: choice
+        options: [minor, patch, major]
+        default: minor
+      dry_run:
+        description: only print the version and notes
+        type: boolean
+        default: true
       tag:
-        description: "tag to deploy to production (rollback: an older tag)"
-        required: true
+        description: "rollback: deploy this existing tag instead of releasing"
+        required: false
+        default: ""
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
-  release-please:
-    if: github.event_name == 'push'
+  release:
+    if: github.event_name == 'workflow_dispatch' && inputs.tag == ''
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     outputs:
-      release_created: ${{ steps.rp.outputs.release_created }}
-      tag_name: ${{ steps.rp.outputs.tag_name }}
-      pr_json: ${{ steps.rp.outputs.pr }}
+      tag: ${{ steps.publish.outputs.tag }}
     steps:
-      - id: rp
-        uses: googleapis/release-please-action@v4
-        with:
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-
-  notes:
-    needs: release-please
-    if: needs.release-please.outputs.pr_json != ''
-    runs-on: ubuntu-latest
-    steps:
-      - id: pr
-        env:
-          PR_JSON: ${{ needs.release-please.outputs.pr_json }}
-        run: echo "branch=$(echo "$PR_JSON" | jq -r .headBranchName)" >> "$GITHUB_OUTPUT"
+      - name: main only
+        if: github.ref != 'refs/heads/main'
+        run: echo "run the release from main" && exit 1
       - uses: actions/checkout@v7
         with:
-          ref: ${{ steps.pr.outputs.branch }}
           fetch-depth: 0
-      - run: git fetch origin main --tags
-      - run: node .github/scripts/release-notes.mjs
-      - name: push notes
+      - id: notes
+        run: node .github/scripts/release-notes.mjs
+        env:
+          BUMP: ${{ inputs.bump }}
+          GH_TOKEN: ${{ github.token }}
+      - run: cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
+      - id: publish
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.notes.outputs.tag }}
         run: |
-          git add docs/releases
-          git diff --cached --quiet && exit 0
-          git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -m "docs(release): draft notes"
-          git push
+          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes-file release-notes.md
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
   deploy-production:
-    needs: release-please
-    if: always() && (needs.release-please.outputs.release_created == 'true' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+    needs: release
+    # A release made with the workflow token does not fire `release: published`, so it deploys from here once.
+    if: always() && (github.event_name == 'release' || inputs.tag != '' || needs.release.outputs.tag != '')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
       group: production
       cancel-in-progress: false
     steps:
+      - name: tag only
+        env:
+          REF: ${{ inputs.tag || needs.release.outputs.tag || github.event.release.tag_name }}
+        run: '[[ "$REF" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "production deploys a vX.Y.Z tag, got $REF"; exit 1; }'
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
@@ -73,7 +80,7 @@ jobs:
       - run: node .github/scripts/deploy.mjs
         env:
           TARGET: production
-          REF: ${{ inputs.tag || needs.release-please.outputs.tag_name || github.event.release.tag_name }}
+          REF: ${{ inputs.tag || needs.release.outputs.tag || github.event.release.tag_name }}
           DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
           DOKPLOY_TOKEN: ${{ secrets.DOKPLOY_TOKEN }}
           DOKPLOY_PRODUCTION_COMPOSE_ID: ${{ vars.DOKPLOY_PRODUCTION_COMPOSE_ID }}

@@ -174,3 +174,36 @@ test("the audit log filters by hotel, actor and dates, and pages", async () => {
   expect((await admin.client.admin.audit.list({ hotelId: hotel.id, from: future })).entries).toEqual([])
   expect(await admin.client.admin.audit.actions()).toContain("hotel.create")
 })
+
+test("a suspended hotel is closed to its team, the owner keeps the read-only export", async () => {
+  const ownerAccount = await app.signUp("paused-owner@ritorno.test")
+  const hotelId = await app.createHotel("paused-hotel", ownerAccount)
+  const owner = await app.joinHotel(ownerAccount, hotelId, "owner")
+  const manager = await app.joinHotel(await app.signUp("paused-manager@ritorno.test"), hotelId, "manager")
+  await app.services.db
+    .update(hotelSettings)
+    .set({ status: "suspended" })
+    .where(eq(hotelSettings.organizationId, hotelId))
+
+  await expect(owner.client.guests.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
+  await expect(manager.client.hotel.get()).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect((await owner.client.guests.exportAll()).guests).toEqual([])
+})
+
+test("only the app admin renames a hotel or changes its slug, and a taken slug is refused", async () => {
+  const admin = await app.signUp("rename-admin@ritorno.test", { role: "admin" })
+  const ownerAccount = await app.signUp("rename-owner@ritorno.test")
+  const hotelId = await app.createHotel("rename-before", ownerAccount)
+  await app.createHotel("rename-taken", await app.signUp("rename-other@ritorno.test"))
+  const owner = await app.joinHotel(ownerAccount, hotelId, "owner")
+
+  await expect(owner.client.admin.hotels.update({ id: hotelId, slug: "owner-pick" })).rejects.toMatchObject({
+    code: "FORBIDDEN",
+  })
+  await expect(admin.client.admin.hotels.update({ id: hotelId, slug: "rename-taken" })).rejects.toMatchObject({
+    code: "CONFLICT",
+  })
+  expect(
+    await admin.client.admin.hotels.update({ id: hotelId, name: "Dar Renamed", slug: "rename-after" }),
+  ).toMatchObject({ name: "Dar Renamed", slug: "rename-after" })
+})

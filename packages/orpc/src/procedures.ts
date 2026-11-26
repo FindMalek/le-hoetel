@@ -1,5 +1,6 @@
 import { ORPCError, os } from "@orpc/server"
 import { hotelRoles } from "@ritorno/auth/access"
+import { logger } from "@ritorno/logger"
 import type { Context } from "./context"
 import { type ActiveHotel, resolveHotel } from "./lib/hotel"
 import { activeMembership } from "./lib/org"
@@ -7,14 +8,14 @@ import { enforceRateLimit, RATE_LIMITS } from "./lib/rate-limit"
 
 export const o = os.$context<Context>()
 
-/** Unexpected errors are logged with the procedure path; ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
+/** Unexpected errors are logged with the procedure path (a database error as its class and code only); ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
 const logErrors = o.middleware(async (options) => {
   const route = options.path.join(".")
   await enforceRateLimit(options.context, route, RATE_LIMITS.default)
   try {
     return await options.next()
   } catch (error) {
-    if (!(error instanceof ORPCError)) console.error(`[${route}]`, error)
+    if (!(error instanceof ORPCError)) logger.error("procedure failed", { route, err: error })
     throw error
   }
 })
@@ -62,6 +63,14 @@ const requireHotel = o.middleware(async ({ context, next }) => {
  * on `context.hotel.hotelId`, and never on an id taken from the input.
  */
 export const hotelProcedure = protectedProcedure.use(requireHotel)
+
+const requireHotelExport = o.middleware(async ({ context, next }) => {
+  const hotel = await resolveHotel(context, { readOnlyExport: true })
+  return next({ context: { hotel } })
+})
+
+/** Like `hotelProcedure`, but the owner of a suspended hotel still gets through: for the read-only guest exports only. */
+export const hotelExportProcedure = protectedProcedure.use(requireHotelExport)
 
 type Permission = Parameters<(typeof hotelRoles)["owner"]["authorize"]>[0]
 

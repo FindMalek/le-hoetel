@@ -1,6 +1,7 @@
 "use client"
 
 import { orgClient } from "@ritorno/auth/orgs"
+import { Logo } from "@ritorno/ui/brand/logo"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
-import { BrandMark } from "@/components/brand-mark"
 
 const Initial = ({ name }: { name: string }) => (
   <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary font-semibold text-primary-foreground">
@@ -37,7 +37,7 @@ export function HotelSwitcher({ hotels, activeId }: { hotels: HotelChoice[]; act
   if (!active)
     return (
       <SidebarMenuButton size="lg" render={<Link href="/" />}>
-        <BrandMark />
+        <Logo />
       </SidebarMenuButton>
     )
 

@@ -61,7 +61,16 @@ export const logoUploadSchema = z.object({
   headers: z.record(z.string(), z.string()),
 })
 
+/** Printed in every QR code url: changing it on a live hotel breaks the codes already printed. */
+const hotelSlug = z
+  .string()
+  .trim()
+  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Lowercase letters, digits and dashes.")
+  .max(60)
+
 export const hotelAdminUpdateSchema = hotelUpdateSchema.extend({
+  name: text(80).optional(),
+  slug: hotelSlug.optional(),
   plan: z.enum(HOTEL_PLANS).optional(),
   status: z.enum(HOTEL_STATUSES).optional(),
   pilotEndsAt: z.date().nullable().optional(),
@@ -80,11 +89,7 @@ export const hotelSchema = hotelBrandingInputSchema.extend({
 
 export const hotelCreateSchema = z.object({
   name: text(80),
-  slug: z
-    .string()
-    .trim()
-    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Lowercase letters, digits and dashes.")
-    .max(60),
+  slug: hotelSlug,
   ownerEmail: z.email(),
   displayName: text(80).optional(),
   primaryColor: hexColor.optional(),
