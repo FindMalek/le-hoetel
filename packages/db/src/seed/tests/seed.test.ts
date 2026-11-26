@@ -21,7 +21,11 @@ beforeAll(async () => {
 })
 afterAll(() => testDb.close())
 
-const OPTS = { hashPassword: async (p: string) => `hash:${p}`, demoPassword: "pw" }
+const OPTS = {
+  hashPassword: async (p: string) => `hash:${p}`,
+  demoPassword: "pw",
+  databaseUrl: "postgres://localhost/demo",
+}
 
 test("seeding twice leaves the first run's data alone", async () => {
   const { db } = testDb
@@ -46,7 +50,8 @@ test("seeding twice leaves the first run's data alone", async () => {
 
   expect(await seedDemo(db, OPTS)).toBe(false)
   expect(await totals()).toEqual(first)
-})
+  // Two full seeds of some 40k rows: slower than the default 5s on a busy machine.
+}, 60_000)
 
 test("every seeded guest and account is unreachable", async () => {
   const people = await testDb.db.select({ phone: guests.phoneE164, email: guests.email }).from(guests)

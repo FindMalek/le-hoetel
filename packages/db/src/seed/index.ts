@@ -32,7 +32,7 @@ import {
   user,
 } from "../schema"
 import { buildActivityScenario } from "./activity"
-import { assertSeedable } from "./guard"
+import { assertSeedable, type SeedTarget } from "./guard"
 import { buildHotelScenario } from "./hotels"
 import { uploadDemoLogos } from "./logos"
 import { buildMessageScenario } from "./messages"
@@ -40,19 +40,18 @@ import { buildOfferScenario } from "./offers"
 import { buildScenario } from "./scenario"
 import { buildSurveyScenario } from "./surveys"
 
-export { assertSeedable } from "./guard"
+export { assertSeedable, seedRefusal } from "./guard"
 export { buildHotelScenario } from "./hotels"
 export { buildOfferScenario } from "./offers"
 export { buildScenario } from "./scenario"
 export { buildSurveyScenario } from "./surveys"
 
-export interface SeedOptions {
+/** `databaseUrl` is the one `db` is connected to: it is what keeps the demo out of a remote database. */
+export interface SeedOptions extends SeedTarget {
   ownerId?: string
   /** The demo accounts share one password; pass the auth library's hasher so they can sign in. */
   hashPassword: (password: string) => Promise<string>
   demoPassword?: string
-  /** `production` is refused. */
-  deployEnv?: string
   /** Where the demo logos go. Without it the hotels show their initial. */
   storage?: Pick<Storage, "prefix" | "put"> | null
   /** Used by the links inside the message previews. */

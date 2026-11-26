@@ -43,7 +43,9 @@ Emails are on `demo.ritorno.test` (`.test` never resolves). Phone numbers come f
 
 Only the first is an official reservation, check the other three again if an operator opens those blocks. On top of that the notifier never hands a demo address or number to a provider, even with `MESSAGING_LIVE=true`.
 
-The seed refuses to run with `DEPLOY_ENV=production` (the api ignores `SEED=demo` there), and with `DEPLOY_ENV` unset or `local` it refuses a database that is not on this machine. To reseed staging see the [deploy runbook](/docs/deploy-runbook#reseed-staging).
+The seed refuses to run with `DEPLOY_ENV=production`, and with `DEPLOY_ENV` unset or `local` it refuses a database that is not on this machine (`localhost`, `127.0.0.1`, `::1` or the compose service `postgres`). `pnpm db:seed` fails there, the api logs a warning, skips the seed and starts. Staging (`DEPLOY_ENV=staging`) and previews (`pr-<N>`) seed their own databases.
+
+Self-hosting with `docker-compose.yml` defaults to `DEPLOY_ENV=production`, so `SEED=demo` alone does nothing there. For a throwaway demo stack set `DEPLOY_ENV` to another name, such as `demo`, as well. That compose file does not pass `DEMO_PASSWORD` through, so the accounts get the public default: never expose such a stack with real data. To reseed staging see the [deploy runbook](/docs/deploy-runbook#reseed-staging).
 
 A feature that adds tables adds its rows to a scenario file in `packages/db/src/seed`, its insert to `seedDemo` and a test.
 

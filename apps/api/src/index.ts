@@ -2,7 +2,6 @@ import { resolveModel } from "@ritorno/ai"
 import { createAuth } from "@ritorno/auth"
 import { createDb } from "@ritorno/db"
 import { runMigrations } from "@ritorno/db/migrate"
-import { seedDemo } from "@ritorno/db/seed"
 import { loadApiEnv } from "@ritorno/env/api"
 import { authEmails, createNotifier } from "@ritorno/notification"
 import { createRateLimiter } from "@ritorno/orpc"
@@ -13,6 +12,7 @@ import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 import { startOpenObserve } from "./openobserve"
 import { PREVIEW_ORIGINS } from "./origins"
+import { seedOnBoot } from "./seed"
 import { initSentry } from "./sentry"
 import { createServer } from "./server"
 
@@ -53,19 +53,17 @@ const storage = createStorage({
   secretAccessKey: env.S3_SECRET_ACCESS_KEY,
   prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
 })
-if (env.SEED === "demo" && env.DEPLOY_ENV === "production") console.warn("SEED=demo is ignored in production")
-else if (env.SEED === "demo") {
-  const hashPassword = (await auth.$context).password.hash
-  const seeded = await seedDemo(db, {
+if (env.SEED === "demo") {
+  await seedOnBoot(db, {
     ownerId: adminId,
-    hashPassword,
+    hashPassword: (await auth.$context).password.hash,
     demoPassword: env.DEMO_PASSWORD,
     deployEnv: env.DEPLOY_ENV,
+    databaseUrl: env.DATABASE_URL,
     storage,
     webUrl: env.WEB_URL,
     apiUrl: env.API_PUBLIC_URL,
   })
-  if (seeded) console.info("seeded demo data")
 }
 
 const fetch = createServer(

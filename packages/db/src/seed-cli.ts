@@ -5,7 +5,7 @@ import { assertSeedable, seedDemo } from "./seed/index"
 
 const { DATABASE_URL, DEPLOY_ENV, DEMO_PASSWORD, WEB_URL, API_PUBLIC_URL, S3_PREFIX } = process.env
 // Before anything connects, so a production url is never even opened.
-assertSeedable({ deployEnv: DEPLOY_ENV, databaseUrl: DATABASE_URL })
+assertSeedable({ deployEnv: DEPLOY_ENV, databaseUrl: DATABASE_URL! })
 const db = createDb(DATABASE_URL!)
 const storage = createStorage({
   endpoint: process.env.S3_ENDPOINT,
@@ -19,6 +19,7 @@ const seeded = await seedDemo(db, {
   hashPassword,
   demoPassword: DEMO_PASSWORD,
   deployEnv: DEPLOY_ENV,
+  databaseUrl: DATABASE_URL!,
   storage,
   webUrl: WEB_URL,
   apiUrl: API_PUBLIC_URL,
