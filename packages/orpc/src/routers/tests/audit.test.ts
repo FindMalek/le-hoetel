@@ -44,6 +44,35 @@ test("a hotel reads only its own log, without platform identities, and staff are
   await expect(staff.client.audit.list({})).rejects.toMatchObject({ code: "FORBIDDEN" })
 })
 
+test("what an admin does signed in as the owner is Ritorno's, not the owner's", async () => {
+  const mine = await hotel("audit-imp")
+  const admin = await app.signUp("audit-imp-admin@ritorno.test", { role: "admin" })
+  await app.services.db.delete(auditLog)
+  const started = await app.services.auth.api.impersonateUser({
+    body: { userId: mine.ownerId },
+    headers: admin.headers,
+    returnHeaders: true,
+  })
+  const cookie = [admin.headers.get("cookie"), ...started.headers.getSetCookie().map((line) => line.split(";")[0])]
+  // Later cookies win, like in a browser.
+  const jar = new Map(
+    cookie
+      .join("; ")
+      .split("; ")
+      .map((part) => [part.split("=")[0], part]),
+  )
+  const headers = new Headers({ cookie: [...jar.values()].join("; "), "x-csrf-token": "orpc" })
+  const asOwner = await app.joinHotel({ id: mine.ownerId, headers, client: mine.client }, mine.hotelId, "owner")
+  await asOwner.client.offers.create({ title: "Spa", promoCode: "SPA" })
+
+  const { entries } = await mine.client.audit.list({})
+  expect(entries.map((entry) => [entry.action, entry.actorEmail, entry.platform])).toEqual([
+    ["offer.create", null, true],
+  ])
+  expect((await mine.client.audit.list({ actorId: mine.ownerId })).entries).toEqual([])
+  expect((await mine.client.audit.filters()).actors).toEqual([])
+})
+
 test("date filters are days on the hotel's clock", async () => {
   const mine = await hotel("audit-days")
   await app.services.db.delete(auditLog)

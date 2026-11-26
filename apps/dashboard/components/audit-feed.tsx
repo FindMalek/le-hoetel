@@ -42,6 +42,7 @@ interface ListProps {
 }
 
 type FeedProps<T> = ListProps & {
+  caption: string
   query: FeedState<T>
   columns: DataColumn<T>[]
   card: (entry: T) => ReactNode
@@ -74,7 +75,7 @@ function LoadMore({ query }: { query: FeedState<unknown> }) {
   )
 }
 
-function Feed<T extends { id: string }>({ query, columns, card, filters, filtered, resetHref }: FeedProps<T>) {
+function Feed<T extends { id: string }>({ caption, query, columns, card, filters, filtered, resetHref }: FeedProps<T>) {
   const t = useTranslations("adminAudit")
   const rows = query.data?.pages.flatMap((page) => page.entries) ?? []
   const empty = filtered ? (
@@ -113,7 +114,7 @@ function Feed<T extends { id: string }>({ query, columns, card, filters, filtere
   return (
     <div className="flex flex-col gap-4">
       <DataList
-        caption={t("title")}
+        caption={caption}
         rows={rows}
         columns={columns}
         getRowKey={(entry) => entry.id}
@@ -182,6 +183,7 @@ export function AdminAuditFeed({ filter, ...list }: ListProps & { filter: AdminA
   return (
     <Feed
       {...list}
+      caption={t("title")}
       query={query}
       columns={columns}
       card={(entry) => (
@@ -238,6 +240,7 @@ export function HotelAuditFeed({
   return (
     <Feed
       {...list}
+      caption={t("hotel.title")}
       query={query}
       columns={columns}
       card={(entry) => (
