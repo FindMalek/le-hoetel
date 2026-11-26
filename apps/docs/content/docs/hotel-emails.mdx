@@ -22,7 +22,7 @@ The sender name is the hotel name. The caller sets it, along with the `List-Unsu
 
 ## Branding
 
-Branding is data, never code per hotel. The primary color is the button and the accent color is the top bar and the offer border. The text on each is black or white, whichever reads better (`readableForeground`). When a brand color is too faint on the dark page, the button falls back to the neutral dark theme color. The logo sits on a white chip in dark mode so a dark logo never disappears. Without an address the footer shows a placeholder, so fill it in for every hotel.
+Branding is data, never code per hotel. The primary color is the button and the accent color is the top bar and the offer border. The text on each is black or white, whichever reads better (`readableForeground`). When a brand color is too faint on the dark page, the button falls back to the neutral dark theme color. The logo sits on a white chip in dark mode so a dark logo never disappears. Without an address the footer shows the hotel name alone. In dark mode the offer border keeps the accent color, with the same fallback as the button.
 
 ## What works in hospitality email
 
@@ -38,16 +38,17 @@ Tables only, inline styles, a `prefers-color-scheme` block for dark mode. This h
 
 ## Copy and languages
 
-All strings are in `packages/notification/src/hotel-email/copy`, one file per language (`en.ts`, `fr.ts`, `ar.ts`), so a reviewer reads one file. Arabic renders with `dir="rtl"`, taken from `htmlAttributes` in `@ritorno/i18n`, and names are isolated so a Latin name doesn't reorder the sentence.
+All strings are in `packages/notification/src/hotel-email/copy`, one file per language (`en.ts`, `fr.ts`, `ar.ts`), so a reviewer reads one file. Arabic renders with `dir="rtl"`, taken from `htmlAttributes` in `@ritorno/i18n`. Names, offer texts, hotel-written messages and alert values are isolated (`packages/notification/src/bidi.ts`), so Latin text doesn't reorder the sentence or move its full stop.
 
 ## Tests
 
-`render.test.ts` snapshots every template in every language. After a copy change run `bun test --update-snapshots` in `packages/notification` and read the diff.
+`packages/notification/src/tests/matrix.ts` renders every email in every language it is written in, with made-up data and nothing sent. Hotel emails, the manager alert and the weekly digest exist in en, fr and ar; account emails are English only. A new template or locale joins the matrix.
+
+- `render.test.ts` snapshots the subject and plain text of the hotel emails, and asserts direction, branding, the unsubscribe link, no English left in fr or ar, and isolation of mixed-direction text. After a copy change run `bun test --update-snapshots` in `packages/notification` and read the diff.
+- `apps/e2e/tests/email.spec.ts` opens the matrix in chromium at 375px, light and dark: no horizontal scroll, direction, 44px buttons, a visible unsubscribe link and readable contrast. It checks layout instead of pixel baselines, because fonts differ per machine. Every run attaches screenshots to the Playwright report. It does not stand in for a look in Gmail or Outlook.
 
 ## Preview in the dashboard
 
 `/emails` shows any template in any language as a sample guest sees it: light or dark, desktop or phone width. The mail is rendered by the api (`emails.preview`) with the hotel's own colors and logo, and shown in a sandboxed iframe (`srcdoc`, no scripts). The sample guest is made up, never a real one.
 
 `Send test to me` (`emails.sendTest`) sends the same email with a `[Test]` subject prefix to the signed in user's own address only, never to an address from the input. It is limited to 5 per 10 minutes per user. Outside production with live messaging it only logs, like every other message.
-
-The hotel address is not stored yet, so the footer shows its placeholder until the hotel settings get one.

@@ -8,7 +8,7 @@ export const fr: Copy = {
     footerReason: "Vous recevez cet e-mail car vous avez communiqué votre adresse à {hotel}.",
     unsubscribe: "Se désabonner",
     offerValidUntil: "Valable jusqu'au {date}",
-    offerCode: "Votre code",
+    offerCode: "Votre code\u00a0:",
     dateFormat: "{day} {month} {year}",
     months: [
       "janvier",

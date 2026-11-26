@@ -102,13 +102,13 @@ const message: Builder<"message"> = (ctx, { subject, title, body, offer, ctaUrl,
   preview: ctx.t(title),
   body: (
     <>
-      <Title ctx={ctx}>{ctx.t(title)}</Title>
+      <Title ctx={ctx}>{ctx.own(ctx.t(title))}</Title>
       {ctx
         .t(body)
         .split(/\n{2,}/)
         .map((text) => (
           <Paragraph key={text} ctx={ctx}>
-            {text}
+            {ctx.own(text)}
           </Paragraph>
         ))}
       {offer ? <OfferCard ctx={ctx} offer={offer} /> : null}

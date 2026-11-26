@@ -1,9 +1,12 @@
 import { Body, Button, Container, Head, Hr, Html, Img, Link, Preview, Section, Text } from "@react-email/components"
 import { DEFAULT_LOCALE, htmlAttributes, type Locale } from "@ritorno/i18n/config"
 import { type CSSProperties, createContext, type ReactNode, useContext } from "react"
+import { isolate } from "../bidi"
 import { BRAND, brandFonts } from "../brand"
 
 const { light, dark } = BRAND
+
+const SENT_BY: Record<Locale, string> = { en: "Sent by", fr: "Envoyé par", ar: "أُرسلت بواسطة" }
 
 /** Shared by every template; the notifier fills `appUrl` from the api's public app url. */
 export interface BaseProps {
@@ -100,7 +103,7 @@ export function Layout({
               {children}
               <Section style={{ padding: "16px 8px 0" }}>
                 <Text className="e-mut" style={{ ...base(sans), color: light.muted, fontSize: 12, lineHeight: "18px" }}>
-                  {footer ?? `Sent by ${BRAND.name}${host ? ` · ${host}` : ""}`}
+                  {footer ?? `${SENT_BY[locale]} ${BRAND.name}${host ? ` · ${host}` : ""}`}
                 </Text>
               </Section>
             </Container>
@@ -178,6 +181,8 @@ export function Paragraph({ children, muted = false }: { children: ReactNode; mu
       style={{
         ...base(sans),
         margin: "16px 0 0",
+        // Muted notes sit under the card, so they line up with the footer.
+        padding: muted ? "0 8px" : 0,
         color: muted ? light.muted : light.foreground,
         fontSize: muted ? 13 : 16,
         lineHeight: muted ? "20px" : "26px",
@@ -304,13 +309,14 @@ export function Divider() {
 /** Key and value pairs in rows with 1px rules between them. */
 export function Rows({ rows }: { rows: { label: string; value: string }[] }) {
   const { sans } = useFonts()
+  const rtl = useContext(RtlContext)
   return (
     <Section style={{ margin: "20px 0 0" }}>
       {rows.map((row) => (
         <Section key={row.label} className="e-bd" style={{ borderTop: `1px solid ${light.border}`, padding: "12px 0" }}>
           <Label muted>{row.label}</Label>
           <Text className="e-fg" style={{ ...base(sans), margin: "2px 0 0", fontSize: 15, lineHeight: "22px" }}>
-            {row.value}
+            {rtl ? isolate(row.value) : row.value}
           </Text>
         </Section>
       ))}
