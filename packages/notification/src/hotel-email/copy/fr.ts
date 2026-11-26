@@ -7,6 +7,7 @@ export const fr: Copy = {
     team: "L'équipe {hotel}",
     footerReason: "Vous recevez cet e-mail car vous avez communiqué votre adresse à {hotel}.",
     unsubscribe: "Se désabonner",
+    poweredBy: "Envoyé avec Ritorno",
     offerValidUntil: "Valable jusqu'au {date}",
     offerCode: "Votre code",
     dateFormat: "{day} {month} {year}",

@@ -1,20 +1,9 @@
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Img,
-  Link,
-  Preview,
-  Section,
-  Text,
-} from "@react-email/components"
+import { Body, Container, Head, Heading, Html, Img, Link, Preview, Section, Text } from "@react-email/components"
 import { contrastRatio, MIN_UI_CONTRAST, readableForeground } from "@ritorno/common/color"
 import { htmlAttributes, type Locale } from "@ritorno/i18n/config"
 import type { CSSProperties, ReactNode } from "react"
-import { BRAND } from "../brand"
+import { BRAND, brandFonts } from "../brand"
+import { PillButton } from "../templates/primitives"
 import type { Copy } from "./copy"
 import { fill } from "./copy"
 import type { EmailGuest, EmailHotel, EmailOffer } from "./types"
@@ -35,6 +24,8 @@ export interface Theme {
   dir: "ltr" | "rtl"
   /** Outlook's Word engine ignores `text-align: start`, so alignment is explicit. */
   align: "left" | "right"
+  sans: string
+  display: string
   primary: string
   onPrimary: string
   accent: string
@@ -58,6 +49,7 @@ export function buildTheme(hotel: EmailHotel, locale: Locale): Theme {
   return {
     dir,
     align: dir === "rtl" ? "right" : "left",
+    ...brandFonts(dir === "rtl"),
     primary,
     onPrimary: readableForeground(primary),
     accent,
@@ -84,6 +76,7 @@ export const createCtx = (hotel: EmailHotel, guest: EmailGuest, locale: Locale, 
 const css = (theme: Theme): string => `
 :root { color-scheme: light dark; supported-color-schemes: light dark; }
 @media (prefers-color-scheme: dark) {
+  .e-cv { background-color: ${dark.canvas} !important; }
   .e-bg { background-color: ${dark.background} !important; }
   .e-fg { color: ${dark.foreground} !important; }
   .e-mut { color: ${dark.muted} !important; }
@@ -95,94 +88,129 @@ const css = (theme: Theme): string => `
 }
 @media only screen and (max-width: 480px) {
   .e-pad { padding-left: 20px !important; padding-right: 20px !important; }
-  .e-cta { display: block !important; text-align: center !important; }
+  .e-btn { width: 100% !important; }
+  .e-btn a { display: block !important; text-align: center !important; }
 }
 `
 
 const text = (theme: Theme): CSSProperties => ({
   margin: 0,
-  fontFamily: BRAND.fontSans,
+  fontFamily: theme.sans,
   color: light.foreground,
   textAlign: theme.align,
+})
+
+const small = (theme: Theme): CSSProperties => ({
+  ...text(theme),
+  color: light.muted,
+  fontSize: 13,
+  lineHeight: "20px",
 })
 
 export function Layout({ ctx, preview, children }: { ctx: Ctx; preview: string; children: ReactNode }) {
   const { hotel, guest, copy, theme, locale, t } = ctx
   const { lang, dir } = htmlAttributes(locale)
   return (
-    <Html lang={lang} dir={dir} style={{ backgroundColor: light.background }} className="e-bg">
+    <Html lang={lang} dir={dir} style={{ backgroundColor: light.canvas }} className="e-cv">
       <Head>
         <meta name="color-scheme" content="light dark" />
         <meta name="supported-color-schemes" content="light dark" />
         <style>{css(theme)}</style>
       </Head>
       <Preview>{preview}</Preview>
-      <Body className="e-bg" style={{ margin: 0, padding: 0, backgroundColor: light.background }}>
-        <Container style={{ width: "100%", maxWidth: 600, margin: "0 auto" }} dir={dir}>
-          <Section
-            className="e-ac"
-            style={{ height: 6, lineHeight: "6px", fontSize: 0, backgroundColor: theme.accent }}
-          >
-            &nbsp;
-          </Section>
-          <Section className="e-pad" style={{ padding: "28px 32px 0" }}>
-            {hotel.logoUrl ? (
-              <Img
-                src={hotel.logoUrl}
-                alt={hotel.name}
-                height={48}
-                className="e-logo"
-                style={{ display: "block", height: 48, width: "auto", maxWidth: 200, borderRadius: 4 }}
-              />
-            ) : (
-              <Text className="e-fg" style={{ ...text(theme), fontSize: 20, lineHeight: "28px", fontWeight: 700 }}>
-                {hotel.name}
-              </Text>
-            )}
-          </Section>
-          <Section className="e-pad" style={{ padding: "24px 32px 8px" }}>
-            {children}
-            <Text className="e-fg" style={{ ...text(theme), margin: "28px 0 0", fontSize: 16, lineHeight: "24px" }}>
-              {copy.common.signoff}
-              <br />
-              {t(copy.common.team)}
-            </Text>
-          </Section>
-          <Section
-            className="e-pad e-bd"
-            style={{ padding: "20px 32px 32px", borderTop: `1px solid ${light.border}`, marginTop: 24 }}
-          >
-            <Text className="e-mut" style={{ ...text(theme), color: light.muted, fontSize: 13, lineHeight: "20px" }}>
-              {t(copy.common.footerReason)}
-            </Text>
-            <Text
-              className="e-mut"
-              style={{ ...text(theme), margin: "8px 0 0", color: light.muted, fontSize: 13, lineHeight: "20px" }}
+      <Body className="e-cv" style={{ margin: 0, padding: 0, backgroundColor: light.canvas }}>
+        {/* Body copies its background onto an inner cell without the class, so dark mode needs this wrapper. */}
+        <Section className="e-cv" style={{ backgroundColor: light.canvas }}>
+          <Container style={{ width: "100%", maxWidth: 600, margin: "0 auto", padding: "24px 12px" }} dir={dir}>
+            <Section
+              className="e-bg e-bd"
+              style={{
+                backgroundColor: light.background,
+                border: `1px solid ${light.border}`,
+                borderRadius: BRAND.radius,
+              }}
             >
-              {hotel.address ? `${hotel.name} · ${hotel.address}` : hotel.name}
-            </Text>
-            <Text style={{ ...text(theme), margin: "8px 0 0", fontSize: 13, lineHeight: "20px" }}>
-              <Link
-                href={guest.unsubscribeUrl}
-                className="e-mut"
-                style={{ color: light.muted, textDecoration: "underline" }}
+              <Section
+                className="e-ac"
+                style={{
+                  height: 6,
+                  lineHeight: "6px",
+                  fontSize: 0,
+                  backgroundColor: theme.accent,
+                  borderRadius: `${BRAND.radius - 1}px ${BRAND.radius - 1}px 0 0`,
+                }}
               >
-                {copy.common.unsubscribe}
-              </Link>
-            </Text>
-          </Section>
-        </Container>
+                &nbsp;
+              </Section>
+              <Section className="e-pad" style={{ padding: "28px 32px 0" }}>
+                {hotel.logoUrl ? (
+                  <Img
+                    src={hotel.logoUrl}
+                    alt={hotel.name}
+                    height={48}
+                    className="e-logo"
+                    style={{ display: "block", height: 48, width: "auto", maxWidth: 200, borderRadius: 8 }}
+                  />
+                ) : (
+                  <Text className="e-fg" style={{ ...text(theme), fontSize: 18, lineHeight: "26px", fontWeight: 600 }}>
+                    {hotel.name}
+                  </Text>
+                )}
+              </Section>
+              <Section className="e-pad" style={{ padding: "28px 32px 36px" }}>
+                {children}
+                <Text className="e-fg" style={{ ...text(theme), margin: "32px 0 0", fontSize: 16, lineHeight: "24px" }}>
+                  {copy.common.signoff}
+                  <br />
+                  {t(copy.common.team)}
+                </Text>
+              </Section>
+            </Section>
+            <Section className="e-pad" style={{ padding: "20px 32px 8px" }}>
+              <Text className="e-mut" style={small(theme)}>
+                {t(copy.common.footerReason)}
+              </Text>
+              <Text className="e-mut" style={{ ...small(theme), margin: "8px 0 0" }}>
+                {hotel.address ? `${hotel.name} · ${hotel.address}` : hotel.name}
+              </Text>
+              <Text style={{ ...small(theme), margin: "8px 0 0" }}>
+                <Link
+                  href={guest.unsubscribeUrl}
+                  className="e-mut"
+                  style={{ color: light.muted, textDecoration: "underline" }}
+                >
+                  {copy.common.unsubscribe}
+                </Link>
+              </Text>
+              <Text className="e-mut" style={{ ...small(theme), margin: "20px 0 0", fontSize: 12, lineHeight: "18px" }}>
+                {copy.common.poweredBy}
+              </Text>
+            </Section>
+          </Container>
+        </Section>
       </Body>
     </Html>
   )
 }
 
+/** The display line: serif italic in Latin scripts, upright Naskh in Arabic. */
 export function Title({ ctx, children }: { ctx: Ctx; children: ReactNode }) {
+  const { theme } = ctx
+  const rtl = theme.dir === "rtl"
   return (
     <Heading
       as="h1"
       className="e-fg"
-      style={{ ...text(ctx.theme), margin: "0 0 16px", fontSize: 28, lineHeight: "34px", fontWeight: 700 }}
+      style={{
+        ...text(theme),
+        margin: "0 0 20px",
+        fontFamily: theme.display,
+        fontSize: 32,
+        lineHeight: rtl ? "46px" : "38px",
+        fontStyle: rtl ? "normal" : "italic",
+        fontWeight: rtl ? 700 : 400,
+        letterSpacing: rtl ? 0 : "-0.01em",
+      }}
     >
       {children}
     </Heading>
@@ -200,27 +228,16 @@ export function Paragraph({ ctx, children }: { ctx: Ctx; children: ReactNode }) 
 export function Cta({ ctx, href, children }: { ctx: Ctx; href: string; children: ReactNode }) {
   const { theme } = ctx
   return (
-    <Section style={{ margin: "24px 0 0", textAlign: theme.align }}>
-      <Button
+    <Section style={{ margin: "28px 0 0" }}>
+      <PillButton
         href={href}
-        className="e-pr e-cta"
-        style={{
-          display: "inline-block",
-          boxSizing: "border-box",
-          backgroundColor: theme.primary,
-          border: `1px solid ${theme.primary}`,
-          borderRadius: 8,
-          color: theme.onPrimary,
-          fontFamily: BRAND.fontSans,
-          fontSize: 16,
-          fontWeight: 600,
-          lineHeight: "24px",
-          padding: "14px 28px",
-          textDecoration: "none",
-        }}
+        background={theme.primary}
+        color={theme.onPrimary}
+        fontFamily={theme.sans}
+        align={theme.align}
       >
         {children}
-      </Button>
+      </PillButton>
     </Section>
   )
 }
@@ -244,14 +261,14 @@ export function OfferCard({ ctx, offer }: { ctx: Ctx; offer: EmailOffer }) {
         padding: 20,
         backgroundColor: light.surface,
         border: `1px solid ${theme.accent}`,
-        borderRadius: 8,
+        borderRadius: 16,
       }}
     >
-      <Text className="e-fg" style={{ ...text(theme), fontSize: 20, lineHeight: "28px", fontWeight: 700 }}>
+      <Text className="e-fg" style={{ ...text(theme), fontSize: 18, lineHeight: "26px", fontWeight: 600 }}>
         {offer.title}
       </Text>
       {offer.description ? (
-        <Text className="e-fg" style={{ ...text(theme), margin: "8px 0 0", fontSize: 15, lineHeight: "22px" }}>
+        <Text className="e-fg" style={{ ...text(theme), margin: "6px 0 0", fontSize: 15, lineHeight: "22px" }}>
           {offer.description}
         </Text>
       ) : null}
@@ -264,10 +281,7 @@ export function OfferCard({ ctx, offer }: { ctx: Ctx; offer: EmailOffer }) {
         </Text>
       ) : null}
       {until ? (
-        <Text
-          className="e-mut"
-          style={{ ...text(theme), margin: "8px 0 0", color: light.muted, fontSize: 13, lineHeight: "20px" }}
-        >
+        <Text className="e-mut" style={{ ...small(theme), margin: "8px 0 0" }}>
           {t(copy.common.offerValidUntil, { date: until })}
         </Text>
       ) : null}

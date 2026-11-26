@@ -44,7 +44,7 @@ async function invite(slug: string) {
 const cases = (hotelId: string) =>
   app.services.db.select().from(feedbackCases).where(eq(feedbackCases.hotelId, hotelId))
 
-test("a score at or below the default threshold opens a new case and alerts the manager", async () => {
+test("a score at or below the default threshold opens a new case and alerts the manager in the hotel language", async () => {
   const { hotelId, token } = await invite("survey-low")
   emails.length = 0
 
@@ -58,6 +58,8 @@ test("a score at or below the default threshold opens a new case and alerts the 
   expect(text).toContain("Pas de clim")
   expect(text).toContain("/feedback/")
   expect(text).not.toContain("+216")
+  expect(emails[0]!.email.html).toContain('lang="fr"')
+  expect(emails[0]!.email.html).toContain("Note basse de Amel")
 })
 
 test("a score above the threshold stays quiet, and the hotel can move the threshold", async () => {

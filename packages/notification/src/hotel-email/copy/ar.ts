@@ -7,6 +7,7 @@ export const ar: Copy = {
     team: "فريق {hotel}",
     footerReason: "وصلتك هذه الرسالة لأنك شاركت بريدك الإلكتروني مع {hotel}.",
     unsubscribe: "إلغاء الاشتراك",
+    poweredBy: "أُرسلت عبر Ritorno",
     offerValidUntil: "صالح حتى {date}",
     offerCode: "رمزك",
     dateFormat: "{day} {month} {year}",
