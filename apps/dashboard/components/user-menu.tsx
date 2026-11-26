@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@ritorno/ui/components/dropdown-menu"
 import { SidebarMenuButton } from "@ritorno/ui/components/sidebar"
-import { ChevronsUpDownIcon, LogOutIcon, SettingsIcon } from "lucide-react"
+import { ChevronsUpDownIcon, CircleUserIcon, LogOutIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { PreferencesMenu } from "@/components/preferences-menu"
@@ -38,14 +38,16 @@ export function UserAvatar({ me, className }: { me: Me; className?: string }) {
   )
 }
 
-/** The sidebar footer: who you are, with settings, theme, language and sign out. */
+/** The sidebar footer: who you are, with your account, language and sign out. */
 export function UserMenu({ me }: { me: Me }) {
   const t = useTranslations("shell")
   const tNav = useTranslations("nav")
   const router = useRouter()
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<SidebarMenuButton size="lg" aria-label={t("account")} />}>
+      <DropdownMenuTrigger
+        render={<SidebarMenuButton size="lg" className="hover:bg-sidebar-accent/70" aria-label={t("account")} />}
+      >
         <UserAvatar me={me} className="size-8" />
         <span className="grid flex-1 text-start text-sm leading-tight">
           <span className="truncate font-medium">{me.name}</span>
@@ -53,7 +55,7 @@ export function UserMenu({ me }: { me: Me }) {
             {me.email}
           </span>
         </span>
-        <ChevronsUpDownIcon className="ms-auto" />
+        <ChevronsUpDownIcon className="ms-auto text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="start" className="min-w-60">
         <DropdownMenuGroup>
@@ -61,8 +63,8 @@ export function UserMenu({ me }: { me: Me }) {
             {me.email}
           </DropdownMenuLabel>
           <DropdownMenuItem className="min-h-11" onClick={() => router.push("/settings")}>
-            <SettingsIcon />
-            {tNav("settings")}
+            <CircleUserIcon />
+            {tNav("account")}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

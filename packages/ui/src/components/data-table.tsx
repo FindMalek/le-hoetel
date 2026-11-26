@@ -69,7 +69,7 @@ function DataTable<T>({ columns, rows, getRowKey, card, caption, empty, footer, 
                   key={column.id}
                   scope="col"
                   className={cn(
-                    "sticky top-14 z-10 h-11 border-b bg-background px-4 text-start font-medium text-muted-foreground first:rounded-ss-lg last:rounded-se-lg",
+                    "sticky top-[var(--app-header,0px)] z-10 h-11 border-b bg-background px-4 text-start font-medium text-muted-foreground first:rounded-ss-lg last:rounded-se-lg",
                     column.align === "end" && "text-end",
                     column.showFrom && SHOW_FROM[column.showFrom],
                     column.className,

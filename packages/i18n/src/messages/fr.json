@@ -18,7 +18,18 @@
     "mainNav": "Navigation principale",
     "tabs": "Navigation rapide",
     "appearance": "Langue et compte",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "toggleSidebar": "Réduire ou agrandir la barre latérale",
+    "shortcuts": "Appuyez sur G puis une lettre pour y aller",
+    "feedback": "Avis",
+    "feedbackTitle": "Envoyer un avis",
+    "feedbackDescription": "Dites-nous ce qui vous a ralenti ou ce qui vous manque. Cela arrive directement à l'équipe.",
+    "feedbackPlaceholder": "Qu'est-ce qui pourrait être mieux ?",
+    "feedbackEmail": "E-mail (facultatif)",
+    "feedbackSend": "Envoyer",
+    "feedbackCancel": "Annuler",
+    "feedbackThanks": "Merci, bien reçu.",
+    "breadcrumb": "Fil d'Ariane"
   },
   "home": {
     "greeting": "Bonjour {name}",
@@ -203,7 +214,6 @@
     "messages": "Messages",
     "data": "Données clients",
     "hotels": "Hôtels",
-    "overview": "Vue d'ensemble",
     "guests": "Clients",
     "inbox": "Boîte de réception",
     "team": "Équipe",
@@ -214,7 +224,17 @@
     "holidays": "Fêtes",
     "adminOverview": "Vue d'ensemble",
     "campaigns": "Campagnes",
-    "metrics": "Statistiques"
+    "metrics": "Statistiques",
+    "home": "Accueil",
+    "import": "Importer",
+    "usage": "Consommation",
+    "account": "Compte",
+    "addGuest": "Ajouter un client",
+    "groupToday": "Aujourd'hui",
+    "groupGuests": "Clients",
+    "groupGrow": "Croissance",
+    "groupInsights": "Analyses",
+    "groupSettings": "Réglages"
   },
   "hotel": {
     "switch": "Changer d'hôtel",

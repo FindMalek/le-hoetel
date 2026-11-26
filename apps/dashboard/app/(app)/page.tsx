@@ -29,7 +29,6 @@ import { FirstRunChecklist } from "@/components/first-run-checklist"
 import { GuestFinder } from "@/components/guest-finder"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
-import { TopBarAction } from "@/components/top-bar"
 import { call } from "@/lib/api"
 
 export default async function HomePage() {
@@ -258,8 +257,16 @@ async function PlatformHome({ name }: { name: string }) {
   ]
   return (
     <>
-      <PageHeader title={t("greeting", { name })} description={t("adminDescription")} />
-      <TopBarAction href="/admin/hotels" label={t("hotelsAction")} icon={<BuildingIcon />} />
+      <PageHeader
+        title={t("greeting", { name })}
+        description={t("adminDescription")}
+        action={
+          <Button render={<Link href="/admin/hotels" />} nativeButton={false}>
+            <BuildingIcon data-icon="inline-start" />
+            {t("hotelsAction")}
+          </Button>
+        }
+      />
       <div className="flex flex-col gap-10 p-4 md:p-6">
         <div className="grid gap-3 sm:grid-cols-3 md:gap-4">
           <StatCard label={t("hotels")} value={hotels.length} icon={<BuildingIcon />} />

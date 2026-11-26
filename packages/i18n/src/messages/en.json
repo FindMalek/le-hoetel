@@ -18,7 +18,18 @@
     "mainNav": "Main navigation",
     "tabs": "Quick navigation",
     "appearance": "Language and account",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "toggleSidebar": "Collapse or expand the sidebar",
+    "shortcuts": "Press G then a letter to jump",
+    "feedback": "Feedback",
+    "feedbackTitle": "Send feedback",
+    "feedbackDescription": "Tell us what slowed you down or what you miss. It goes straight to the team.",
+    "feedbackPlaceholder": "What could be better?",
+    "feedbackEmail": "Email (optional)",
+    "feedbackSend": "Send",
+    "feedbackCancel": "Cancel",
+    "feedbackThanks": "Thanks, we got it.",
+    "breadcrumb": "Breadcrumb"
   },
   "home": {
     "greeting": "Hello {name}",
@@ -203,7 +214,6 @@
     "messages": "Messages",
     "data": "Guest data",
     "hotels": "Hotels",
-    "overview": "Overview",
     "guests": "Guests",
     "inbox": "Inbox",
     "team": "Team",
@@ -214,7 +224,17 @@
     "holidays": "Holidays",
     "adminOverview": "Platform overview",
     "campaigns": "Campaigns",
-    "metrics": "Metrics"
+    "metrics": "Metrics",
+    "home": "Home",
+    "import": "Import",
+    "usage": "Usage",
+    "account": "Account",
+    "addGuest": "Add guest",
+    "groupToday": "Today",
+    "groupGuests": "Guests",
+    "groupGrow": "Grow",
+    "groupInsights": "Insights",
+    "groupSettings": "Settings"
   },
   "hotel": {
     "switch": "Switch hotel",

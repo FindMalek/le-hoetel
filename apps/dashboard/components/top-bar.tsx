@@ -2,62 +2,104 @@
 
 import { Button } from "@ritorno/ui/components/button"
 import { Kbd } from "@ritorno/ui/components/kbd"
-import { SidebarTrigger } from "@ritorno/ui/components/sidebar"
-import { SearchIcon } from "lucide-react"
-import type { Route } from "next"
+import { Separator } from "@ritorno/ui/components/separator"
+import { useSidebar } from "@ritorno/ui/components/sidebar"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ritorno/ui/components/tooltip"
+import { ChevronRightIcon, PanelLeftIcon, SearchIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { useEffect, useState } from "react"
-import { createPortal } from "react-dom"
 import { openCommandPalette } from "@/components/command-palette"
-import { navFor } from "@/lib/nav"
+import { MoreSheet } from "@/components/more-sheet"
+import type { Me } from "@/components/user-menu"
+import { groupLabel, navFor } from "@/lib/nav"
 
-const ACTION_SLOT = "topbar-action"
+// i18n-used: shell.toggleSidebar
 
-/** The one primary action of a page, in the top bar: icon and label on desktop, icon only on a phone. */
-export function TopBarAction({ href, label, icon }: { href: Route; label: string; icon: React.ReactNode }) {
-  const [slot, setSlot] = useState<HTMLElement | null>(null)
-  useEffect(() => setSlot(document.getElementById(ACTION_SLOT)), [])
-  if (!slot) return null
-  return createPortal(
-    <>
-      <Button className="max-md:hidden" render={<Link href={href} />} nativeButton={false}>
-        {icon}
-        {label}
-      </Button>
-      <Button size="icon" className="md:hidden" aria-label={label} render={<Link href={href} />} nativeButton={false}>
-        {icon}
-      </Button>
-    </>,
-    slot,
+function SidebarToggle() {
+  const { toggleSidebar } = useSidebar()
+  const t = useTranslations("shell")
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={<Button variant="ghost" size="icon-sm" aria-label={t("toggleSidebar")} onClick={toggleSidebar} />}
+      >
+        <PanelLeftIcon className="rtl:-scale-x-100 text-muted-foreground" />
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        {t("toggleSidebar")}
+        <Kbd dir="ltr">⌘B</Kbd>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
-export function TopBar({ bell }: { bell: React.ReactNode }) {
+/** Where you are, not what the page is called: the section, then the page as a link once you go deeper. */
+function Crumbs() {
   const t = useTranslations("nav")
-  const tShell = useTranslations("shell")
-  const item = navFor(usePathname())
+  const pathname = usePathname()
+  const item = navFor(pathname)
+  if (!item) return null
+  const group = t(groupLabel(item.group))
+  const page = t(item.label)
   return (
-    <div className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-background/90 px-4 pt-safe backdrop-blur supports-[backdrop-filter]:bg-background/70 md:px-6">
-      <SidebarTrigger className="max-md:hidden" />
-      <p className="min-w-0 flex-1 truncate font-medium text-sm">{item ? t(item.label) : null}</p>
-      <div id={ACTION_SLOT} className="flex items-center gap-2" />
+    <ol className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-sm">
+      {group !== page ? (
+        <>
+          <li className="truncate">{group}</li>
+          <li aria-hidden>
+            <ChevronRightIcon className="rtl:-scale-x-100 size-3.5" />
+          </li>
+        </>
+      ) : null}
+      <li className="truncate">
+        {pathname === item.href ? (
+          <span aria-current="page" className="text-foreground">
+            {page}
+          </span>
+        ) : (
+          <Link href={item.href} className="rounded-sm transition-colors hover:text-foreground">
+            {page}
+          </Link>
+        )}
+      </li>
+    </ol>
+  )
+}
+
+/** Breadcrumb, search and notifications. Page titles and actions live in each page's `PageHeader`. */
+export function TopBar({ me, hotelName, bell }: { me: Me; hotelName: string | null; bell: React.ReactNode }) {
+  const t = useTranslations("shell")
+  return (
+    <div className="flex h-14 items-center gap-2 px-2 md:px-4">
+      <MoreSheet me={me} className="md:hidden" />
+      <p className="min-w-0 flex-1 truncate font-medium text-sm md:hidden">{hotelName}</p>
+      <div className="flex min-w-0 flex-1 items-center gap-3 max-md:hidden">
+        <SidebarToggle />
+        <Separator orientation="vertical" className="data-vertical:h-4 data-vertical:self-center" />
+        <nav aria-label={t("breadcrumb")} className="min-w-0">
+          <Crumbs />
+        </nav>
+      </div>
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden"
-        aria-label={tShell("search")}
+        className="size-11 md:hidden"
+        aria-label={t("search")}
         onClick={openCommandPalette}
       >
-        <SearchIcon />
+        <SearchIcon className="size-5" />
       </Button>
-      <Button variant="outline" className="text-muted-foreground max-md:hidden" onClick={openCommandPalette}>
+      <Button
+        variant="outline"
+        className="w-56 justify-start text-muted-foreground shadow-xs max-lg:w-auto max-md:hidden"
+        onClick={openCommandPalette}
+      >
         <SearchIcon data-icon="inline-start" />
-        {tShell("search")}
+        <span className="flex-1 text-start">{t("search")}</span>
         <Kbd dir="ltr">⌘K</Kbd>
       </Button>
-      {bell}
+      <div className="max-md:hidden">{bell}</div>
     </div>
   )
 }
