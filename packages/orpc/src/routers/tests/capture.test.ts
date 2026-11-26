@@ -1,12 +1,13 @@
 import { afterAll, beforeAll, expect, spyOn, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
 import { captionedSvg, parseSpots, printedUrl, QR_LOGO_RATIO } from "@ritorno/common/qr"
-import { guests, hotelSettings, organization } from "@ritorno/db"
+import { guests, hotelSettings, organization, shortLinks } from "@ritorno/db"
 import { logger } from "@ritorno/logger"
 import { eq } from "drizzle-orm"
 import jsQR from "jsqr"
 import sharp from "sharp"
 import { RATE_LIMITS } from "../../lib/rate-limit"
+import { SHORT_LINKS_PER_HOTEL } from "../../lib/short-links"
 import { createTestApp, type TestApp } from "../../testing"
 
 let app: TestApp
@@ -116,19 +117,41 @@ test("bots are dropped silently and counted without their data: honeypot, a link
   info.mockRestore()
 })
 
-test("capture is limited per ip and per hotel", async () => {
+test("guests behind one hotel ip can all join, and another hotel on that ip is not blocked", async () => {
+  const owner = await app.signUp("capture-wifi@ritorno.test")
+  const hotelId = await app.createHotel("capture-wifi", owner)
+  await app.createHotel("capture-next-door", await app.signUp("capture-next-door@ritorno.test"))
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const wifi = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.1.1" }))
+
+  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
+    await wifi.public.capture({ slug: "capture-wifi", ...scan, phone: `+2162012${1000 + i}` })
+  }
+
+  expect(RATE_LIMITS.captureIp.limit).toBeGreaterThanOrEqual(50)
+  expect((await client.guests.list({})).total).toBe(RATE_LIMITS.captureIp.limit)
+  await expect(wifi.public.capture({ slug: "capture-wifi", ...scan })).rejects.toThrow("Too many requests")
+  await expect(wifi.public.capture({ slug: "capture-next-door", ...scan })).resolves.toEqual({ ok: true })
+})
+
+test("a survey answer is not blocked by sign-ups from the same ip", async () => {
+  await app.createHotel("capture-survey", await app.signUp("capture-survey@ritorno.test"))
+  const wifi = app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": "10.0.3.1" }))
+  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
+    await wifi.public.capture({ slug: "capture-survey", ...scan, phone: `+2162013${1000 + i}` })
+  }
+
+  // a bad link is refused for being a bad link, not for the sign-ups before it
+  await expect(wifi.public.survey.submit({ token: "not-a-link".repeat(4), nps: 9 })).rejects.toThrow("not valid")
+})
+
+test("capture is limited per hotel whatever the ip", async () => {
   const owner = await app.signUp("capture-limit@ritorno.test")
   const hotelId = await app.createHotel("capture-limit", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const from = (ip: string) => app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": ip }))
 
-  const one = from("10.0.1.1")
-  for (let i = 0; i < RATE_LIMITS.captureIp.limit; i++) {
-    await one.public.capture({ slug: "capture-limit", ...scan, phone: `+2162012${1000 + i}` })
-  }
-  await expect(one.public.capture({ slug: "capture-limit", ...scan })).rejects.toThrow("Too many requests")
-
-  for (let i = RATE_LIMITS.captureIp.limit; i < RATE_LIMITS.captureHotel.limit; i++) {
+  for (let i = 0; i < RATE_LIMITS.captureHotel.limit; i++) {
     await from(`10.1.${i >> 8}.${i & 255}`).public.capture({
       slug: "capture-limit",
       ...scan,
@@ -161,7 +184,7 @@ test("the printed code still decodes to its spot with a solid logo over its midd
     .toBuffer({ resolveWithObject: true })
   const decoded = jsQR(new Uint8ClampedArray(data), info.width, info.height)?.data
   expect(decoded).toBe(code!.url)
-  expect(decoded).toMatch(/\/q\/[2-9A-Z]{6}$/)
+  expect(decoded).toMatch(/\/q\/[2-9A-Z]{8}$/)
 
   // the download writes the address under the code, and still scans
   const download = captionedSvg(code!.svg, printedUrl(code!.url))
@@ -241,5 +264,41 @@ test("a printed code follows its own hotel through a rename and keeps source and
   expect(await resolve(desk)).toEqual({ slug: "capture-renamed", source: "desk", location: null })
   expect(await resolve(theirs)).toEqual({ slug: "capture-short-other", source: "room", location: "101" })
   expect(await codeOf(client, ["101"])).toBe(room)
-  await expect(resolve("000000")).rejects.toThrow("Code not found")
+  await expect(resolve("00000000")).rejects.toThrow("Code not found")
+
+  await app.services.db
+    .update(hotelSettings)
+    .set({ status: "suspended" })
+    .where(eq(hotelSettings.organizationId, hotelId))
+  await expect(resolve(room)).rejects.toThrow("Code not found")
+})
+
+test("resolving codes is limited per ip, with room for a whole hotel wifi", async () => {
+  const from = (ip: string) => app.clientFor(new Headers({ "x-csrf-token": "orpc", "x-forwarded-for": ip }))
+  const guess = (ip: string) => from(ip).public.shortLink({ code: "22222222" })
+  // counted straight on the limiter: this many real calls would meet the 120 a minute every route has first
+  for (let i = 1; i < RATE_LIMITS.shortLinkIp.limit; i++) {
+    await app.services.rateLimiter.hit("short-link.ip:10.3.0.1", RATE_LIMITS.shortLinkIp)
+  }
+  await expect(guess("10.3.0.1")).rejects.toThrow("Code not found")
+  await expect(guess("10.3.0.1")).rejects.toThrow("Too many requests")
+  await expect(guess("10.3.0.2")).rejects.toThrow("Code not found")
+})
+
+test("a hotel stops getting new codes at the cap and keeps the ones it has", async () => {
+  const owner = await app.signUp("capture-cap@ritorno.test")
+  const hotelId = await app.createHotel("capture-cap", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const [first] = await client.hotel.qrCodes({ source: "room", spots: ["101"] })
+  await app.services.db.insert(shortLinks).values(
+    Array.from({ length: SHORT_LINKS_PER_HOTEL - 1 }, (_, i) => ({
+      code: `cap-${i}`,
+      hotelId,
+      source: "table" as const,
+      location: String(i),
+    })),
+  )
+
+  await expect(client.hotel.qrCodes({ source: "room", spots: ["102"] })).rejects.toThrow("printed codes")
+  expect((await client.hotel.qrCodes({ source: "room", spots: ["101"] }))[0]?.url).toBe(first!.url)
 })

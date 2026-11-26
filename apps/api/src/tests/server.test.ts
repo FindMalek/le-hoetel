@@ -1,4 +1,7 @@
-import { afterAll, beforeAll, expect, test } from "bun:test"
+import { afterAll, beforeAll, expect, spyOn, test } from "bun:test"
+import { signScanCode } from "@ritorno/common/whatsapp-scan"
+import { guestConsents, guests, messages, whatsappScans } from "@ritorno/db"
+import type { Notifier } from "@ritorno/notification"
 import { createTestApp, type TestApp } from "@ritorno/orpc/testing"
 import { hmacSha256 } from "@ritorno/webhooks"
 import { createServer } from "../server"
@@ -88,4 +91,63 @@ test("the WhatsApp webhook needs a valid signature header", async () => {
   expect((await post("nope")).status).toBe(401)
   expect((await post(hmacSha256(secret, body))).status).toBe(200)
   expect((await call("/whatsapp/webhook", { method: "POST", body })).status).toBe(404)
+})
+
+test("STOP and a QR scan work from a sender with a user id and no phone", async () => {
+  const owner = await app.signUp("username@ritorno.test")
+  const hotelId = await app.createHotel("username", owner)
+  const { db } = app.services
+  const [guest] = await db
+    .insert(guests)
+    .values({ hotelId, name: "Amel", phoneE164: "+21620999001", language: "en", source: "qr_room" })
+    .returning({ id: guests.id })
+  await db
+    .insert(guestConsents)
+    .values({ guestId: guest!.id, hotelId, channel: "whatsapp", granted: true, source: "qr_room", wordingVersion: "1" })
+  await db.insert(messages).values({
+    hotelId,
+    guestId: guest!.id,
+    channel: "whatsapp",
+    templateKey: "welcome",
+    language: "en",
+    status: "sent",
+    providerId: "wamid.ours",
+  })
+
+  const replies: unknown[] = []
+  const notification = {
+    replyWhatsApp: async (to: unknown) => {
+      replies.push(to)
+      return { channel: "whatsapp", sent: true }
+    },
+  } as unknown as Notifier
+  const secret = "kapso-test-secret"
+  const server = createServer(
+    { ...app.services, notification, config: { ...app.services.config, webhookSecrets: { kapso: secret } } },
+    { publicUrl: "http://localhost:3001" },
+  )
+  const receive = async (id: string, text: string, context?: { id: string }) => {
+    const body = JSON.stringify({
+      message: { id, type: "text", from_user_id: "TN.123456", text: { body: text }, context },
+      conversation: { phone_number: null, business_scoped_user_id: "TN.123456" },
+    })
+    const headers = { "x-webhook-event": "whatsapp.message.received", "x-webhook-signature": hmacSha256(secret, body) }
+    const init = { method: "POST", headers, body }
+    expect((await server(new Request("http://localhost:3001/whatsapp/webhook", init))).status).toBe(200)
+  }
+  const consent = async () => (await db.select().from(guestConsents))[0]!.granted
+
+  const spot = { slug: "username", source: "room", language: "en", location: "12" } as const
+  await receive("wamid.scan", signScanCode(app.services.config.tokenSecret, spot))
+  expect(replies).toEqual([{ userId: "TN.123456" }])
+  expect(await db.select().from(whatsappScans)).toHaveLength(0)
+
+  const warn = spyOn(console, "warn").mockImplementation(() => {})
+  await receive("wamid.stop-1", "STOP")
+  expect(warn.mock.calls).toEqual([["[whatsapp-stop] sender not matched, no consent changed"]])
+  expect(await consent()).toBe(true)
+  warn.mockRestore()
+
+  await receive("wamid.stop-2", "STOP", { id: "wamid.ours" })
+  expect(await consent()).toBe(false)
 })

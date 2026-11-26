@@ -55,9 +55,10 @@ Every printed code has the hotel logo in its middle (the first letter of the hot
 
 Every printed piece and download opens `<web url>/q/<code>` and shows that address under the code, for a camera that fails.
 
-- A code is 6 characters from `23456789ABCDEFGHJKMNPQRSTUVWXYZ` (no `0 O 1 I L`), and typing it in lower case works. The shorter address also makes a less dense QR.
-- `short_links` keeps the hotel id, `src` and the spot, one row per hotel, source and spot. `hotel.qrCodes` makes the row the first time and returns the same code ever after. The demo viewer account can therefore create rows by opening the page.
-- The web route `/q/<code>` asks `public.shortLink`, which answers with the hotel's current slug, then redirects (302, never cached) to `/h/<slug>?src=&loc=`. A `lang` in the address is kept. An unknown code shows a "does not work" page, and an unreachable api shows a retry button.
+- A code is 8 characters from `23456789BCDFGHJKMNPQRSTVWXYZ` (no `0 O 1 I L`, no vowels so none spells a word), and typing it in lower case works. The shorter address also makes a less dense QR.
+- `short_links` keeps the hotel id, `src` and the spot, one row per hotel, source and spot. `hotel.qrCodes` makes the row the first time and returns the same code ever after. A hotel can have 2000 rows (422 over that, existing codes keep working). The demo viewer account creates none: a spot without a code gets the long `/h/` address.
+- The web route `/q/<code>` asks `public.shortLink`, which answers with the hotel's current slug, then redirects (302, never cached) to `/h/<slug>?src=&loc=`. A `lang` in the address is kept. An unknown code, or one of a suspended hotel, shows a "does not work" page. An unreachable api, or too many requests, shows a retry button.
+- `public.shortLink` is limited to 300 calls per ip per 10 minutes, so codes cannot be listed by guessing. The web app forwards the guest's ip, and a whole hotel wifi counts as one.
 - Rows are never removed on their own, so a spot taken off the list keeps its printed code. Deleting the hotel deletes them.
 - `/h/<slug>?src=&loc=` stays as it was, so codes printed before short links work as long as the slug does not change.
 - The web address itself is part of the printed code: moving the guest site to another domain needs the old domain to keep redirecting.

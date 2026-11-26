@@ -1,13 +1,6 @@
 import "server-only"
 import type { CaptureInput, LeadInput } from "@ritorno/common/schemas"
-import { createServerClient } from "@ritorno/orpc/server"
-import { headers } from "next/headers"
-
-/** Forwards the guest's ip so the api rate limits the guest, not this server. */
-const api = createServerClient(async (): Promise<Record<string, string>> => {
-  const forwarded = (await headers()).get("x-forwarded-for")
-  return forwarded ? { "x-forwarded-for": forwarded } : {}
-})
+import { guestApi as api } from "./api"
 
 export const getPublicHotel = (slug: string) => api.public.hotel({ slug }).catch(() => null)
 

@@ -37,6 +37,6 @@ test("the staff label marks table numbers with a T and leaves rooms and names al
 
 test("short codes avoid look-alike characters and can be typed in lower case", () => {
   const codes = Array.from({ length: 200 }, newShortCode).join("")
-  expect(codes).toMatch(/^[2-9A-HJKMNP-Z]{1200}$/)
+  expect(codes).toMatch(/^[2-9BCDFGHJKMNP-TV-Z]{1600}$/)
   expect(normalizeShortCode(" ab3k7m ")).toBe("AB3K7M")
 })

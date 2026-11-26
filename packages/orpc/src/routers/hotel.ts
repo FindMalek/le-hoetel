@@ -1,5 +1,6 @@
 import { ORPCError } from "@orpc/server"
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
+import { isDemoViewer } from "@ritorno/common/demo"
 import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
 import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
 import { captureUrl, HOTEL_SPOTS_MAX, shortUrl } from "@ritorno/common/qr"
@@ -132,16 +133,23 @@ export const hotelRouter = {
     .input(qrCodesInputSchema)
     .output(z.array(qrCodeSchema))
     .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const { slug } = await loadHotel(context.db, hotelId)
       const spots = input.spots.length ? input.spots : [null]
+      // the view only demo account writes nothing: a spot without a code yet gets the long address
       const codes = await shortCodes(
         context.db,
-        context.hotel.hotelId,
+        hotelId,
         input.source,
         spots.map((location) => location ?? ""),
+        !isDemoViewer(context.session.user.email),
       )
       return Promise.all(
         spots.map(async (location) => {
-          const url = shortUrl(context.config.webUrl, codes.get(location ?? "")!)
+          const code = codes.get(location ?? "")
+          const url = code
+            ? shortUrl(context.config.webUrl, code)
+            : captureUrl(context.config.webUrl, slug!, input.source, location)
           return { location, url, svg: await qrSvg(url, { type: "svg", margin: 2, errorCorrectionLevel: "H" }) }
         }),
       )

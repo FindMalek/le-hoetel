@@ -62,6 +62,8 @@ interface Welcome {
   perk: string
   register: string
   team: string
+  /** The `team` line for a sender whose number WhatsApp does not share. */
+  teamNoNumber: string
 }
 
 const WELCOMES: Record<HotelLanguage, Welcome> = {
@@ -70,18 +72,24 @@ const WELCOMES: Record<HotelLanguage, Welcome> = {
     perk: "A small gift from {hotel} is waiting for you at the front desk.",
     register: "Join here: {url}",
     team: "For any request, please ask the front desk. The hotel team does not see what you write here, only your number and the room or table you scanned. They may write to you from their own WhatsApp. Ritorno sends this reply for {hotel}.",
+    teamNoNumber:
+      "For any request, please ask the front desk. The hotel team does not see what you write here and does not get your number. Ritorno sends this reply for {hotel}.",
   },
   fr: {
     welcome: "Bienvenue à {hotel} !",
     perk: "Un petit cadeau de {hotel} vous attend à la réception.",
     register: "Inscrivez-vous ici : {url}",
     team: "Pour toute demande, adressez-vous à la réception. L'équipe de l'hôtel ne voit pas ce que vous écrivez ici, seulement votre numéro et la chambre ou la table scannée. Elle peut vous écrire depuis son propre WhatsApp. Ritorno envoie cette réponse pour {hotel}.",
+    teamNoNumber:
+      "Pour toute demande, adressez-vous à la réception. L'équipe de l'hôtel ne voit pas ce que vous écrivez ici et ne reçoit pas votre numéro. Ritorno envoie cette réponse pour {hotel}.",
   },
   ar: {
     welcome: "مرحبًا بكم في {hotel}!",
     perk: "هدية صغيرة من {hotel} في انتظاركم في الاستقبال.",
     register: "سجّلوا من هنا: {url}",
     team: "لأي طلب، توجهوا إلى الاستقبال. لا يرى فريق الفندق ما تكتبونه هنا، بل رقمكم والغرفة أو الطاولة التي مسحتم رمزها فقط. وقد يراسلكم من واتساب الخاص به. ترسل Ritorno هذا الرد نيابة عن {hotel}.",
+    teamNoNumber:
+      "لأي طلب، توجهوا إلى الاستقبال. لا يرى فريق الفندق ما تكتبونه هنا ولا يحصل على رقمكم. ترسل Ritorno هذا الرد نيابة عن {hotel}.",
   },
 }
 
@@ -91,6 +99,7 @@ export function scanWelcome(input: {
   hotelName: string
   offer: { title: string; text: string | null } | null
   registerUrl: string | null
+  numberHidden?: boolean
 }): string {
   const copy = WELCOMES[input.language]
   const fill = (line: string) => line.replace("{hotel}", () => input.hotelName)
@@ -99,7 +108,7 @@ export function scanWelcome(input: {
     fill(copy.welcome),
     perk,
     input.registerUrl && copy.register.replace("{url}", () => input.registerUrl ?? ""),
-    fill(copy.team),
+    fill(input.numberHidden ? copy.teamNoNumber : copy.team),
     unsubscribeFooter("whatsapp", input.language, ""),
   ]
     .filter(Boolean)

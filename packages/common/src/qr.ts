@@ -46,9 +46,10 @@ export function captureUrl(webUrl: string, slug: string, source: CaptureSource, 
   return `${webUrl.replace(/\/$/, "")}/h/${encodeURIComponent(slug)}?${query}`
 }
 
-/** No `0 O 1 I L`: the code is also read off paper and typed by hand. */
-const SHORT_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
-const SHORT_LENGTH = 6
+/** No `0 O 1 I L`: the code is also read off paper and typed by hand. No vowels, so no code spells a word. */
+const SHORT_ALPHABET = "23456789BCDFGHJKMNPQRSTVWXYZ"
+/** Long enough that guessing codes to list hotels is hopeless under the rate limit. */
+const SHORT_LENGTH = 8
 
 export const newShortCode = (): string =>
   Array.from(
@@ -77,6 +78,6 @@ export function captionedSvg(svg: string, caption: string): string {
     )
     .replace(
       "</svg>",
-      `<text x="${size / 2}" y="${size + font * 0.8}" font-family="monospace" font-size="${font}" text-anchor="middle" shape-rendering="auto">${caption}</text></svg>`,
+      `<text x="${size / 2}" y="${size + font * 0.8}" font-family="monospace" font-size="${font}" text-anchor="middle" shape-rendering="auto">${caption.replaceAll("&", "&amp;")}</text></svg>`,
     )
 }

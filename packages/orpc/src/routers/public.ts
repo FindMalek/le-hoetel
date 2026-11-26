@@ -144,7 +144,7 @@ const surveyRouter = {
     .input(z.object({ token }).extend(surveyAnswerSchema.shape))
     .output(z.object({ state: z.literal("answered") }))
     .handler(async ({ context, input }) => {
-      await enforceRateLimit(context, "capture.ip", RATE_LIMITS.captureIp)
+      await enforceRateLimit(context, "survey.ip", RATE_LIMITS.surveyIp)
       const { token: link, ...answer } = input
       const { state } = await submitSurvey(context, link, answer)
       return { state }
@@ -162,7 +162,10 @@ export const publicRouter = {
     .route({ method: "POST", path: "/public/short-link", summary: "Where a printed /q/<code> leads", tags: ["public"] })
     .input(z.object({ code: z.string().min(1).max(20) }))
     .output(shortLinkSchema)
-    .handler(({ context, input }) => findShortLink(context.db, input.code)),
+    .handler(async ({ context, input }) => {
+      await enforceRateLimit(context, "short-link.ip", RATE_LIMITS.shortLinkIp)
+      return findShortLink(context.db, input.code)
+    }),
 
   unsubscribe: unsubscribeRouter,
   survey: surveyRouter,
@@ -258,8 +261,8 @@ export const publicRouter = {
     .input(captureInputSchema)
     .output(z.object({ ok: z.literal(true) }))
     .handler(async ({ context, input }) => {
-      await enforceRateLimit(context, "capture.ip", RATE_LIMITS.captureIp)
       const hotel = await findPublicHotel(context.db, input.slug)
+      await enforceRateLimit(context, `capture.ip:${hotel.id}`, RATE_LIMITS.captureIp)
       const reason = botReason(input)
       if (reason) {
         logger.info("capture discarded", { hotelId: hotel.id, reason })

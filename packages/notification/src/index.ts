@@ -1,7 +1,7 @@
 import { isDemoRecipient } from "@ritorno/common/demo"
 import { type Logger, logger } from "@ritorno/logger"
 import { createEmailChannel, type EmailExtras } from "./channels/email"
-import { createWhatsAppChannel } from "./channels/whatsapp"
+import { createWhatsAppChannel, type WhatsAppAddress } from "./channels/whatsapp"
 import { type RenderedEmail, renderEmail, summarize, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
 
@@ -82,7 +82,7 @@ export interface Notifier {
   /** An email that is already rendered (the hotel templates): sent with the hotel's name, reply-to and headers. */
   sendEmail: (input: SendEmailInput) => Promise<SendResult>
   /** A free-form WhatsApp reply to a guest who just wrote to us. `kind` only names it in the log. Log-only outside live messaging. */
-  replyWhatsApp: (to: string, text: string, kind?: "stop_confirmation" | "scan_welcome") => Promise<SendResult>
+  replyWhatsApp: (to: WhatsAppAddress, text: string, kind?: "stop_confirmation" | "scan_welcome") => Promise<SendResult>
   /** An approved named template to a guest. Log-only outside live messaging. */
   sendWhatsApp: (input: SendWhatsAppInput) => Promise<SendResult>
   /** Plain text to every configured channel (or the ones asked for). One channel failing doesn't stop the rest. */
@@ -147,7 +147,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       return { channel: "email", sent: true, id: result.id }
     },
     async replyWhatsApp(to, text, kind = "stop_confirmation") {
-      if (!live || isDemoRecipient(to)) {
+      if (!live || (typeof to === "string" && isDemoRecipient(to))) {
         log.info("message not sent, log-only provider", { channel: "whatsapp", template: kind })
         return { channel: "whatsapp", sent: false }
       }

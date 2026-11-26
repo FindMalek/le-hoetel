@@ -6,7 +6,7 @@ import { and, desc, eq, inArray } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
 import { hotelBranding } from "./hotel"
-import type { KapsoPayload } from "./messages"
+import { type KapsoPayload, kapsoSender } from "./messages"
 import { forgetScans, scanHotels } from "./whatsapp-scans"
 
 type Ctx = Pick<Context, "db" | "config" | "now">
@@ -107,18 +107,34 @@ export async function applyStopReply(
   })
 }
 
+/** The number we sent this WhatsApp message to: all that is left to match a sender who hides theirs. */
+async function recipientOf(db: Db, providerId: string | undefined): Promise<string | undefined> {
+  if (!providerId) return undefined
+  const [row] = await db
+    .select({ phoneE164: guests.phoneE164 })
+    .from(messages)
+    .innerJoin(guests, and(eq(guests.id, messages.guestId), eq(guests.hotelId, messages.hotelId)))
+    .where(and(eq(messages.providerId, providerId), eq(messages.channel, "whatsapp")))
+  return row?.phoneE164
+}
+
 /**
  * An inbound WhatsApp message from Kapso. Anything but a whole-message STOP keyword is ignored. One business number
  * serves every hotel, so the number alone says nothing: the guest leaves the hotel whose message they got last and
  * every hotel whose QR welcome they still have a scan for (a welcome writes no `messages` row). A number we never
  * messaged is unsubscribed everywhere, the safe side. The scans are dropped too. One confirmation when a consent
- * changed or a scan was removed; a repeated delivery changes nothing and says nothing.
+ * changed or a scan was removed; a repeated delivery changes nothing and says nothing. A sender without a phone
+ * (WhatsApp username) is matched only through the message they reply to, otherwise the STOP is logged.
  */
 export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoPayload): Promise<boolean> {
-  const { from, type, text } = payload.message ?? {}
-  const digits = from?.replace(/\D/g, "")
-  if (!digits || type !== "text" || !isStopKeyword(text?.body ?? "")) return false
-  const phoneE164 = `+${digits}`
+  const { type, text, context: repliedTo } = payload.message ?? {}
+  if (type !== "text" || !isStopKeyword(text?.body ?? "")) return false
+  const phoneE164 = kapsoSender(payload).phoneE164 ?? (await recipientOf(context.db, repliedTo?.id))
+  if (!phoneE164) {
+    // No ids here: a user id is personal data, and a message id can encode the number.
+    console.warn("[whatsapp-stop] sender not matched, no consent changed")
+    return false
+  }
 
   const [last] = await context.db
     .select({ hotelId: messages.hotelId })
