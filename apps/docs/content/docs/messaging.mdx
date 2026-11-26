@@ -61,7 +61,7 @@ Every automatic send first claims a row in `automation_sends` (unique per guest,
 
 | Job | When | Who |
 | --- | --- | --- |
-| `welcome-guest` | queued right after a guest is saved from the QR page or staff quick add, never for a csv import (an old list would get a burst of welcomes) | the channels the guest agreed to, once per guest and channel |
+| `welcome-guest` | queued right after a guest is saved from the QR page or staff quick add, never for a csv import (an old list would get a burst of welcomes) | the channels the guest agreed to, once per guest and channel. From the QR page also at most once per guest every 30 days and 60 per hotel per hour |
 | `birthday-guests` | every hour, which handles each hotel from 09:00 to 20:59 in its own timezone | guests whose birthday is today and who agreed to a channel, once per year |
 | `holiday-guests` | every hour, same window | guests who agreed to a channel the hotel picked for a holiday it switched on, one holiday message per channel and day |
 

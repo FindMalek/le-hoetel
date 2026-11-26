@@ -5,7 +5,7 @@ import { holidayJob } from "./holidays"
 import { surveyJob } from "./survey"
 import { type JobServices, welcomeJob } from "./welcome"
 
-export { enqueueWelcome, type JobServices } from "./welcome"
+export { enqueuePublicWelcome, enqueueWelcome, type JobServices } from "./welcome"
 
 /** The jobs that send to guests. They need the dispatcher's services, so the api builds them and hands them to the runner next to `JOBS`. */
 export const createMessageJobs = (
