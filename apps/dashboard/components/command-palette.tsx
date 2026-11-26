@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { openFeedback } from "@/components/feedback-button"
 import { navGroups, visibleNav } from "@/lib/nav"
+import type { Viewer } from "@/lib/viewer"
 
 const OPEN_EVENT = "open-command-palette"
 const SEQUENCE_MS = 1000
@@ -27,7 +28,7 @@ const isTyping = (target: EventTarget | null): boolean =>
   target instanceof HTMLElement &&
   (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
 
-export function CommandPalette({ role }: { role: string | null }) {
+export function CommandPalette({ viewer }: { viewer: Viewer }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const t = useTranslations("shell")
@@ -45,7 +46,7 @@ export function CommandPalette({ role }: { role: string | null }) {
       if (event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return
       if (pendingG && Date.now() - pendingG < SEQUENCE_MS) {
         pendingG = 0
-        const item = visibleNav(role).find((entry) => entry.shortcut === key)
+        const item = visibleNav(viewer).find((entry) => entry.shortcut === key)
         if (item) router.push(item.href)
         return
       }
@@ -58,7 +59,7 @@ export function CommandPalette({ role }: { role: string | null }) {
       document.removeEventListener("keydown", onKey)
       window.removeEventListener(OPEN_EVENT, onOpen)
     }
-  }, [role, router])
+  }, [viewer, router])
 
   const run = (action: () => void | Promise<void>) => () => {
     setOpen(false)
@@ -70,7 +71,7 @@ export function CommandPalette({ role }: { role: string | null }) {
       <CommandInput placeholder={t("searchPlaceholder")} />
       <CommandList>
         <CommandEmpty>{t("noResults")}</CommandEmpty>
-        {navGroups(role).map((group) => (
+        {navGroups(viewer).map((group) => (
           <CommandGroup key={group.key} heading={tNav(group.label)}>
             {group.items.map((item) => (
               <CommandItem

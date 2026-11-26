@@ -13,10 +13,11 @@ export const metadata: Metadata = { title: "Offers" }
 export default async function OffersPage() {
   const t = await getTranslations("offers")
   const queryClient = getQueryClient()
+  // `fetchQuery`, not `prefetchQuery`: a swallowed failure leaves the suspense query loading forever.
   const [mine] = await Promise.all([
     call((api) => api.hotel.mine()),
-    queryClient.prefetchQuery(serverOrpc.offers.list.queryOptions()),
-    queryClient.prefetchQuery(serverOrpc.offers.redemptionStats.queryOptions()),
+    call(() => queryClient.fetchQuery(serverOrpc.offers.list.queryOptions())),
+    call(() => queryClient.fetchQuery(serverOrpc.offers.redemptionStats.queryOptions())),
   ])
   const canEdit = mine.role !== "staff"
   return (

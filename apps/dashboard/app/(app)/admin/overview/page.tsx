@@ -21,11 +21,12 @@ import { AdminAttention } from "@/components/admin-attention"
 import { AdminPilotSuccess } from "@/components/admin-pilot-success"
 import { PageHeader } from "@/components/page-header"
 import { consentRate } from "@/lib/admin"
-import { call } from "@/lib/api"
+import { call, requireAdmin } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Platform overview" }
 
 export default async function AdminOverviewPage() {
+  await requireAdmin()
   const [t, locale, { hotels, guests, messages, lowBalance }, list] = await Promise.all([
     getTranslations("adminOverview"),
     getLocale(),

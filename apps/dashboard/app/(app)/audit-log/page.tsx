@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server"
 import { AdminAuditFeed } from "@/components/audit-feed"
 import { AuditFilters } from "@/components/audit-filters"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, getQueryClient, requireAdmin, serverOrpc } from "@/lib/api"
 import { actionLabel, adminAuditPages, picked, urlDay } from "@/lib/audit"
 
 export const metadata: Metadata = { title: "Audit log" }
@@ -20,6 +20,7 @@ interface Params {
 const DAY_MS = 86_400_000
 
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<Params> }) {
+  await requireAdmin()
   const raw = await searchParams
   const values: Params = {
     action: picked(raw.action),

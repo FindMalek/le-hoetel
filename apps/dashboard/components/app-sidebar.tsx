@@ -26,6 +26,7 @@ import { openFeedback } from "@/components/feedback-button"
 import { HotelSwitcher, type HotelSwitcherProps } from "@/components/hotel-switcher"
 import { type Me, UserMenu } from "@/components/user-menu"
 import { activeHref, type NavGroup, navGroups } from "@/lib/nav"
+import type { Viewer } from "@/lib/viewer"
 
 // i18n-used: shell.mainNav
 // i18n-used: shell.feedback
@@ -100,10 +101,10 @@ function NavSection({
   )
 }
 
-export function AppSidebar({ me, switcher }: { me: Me; switcher: HotelSwitcherProps }) {
+export function AppSidebar({ me, viewer, switcher }: { me: Me; viewer: Viewer; switcher: HotelSwitcherProps }) {
   const pathname = usePathname()
   const t = useTranslations("shell")
-  const groups = navGroups(me.role)
+  const groups = navGroups(viewer)
   const active = activeHref(
     groups.flatMap((group) => group.items.map((item) => item.href)),
     pathname,

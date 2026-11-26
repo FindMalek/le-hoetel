@@ -13,6 +13,7 @@ import { openCommandPalette } from "@/components/command-palette"
 import { MoreSheet } from "@/components/more-sheet"
 import type { Me } from "@/components/user-menu"
 import { groupLabel, navFor } from "@/lib/nav"
+import type { Viewer } from "@/lib/viewer"
 
 // i18n-used: shell.toggleSidebar
 
@@ -70,11 +71,13 @@ function Crumbs() {
 /** Breadcrumb, search and notifications. Page titles and actions live in each page's `PageHeader`. */
 export function TopBar({
   me,
+  viewer,
   hotelName,
   switcher,
   bell,
 }: {
   me: Me
+  viewer: Viewer
   hotelName: string | null
   switcher: React.ReactNode
   bell: React.ReactNode
@@ -82,7 +85,7 @@ export function TopBar({
   const t = useTranslations("shell")
   return (
     <div className="flex h-14 items-center gap-2 px-2 md:px-4">
-      <MoreSheet me={me} switcher={switcher} className="md:hidden" />
+      <MoreSheet me={me} viewer={viewer} switcher={switcher} className="md:hidden" />
       <p className="min-w-0 flex-1 truncate font-medium text-sm md:hidden">{hotelName}</p>
       <div className="flex min-w-0 flex-1 items-center gap-3 max-md:hidden">
         <SidebarToggle />
