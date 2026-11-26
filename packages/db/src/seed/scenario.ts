@@ -1,3 +1,4 @@
+import { DEMO_EMAIL_DOMAIN } from "@ritorno/common/demo"
 import type { notes, user } from "../schema"
 import { random } from "./random"
 
@@ -6,32 +7,8 @@ type NewNote = typeof notes.$inferInsert
 
 const DAY = 864e5
 
-const FIRST = [
-  "Ada",
-  "Linus",
-  "Grace",
-  "Alan",
-  "Margaret",
-  "Ken",
-  "Barbara",
-  "Dennis",
-  "Radia",
-  "Guido",
-  "Frances",
-  "Bjarne",
-]
-const LAST = [
-  "Lovelace",
-  "Torvalds",
-  "Hopper",
-  "Turing",
-  "Hamilton",
-  "Thompson",
-  "Liskov",
-  "Ritchie",
-  "Perlman",
-  "Rossum",
-]
+const FIRST = "Aicha Bilel Cyrine Donia Elyes Feriel Hamza Islem Jihene Kais Lamia Marwen".split(" ")
+const LAST = "Abidi Baccouche Chaabane Dhaouadi Ferchichi Guesmi Jaziri Kefi Louati Maalej".split(" ")
 const TITLES = [
   "Launch checklist",
   "Ideas for the landing page",
@@ -61,7 +38,7 @@ export function buildScenario(now: Date, opts: { ownerId?: string } = {}, seed =
     return {
       id: `demo-user-${i + 1}`,
       name,
-      email: `${first.toLowerCase()}.${i + 1}@example.com`,
+      email: `${first.toLowerCase()}.${i + 1}@${DEMO_EMAIL_DOMAIN}`,
       emailVerified: i % 4 !== 3,
       role: i < 2 ? "admin" : "user",
       banned: i === 11,

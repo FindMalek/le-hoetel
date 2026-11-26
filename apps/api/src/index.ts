@@ -2,7 +2,6 @@ import { resolveModel } from "@ritorno/ai"
 import { createAuth } from "@ritorno/auth"
 import { createDb } from "@ritorno/db"
 import { runMigrations } from "@ritorno/db/migrate"
-import { seedDemo } from "@ritorno/db/seed"
 import { loadApiEnv } from "@ritorno/env/api"
 import { authEmails, createNotifier } from "@ritorno/notification"
 import { createRateLimiter } from "@ritorno/orpc"
@@ -13,6 +12,7 @@ import { shutdownOnSignal, startJobs } from "./jobs"
 import { startLogger } from "./logger"
 import { startOpenObserve } from "./openobserve"
 import { PREVIEW_ORIGINS } from "./origins"
+import { seedOnBoot } from "./seed"
 import { initSentry } from "./sentry"
 import { createServer } from "./server"
 
@@ -45,10 +45,25 @@ const auth = createAuth({
 })
 
 const adminId = await ensureAdmin(db, auth, env.ADMIN_EMAIL, env.ADMIN_PASSWORD)
+const storage = createStorage({
+  endpoint: env.S3_ENDPOINT,
+  region: env.S3_REGION,
+  bucket: env.S3_BUCKET,
+  accessKeyId: env.S3_ACCESS_KEY_ID,
+  secretAccessKey: env.S3_SECRET_ACCESS_KEY,
+  prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
+})
 if (env.SEED === "demo") {
-  const hashPassword = (await auth.$context).password.hash
-  if (await seedDemo(db, { ownerId: adminId, hashPassword, demoPassword: env.DEMO_PASSWORD }))
-    console.info("seeded demo data")
+  await seedOnBoot(db, {
+    ownerId: adminId,
+    hashPassword: (await auth.$context).password.hash,
+    demoPassword: env.DEMO_PASSWORD,
+    deployEnv: env.DEPLOY_ENV,
+    databaseUrl: env.DATABASE_URL,
+    storage,
+    webUrl: env.WEB_URL,
+    apiUrl: env.API_PUBLIC_URL,
+  })
 }
 
 const fetch = createServer(
@@ -62,14 +77,7 @@ const fetch = createServer(
       upstashUrl: env.UPSTASH_REDIS_REST_URL,
       upstashToken: env.UPSTASH_REDIS_REST_TOKEN,
     }),
-    storage: createStorage({
-      endpoint: env.S3_ENDPOINT,
-      region: env.S3_REGION,
-      bucket: env.S3_BUCKET,
-      accessKeyId: env.S3_ACCESS_KEY_ID,
-      secretAccessKey: env.S3_SECRET_ACCESS_KEY,
-      prefix: env.S3_PREFIX ?? (env.DEPLOY_ENV.startsWith("pr-") ? `${env.DEPLOY_ENV}/` : ""),
-    }),
+    storage,
     notification,
     model: resolveModel(env.AI_MODEL, env),
   },

@@ -18,13 +18,36 @@ No `.env` is needed: `pnpm dev` reads the Infisical `dev` environment, see [secr
 
 ## Demo data
 
-`pnpm db:seed`, the api with `SEED=demo` and the Playwright run all use the same deterministic seed (`packages/db/src/seed`, fixed random seed, only dates move with today). It runs on an empty database only and is all fake:
+`pnpm db:seed`, the api with `SEED=demo` and the Playwright run all use the same deterministic seed (`packages/db/src/seed`, fixed random seeds, only dates move with today). It runs on an empty database only (no hotel and no note), so running it twice changes nothing. It is all fake and covers six months:
 
-- four hotels with their own branding: Dar Zitouna (Monastir guesthouse), Sunset Bay Resort (Hammamet), Villa Mimosa Spa (Djerba), Riad Dattier (Tozeur)
-- about 440 guests with Tunisian, French, Arabic and international names and phone formats, in fr, ar and en, with consents and an append-only `consent_events` log (some withdrawn)
-- accounts on `@demo.ritorno.test`, never deliverable: a super admin `admin@demo.ritorno.test` and one owner per hotel, `owner.dar-zitouna@`, `owner.sunset-bay@`, `owner.villa-mimosa@`, `owner.riad-dattier@`. They share the password `DEMO_PASSWORD` (default `demo-ritorno-2026`)
+- four hotels with their own colors and logo: Dar Zitouna (Monastir guesthouse), Sunset Bay Resort (Hammamet), Villa Mimosa Spa (Djerba), Riad Dattier (Tozeur, pilot ending soon and low WhatsApp credit). Two more only the platform admin sees: one waiting for its owner, one suspended
+- about 1400 guests in fr, ar and en with consents, an append-only `consent_events` log, visits (some returning), birthdays (a few today and this week) and QR spots (rooms, tables)
+- offers (open, expired, paused, used up) with codes and redemptions, post-stay surveys with comments and feedback cases with notes
+- campaigns (sent, scheduled, draft, cancelled), holiday choices, the message log in every status with previews of the last week's unsent messages, the prepaid balance ledger, notifications and the audit log
+- a team per hotel (owner, manager, two staff) and a pending invitation
 
-A feature that adds tables adds its own section to `seedDemo` and a test in `packages/db/src/seed`.
+Logos are uploaded only when the `S3_*` keys are set, otherwise a hotel shows its initial.
+
+Accounts are on `@demo.ritorno.test`: a super admin `admin@`, and per hotel `owner.<slug>@`, `manager.<slug>@`, `reception.<slug>@` and `service.<slug>@`, for example `owner.sunset-bay@demo.ritorno.test`. They share the password `DEMO_PASSWORD` (default `demo-ritorno-2026`).
+
+### Nothing can reach a person
+
+Emails are on `demo.ritorno.test` (`.test` never resolves). Phone numbers come from `DEMO_PHONE_RANGES` in `packages/common/src/demo.ts`:
+
+| Range | Used for | Why it is safe |
+| --- | --- | --- |
+| `+33 6 39 98 XX XX` | French, British and Italian guests | reserved by ARCEP for fiction |
+| `+216 49 XXX XXX` | Tunisian guests and managers | no operator block in libphonenumber's allocation data |
+| `+213 500 XXX XXX` | Algerian guests | same |
+| `+49 1530 XXXXXXX` | German guests | same |
+
+Only the first is an official reservation, check the other three again if an operator opens those blocks. On top of that the notifier never hands a demo address or number to a provider, even with `MESSAGING_LIVE=true`.
+
+The seed refuses to run with `DEPLOY_ENV=production`, and with `DEPLOY_ENV` unset or `local` it refuses a database that is not on this machine (`localhost`, `127.0.0.1`, `::1` or the compose service `postgres`). `pnpm db:seed` fails there, the api logs a warning, skips the seed and starts. Staging (`DEPLOY_ENV=staging`) and previews (`pr-<N>`) seed their own databases.
+
+Self-hosting with `docker-compose.yml` defaults to `DEPLOY_ENV=production`, so `SEED=demo` alone does nothing there. For a throwaway demo stack set `DEPLOY_ENV` to another name, such as `demo`, as well. That compose file does not pass `DEMO_PASSWORD` through, so the accounts get the public default: never expose such a stack with real data. To reseed staging see the [deploy runbook](/docs/deploy-runbook#reseed-staging).
+
+A feature that adds tables adds its rows to a scenario file in `packages/db/src/seed`, its insert to `seedDemo` and a test.
 
 ## End-to-end tests
 
