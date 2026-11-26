@@ -169,3 +169,21 @@ test("a guest template goes to kapso by name and language with named variables",
     },
   })
 })
+
+test("a seeded demo address or number is never handed to a provider, even live", async () => {
+  const { calls, doFetch } = recorder()
+  const notifier = createNotifier(
+    { ...LIVE, RESEND_API_KEY: "re_test", KAPSO_API_KEY: "k", WHATSAPP_PHONE_NUMBER_ID: "555" },
+    { fetch: doFetch },
+  )
+
+  const email = { subject: "Hi", html: "<p>Hi</p>", text: "Hi" }
+  const results = [
+    await notifier.sendEmail({ to: "guest.1@guest.demo.ritorno.test", email }),
+    await notifier.sendWhatsApp({ to: "+21649123456", template: "guest_welcome", language: "fr", params: {} }),
+    await notifier.replyWhatsApp("+33639981234", "ok"),
+  ]
+
+  expect(results.map((r) => r.sent)).toEqual([false, false, false])
+  expect(calls).toHaveLength(0)
+})

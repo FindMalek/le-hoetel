@@ -1,3 +1,4 @@
+import { isDemoRecipient } from "@ritorno/common/demo"
 import { type Logger, logger } from "@ritorno/logger"
 import { createEmailChannel, type EmailExtras } from "./channels/email"
 import { createWhatsAppChannel } from "./channels/whatsapp"
@@ -123,7 +124,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
     live,
     channels,
     async send({ channel, to, template, data, footer }) {
-      if (!live) {
+      if (!live || (to && isDemoRecipient(to))) {
         log.info("message not sent, log-only provider", { channel, template })
         return { channel, sent: false }
       }
@@ -137,7 +138,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       return { channel, sent: true, id: result.id }
     },
     async sendEmail({ to, email: rendered, ...extras }) {
-      if (!live) {
+      if (!live || isDemoRecipient(to)) {
         log.info("message not sent, log-only provider", { channel: "email" })
         return { channel: "email", sent: false }
       }
@@ -146,7 +147,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       return { channel: "email", sent: true, id: result.id }
     },
     async replyWhatsApp(to, text, kind = "stop_confirmation") {
-      if (!live) {
+      if (!live || isDemoRecipient(to)) {
         log.info("message not sent, log-only provider", { channel: "whatsapp", template: kind })
         return { channel: "whatsapp", sent: false }
       }
@@ -155,7 +156,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
       return { channel: "whatsapp", sent: true, id: result.id }
     },
     async sendWhatsApp({ to, template, language, params }) {
-      if (!live) {
+      if (!live || isDemoRecipient(to)) {
         log.info("message not sent, log-only provider", { channel: "whatsapp", template })
         return { channel: "whatsapp", sent: false }
       }

@@ -23,8 +23,8 @@ Locally the values come from the Infisical `dev` environment, loaded by the root
 | `DATABASE_URL` | postgres connection string |
 | `POSTGRES_PORT` | host port of the local docker postgres |
 | `POSTGRES_USER`, `POSTGRES_DB` | role and database of the docker postgres, default `ritorno` (staging and production keep `le_hoetel`, see [deploy runbook](/docs/deploy-runbook)) |
-| `SEED` | `demo` fills an empty database with sample data, `none` never seeds |
-| `DEMO_PASSWORD` | password of the seeded demo accounts, default `demo-ritorno-2026` (fake, local and previews only) |
+| `SEED` | `demo` fills an empty database with [demo data](/docs/setup#demo-data), `none` never seeds. Defaults to `demo` in the api (local, previews, staging deploys set it), `none` in the compose files. Ignored with a warning when `DEPLOY_ENV=production`, or when `DEPLOY_ENV` is unset or `local` and the database is on another machine |
+| `DEMO_PASSWORD` | password of the seeded demo accounts, default `demo-ritorno-2026`. The default is public: previews and `docker-compose.deploy.yml` (staging) get their own value. Read only while seeding an empty database |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | the first admin, created or reset on every api start |
 | `LEADS_NOTIFY_EMAIL` | who is emailed when a hotel requests a demo on the landing page, defaults to `ADMIN_EMAIL` |
