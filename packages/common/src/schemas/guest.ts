@@ -258,14 +258,25 @@ export const exportedFeedbackSchema = z.object({
   updatedAt: z.date(),
 })
 
+export const exportedWhatsappScanSchema = z.object({
+  phoneE164: z.string(),
+  source: z.string(),
+  location: z.string().nullable(),
+  language: z.string(),
+  lastScanAt: z.date(),
+  repliedAt: z.date(),
+})
+
 export const guestExportSchema = z.object({
   exportedAt: z.date(),
   guest: guestSchema,
   consentEvents: z.array(consentEventSchema),
   feedback: z.array(exportedFeedbackSchema),
+  whatsappScans: z.array(exportedWhatsappScanSchema),
 })
 
 export const hotelGuestsExportSchema = z.object({
   exportedAt: z.date(),
-  guests: z.array(guestExportSchema.omit({ exportedAt: true })),
+  guests: z.array(guestExportSchema.omit({ exportedAt: true, whatsappScans: true })),
+  whatsappScans: z.array(exportedWhatsappScanSchema),
 })

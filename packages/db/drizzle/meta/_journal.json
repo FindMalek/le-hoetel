@@ -162,6 +162,13 @@
       "when": 1795708520049,
       "tag": "0026_green_blacklash",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1795716457020,
+      "tag": "0027_petite_husk",
+      "breakpoints": true
     }
   ]
 }

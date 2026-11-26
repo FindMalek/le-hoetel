@@ -6,6 +6,7 @@ import { holidayJob } from "./holidays"
 import { ownerDigestJob } from "./owner-digest"
 import { surveyJob } from "./survey"
 import { type JobServices, welcomeJob } from "./welcome"
+import { scanPurgeJob } from "./whatsapp-scans"
 
 export { enqueuePublicWelcome, enqueueWelcome, type JobServices } from "./welcome"
 
@@ -19,5 +20,6 @@ export const createMessageJobs = (services: JobServices, options: Partial<SendPa
     surveyJob(services, pacing),
     campaignJob(services, { pauseMs: pacing.pauseMs, batchSize: pacing.batchSize }),
     ownerDigestJob(services, pacing),
+    scanPurgeJob(services),
   ]
 }

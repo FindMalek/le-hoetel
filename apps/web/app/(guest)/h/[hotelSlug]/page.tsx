@@ -1,13 +1,15 @@
 import { consentWording } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
-import { CAPTURE_SOURCES } from "@ritorno/common/schemas"
-import { GiftIcon } from "lucide-react"
+import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
+import { buttonVariants } from "@ritorno/ui/components/button"
+import { cn } from "@ritorno/ui/lib/utils"
+import { GiftIcon, MessageCircleIcon } from "lucide-react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { CaptureForm } from "@/components/capture-form"
 import { GuestShell, guestLanguage } from "@/components/guest-shell"
-import { getPublicHotel } from "@/lib/capture"
+import { getPublicHotel, getWhatsAppLink } from "@/lib/capture"
 
 type Props = { params: Promise<{ hotelSlug: string }>; searchParams: Promise<Record<string, string | undefined>> }
 
@@ -19,9 +21,10 @@ export default async function CapturePage({ params, searchParams }: Props) {
   if (!hotel) notFound()
 
   const language = guestLanguage(query.lang, hotel.defaultLanguage)
-  const source = query.src && query.src in CAPTURE_SOURCES ? query.src : "desk"
+  const source = (query.src && query.src in CAPTURE_SOURCES ? query.src : "desk") as CaptureSource
   const location = (query.loc ?? "").slice(0, 40)
   const t = await getTranslations({ locale: language, namespace: "capture" })
+  const whatsappUrl = await getWhatsAppLink({ slug: hotel.slug, source, language, location: location || null })
   const switchTo = (to: HotelLanguage) => {
     const next = new URLSearchParams({ src: source, lang: to })
     if (location) next.set("loc", location)
@@ -42,6 +45,23 @@ export default async function CapturePage({ params, searchParams }: Props) {
     </section>
   )
 
+  const whatsapp = whatsappUrl ? (
+    <section className="grid w-full gap-2">
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "min-h-11 w-full")}
+      >
+        <MessageCircleIcon data-icon="inline-start" aria-hidden />
+        {t("whatsappButton")}
+      </a>
+      <p className="text-center text-muted-foreground text-xs leading-relaxed rtl:text-[0.8125rem]">
+        {t("whatsappHint", { hotel: hotel.displayName })}
+      </p>
+    </section>
+  ) : null
+
   return (
     <GuestShell hotel={hotel} language={language} line={t("welcome")} languageHref={switchTo}>
       <CaptureForm
@@ -51,6 +71,7 @@ export default async function CapturePage({ params, searchParams }: Props) {
         renderedAt={Date.now()}
         language={language}
         perk={perk}
+        whatsapp={whatsapp}
         copy={{
           name: t("name"),
           nameError: t("nameError"),

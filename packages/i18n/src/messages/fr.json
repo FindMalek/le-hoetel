@@ -237,7 +237,8 @@
     "groupGrow": "Croissance",
     "groupInsights": "Analyses",
     "groupSettings": "Réglages",
-    "unhappyGuests": "Clients mécontents"
+    "unhappyGuests": "Clients mécontents",
+    "whatsappScans": "WhatsApp"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -617,7 +618,9 @@
     "whatsappTitle": "WhatsApp",
     "emailTitle": "E-mail",
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
-    "thanksPerk": "Montrez cet écran à la réception pour le recevoir."
+    "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
+    "whatsappButton": "Continuer sur WhatsApp",
+    "whatsappHint": "Votre message arrive au numéro de Ritorno, qui répond pour {hotel}. L'équipe de l'hôtel voit votre numéro et peut vous écrire. Cela ne vous inscrit à aucun message."
   },
   "guest": {
     "languageLabel": "Langue",
@@ -2175,5 +2178,24 @@
     "notFoundBody": "Il n'est pas dans {hotel}. Si l'alerte concernait un autre hôtel, changez d'hôtel dans le menu puis rouvrez le lien.",
     "backToList": "Retour aux clients mécontents",
     "loadingCase": "Chargement du dossier"
+  },
+  "whatsappScans": {
+    "description": "Les clients qui ont scanné un code et écrit sur WhatsApp.",
+    "notice": "Ils ont écrit au numéro partagé de Ritorno et reçu un seul accueil automatique. Répondez depuis votre propre WhatsApp, uniquement à leur demande : écrire ne vaut pas consentement marketing. Les entrées sont supprimées après 30 jours.",
+    "reply": "Répondre sur WhatsApp",
+    "replyTo": "Répondre sur WhatsApp à {guest}",
+    "remove": "Retirer",
+    "removeFrom": "Retirer {guest}",
+    "removeTitle": "Retirer cette entrée ?",
+    "removeBody": "Le numéro est supprimé de cette liste. Un client inscrit reste dans vos clients.",
+    "cancel": "Annuler",
+    "emptyTitle": "Aucun message pour l'instant",
+    "emptyBody": "Quand un client continue sur WhatsApp depuis un code QR, il apparaît ici.",
+    "spot": {
+      "room": "Chambre",
+      "table": "Table",
+      "desk": "Réception"
+    },
+    "loading": "Chargement des scans WhatsApp"
   }
 }

@@ -88,6 +88,7 @@ export function CaptureForm(props: {
   renderedAt: number
   language: HotelLanguage
   perk: ReactNode
+  whatsapp: ReactNode
   copy: CaptureCopy
 }) {
   const { copy } = props
@@ -149,6 +150,7 @@ export function CaptureForm(props: {
             {props.perk}
             <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
           </div>
+          {props.whatsapp}
         </div>
       ) : null}
       <form onSubmit={submit} noValidate hidden={status === "done"} className="flex flex-col gap-6">
@@ -296,6 +298,7 @@ export function CaptureForm(props: {
           <p className="text-center text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.submitHint}</p>
         </div>
       </form>
+      {status === "done" || !props.whatsapp ? null : <div className="mt-6 border-t pt-6">{props.whatsapp}</div>}
     </>
   )
 }

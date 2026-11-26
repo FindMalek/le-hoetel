@@ -66,6 +66,11 @@ const schema = z.object({
   KAPSO_API_KEY: optional,
   KAPSO_WEBHOOK_SECRET: optional,
   WHATSAPP_PHONE_NUMBER_ID: optional,
+  /** The shared business number behind `WHATSAPP_PHONE_NUMBER_ID`, digits only. Empty hides the QR page's WhatsApp button. */
+  WHATSAPP_BUSINESS_NUMBER: z
+    .string()
+    .regex(/^(\d{6,15})?$/, "country code and number, digits only")
+    .optional(),
   WHATSAPP_NOTIFY_TO: optional,
   WHATSAPP_TEMPLATE_NAME: z.string().default("app_notification"),
   WHATSAPP_TEMPLATE_LANGUAGE: z.string().default("en_US"),

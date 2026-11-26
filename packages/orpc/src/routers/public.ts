@@ -11,6 +11,7 @@ import {
   statusSchema,
 } from "@ritorno/common/schemas"
 import { surveyAnswerSchema } from "@ritorno/common/survey"
+import { scanLink, signScanCode } from "@ritorno/common/whatsapp-scan"
 import { hotelSettings, organization } from "@ritorno/db"
 import { and, eq, ne, sql } from "drizzle-orm"
 import { z } from "zod"
@@ -216,6 +217,28 @@ export const publicRouter = {
         logoUrl: logoKey ? `${context.config.apiUrl}/files/${logoKey}` : null,
         welcomeOffer: await welcomeOffer(context.db, id, context.now()),
       }
+    }),
+
+  whatsappLink: publicProcedure
+    .route({
+      method: "GET",
+      path: "/public/hotels/{slug}/whatsapp-link",
+      summary: "The wa.me link of a QR page, null when no business number is set",
+      tags: ["public"],
+    })
+    .input(captureInputSchema.pick({ slug: true, source: true, language: true, location: true }))
+    .output(z.object({ url: z.string().nullable() }))
+    .handler(async ({ context, input }) => {
+      const hotel = await findPublicHotel(context.db, input.slug)
+      const number = context.config.whatsappNumber
+      if (!number) return { url: null }
+      const code = signScanCode(context.config.tokenSecret, {
+        slug: input.slug,
+        source: input.source,
+        language: input.language,
+        location: input.location ?? null,
+      })
+      return { url: scanLink(number, hotel.displayName, input.language, code) }
     }),
 
   capture: publicProcedure

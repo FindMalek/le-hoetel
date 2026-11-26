@@ -26,7 +26,7 @@ export function BottomTabs({ unread }: { unread: number }) {
   // Unhappy guests are the other half of the Inbox, so they keep its tab lit.
   const active = activeHref(
     TABS.map((tab) => tab.href),
-    pathname.startsWith("/feedback") ? "/inbox" : pathname,
+    ["/feedback", "/whatsapp"].some((tab) => pathname.startsWith(tab)) ? "/inbox" : pathname,
   )
   return (
     <nav

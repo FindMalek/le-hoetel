@@ -7,6 +7,7 @@ import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
 import { hotelBranding } from "./hotel"
 import type { KapsoPayload } from "./messages"
+import { forgetScans } from "./whatsapp-scans"
 
 type Ctx = Pick<Context, "db" | "config" | "now">
 type InboundCtx = Pick<Context, "db" | "now" | "notification">
@@ -111,12 +112,14 @@ export async function applyStopReply(
  * one whose message this number got last (one business number serves every hotel, so the number alone says
  * nothing); a number we never wrote to is unsubscribed everywhere, the safe side. When a consent really changed
  * the guest gets one confirmation in their language; a repeated delivery changes nothing and says nothing.
+ * A STOP also drops the number's QR scans, with the same confirmation when that is all there was.
  */
 export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoPayload): Promise<boolean> {
   const { from, type, text } = payload.message ?? {}
   const digits = from?.replace(/\D/g, "")
   if (!digits || type !== "text" || !isStopKeyword(text?.body ?? "")) return false
   const phoneE164 = `+${digits}`
+  const scans = await forgetScans(context.db, phoneE164)
 
   const [last] = await context.db
     .select({ hotelId: messages.hotelId })
@@ -138,10 +141,9 @@ export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoP
     .where(
       hotelId ? and(eq(guests.phoneE164, phoneE164), eq(guests.hotelId, hotelId)) : eq(guests.phoneE164, phoneE164),
     )
-  if (!guest) return false
-
-  const changed = await applyStopReply(context.db, { phoneE164, hotelId, at: context.now() })
-  if (changed > 0)
-    await context.notification.replyWhatsApp(phoneE164, stopConfirmation(guest.language)).catch(() => null)
-  return changed > 0
+  const changed = guest ? await applyStopReply(context.db, { phoneE164, hotelId, at: context.now() }) : 0
+  const language = guest?.language ?? scans[0]?.language
+  if (!language || (!changed && !scans.length)) return false
+  await context.notification.replyWhatsApp(phoneE164, stopConfirmation(language)).catch(() => null)
+  return true
 }

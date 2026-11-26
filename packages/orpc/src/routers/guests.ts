@@ -45,6 +45,7 @@ import {
   upsertGuest,
   withConsents,
 } from "../lib/guests"
+import { eraseGuestScans, scansForExport } from "../lib/whatsapp-scans"
 import { can, hotelExportProcedure, hotelProcedure } from "../procedures"
 
 const guestMessageSchema = z.object({
@@ -325,6 +326,7 @@ export const guestsRouter = {
         guest,
         consentEvents: await eventsOf(context.db, hotelId, [input.id]),
         feedback: await feedbackOfGuests(context.db, hotelId, input.id),
+        whatsappScans: await scansForExport(context.db, hotelId, input.id),
       }
     }),
 
@@ -343,6 +345,7 @@ export const guestsRouter = {
       const all = await withConsents(context.db, hotelId, rows)
       const events = await eventsOf(context.db, hotelId, null)
       const feedback = await feedbackOfGuests(context.db, hotelId, null)
+      const whatsappScans = await scansForExport(context.db, hotelId, null)
       await audit(context, { action: "guest.export-all", metadata: { hotelId, count: all.length } })
       return {
         exportedAt: context.now(),
@@ -351,6 +354,8 @@ export const guestsRouter = {
           consentEvents: events.filter((event) => event.guestId === guest.id),
           feedback: feedback.filter((item) => item.guestId === guest.id),
         })),
+        // Hotel wide, so numbers that wrote without signing up are in it too.
+        whatsappScans,
       }
     }),
 
@@ -375,6 +380,7 @@ export const guestsRouter = {
       const all = await withConsents(context.db, hotelId, rows)
       const events = await eventsOf(context.db, hotelId, input.id ? [input.id] : null)
       const feedback = await feedbackOfGuests(context.db, hotelId, input.id ?? null)
+      const scans = await scansForExport(context.db, hotelId, input.id ?? null)
       await audit(context, {
         action: input.id ? "guest.export" : "guest.export-all",
         targetId: input.id,
@@ -388,6 +394,7 @@ export const guestsRouter = {
             guest,
             consentEvents: events.filter((e) => e.guestId === guest.id),
             feedback: feedback.filter((f) => f.guestId === guest.id),
+            whatsappScans: scans.filter((s) => s.phoneE164 === guest.phoneE164),
           })),
         ),
       }
@@ -407,6 +414,7 @@ export const guestsRouter = {
       const { hotelId } = context.hotel
       const removed = await context.db.transaction(async (tx) => {
         await eraseFeedbackNotes(tx, hotelId, input.id)
+        await eraseGuestScans(tx, hotelId, input.id)
         return tx.delete(guests).where(hotelGuest(hotelId, input.id)).returning({ id: guests.id })
       })
       if (!removed.length) throw notFound()
@@ -433,6 +441,7 @@ export const guestsRouter = {
           throw new ORPCError("CONFLICT", { message: "The guest list changed. Reload and confirm again." })
         }
         await eraseFeedbackNotes(tx, hotelId, null)
+        await eraseGuestScans(tx, hotelId, null)
         return tx.delete(guests).where(eq(guests.hotelId, hotelId)).returning({ id: guests.id })
       })
       await audit(context, { action: "guest.delete-all", metadata: { hotelId, count: deleted.length } })

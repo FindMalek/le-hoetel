@@ -11,6 +11,12 @@ const api = createServerClient(async (): Promise<Record<string, string>> => {
 
 export const getPublicHotel = (slug: string) => api.public.hotel({ slug }).catch(() => null)
 
+export const getWhatsAppLink = (input: Parameters<typeof api.public.whatsappLink>[0]) =>
+  api.public
+    .whatsappLink(input)
+    .then((link) => link.url)
+    .catch(() => null)
+
 export type CaptureResult = "done" | "invalid" | "tooMany"
 
 export async function submitCapture(input: CaptureInput): Promise<CaptureResult> {
