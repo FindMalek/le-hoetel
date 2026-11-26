@@ -29,9 +29,11 @@ The product, the research behind it, the decisions and the roadmap are in the do
 
 ## Quickstart
 
-You need node 24, pnpm, bun and docker. The project is already installed and has a `.env` with generated secrets.
+You need node 24, pnpm, bun, docker and the Infisical cli.
 
 ```bash
+pnpm install
+infisical login   # once, secrets come from Infisical (docs: Secrets)
 pnpm db:up
 pnpm dev
 ```
@@ -43,7 +45,7 @@ pnpm dev
 | `apps/dashboard` | http://localhost:3002 | login and app shell |
 | `apps/docs` | http://localhost:3003 | docs site |
 
-Sign in to the dashboard with `ADMIN_EMAIL` and `ADMIN_PASSWORD` from `.env`.
+Sign in to the dashboard with `ADMIN_EMAIL` and `ADMIN_PASSWORD` of the Infisical `dev` environment.
 
 ---
 
@@ -68,7 +70,7 @@ ritorno/
 | `@ritorno/orpc` | procedures and typed clients |
 | `@ritorno/db` | drizzle schema, migrations, seed scenario |
 | `@ritorno/auth` | better-auth setup |
-| `@ritorno/env` | zod-validated env, one root `.env` |
+| `@ritorno/env` | zod-validated env, values from Infisical |
 
 `apps/api` is the only app that touches the database, auth and providers. `web` and `dashboard` call it through `@ritorno/orpc`.
 

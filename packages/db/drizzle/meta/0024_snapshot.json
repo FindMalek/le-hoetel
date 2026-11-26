@@ -1,5 +1,5 @@
 {
-  "id": "6e5afa2e-a6b9-4a01-80e2-6117bafcc618",
+  "id": "d458f96a-fd97-436a-9d26-b3d4bc04a08e",
   "prevId": "a4308a28-76cd-4e76-be76-831b040cd8e2",
   "version": "7",
   "dialect": "postgresql",
@@ -1330,12 +1330,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "staff_user_id": {
-          "name": "staff_user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "at": {
           "name": "at",
           "type": "timestamp with time zone",
@@ -1389,19 +1383,6 @@
         }
       },
       "foreignKeys": {
-        "consent_events_staff_user_id_user_id_fk": {
-          "name": "consent_events_staff_user_id_user_id_fk",
-          "tableFrom": "consent_events",
-          "tableTo": "user",
-          "columnsFrom": [
-            "staff_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
         "consent_events_guest_id_hotel_id_guests_id_hotel_id_fk": {
           "name": "consent_events_guest_id_hotel_id_guests_id_hotel_id_fk",
           "tableFrom": "consent_events",
@@ -2243,6 +2224,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "preview": {
+          "name": "preview",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -2493,27 +2480,6 @@
         }
       },
       "indexes": {
-        "offer_redemptions_guest_idx": {
-          "name": "offer_redemptions_guest_idx",
-          "columns": [
-            {
-              "expression": "guest_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "redeemed_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "offer_redemptions_hotel_idx": {
           "name": "offer_redemptions_hotel_idx",
           "columns": [
@@ -3175,27 +3141,6 @@
         }
       },
       "indexes": {
-        "survey_responses_guest_idx": {
-          "name": "survey_responses_guest_idx",
-          "columns": [
-            {
-              "expression": "guest_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "submitted_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "survey_responses_hotel_idx": {
           "name": "survey_responses_hotel_idx",
           "columns": [
