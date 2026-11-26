@@ -94,7 +94,17 @@ See [data and consent rules](/docs/data-rules) and [decisions](/docs/decisions).
 ### Accessibility and speed budgets
 
 - `apps/e2e/tests/a11y.spec.ts` runs axe on the landing page, the QR capture page and the sign-in page in English and Arabic. Any serious or critical violation fails the e2e job.
-- The `lighthouse` workflow runs Lighthouse CI (`apps/e2e/lighthouserc.json`) on the QR capture page with the mobile throttling defaults, only when a pull request touches `apps/web`, `packages/ui` or `packages/i18n`. Accessibility must be at least 0.95 and blocks. Performance at least 0.8, LCP at most 3000 ms and script transfer at most 300 kB only warn until the runs are stable, then they become errors.
+- The `lighthouse` workflow runs Lighthouse CI on the landing page (`/`, `/ar`) and the QR capture page (en, ar) with the mobile throttling defaults, when a pull request touches `apps/web`, `pnpm-lock.yaml` or a package those pages ship. Budgets live in `apps/e2e/lighthouserc.json`, 3 runs per URL:
+
+  | Budget | Capture | Landing | Runs compared |
+  | --- | --- | --- | --- |
+  | Largest Contentful Paint | 2500 ms | 2500 ms | median |
+  | Cumulative Layout Shift | 0.1 | 0.1 | median |
+  | Total Blocking Time (lab stand-in for INP) | 600 ms | 600 ms | best |
+  | Script transfer | 250 kB | 300 kB | median |
+  | Accessibility score | 0.95 | 0.95 | best |
+
+  All of these block. The performance score (0.8) only warns, because it swings with the speed of the runner. Total Blocking Time takes the best run for the same reason. INP needs real interactions, so CI does not measure it.
 
 ## Adding an endpoint
 

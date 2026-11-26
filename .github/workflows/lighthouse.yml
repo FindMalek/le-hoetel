@@ -1,7 +1,7 @@
 name: lighthouse
 
-# The QR capture page on a throttled phone (Lighthouse mobile defaults). Accessibility blocks, performance and the
-# budgets only warn until the runs prove stable. Only runs when the public site or the shared ui changes.
+# Core Web Vitals budgets for the landing and QR capture pages on a throttled phone (Lighthouse mobile defaults).
+# Budgets live in apps/e2e/lighthouserc.json. Only runs when something that ships in those pages changes.
 
 on:
   pull_request:
@@ -9,6 +9,12 @@ on:
       - apps/web/**
       - packages/ui/**
       - packages/i18n/**
+      - packages/common/**
+      - packages/env/**
+      - packages/compliance/**
+      - packages/logger/**
+      - packages/orpc/**
+      - pnpm-lock.yaml
       - apps/e2e/lighthouserc.json
       - .github/workflows/lighthouse.yml
 
@@ -66,7 +72,10 @@ jobs:
       - name: Lighthouse
         working-directory: apps/e2e
         run: |
-          export CHROME_PATH="$(pnpm exec node -e "console.log(require('playwright-core').chromium.executablePath())")"
+          # Assigned before export so a failed lookup stops the job instead of falling back to the runner's Chrome.
+          CHROME_PATH="$(node -e "console.log(require('@playwright/test').chromium.executablePath())")"
+          test -x "$CHROME_PATH"
+          export CHROME_PATH
           pnpm dlx @lhci/cli@0.16.1 autorun
       - if: failure()
         run: tail -30 /tmp/api.log /tmp/web.log
