@@ -77,3 +77,6 @@ jobs:
           cp .env.example .env
           printf 'BETTER_AUTH_SECRET=%s\nADMIN_PASSWORD=%s\n' ci-build-only-secret-not-used-at-runtime-0123456789 ci-build-only >> .env
           pnpm build ${{ github.event_name == 'pull_request' && '--affected' || '' }}
+      # needs the build output and skips without it. Not through turbo: it would replay the skipped run from `pnpm test`
+      - name: Docs tests against the build
+        run: pnpm --filter docs test
