@@ -10,7 +10,7 @@ const HEX = /^#[0-9a-fA-F]{6}$/
 
 export const isHexColor = (value: string): boolean => HEX.test(value)
 
-/** A hex color with the system picker, a live sample with its readable text color, and a warning when it is too faint on the light or dark page. */
+/** A hex color with the system picker, a live sample with its readable text color, and a warning when it is too faint on the page or a surface. */
 export function ColorField({
   id,
   label,
@@ -78,12 +78,12 @@ export function ColorField({
           </div>
         )}
       </FormField>
-      {issues.map((mode) => (
-        <p key={mode} role="status" className="flex items-start gap-1.5 text-sm">
+      {issues.length > 0 ? (
+        <p role="status" className="flex items-start gap-1.5 text-sm">
           <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
-          {mode === "light" ? t("contrastLight") : t("contrastDark")}
+          {t("contrastLight")}
         </p>
-      ))}
+      ) : null}
     </div>
   )
 }

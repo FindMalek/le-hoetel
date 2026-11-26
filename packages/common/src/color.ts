@@ -1,7 +1,7 @@
 const HEX = /^#[0-9a-fA-F]{6}$/
 
 /** The page backgrounds of `packages/ui/src/styles/theme.css`, as sRGB hex, for contrast checks. */
-export const PAGE_BACKGROUNDS = { light: "#ffffff", dark: "#09090b" } as const
+export const PAGE_BACKGROUNDS = { page: "#ffffff", surface: "#f4f4f3" } as const
 
 /** WCAG 1.4.11: user interface components and graphics need 3:1 against what is behind them. */
 export const MIN_UI_CONTRAST = 3
@@ -25,10 +25,10 @@ export function readableForeground(background: string): "#000000" | "#ffffff" {
   return contrastRatio(background, "#ffffff") >= contrastRatio(background, "#000000") ? "#ffffff" : "#000000"
 }
 
-/** The themes where a brand color is too faint to be seen as a button, border or icon on the page. */
-export function brandContrastIssues(color: string | null | undefined): ("light" | "dark")[] {
+/** The surfaces where a brand color is too faint to be seen as a button, border or icon. */
+export function brandContrastIssues(color: string | null | undefined): (keyof typeof PAGE_BACKGROUNDS)[] {
   if (!color || !HEX.test(color)) return []
-  return (["light", "dark"] as const).filter((mode) => contrastRatio(color, PAGE_BACKGROUNDS[mode]) < MIN_UI_CONTRAST)
+  return (["page", "surface"] as const).filter((key) => contrastRatio(color, PAGE_BACKGROUNDS[key]) < MIN_UI_CONTRAST)
 }
 
 /** The css variables that rebrand a hotel's pages: primary and one accent, each with a readable foreground. */

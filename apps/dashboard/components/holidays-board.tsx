@@ -9,7 +9,7 @@ import { useLocale, useTranslations } from "next-intl"
 import { toast } from "sonner"
 
 const SELECT_CLASS =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 disabled:opacity-50 md:h-9 md:w-44 md:text-sm dark:bg-input/30"
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 disabled:opacity-50 md:h-9 md:w-44 md:text-sm"
 
 export function HolidaysBoard() {
   const t = useTranslations("holidays")

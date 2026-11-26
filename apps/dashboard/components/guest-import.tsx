@@ -84,7 +84,7 @@ const problemOf = (message: string): (typeof PROBLEM_FIELDS)[number] | "row" => 
 }
 
 const selectClass =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 md:text-sm"
 
 export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguage }) {
   const t = useTranslations("guests.import")

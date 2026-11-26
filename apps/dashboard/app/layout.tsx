@@ -8,7 +8,6 @@ import { cn } from "@ritorno/ui/lib/utils"
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
 import { getLocale } from "next-intl/server"
-import { ThemeProvider } from "@/components/theme-provider"
 import { dashboardUrl, SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
 
@@ -30,15 +29,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning className={cn("antialiased", fontVariables, "font-sans")}>
       <body className="bg-background text-foreground">
-        <ThemeProvider>
-          <QueryProvider>
-            <NextIntlClientProvider>
-              <TooltipProvider>{children}</TooltipProvider>
-            </NextIntlClientProvider>
-          </QueryProvider>
-          <Toaster position="top-center" />
-          <ConsentBanner />
-        </ThemeProvider>
+        <QueryProvider>
+          <NextIntlClientProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </NextIntlClientProvider>
+        </QueryProvider>
+        <Toaster position="top-center" />
+        <ConsentBanner />
       </body>
     </html>
   )

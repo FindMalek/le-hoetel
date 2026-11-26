@@ -12,9 +12,10 @@ test("contrast follows WCAG and every brand color gets a readable foreground", (
   }
 })
 
-test("a faint or too dark brand color is flagged for the theme it disappears in", () => {
-  expect(brandContrastIssues("#f2e8b0")).toEqual(["light"])
-  expect(brandContrastIssues("#101820")).toEqual(["dark"])
+test("a faint brand color is flagged for the surface it disappears on", () => {
+  expect(brandContrastIssues("#f2e8b0")).toEqual(["page", "surface"])
+  expect(brandContrastIssues("#949494")).toEqual(["surface"])
+  expect(brandContrastIssues("#101820")).toEqual([])
   expect(brandContrastIssues("#0a7c66")).toEqual([])
   expect(brandContrastIssues(null)).toEqual([])
   expect(brandStyle({ primaryColor: "#0a7c66", accentColor: null })).toEqual({

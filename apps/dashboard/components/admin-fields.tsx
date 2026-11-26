@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl"
 import { useId } from "react"
 
 export const selectClass =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm dark:bg-input/30"
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm"
 
 interface Shared {
   label: string
@@ -85,7 +85,7 @@ const HEX = /^#[0-9a-fA-F]{6}$/
 
 export const isHex = (value: string) => HEX.test(value)
 
-/** A hex input with a native picker next to it and a warning when the color is too faint on a light or dark page. */
+/** A hex input with a native picker next to it and a warning when the color is too faint on the page or a surface. */
 export function ColorInput({
   label,
   value,
@@ -96,11 +96,7 @@ export function ColorInput({
 }: Shared & { value: string; onChange: (value: string) => void; placeholder: string }) {
   const t = useTranslations("adminHotel")
   const issues = brandContrastIssues(isHex(value) ? value : null)
-  const warning = issues.includes("light")
-    ? t("contrastLight")
-    : issues.includes("dark")
-      ? t("contrastDark")
-      : undefined
+  const warning = issues.length > 0 ? t("contrastLight") : undefined
   return (
     <AdminField label={label} error={error} hint={warning} className={className}>
       {(aria) => (
