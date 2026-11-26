@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "check-types": "tsc --noEmit",
-    "logo:build": "node scripts/build-logo.ts"
+    "logo:build": "node scripts/build-logo.ts",
+    "sky:poster": "bun scripts/pixel-sky-poster.ts",
+    "test": "bun test"
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
@@ -23,6 +25,7 @@
   "devDependencies": {
     "@ritorno/config": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
+    "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

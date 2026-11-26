@@ -248,3 +248,17 @@
 @utility animate-caret {
   animation: caret-blink 1.05s step-end infinite;
 }
+
+/* Display reveal: each word rises 8px and unblurs; the stagger is set inline per word. */
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(6px);
+  }
+}
+
+@utility animate-word-rise {
+  display: inline-block;
+  animation: word-rise 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}

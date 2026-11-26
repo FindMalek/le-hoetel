@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 type Breakpoint = "md" | "lg" | "xl"
 

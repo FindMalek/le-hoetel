@@ -1,5 +1,5 @@
 import { useId } from "react"
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 type ZelligePatternProps = { className?: string }
 

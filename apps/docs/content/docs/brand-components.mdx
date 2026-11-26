@@ -1,0 +1,137 @@
+---
+title: Brand components
+description: PixelSky, display type, bento tiles, the pill nav, device frames and the footer art, all in @ritorno/ui/brand.
+---
+
+import {
+  BentoExample,
+  ChipExample,
+  DisplayExample,
+  FooterExample,
+  FramesExample,
+  HeroExample,
+  SkyExample,
+} from "@/components/brand-examples"
+
+The landing, auth panel, 404 and first run screens are built from these. They live in `packages/ui/src/brand` (import `@ritorno/ui/brand/<file>`), take every visible string as a prop so the page passes translated copy, and only use the theme tokens from the [design system](/docs/design-system). Guest pages never import them.
+
+<HeroExample />
+
+## PixelSky
+
+Dithered pixel sky that fills its positioned parent (`absolute inset-0`, so it never shifts layout). Square cells, 8 px under `md` and 12 px above. A seeded two octave value noise picks one of the four `--sky-*` bands per cell, deep at the top to haze at the bottom, and band edges get a `(x + y) % 2` checker of both colors. A second noise layer becomes white cloud in 2x2 blocks with a haze underside.
+
+<SkyExample />
+
+```tsx title="PixelSky"
+import { PixelSky } from "@ritorno/ui/brand/pixel-sky"
+
+<section className="relative isolate min-h-svh pt-20 md:pt-32">
+  <PixelSky clearCenter className="-z-10" />
+  <div data-sky-clear>
+    <Display size="xl">…</Display>
+    {/* lead and CTAs */}
+  </div>
+</section>
+```
+
+| prop | default | what it does |
+| --- | --- | --- |
+| `seed` | `"ritorno"` | any string gives another deterministic sky |
+| `cellSize` | 8 / 12 px | fixed cell size in px, for small tiles like the logo |
+| `density` | `0.5` | 0 to 1, how much of the sky is cloud |
+| `clearCenter` | `false` | dithered white zone for the hero text. Mark the text block with `data-sky-clear` (inside the sky's parent) and the zone hugs its box (a superellipse 3.5% outside it, feathered by a checker) from 768 px up; on phones and without it a default center ellipse is used |
+| `fadeTop` | `false` | stepped dithered fade to white over the top 40%, for a sky inside a white card (no poster) |
+| `animated` | `true` | clouds step one cell every 900 ms |
+
+How it loads:
+
+- the server renders a 160x90 PNG poster (about 1.5 KB, inlined as a data URL) as `background-image` with `image-rendering: pixelated`, so the sky paints with the HTML and LCP stays on the headline. The poster is drawn for the default seed and density
+- `pixel-sky-canvas.tsx` is the only client part, no dependencies. After `requestIdleCallback` it redraws the grid at the real cell size into a canvas one pixel per cell and fades it in, then steps the cloud layer. Each step is one `putImageData` of a few thousand pixels
+- the drift pauses offscreen (`IntersectionObserver`), on hidden tabs (`requestAnimationFrame` stops) and never starts under `prefers-reduced-motion` or `saveData`
+- it is the default export, so a page can split it further with `next/dynamic(() => import("@ritorno/ui/brand/pixel-sky-canvas"), { ssr: false })`
+
+After changing `pixel-sky-grid.ts`, run `pnpm -F @ritorno/ui sky:poster` to rewrite `pixel-sky-poster.ts`. The sky is art: `aria-hidden`, and not mirrored in RTL. Text over it is ink or navy on the cleared center.
+
+## Display
+
+Serif display line: Newsreader italic in en and fr, upright Noto Naskh Arabic 600 in ar (no fake slant). `size="xl"` is `text-display-xl` for the hero, the default is `text-display`. Wrap the emphasis word in `<em>`, it turns `blue-600`. `reveal` makes each word rise 8 px and unblur with a 60 ms stagger, done by 600 ms; it is CSS only and the reduced motion rule renders the words in place.
+
+<DisplayExample />
+
+```tsx title="Display"
+<Display as="h1" size="xl" reveal>
+  Every guest, <em>welcomed</em> back by name
+</Display>
+```
+
+## Chip
+
+`@ritorno/ui/components/chip`: `rounded-full h-7 px-3 text-caption`, surface fill or a semantic soft fill (`info`, `success`, `warning`, `danger`). Put an icon in it when the tone carries meaning.
+
+<ChipExample />
+
+```tsx title="Chip"
+<Chip tone="success">
+  <CheckIcon />
+  Consent logged
+</Chip>
+```
+
+## BentoGrid and BentoTile
+
+Six column grid on a surface panel (28 px radius), tiles stack under `md`. A tile is a white card (20 px) with a chips row, a Geist `text-h3` title, one line of description and a media slot that bleeds to the bottom edge. `span` is 2, 3, 4 or 6 columns. With `href` the title becomes a link stretched over the whole tile and the round arrow appears at the inline-end corner.
+
+<BentoExample />
+
+```tsx title="BentoGrid"
+<BentoGrid>
+  <BentoTile span={4} href="#recognition" chips={<Chip>Front desk</Chip>} title="Know who is back"
+    description="Returning guests are flagged the moment they check in." media={<GuestListMockup />} />
+  <BentoTile span={2} title="Hear it first" description="A low survey score pings the manager." />
+</BentoGrid>
+```
+
+## PillNav
+
+Floating white pill at inline-start with the `Logo` lockup (a link to `homeHref`), links and language pill, and the black "Request a demo" pill plus a 44 px arrow at inline-end (the arrow flips in RTL and is part of the same link). Under `md` the links and language move to a top `Sheet`. It is `fixed` by default; pass `className="absolute"` to pin it inside a section, as in the hero above.
+
+```tsx title="PillNav"
+<PillNav
+  homeHref="/"
+  navLabel={t("nav.label")}
+  menuLabel={t("nav.menu")}
+  links={[{ href: "#how", label: t("nav.how") }]}
+  cta={{ href: "/demo", label: t("hero.cta") }}
+  language={<LanguagePill />}
+/>
+```
+
+## BrowserFrame and PhoneFrame
+
+Frames for product shots: real screenshots or JSX mockups with fixture data. The browser has a 36 px bar with three dots and a url pill and a 14 px radius; the phone is 9:19.5 with a 6 px ink bezel and a 40 px radius. Both use `shadow-device`, render their children `inert` and are `role="img"` with the translated `label` you pass. Mockups follow the page locale and direction; put the phone at inline-end.
+
+<FramesExample />
+
+```tsx title="Device frames"
+<BrowserFrame label={t("shot.guests")} url="app.ritorno.co/guests">
+  <GuestListMockup />
+</BrowserFrame>
+<PhoneFrame label={t("shot.capture")} className="w-48">
+  <CapturePageMockup />
+</PhoneFrame>
+```
+
+## EmbossedWordmark and GradientBand
+
+The footer ends with the giant inset outlined wordmark from `Logo` (72vw wide, the canvas color, legible through a white top highlight and layered ink drop shadows, so it only shows as an emboss on `bg-canvas`) and a 120 px blurred band of `blue-300`, `blue-500` and haze. Both are CSS only and `aria-hidden`.
+
+<FooterExample />
+
+```tsx title="Footer"
+<footer className="bg-canvas">
+  {/* columns */}
+  <EmbossedWordmark />
+  <GradientBand />
+</footer>
+```

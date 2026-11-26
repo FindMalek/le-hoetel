@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 import { Loader2Icon } from "lucide-react"
 
 function Spinner({ className, "aria-label": label, ...props }: React.ComponentProps<"svg">) {

@@ -1,4 +1,4 @@
-import { cn } from "cn"
+import { cn } from "@ritorno/ui/lib/utils"
 
 type PageHeaderProps = {
   title: React.ReactNode

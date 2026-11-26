@@ -6,3 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @source "../node_modules/fumadocs-ui/dist/**/*.js";
+
+/* Marker fumadocs typography skips; declared so live examples can opt out of prose styles. */
+@utility not-prose {
+  isolation: isolate;
+}
