@@ -14,6 +14,8 @@ export interface EmailExtras {
   fromName?: string
   replyTo?: string
   headers?: Record<string, string>
+  /** Sent as Resend's `Idempotency-Key`: a repeat with the same key within 24 hours is not sent again. */
+  idempotencyKey?: string
 }
 
 export interface EmailChannel {
@@ -35,17 +37,20 @@ export function createEmailChannel(config: EmailConfig): EmailChannel | null {
   const client = createEmailClient({ adapters: [resend({ apiKey: config.apiKey, fetch: config.fetch })] })
   return {
     async send(to, { subject, html, text }, extras = {}) {
-      const result = await client.send({
-        from: fromWithName(config.from, extras.fromName),
-        to,
-        subject,
-        html,
-        text,
-        ...(extras.replyTo ? { replyTo: extras.replyTo } : {}),
-        ...(extras.headers
-          ? { headers: Object.entries(extras.headers).map(([name, value]) => ({ name, value })) }
-          : {}),
-      })
+      const result = await client.send(
+        {
+          from: fromWithName(config.from, extras.fromName),
+          to,
+          subject,
+          html,
+          text,
+          ...(extras.replyTo ? { replyTo: extras.replyTo } : {}),
+          ...(extras.headers
+            ? { headers: Object.entries(extras.headers).map(([name, value]) => ({ name, value })) }
+            : {}),
+        },
+        extras.idempotencyKey ? { idempotencyKey: extras.idempotencyKey } : undefined,
+      )
       return { id: result.id }
     },
   }

@@ -1,8 +1,10 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { messages } from "@ritorno/db"
+import type { SendEmailInput } from "@ritorno/notification"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../../testing"
-import { claimAndSend } from "../automations"
+import { claimAndSend, SEND_PACING } from "../automations"
+import { isRetryableSendError } from "../messages"
 
 let app: TestApp
 beforeAll(async () => {
@@ -10,7 +12,7 @@ beforeAll(async () => {
 })
 afterAll(() => app.close())
 
-const NO_WAIT = { pauseMs: 0, retryDelayMs: 0 }
+const NO_WAIT = { ...SEND_PACING, pauseMs: 0, retryDelayMs: 0 }
 
 async function guestWithEmail(slug: string) {
   const owner = await app.signUp(`${slug}@ritorno.test`)
@@ -28,31 +30,37 @@ async function guestWithEmail(slug: string) {
 }
 
 function provider(failures: unknown[]) {
-  let calls = 0
+  const keys: (string | undefined)[] = []
   const notification = {
     live: true,
     channels: [],
-    sendEmail: async () => {
-      const failure = failures[calls++]
+    sendEmail: async (input: SendEmailInput) => {
+      const failure = failures[keys.length]
+      keys.push(input.idempotencyKey)
       if (failure) throw failure
       return { channel: "email", sent: true, id: "provider-id" }
     },
   }
   const services = { ...app.services, notification: notification as unknown as typeof app.services.notification }
-  return { services, calls: () => calls }
+  return { services, keys, calls: () => keys.length }
 }
 
 const welcome = (hotelId: string, guestId: string) =>
   ({ hotelId, guestId, channel: "email", template: "welcome", props: {} }) as const
 
-test("a 5xx or network failure is retried until it goes through, and the claim still stops a second send", async () => {
+test("an email 5xx or lost answer is retried under one idempotency key, and the claim still stops a second send", async () => {
   const { hotelId, guestId } = await guestWithEmail("retry-transient")
-  const { services, calls } = provider([Object.assign(new Error("down"), { status: 503 }), { code: "ECONNRESET" }])
+  const { services, keys, calls } = provider([
+    Object.assign(new Error("down"), { status: 503 }),
+    { code: "ECONNRESET" },
+  ])
 
   expect(await claimAndSend(services, { kind: "welcome" }, welcome(hotelId, guestId), NO_WAIT)).toBe(true)
   expect(await claimAndSend(services, { kind: "welcome" }, welcome(hotelId, guestId), NO_WAIT)).toBe(false)
 
   expect(calls()).toBe(3)
+  expect(new Set(keys).size).toBe(1)
+  expect(keys[0]).toStartWith("automation-send:")
   const rows = await app.services.db.select().from(messages).where(eq(messages.guestId, guestId))
   expect(rows.map((row) => row.status).sort()).toEqual(["failed", "failed", "sent"])
 })
@@ -66,4 +74,12 @@ test("a permanent provider failure is not retried", async () => {
   expect(calls()).toBe(1)
   const rows = await app.services.db.select().from(messages).where(eq(messages.guestId, guestId))
   expect(rows).toMatchObject([{ status: "failed" }])
+})
+
+test("without an idempotency key only a 429 or a connect error is retried, never a 5xx or a lost answer", () => {
+  const retried = [{ status: 429 }, { code: "ECONNREFUSED" }, { cause: { code: "ENOTFOUND" } }]
+  const notRetried = [{ httpStatus: 503 }, { code: "ETIMEDOUT" }, { code: "ECONNRESET" }, { status: 400 }]
+
+  expect(retried.map((error) => isRetryableSendError(error, false))).toEqual([true, true, true])
+  expect(notRetried.map((error) => isRetryableSendError(error, false))).toEqual([false, false, false, false])
 })

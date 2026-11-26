@@ -11,8 +11,7 @@ import type { JobServices } from "./welcome"
 
 export const CAMPAIGN_JOB = "campaign-dispatch"
 
-/** Messages per campaign per minute: at most `BATCH_SIZE` sends, `SEND_PACING.pauseMs` apart. */
-const BATCH_SIZE = 20
+/** Messages per campaign per minute: at most `SEND_PACING.batchSize` sends, `SEND_PACING.pauseMs` apart. */
 
 /**
  * Runs every minute. Takes the campaigns that are due (scheduled, or still sending), skips hotels in quiet hours
@@ -64,7 +63,7 @@ export const campaignJob = (services: JobServices, options: { batchSize?: number
           timezone,
           now: now(),
           campaignId: campaign.id,
-        }).limit(options.batchSize ?? BATCH_SIZE)
+        }).limit(options.batchSize ?? SEND_PACING.batchSize)
         if (!batch.length) {
           await services.db
             .update(campaigns)

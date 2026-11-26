@@ -9,16 +9,13 @@ import { type JobServices, welcomeJob } from "./welcome"
 export { enqueueWelcome, type JobServices } from "./welcome"
 
 /** The jobs that send to guests. They need the dispatcher's services, so the api builds them and hands them to the runner next to `JOBS`. */
-export const createMessageJobs = (
-  services: JobServices,
-  options: Partial<SendPacing> & { campaignBatchSize?: number } = {},
-): readonly Job[] => {
+export const createMessageJobs = (services: JobServices, options: Partial<SendPacing> = {}): readonly Job[] => {
   const pacing = { ...SEND_PACING, ...options }
   return [
     welcomeJob(services, pacing),
     birthdayJob(services, pacing),
     holidayJob(services, pacing),
     surveyJob(services, pacing),
-    campaignJob(services, { pauseMs: pacing.pauseMs, batchSize: options.campaignBatchSize }),
+    campaignJob(services, { pauseMs: pacing.pauseMs, batchSize: pacing.batchSize }),
   ]
 }
