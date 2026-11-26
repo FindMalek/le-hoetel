@@ -163,3 +163,24 @@ test("redeeming: expired, paused and used up offers say why, and staff can redee
   expect(await member.client.offers.lookup({ code: "OLD" })).toMatchObject({ status: "expired" })
   await expect(member.client.offers.create({ title: "No", promoCode: "NOPE" })).rejects.toThrow()
 })
+
+test("redeeming a guest's code counts their visit, and undo takes both back", async () => {
+  const hotel = await hotelAs("redeem-visit")
+  const offer = await hotel.client.offers.create({ title: "Late checkout", promoCode: "LATE" })
+  const code = await guestCodeFor(hotel, offer.id, "+21620777777")
+  const created = app.services.now
+  app.services.now = () => new Date(Date.now() + 2 * 864e5)
+  const visits = async () => (await hotel.client.guests.find({ q: "20777777" }))[0]?.visits
+
+  const done = await hotel.client.offers.redeem({ code })
+  expect(done.justNow).toBe(true)
+  expect(done.guestId).toBeTruthy()
+  expect(await visits()).toBe(2)
+
+  const other = await hotelAs("redeem-visit-other")
+  await expect(other.client.offers.undoRedeem({ id: done.redemptionId! })).rejects.toMatchObject({ code: "NOT_FOUND" })
+  await hotel.client.offers.undoRedeem({ id: done.redemptionId! })
+  expect(await visits()).toBe(1)
+  expect(await hotel.client.offers.lookup({ code })).toMatchObject({ status: "ready" })
+  app.services.now = created
+})

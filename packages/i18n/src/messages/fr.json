@@ -311,13 +311,33 @@
       "needEmail": "Ajoutez un e-mail pour demander le consentement e-mail.",
       "submit": "Ajouter le client",
       "added": "Client ajouté",
-      "merged": "Ce client existait déjà : informations mises à jour",
+      "merged": "Ce client était déjà enregistré",
       "nameRequired": "Saisissez le nom du client.",
       "phoneInvalid": "Saisissez un numéro valide, par exemple 20 123 456.",
       "emailInvalid": "Saisissez un e-mail valide, par exemple nom@exemple.com.",
       "done": "Terminé",
       "view": "Voir le client",
-      "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez."
+      "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez.",
+      "known": "Ce numéro est déjà enregistré",
+      "changed": "Mis à jour : {fields}.",
+      "unchanged": "Rien n'a changé dans la fiche.",
+      "kept": "Conservé tel quel, votre saisie n'a pas été enregistrée : {fields}.",
+      "visitSaved": "Visite enregistrée.",
+      "visitCounted": "La visite du jour était déjà comptée.",
+      "fields": {
+        "name": "nom",
+        "language": "langue",
+        "email": "e-mail",
+        "birthday": "anniversaire",
+        "country": "pays",
+        "city": "ville",
+        "stayCheckIn": "date d'arrivée",
+        "stayCheckOut": "date de départ",
+        "nextDestination": "prochaine destination",
+        "emailConsent": "consentement e-mail",
+        "whatsappConsent": "consentement WhatsApp",
+        "profileConsent": "consentement profil"
+      }
     },
     "import": {
       "title": "Importer des clients",
@@ -474,7 +494,12 @@
       "lastVisit": "Dernière visite",
       "language": "Langue",
       "lastOffer": "Dernière offre utilisée",
-      "consents": "Contact autorisé"
+      "consents": "Contact autorisé",
+      "markedToday": "Visite du jour enregistrée",
+      "alreadyCounted": "La visite du jour était déjà comptée",
+      "undo": "Annuler",
+      "undone": "Visite retirée",
+      "markError": "La visite n'a pas pu être enregistrée. Réessayez."
     },
     "returning": "{count, plural, one {Fidèle, # séjour} other {Fidèle, # séjours}}",
     "edit": {
@@ -1110,7 +1135,10 @@
       "exhausted": "Toutes les utilisations de ce code sont épuisées.",
       "wrongHotel": "Demandez au client le code envoyé par cet hôtel.",
       "unknown": "Vérifiez le code avec le client et réessayez."
-    }
+    },
+    "viewGuest": "Voir le client",
+    "undo": "Annuler, touché par erreur",
+    "undone": "Utilisation annulée"
   },
   "notFound": {
     "title": "Page introuvable",
@@ -1760,7 +1788,8 @@
         "create": "Offre créée",
         "delete": "Offre supprimée",
         "redeem": "Offre utilisée",
-        "update": "Offre modifiée"
+        "update": "Offre modifiée",
+        "unredeem": "A annulé l'utilisation d'une offre"
       },
       "privacy": {
         "delete-account": "Compte supprimé",

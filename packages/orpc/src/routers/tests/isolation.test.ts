@@ -46,6 +46,7 @@ test("a hotel can't read, change, export or delete another hotel's guest, even k
     export: () => a.client.guests.export({ id: guestB.id }),
     remove: () => a.client.guests.remove({ id: guestB.id }),
     markVisit: () => a.client.guests.markVisit({ id: guestB.id }),
+    undoVisit: () => a.client.guests.undoVisit({ id: guestB.id, visitId: crypto.randomUUID() }),
   }
   for (const [name, attempt] of Object.entries(attempts)) {
     await expect(attempt(), name).rejects.toMatchObject({ code: "NOT_FOUND" })
@@ -120,6 +121,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     "messages",
     "find",
     "markVisit",
+    "undoVisit",
   ]
   expect(Object.keys(guestsRouter).sort()).toEqual([...covered].sort())
   const calls = {
@@ -143,6 +145,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     activity: () => app.anonymous.guests.activity({ id: crypto.randomUUID() }),
     find: () => app.anonymous.guests.find({ q: "amel" }),
     markVisit: () => app.anonymous.guests.markVisit({ id: crypto.randomUUID() }),
+    undoVisit: () => app.anonymous.guests.undoVisit({ id: crypto.randomUUID(), visitId: crypto.randomUUID() }),
     consentHistory: () => app.anonymous.guests.consentHistory({ id: crypto.randomUUID() }),
     import: () =>
       app.anonymous.guests.import({

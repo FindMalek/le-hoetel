@@ -4,10 +4,21 @@ import {
   CONSENT_WORDING_VERSION,
   type ConsentChannel,
   type ConsentSource,
+  type GuestSource,
 } from "@ritorno/common/consent"
-import type { Guest, guestCreateSchema } from "@ritorno/common/schemas"
-import { consentEvents, type Db, guestConsents, guests, guestVisits, offerRedemptions, offers } from "@ritorno/db"
-import { and, count, desc, eq, inArray, max, min } from "drizzle-orm"
+import { isSameLocalDay } from "@ritorno/common/hotel-time"
+import { GUEST_MERGE_FIELDS, type Guest, type GuestUpsertResult, type guestCreateSchema } from "@ritorno/common/schemas"
+import {
+  consentEvents,
+  type Db,
+  guestConsents,
+  guests,
+  guestVisits,
+  hotelSettings,
+  offerRedemptions,
+  offers,
+} from "@ritorno/db"
+import { and, count, desc, eq, gt, inArray, max, min } from "drizzle-orm"
 import type { z } from "zod"
 
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0]
@@ -96,7 +107,57 @@ export async function withConsents(
   })
 }
 
+async function timezoneOf(db: Db | Tx, hotelId: string): Promise<string> {
+  const [row] = await db
+    .select({ timezone: hotelSettings.timezone })
+    .from(hotelSettings)
+    .where(eq(hotelSettings.organizationId, hotelId))
+  return row?.timezone ?? "Africa/Tunis"
+}
+
+/**
+ * Records that the guest is here, at most once per hotel day. The guest row is locked so a rescan and a staff tap
+ * at the same moment count once. Returns the new visit's id, null when that day was already counted.
+ */
+export async function recordVisit(
+  db: Db | Tx,
+  visit: { hotelId: string; guestId: string; source: GuestSource; at: Date },
+): Promise<string | null> {
+  const { hotelId, guestId, at } = visit
+  return db.transaction(async (tx) => {
+    await tx.select({ id: guests.id }).from(guests).where(hotelGuest(hotelId, guestId)).for("no key update")
+    const timeZone = await timezoneOf(tx, hotelId)
+    const recent = await tx
+      .select({ at: guestVisits.at })
+      .from(guestVisits)
+      .where(
+        and(
+          eq(guestVisits.hotelId, hotelId),
+          eq(guestVisits.guestId, guestId),
+          // no timezone's day is longer than this
+          gt(guestVisits.at, new Date(at.getTime() - 48 * 3_600_000)),
+        ),
+      )
+    if (recent.some((row) => isSameLocalDay(row.at, at, timeZone))) return null
+    const [row] = await tx.insert(guestVisits).values(visit).returning({ id: guestVisits.id })
+    return row!.id
+  })
+}
+
 export type GuestInput = z.output<typeof guestCreateSchema>
+
+type MergeReport = Pick<GuestUpsertResult, "changed" | "kept">
+
+function compareMerge(
+  before: typeof guests.$inferSelect,
+  after: Partial<typeof guests.$inferSelect>,
+  typed: Omit<GuestInput, "consents" | "phone">,
+): MergeReport {
+  return {
+    changed: GUEST_MERGE_FIELDS.filter((field) => (after[field] ?? null) !== (before[field] ?? null)),
+    kept: GUEST_MERGE_FIELDS.filter((field) => typed[field] != null && typed[field] !== after[field]),
+  }
+}
 
 /**
  * One phone is one guest per hotel. A new phone creates the guest. A known phone merges into the existing guest:
@@ -105,6 +166,7 @@ export type GuestInput = z.output<typeof guestCreateSchema>
  * anyone who knows a phone can rescan the public QR form. Withdrawal is unsubscribe, STOP or `setConsent`.
  * A csv row never re-grants a channel the guest withdrew (a "no" after an earlier "yes"): an old list must not
  * override an unsubscribe, only the guest can opt in again. `consentKept` reports such a row.
+ * Anything but a csv row also counts a visit, new or known phone.
  */
 export async function upsertGuest(
   tx: Tx,
@@ -112,7 +174,7 @@ export async function upsertGuest(
   input: GuestInput,
   at: Date,
   staffUserId?: string,
-): Promise<{ id: string; merged: boolean; consentKept: boolean }> {
+): Promise<{ id: string; merged: boolean; consentKept: boolean; visitRecorded: boolean } & MergeReport> {
   const { consents, phone, ...fields } = input
   const [created] = await tx
     .insert(guests)
@@ -120,9 +182,7 @@ export async function upsertGuest(
     .onConflictDoNothing({ target: [guests.hotelId, guests.phoneE164] })
     .returning({ id: guests.id })
   let id = created?.id
-  if (created && fields.source !== "csv") {
-    await tx.insert(guestVisits).values({ guestId: created.id, hotelId, source: fields.source, at })
-  }
+  let report: MergeReport = { changed: [], kept: [] }
   if (!id) {
     const [existing] = await tx
       .select()
@@ -130,21 +190,22 @@ export async function upsertGuest(
       .where(and(eq(guests.hotelId, hotelId), eq(guests.phoneE164, phone)))
       .for("update")
     id = existing!.id
-    await tx
-      .update(guests)
-      .set({
-        name: existing!.name || fields.name,
-        email: existing!.email ?? fields.email,
-        birthday: existing!.birthday ?? fields.birthday,
-        country: existing!.country ?? fields.country,
-        city: existing!.city ?? fields.city,
-        language: fields.language,
-        stayCheckIn: fields.stayCheckIn ?? existing!.stayCheckIn,
-        stayCheckOut: fields.stayCheckOut ?? existing!.stayCheckOut,
-        nextDestination: fields.nextDestination ?? existing!.nextDestination,
-      })
-      .where(hotelGuest(hotelId, id))
+    const merged = {
+      name: existing!.name || fields.name,
+      email: existing!.email ?? fields.email,
+      birthday: existing!.birthday ?? fields.birthday,
+      country: existing!.country ?? fields.country,
+      city: existing!.city ?? fields.city,
+      language: fields.language,
+      stayCheckIn: fields.stayCheckIn ?? existing!.stayCheckIn,
+      stayCheckOut: fields.stayCheckOut ?? existing!.stayCheckOut,
+      nextDestination: fields.nextDestination ?? existing!.nextDestination,
+    }
+    await tx.update(guests).set(merged).where(hotelGuest(hotelId, id))
+    report = compareMerge(existing!, { ...existing, ...merged }, fields)
   }
+  const visitRecorded =
+    fields.source !== "csv" && !!(await recordVisit(tx, { hotelId, guestId: id, source: fields.source, at }))
   const current = created
     ? {}
     : Object.fromEntries(
@@ -165,9 +226,10 @@ export async function upsertGuest(
       consentKept = true
       continue
     }
-    await recordConsent(tx, { hotelId, guestId: id, channel, granted, source: fields.source, at, staffUserId })
+    const change = { hotelId, guestId: id, channel, granted, source: fields.source, at, staffUserId }
+    if ((await recordConsent(tx, change)) && granted && !created) report.changed.push(`${channel}Consent`)
   }
-  return { id, merged: !created, consentKept }
+  return { id, merged: !created, consentKept, visitRecorded, ...report }
 }
 
 async function withdrawnChannels(
@@ -199,10 +261,11 @@ export const clearExtras = (db: Db | Tx, hotelId: string, guestId: string) =>
     .where(hotelGuest(hotelId, guestId))
 
 /** What the front desk needs to greet a guest: visits, consents and the last offer used. Always one hotel's guests. */
-export async function recognitionOf(db: Db | Tx, hotelId: string, rows: (typeof guests.$inferSelect)[]) {
+export async function recognitionOf(db: Db | Tx, hotelId: string, rows: (typeof guests.$inferSelect)[], now: Date) {
   const ids = rows.map((row) => row.id)
   if (!ids.length) return []
-  const [visits, consents, redemptions] = await Promise.all([
+  const [timeZone, visits, consents, redemptions] = await Promise.all([
+    timezoneOf(db, hotelId),
     db
       .select({
         guestId: guestVisits.guestId,
@@ -234,6 +297,7 @@ export async function recognitionOf(db: Db | Tx, hotelId: string, rows: (typeof 
       visits: seen?.n ?? 0,
       firstVisitAt: seen?.first ?? null,
       lastVisitAt: seen?.last ?? null,
+      visitedToday: !!seen?.last && isSameLocalDay(seen.last, now, timeZone),
       lastOffer: offer ? { title: offer.title, at: offer.at } : null,
     }
   })

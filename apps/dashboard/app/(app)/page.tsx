@@ -29,6 +29,7 @@ import { AdminAttention } from "@/components/admin-attention"
 import { CapturedChart } from "@/components/captured-chart"
 import { CopyLink } from "@/components/copy-link"
 import { FirstRunChecklist } from "@/components/first-run-checklist"
+import { GuestFinder } from "@/components/guest-finder"
 import { HomeAttention } from "@/components/home-attention"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
@@ -130,6 +131,8 @@ async function HotelHome({
         }
       />
       <div className="flex flex-col gap-8 p-4 md:gap-10 md:p-6">
+        <GuestFinder />
+
         <Section title={t("attention.title")}>
           <HomeAttention alerts={overview.alerts} unread={inbox.unread} timeZone={hotel.timezone} />
         </Section>
