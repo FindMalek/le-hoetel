@@ -365,16 +365,15 @@ export function Sheet({
   return (
     <div
       dir="ltr"
-      // oxlint-disable-next-line shadcn/no-inline-styles
       style={
         {
           "--page-width": `${page.width}mm`,
           "--page-height": `${page.height}mm`,
-          aspectRatio: `${page.width} / ${page.height}`,
+          "--ratio": `${page.width} / ${page.height}`,
         } as React.CSSProperties
       }
       className={cn(
-        "relative w-full shrink-0 break-inside-avoid overflow-hidden bg-white text-foreground [print-color-adjust:exact] print:h-(--page-height) print:w-(--page-width)",
+        "relative aspect-(--ratio) w-full shrink-0 break-inside-avoid overflow-hidden bg-white text-foreground [print-color-adjust:exact] print:h-(--page-height) print:w-(--page-width)",
         className,
       )}
     >
@@ -383,14 +382,15 @@ export function Sheet({
           // two copies of the desk sign share a code
           // biome-ignore lint/suspicious/noArrayIndexKey: the position on the page is the identity
           key={index}
-          className="absolute"
-          // oxlint-disable-next-line shadcn/no-inline-styles
-          style={{
-            insetInlineStart: percent(lefts[index % columns]!, page.width),
-            top: percent(tops[Math.floor(index / columns)]!, page.height),
-            width: percent(cell.width, page.width),
-            height: percent(cell.height, page.height),
-          }}
+          className="absolute start-(--x) top-(--y) h-(--h) w-(--w)"
+          style={
+            {
+              "--x": percent(lefts[index % columns]!, page.width),
+              "--y": percent(tops[Math.floor(index / columns)]!, page.height),
+              "--w": percent(cell.width, page.width),
+              "--h": percent(cell.height, page.height),
+            } as React.CSSProperties
+          }
         >
           {piece === "sticker" ? (
             <StickerArt

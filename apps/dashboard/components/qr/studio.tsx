@@ -578,12 +578,13 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
             ) : pages[shown] ? (
               <div
                 data-preview
-                className="w-full shadow-md"
                 // short enough to be seen whole above the consent card and the page chrome
-                // oxlint-disable-next-line shadcn/no-inline-styles
-                style={{
-                  maxWidth: `clamp(14rem, calc((100dvh - var(--consent-banner-height, 0px) - 20rem) * ${ratio}), ${ratio > 1 ? "36rem" : "24rem"})`,
-                }}
+                className="w-full max-w-(--preview-width) shadow-md"
+                style={
+                  {
+                    "--preview-width": `clamp(14rem, calc((100dvh - var(--consent-banner-height, 0px) - 24rem) * ${ratio}), ${ratio > 1 ? "36rem" : "24rem"})`,
+                  } as React.CSSProperties
+                }
               >
                 <Sheet {...drawing} codes={pages[shown]} />
               </div>
