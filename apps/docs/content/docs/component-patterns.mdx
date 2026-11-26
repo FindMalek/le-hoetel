@@ -48,7 +48,7 @@ In the dashboard, `PageHeader` from `@/components/page-header` adds the page pad
 
 ### Auth pages
 
-Sign in, sign up, forgot password, reset password and accept invitation share one layout (`apps/dashboard/app/(auth)/layout.tsx`): a brand panel with the zellige pattern from `lg`, the form on a phone. Fields validate on blur, errors have an icon and are linked with `aria-describedby`, inputs have the right `autocomplete`, `inputmode` and `enterkeyhint`. `?next=` keeps the page a signed out visitor wanted (an invitation link) through sign in and sign up, only same site paths are followed. Password reset uses better-auth with the notification module: outside live messaging the email is only logged, so locally read the token from the `verification` table (`reset-password:<token>`) and open `/reset-password?token=<token>`.
+Sign in, sign up, forgot password, reset password and accept invitation share one layout (`apps/dashboard/app/(auth)/layout.tsx`): a brand panel with the zellige pattern from `lg`, the form on a phone. Fields validate on blur, errors have an icon and are linked with `aria-describedby`, inputs have the right `autocomplete`, `inputmode` and `enterkeyhint`. `?next=` keeps the page a signed out visitor wanted (an invitation link) through sign in and sign up, only same site paths are followed. Sign up is for invited emails only: anyone else gets the `notInvited` error. Password reset uses better-auth with the notification module: outside live messaging the email is only logged, so locally read the token from the `verification` table (`reset-password:<token>`) and open `/reset-password?token=<token>`.
 
 ### Forms
 

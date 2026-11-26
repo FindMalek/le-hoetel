@@ -18,7 +18,7 @@ import {
 } from "@ritorno/common/schemas"
 import { guestConsents, guests, hotelSettings, invitation, member, messages, organization, user } from "@ritorno/db"
 import { hotelPublicPrefix } from "@ritorno/storage"
-import { and, asc, count, countDistinct, eq, gte, inArray, like, max, sql } from "drizzle-orm"
+import { and, asc, count, countDistinct, eq, gte, inArray, like, max, ne, sql } from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -409,11 +409,27 @@ export const adminHotelsRouter = {
     .route({ method: "PATCH", path: "/admin/hotels/{id}", summary: "Update any hotel", tags: ["admin"] })
     .input(hotelAdminUpdateSchema.extend({ id: z.string() }))
     .output(hotelSchema)
-    .handler(async ({ context, input: { id, ...patch } }) => {
-      await loadHotel(context.db, id)
+    .handler(async ({ context, input: { id, name, slug, ...patch } }) => {
+      const current = await loadHotel(context.db, id)
+      if (slug !== undefined && slug !== current.slug) {
+        const [taken] = await context.db
+          .select({ id: organization.id })
+          .from(organization)
+          .where(and(eq(organization.slug, slug), ne(organization.id, id)))
+        if (taken) throw new ORPCError("CONFLICT", { message: "That slug is taken." })
+      }
+      const renamed = Object.fromEntries(Object.entries({ name, slug }).filter(([, value]) => value !== undefined))
+      if (Object.keys(renamed).length) await context.db.update(organization).set(renamed).where(eq(organization.id, id))
       if (Object.keys(patch).length) {
         await context.db.update(hotelSettings).set(patch).where(eq(hotelSettings.organizationId, id))
-        await audit(context, { action: "hotel.admin-update", targetId: id, metadata: { fields: Object.keys(patch) } })
+      }
+      const fields = [...Object.keys(renamed), ...Object.keys(patch)]
+      if (fields.length) {
+        await audit(context, {
+          action: "hotel.admin-update",
+          targetId: id,
+          metadata: { fields, ...(slug !== undefined && slug !== current.slug ? { previousSlug: current.slug } : {}) },
+        })
       }
       return loadHotel(context.db, id)
     }),

@@ -64,6 +64,14 @@ const requireHotel = o.middleware(async ({ context, next }) => {
  */
 export const hotelProcedure = protectedProcedure.use(requireHotel)
 
+const requireHotelExport = o.middleware(async ({ context, next }) => {
+  const hotel = await resolveHotel(context, { readOnlyExport: true })
+  return next({ context: { hotel } })
+})
+
+/** Like `hotelProcedure`, but the owner of a suspended hotel still gets through: for the read-only guest exports only. */
+export const hotelExportProcedure = protectedProcedure.use(requireHotelExport)
+
 type Permission = Parameters<(typeof hotelRoles)["owner"]["authorize"]>[0]
 
 /** Narrows a hotel procedure to roles that hold the permission, e.g. `hotelProcedure.use(can({ guest: ["export"] }))`. */

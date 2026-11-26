@@ -19,8 +19,19 @@ test("both apps reach the api through /api/health", async ({ request }) => {
   }
 })
 
-test("sign up, sign out, sign in, then ask for a password reset", async ({ page }) => {
-  const email = `e2e-${Date.now()}@example.com`
+test("an invited owner signs up, signs out, signs in, then asks for a password reset", async ({ page, request }) => {
+  const run = Date.now()
+  const email = `e2e-${run}@example.com`
+  const admin = await request.post(`${URLS.api}/auth/sign-in/email`, {
+    headers: { origin: URLS.dashboard },
+    data: { email: DEMO_SUPER_ADMIN_EMAIL, password: DEFAULT_DEMO_PASSWORD },
+  })
+  expect(admin.status()).toBe(200)
+  const invited = await request.post(`${URLS.api}/v1/admin/hotels`, {
+    headers: { "x-csrf-token": "orpc" },
+    data: { name: `E2E ${run}`, slug: `e2e-${run}`, ownerEmail: email },
+  })
+  expect(invited.status()).toBe(200)
 
   await page.goto(`${URLS.dashboard}/sign-up`)
   await page.getByLabel("Your name").fill("E2E")

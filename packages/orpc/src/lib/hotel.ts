@@ -17,12 +17,27 @@ export const HOTEL_HEADER = "x-hotel-id"
 export const bestRole = (stored: string): HotelRole | null =>
   HOTEL_ROLES.find((role) => stored.split(",").includes(role)) ?? null
 
+async function refuseSuspended(db: Context["db"], hotel: ActiveHotel, readOnlyExport: boolean): Promise<ActiveHotel> {
+  if (hotel.superAdmin) return hotel
+  const [settings] = await db
+    .select({ status: hotelSettings.status })
+    .from(hotelSettings)
+    .where(eq(hotelSettings.organizationId, hotel.hotelId))
+  if (settings?.status !== "suspended") return hotel
+  if (readOnlyExport && hotel.role === "owner") return hotel
+  throw new ORPCError("FORBIDDEN", { message: "This hotel is suspended." })
+}
+
 /**
  * The hotel a call acts on. Members get the hotel of their session, re-checked against `member`. The app admin
  * (user role `admin`) may name any hotel with the `x-hotel-id` header and then acts as its owner. For everyone
  * else the header can only repeat their own hotel: naming another one is refused, never silently ignored.
+ * A suspended hotel is refused to its team, except its owner on the read-only export (`readOnlyExport`).
  */
-export async function resolveHotel(context: Pick<Context, "db" | "session" | "headers">): Promise<ActiveHotel> {
+export async function resolveHotel(
+  context: Pick<Context, "db" | "session" | "headers">,
+  options: { readOnlyExport?: boolean } = {},
+): Promise<ActiveHotel> {
   const requested = context.headers.get(HOTEL_HEADER)
   if (context.session?.user.role === "admin" && requested) {
     const [row] = await context.db
@@ -39,7 +54,11 @@ export async function resolveHotel(context: Pick<Context, "db" | "session" | "he
   }
   const role = bestRole(membership.role)
   if (!role) throw new ORPCError("FORBIDDEN", { message: "Your role has no access to this hotel." })
-  return { hotelId: membership.organizationId, role, superAdmin: false }
+  return refuseSuspended(
+    context.db,
+    { hotelId: membership.organizationId, role, superAdmin: false },
+    options.readOnlyExport ?? false,
+  )
 }
 
 /** What a page for a guest shows of a hotel: its look, nothing else. */
