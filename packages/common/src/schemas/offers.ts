@@ -114,6 +114,10 @@ export const offerLookupSchema = z.object({
   redeemed: z.object({ at: z.date(), by: z.string().nullable() }).nullable(),
   /** True only for the call that made the redemption, so a retry after a lost answer reads as already redeemed. */
   justNow: z.boolean(),
+  /** Null for a promo code, which belongs to no guest. */
+  guestId: z.uuid().nullable(),
+  /** Set with `justNow`: what the undo takes back. */
+  redemptionId: z.uuid().nullable(),
 })
 export type OfferLookup = z.infer<typeof offerLookupSchema>
 

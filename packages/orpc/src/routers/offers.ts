@@ -14,7 +14,7 @@ import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"
 import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
-import { firstName, lookupCode, redeemCode } from "../lib/offers"
+import { firstName, lookupCode, redeemCode, undoRedemption } from "../lib/offers"
 import { can, hotelProcedure } from "../procedures"
 
 const notFound = () => new ORPCError("NOT_FOUND", { message: "Offer not found." })
@@ -116,7 +116,8 @@ export const offersRouter = {
     .input(offerCodeInputSchema)
     .output(offerLookupSchema)
     .handler(async ({ context, input }) => {
-      const { redemptionId, ...result } = await redeemCode(context, context.hotel.hotelId, context.user.id, input.code)
+      const result = await redeemCode(context, context.hotel.hotelId, context.user.id, input.code)
+      const { redemptionId } = result
       if (redemptionId) {
         await audit(context, {
           action: "offer.redeem",
@@ -125,6 +126,28 @@ export const offersRouter = {
         })
       }
       return result
+    }),
+
+  undoRedeem: hotelProcedure
+    .use(can({ offer: ["redeem"] }))
+    .route({
+      method: "DELETE",
+      path: "/offers/redemptions/{id}",
+      summary: "Take back a redemption made by mistake moments ago",
+      tags: ["offers"],
+    })
+    .input(z.object({ id: z.uuid() }))
+    .output(z.object({ ok: z.literal(true) }))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const undone = await undoRedemption(context, hotelId, input.id)
+      if (!undone) throw new ORPCError("NOT_FOUND", { message: "It is too late to undo this redemption." })
+      await audit(context, {
+        action: "offer.unredeem",
+        targetId: input.id,
+        metadata: { offerId: undone.offerId, hotelId },
+      })
+      return { ok: true as const }
     }),
 
   redemptionStats: hotelProcedure

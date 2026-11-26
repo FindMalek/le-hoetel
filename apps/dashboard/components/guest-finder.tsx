@@ -2,26 +2,16 @@
 
 import { orpc } from "@ritorno/orpc/react"
 import { Badge } from "@ritorno/ui/components/badge"
-import { Button } from "@ritorno/ui/components/button"
 import { Input } from "@ritorno/ui/components/input"
 import { Skeleton } from "@ritorno/ui/components/skeleton"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { CheckIcon, SearchIcon } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { SearchIcon } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
+import { useState } from "react"
 import { LocalDate } from "@/components/local-date"
-import { useRefreshLists } from "@/lib/use-refresh-lists"
-
-function useDebounced(value: string, delay = 250) {
-  const [debounced, setDebounced] = useState(value)
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay)
-    return () => clearTimeout(timer)
-  }, [value, delay])
-  return debounced
-}
+import { MarkVisitButton } from "@/components/mark-visit-button"
+import { useDebounced } from "@/lib/use-debounced"
 
 export function GuestFinder() {
   const t = useTranslations("guests.finder")
@@ -34,17 +24,6 @@ export function GuestFinder() {
     enabled,
     placeholderData: (data) => data,
   })
-
-  const refreshLists = useRefreshLists()
-  const markVisit = useMutation(
-    orpc.guests.markVisit.mutationOptions({
-      onSuccess: () => {
-        toast.success(t("marked"))
-        void refreshLists()
-      },
-      onError: () => toast.error(t("error")),
-    }),
-  )
 
   return (
     <div className="flex flex-col gap-3">
@@ -90,14 +69,7 @@ export function GuestFinder() {
                     {guest.phoneE164}
                   </bdi>
                 </div>
-                <Button
-                  size="lg"
-                  disabled={markVisit.isPending && markVisit.variables?.id === guest.id}
-                  onClick={() => markVisit.mutate({ id: guest.id })}
-                >
-                  <CheckIcon data-icon="inline-start" />
-                  {t("markVisit")}
-                </Button>
+                <MarkVisitButton guestId={guest.id} visitedToday={guest.visitedToday} />
               </div>
               <p className="font-medium text-sm">
                 {guest.visits >= 2 ? t("welcomeBack", { count: guest.visits }) : t("firstStay")}

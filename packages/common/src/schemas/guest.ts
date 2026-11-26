@@ -59,7 +59,12 @@ export const guestRecognitionSchema = z.object({
   firstVisitAt: z.date().nullable(),
   lastVisitAt: z.date().nullable(),
   lastOffer: z.object({ title: z.string(), at: z.date() }).nullable(),
+  /** On the hotel's clock. A guest is counted at most once per day. */
+  visitedToday: z.boolean(),
 })
+
+/** `visitId` is the visit this call recorded, null when today was already counted. */
+export const guestVisitResultSchema = guestRecognitionSchema.extend({ visitId: z.uuid().nullable() })
 
 export const guestConsentsSchema = z.object({ email: z.boolean(), whatsapp: z.boolean(), profile: z.boolean() })
 
@@ -141,7 +146,31 @@ export const guestListInputSchema = z.object({
   cursor: cursorSchema.optional(),
 })
 
-export const guestUpsertResultSchema = guestSchema.extend({ merged: z.boolean() })
+/** What a merge into a known phone can touch. */
+export const GUEST_MERGE_FIELDS = [
+  "name",
+  "language",
+  "email",
+  "birthday",
+  "country",
+  "city",
+  "stayCheckIn",
+  "stayCheckOut",
+  "nextDestination",
+] as const
+
+const mergeFields = z.array(z.enum([...GUEST_MERGE_FIELDS, "emailConsent", "whatsappConsent", "profileConsent"]))
+
+export const guestUpsertResultSchema = guestSchema.extend({
+  merged: z.boolean(),
+  /** Empty for a new guest. */
+  changed: mergeFields,
+  /** Typed values that were not saved because the record already had another one. */
+  kept: mergeFields,
+  /** False when today was already counted. */
+  visitRecorded: z.boolean(),
+})
+export type GuestUpsertResult = z.infer<typeof guestUpsertResultSchema>
 
 export const guestListSchema = z.object({
   items: z.array(guestSchema.extend({ visits: z.number().int() })),
