@@ -10,6 +10,11 @@ import { PageHeader } from "@/components/page-header"
 import { call, getQueryClient, serverOrpc } from "@/lib/api"
 import { feedbackCasesList } from "@/lib/lists"
 
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("nav")
+  return { title: t("unhappyGuests") }
+}
+
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)
 
 export default async function FeedbackPage({ searchParams }: PageProps<"/feedback">) {
