@@ -109,6 +109,8 @@ for (let i = 0; i < 60; i++) {
   )
   if (health?.status === 200 && health.body.sha === sha) {
     summary(`${target} api healthy on ${sha.slice(0, 7)}`)
+    // Only a deploy that proved the new sha live reports it, so a release can never tag an unverified commit.
+    if (env.GITHUB_OUTPUT) appendFileSync(env.GITHUB_OUTPUT, `healthy-sha=${sha}\n`)
     process.exit(0)
   }
   if (health) last = `status ${health.status}, sha ${health.body.sha ?? "none"}`

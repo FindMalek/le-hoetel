@@ -25,12 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    outputs:
+      healthy-sha: ${{ steps.deploy.outputs.healthy-sha }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-      - run: node .github/scripts/deploy.mjs
+      - id: deploy
+        run: node .github/scripts/deploy.mjs
         env:
           TARGET: staging
           REF: main
@@ -43,3 +46,16 @@ jobs:
           INFISICAL_PROJECT_ID: ${{ vars.INFISICAL_PROJECT_ID }}
           INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
           INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+
+  # Releases the exact commit staging just proved healthy, only after an automatic (ci triggered) deploy.
+  release:
+    needs: deploy
+    if: github.event_name == 'workflow_run' && needs.deploy.outputs.healthy-sha != ''
+    permissions:
+      contents: write
+      pull-requests: read
+      checks: read
+    uses: ./.github/workflows/release.yml
+    with:
+      sha: ${{ needs.deploy.outputs.healthy-sha }}
+    secrets: inherit
