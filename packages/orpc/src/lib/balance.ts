@@ -10,7 +10,7 @@ export async function getBalance(db: Db, hotelId: string): Promise<number> {
 }
 
 export async function topUp(
-  db: Db,
+  db: Pick<Db, "transaction">,
   hotelId: string,
   millimes: number,
   entry: { createdBy?: string | null; note?: string | null; kind?: "top_up" | "refund"; messageId?: string } = {},
@@ -51,8 +51,22 @@ export async function debit(db: Db, hotelId: string, millimes: number, messageId
 }
 
 /** Gives a debited price back when the provider refused the message. */
-export const refund = (db: Db, hotelId: string, millimes: number, messageId: string) =>
+export const refund = (db: Pick<Db, "transaction">, hotelId: string, millimes: number, messageId: string) =>
   topUp(db, hotelId, millimes, { kind: "refund", messageId })
+
+/**
+ * Gives back what this message was debited, if anything: the ledger amount, since prices can change after the send.
+ * Not idempotent: call it only in the transaction that moves the message to `failed`.
+ */
+export async function refundDebit(db: Pick<Db, "select" | "transaction">, hotelId: string, messageId: string) {
+  const [usage] = await db
+    .select({ amount: balanceLedger.amountMillimes })
+    .from(balanceLedger)
+    .where(
+      and(eq(balanceLedger.hotelId, hotelId), eq(balanceLedger.messageId, messageId), eq(balanceLedger.kind, "usage")),
+    )
+  if (usage) await refund(db, hotelId, -usage.amount, messageId)
+}
 
 /** What the hotel spent since `since`: usage minus refunds, and how many messages that was. */
 export async function usageSince(db: Db, hotelId: string, since: Date) {
