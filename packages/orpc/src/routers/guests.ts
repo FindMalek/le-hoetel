@@ -35,6 +35,7 @@ import { z } from "zod"
 import type { Context } from "../context"
 import { enqueueWelcome } from "../jobs"
 import { audit } from "../lib/audit"
+import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
 import { eraseFeedbackNotes, feedbackOfGuests } from "../lib/feedback-cases"
 import {
   clearExtras,
@@ -125,20 +126,21 @@ export const guestsRouter = {
       )
       const [totals] = await context.db.select({ n: count() }).from(guests).where(where)
       const rows = await context.db
-        .select({ guest: guests, visits })
+        .select({ id: guests.id, cursorAt: cursorAt(guests.createdAt), guest: guests, visits })
         .from(guests)
-        .where(where)
+        .where(and(where, afterCursor(guests.createdAt, guests.id, input.cursor)))
         .orderBy(desc(guests.createdAt), guests.id)
-        .limit(input.limit)
-        .offset(input.offset)
+        .limit(input.limit + 1)
+      const page = cursorPage(rows, input.limit)
       const items = await withConsents(
         context.db,
         hotelId,
-        rows.map((row) => row.guest),
+        page.items.map((row) => row.guest),
       )
       return {
-        items: items.map((item, index) => ({ ...item, visits: rows[index]?.visits ?? 0 })),
+        items: items.map((item, index) => ({ ...item, visits: page.items[index]?.visits ?? 0 })),
         total: totals?.n ?? 0,
+        nextCursor: page.nextCursor,
       }
     }),
 

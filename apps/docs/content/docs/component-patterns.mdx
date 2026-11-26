@@ -72,7 +72,17 @@ Sign in, sign up, forgot password, reset password and accept invitation share on
 
 - mobile: a list of cards or `Item` rows, one tap target per row. Do not shrink a table to fit
 - desktop: a table with start aligned text, numbers end aligned. `DataList` does both layouts
-- search and filters above the list. Pagination or "load more", not infinite scroll without a way to the footer
+- search and filters above the list. Long lists load more on scroll with a "load more" button as the fallback (see below), never a page without one
+
+### Long lists and caching
+
+Guests, messages, unhappy guest cases and redemptions page by cursor, hotel scoped:
+
+- api: `limit` and `cursor` in, `nextCursor` out (`null` at the end). Use `packages/orpc/src/lib/cursor.ts`, which keeps the timestamp's microseconds so rows are not skipped
+- dashboard: the query options live in `apps/dashboard/lib/lists.ts`. The server prefetches the first page, the browser uses `useInfiniteQuery`, and `LoadMore` (`components/load-more.tsx`) fetches the next one near the end of the list
+- every list key ends with the hotel id, so switching hotel never shows cached rows of another
+- stale times: guests 60 s, unhappy guests and redemptions 30 s, messages 15 s (delivery statuses move)
+- a mutation that changes a guest or a case calls `useRefreshLists()`
 
 ### Overlays
 

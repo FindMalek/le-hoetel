@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
 import { auditLog, consentEvents } from "@ritorno/db"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { hashGuestId } from "../../lib/guests"
 import { createTestApp, type TestApp } from "../../testing"
 
@@ -254,4 +254,27 @@ test("import: rows fail one by one, a phone merges, consent needs an explicit ye
     whatsapp: false,
     profile: false,
   })
+})
+
+test("paging by cursor neither skips nor repeats guests added in the same millisecond, and stays in the hotel", async () => {
+  const mine = await hotelAs("cursor-mine")
+  const other = await hotelAs("cursor-other")
+  // Same millisecond: two share a timestamp exactly, the others differ by microseconds only.
+  const times = ["10:00:00.000500", "10:00:00.000500", "10:00:00.000400", "10:00:00.000300", "10:00:00.000200"]
+  for (const [index, time] of times.entries()) {
+    const { id } = await mine.client.guests.create({ ...newGuest, phone: `+2162012340${index}` })
+    await app.services.db.execute(sql`update guests set created_at = ${`2026-01-01 ${time}+00`} where id = ${id}`)
+  }
+  await other.client.guests.create(newGuest)
+
+  const seen: string[] = []
+  let cursor: string | undefined
+  do {
+    const page = await mine.client.guests.list({ limit: 1, cursor })
+    seen.push(...page.items.map((item) => item.id))
+    cursor = page.nextCursor ?? undefined
+  } while (cursor && seen.length <= times.length)
+
+  expect(seen).toHaveLength(times.length)
+  expect(new Set(seen).size).toBe(times.length)
 })

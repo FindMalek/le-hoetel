@@ -116,10 +116,16 @@ test("redeeming: another hotel's code is refused without a leak, the right hotel
 
   const stats = await a.client.offers.redemptionStats()
   expect(stats).toMatchObject({ today: 1, week: 1, total: 1 })
-  expect(stats.recent[0]).toMatchObject({ offerTitle: "Welcome drink", guestFirstName: "Amel" })
+  await a.client.offers.redeem({ code: "DRINK" })
+  const newest = await a.client.offers.redemptions({ limit: 1 })
+  const older = await a.client.offers.redemptions({ limit: 1, cursor: newest.nextCursor! })
+  expect(newest.items[0]).toMatchObject({ offerTitle: "Welcome drink", guestFirstName: null })
+  expect(older.items[0]).toMatchObject({ offerTitle: "Welcome drink", guestFirstName: "Amel" })
+  expect(older.nextCursor).toBeNull()
   expect((await b.client.offers.redemptionStats()).total).toBe(0)
-  expect(await a.client.offers.list().then((rows) => rows[0]?.redeemed)).toBe(1)
-  expect((await auditActions()).filter((action) => action === "offer.redeem")).toHaveLength(1)
+  expect((await b.client.offers.redemptions({ cursor: newest.nextCursor! })).items).toEqual([])
+  expect(await a.client.offers.list().then((rows) => rows[0]?.redeemed)).toBe(2)
+  expect((await auditActions()).filter((action) => action === "offer.redeem")).toHaveLength(2)
 })
 
 test("the database itself refuses a second redemption of one offer by one guest", async () => {

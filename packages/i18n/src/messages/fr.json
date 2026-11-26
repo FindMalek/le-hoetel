@@ -289,8 +289,6 @@
       "description": "Demandez à l'équipe Ritorno de vous ajouter à votre hôtel."
     },
     "loading": "Chargement des clients",
-    "previous": "Précédent",
-    "next": "Suivant",
     "addButton": "Ajouter un client",
     "importButton": "Importer un CSV",
     "add": {
@@ -474,7 +472,6 @@
       "lastOffer": "Dernière offre utilisée",
       "consents": "Contact autorisé"
     },
-    "range": "<from></from>–<to></to> sur <total></total> clients",
     "returning": "{count, plural, one {Fidèle, # séjour} other {Fidèle, # séjours}}",
     "edit": {
       "title": "Modifier le client",
@@ -910,9 +907,6 @@
       "loading": "Chargement de l’aperçu",
       "error": "Impossible de charger l’aperçu."
     },
-    "range": "<from></from>–<to></to> sur <total></total>",
-    "previous": "Précédent",
-    "next": "Suivant",
     "emptyTitle": "Aucun message envoyé pour l’instant",
     "emptyBody": "Les messages partent tout seuls : une bienvenue quand un client dit oui sur votre formulaire QR, une offre d’anniversaire, un questionnaire après le séjour, et les campagnes que vous envoyez. Chacun apparaît ici avec son issue.",
     "noMatchTitle": "Aucun message ne correspond",
@@ -2189,8 +2183,6 @@
     },
     "caption": "Clients mécontents",
     "noComment": "Aucun commentaire",
-    "previous": "Précédent",
-    "next": "Suivant",
     "loading": "Chargement des clients mécontents",
     "emptyTitle": "Aucun client mécontent",
     "emptyBody": "Un client qui laisse une note basse à l'enquête de séjour apparaît ici, pour que vous puissiez le recontacter.",
@@ -2234,5 +2226,11 @@
       "desk": "Réception"
     },
     "loading": "Chargement des scans WhatsApp"
+  },
+  "loadMore": {
+    "more": "Voir plus",
+    "retry": "Réessayer",
+    "failed": "Impossible de charger la suite.",
+    "shown": "{shown} sur {total} affichés"
   }
 }

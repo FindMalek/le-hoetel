@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { HOTEL_LANGUAGES } from "../hotel"
 import { OFFER_TRIGGERS, PROMO_CODE_PATTERN } from "../offers"
+import { cursorSchema } from "./cursor"
 
 export const OFFER_TITLE_MAX = 80
 export const OFFER_TEXT_MAX = 400
@@ -120,7 +121,14 @@ export const redemptionStatsSchema = z.object({
   today: z.number(),
   week: z.number(),
   total: z.number(),
-  recent: z.array(
+})
+
+export const redemptionListInputSchema = z
+  .object({ limit: z.number().int().min(1).max(100).default(20), cursor: cursorSchema.optional() })
+  .prefault({})
+
+export const redemptionListSchema = z.object({
+  items: z.array(
     z.object({
       id: z.string(),
       offerTitle: z.string(),
@@ -129,4 +137,5 @@ export const redemptionStatsSchema = z.object({
       redeemedBy: z.string().nullable(),
     }),
   ),
+  nextCursor: z.string().nullable(),
 })

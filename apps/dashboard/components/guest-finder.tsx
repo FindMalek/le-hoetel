@@ -5,13 +5,14 @@ import { Badge } from "@ritorno/ui/components/badge"
 import { Button } from "@ritorno/ui/components/button"
 import { Input } from "@ritorno/ui/components/input"
 import { Skeleton } from "@ritorno/ui/components/skeleton"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { CheckIcon, SearchIcon } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { LocalDate } from "@/components/local-date"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 function useDebounced(value: string, delay = 250) {
   const [debounced, setDebounced] = useState(value)
@@ -25,7 +26,6 @@ function useDebounced(value: string, delay = 250) {
 export function GuestFinder() {
   const t = useTranslations("guests.finder")
   const tLang = useTranslations("home.languages")
-  const client = useQueryClient()
   const [text, setText] = useState("")
   const q = useDebounced(text.trim())
   const enabled = q.length >= 2
@@ -35,11 +35,12 @@ export function GuestFinder() {
     placeholderData: (data) => data,
   })
 
+  const refreshLists = useRefreshLists()
   const markVisit = useMutation(
     orpc.guests.markVisit.mutationOptions({
       onSuccess: () => {
         toast.success(t("marked"))
-        void client.invalidateQueries({ queryKey: orpc.guests.find.key() })
+        void refreshLists()
       },
       onError: () => toast.error(t("error")),
     }),

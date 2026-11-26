@@ -3,14 +3,18 @@
 import { formatPhone } from "@ritorno/common/phone"
 import type { Guest, GuestListItem } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
+import { orpc } from "@ritorno/orpc/react"
 import { DataList } from "@ritorno/ui/components/data-list"
 import type { DataColumn } from "@ritorno/ui/components/data-table"
+import { PageState } from "@ritorno/ui/components/page-state"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { formatDate } from "@ritorno/ui/lib/date"
-import { pageWindow } from "@ritorno/ui/lib/pagination"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { ChevronRightIcon, MailIcon, MessageCircleIcon, RepeatIcon } from "lucide-react"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
+import { LoadMore } from "@/components/load-more"
+import { guestsList } from "@/lib/lists"
 
 /** Two recorded visits or more: the front desk greets them as a returning guest. */
 export const isReturning = (visits: number): boolean => visits >= 2
@@ -82,20 +86,19 @@ export function GuestDate({ value, to, time = false }: { value: Date | string; t
 }
 
 type GuestListProps = {
-  guests: GuestListItem[]
-  total: number
-  page: number
-  pageSize: number
-  previousHref?: string
-  nextHref?: string
+  hotelId: string
+  query: Parameters<typeof guestsList>[2]
+  filtered: boolean
   filters: React.ReactNode
   empty: React.ReactNode
 }
 
-export function GuestList({ guests, total, page, pageSize, previousHref, nextHref, filters, empty }: GuestListProps) {
+export function GuestList({ hotelId, query, filtered, filters, empty }: GuestListProps) {
   const t = useTranslations("guests")
-  const locale = useLocale()
-  const pages = pageWindow({ page, pageSize, total })
+  const tList = useTranslations("loadMore")
+  const list = useInfiniteQuery(guestsList(orpc, hotelId, query))
+  const guests = list.data?.pages.flatMap((page) => page.items) ?? []
+  const total = list.data?.pages.at(-1)?.total ?? 0
 
   const columns: DataColumn<GuestListItem>[] = [
     {
@@ -140,42 +143,33 @@ export function GuestList({ guests, total, page, pageSize, previousHref, nextHre
   ]
 
   return (
-    <DataList
-      caption={t("title")}
-      filters={filters ? <div className="w-full">{filters}</div> : undefined}
-      columns={columns}
-      rows={guests}
-      getRowKey={(guest) => guest.id}
-      empty={empty}
-      linkComponent={Link}
-      pagination={{
-        previousLabel: t("previous"),
-        nextLabel: t("next"),
-        previous: previousHref ? { href: previousHref } : undefined,
-        next: nextHref ? { href: nextHref } : undefined,
-        range: {
-          ...pages,
-          total,
-          locale,
-          label: (numbers) =>
-            t.rich("range", { from: () => numbers.from, to: () => numbers.to, total: () => numbers.total }),
-        },
-      }}
-      card={(guest) => (
-        <Link href={`/guests/${guest.id}`} className="-m-4 flex min-h-11 items-center gap-3 p-4">
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="truncate font-medium">{guest.name}</span>
-              <ReturningBadge visits={guest.visits} />
+    <div className="flex flex-col gap-4">
+      <DataList
+        caption={t("title")}
+        filters={total > 0 || filtered ? <div className="w-full">{filters}</div> : undefined}
+        columns={columns}
+        rows={guests}
+        loading={list.isPending ? { label: t("title") } : undefined}
+        getRowKey={(guest) => guest.id}
+        empty={list.isError ? <PageState kind="error" title={tList("failed")} /> : empty}
+        linkComponent={Link}
+        card={(guest) => (
+          <Link href={`/guests/${guest.id}`} className="-m-4 flex min-h-11 items-center gap-3 p-4">
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate font-medium">{guest.name}</span>
+                <ReturningBadge visits={guest.visits} />
+              </div>
+              <span className="text-muted-foreground text-sm">
+                <Phone value={guest.phoneE164} /> · {LOCALE_NAMES[guest.language]}
+              </span>
+              <ConsentBadges consents={guest.consents} />
             </div>
-            <span className="text-muted-foreground text-sm">
-              <Phone value={guest.phoneE164} /> · {LOCALE_NAMES[guest.language]}
-            </span>
-            <ConsentBadges consents={guest.consents} />
-          </div>
-          <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden />
-        </Link>
-      )}
-    />
+            <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground rtl:rotate-180" aria-hidden />
+          </Link>
+        )}
+      />
+      <LoadMore query={list} shown={guests.length} total={total} />
+    </div>
   )
 }
