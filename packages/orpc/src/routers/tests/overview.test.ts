@@ -70,6 +70,27 @@ test("the overview counts one hotel's guests, consent and messages, and the chec
   await expect(other.client.guests.messages({ id: first.id })).rejects.toMatchObject({ code: "NOT_FOUND" })
 })
 
+test("logo, review link and test email tick the checklist of that hotel only, and open again with the data", async () => {
+  const mine = await hotelOwner("checklist-mine")
+  const other = await hotelOwner("checklist-other")
+  await app.services.db
+    .update(hotelSettings)
+    .set({ logoKey: "hotels/checklist/public/logo.png" })
+    .where(eq(hotelSettings.organizationId, mine.hotelId))
+  await mine.client.hotel.update({ googleReviewUrl: "https://g.page/r/example" })
+  await mine.client.emails.sendTest({ template: "welcome", locale: "fr" })
+
+  expect((await mine.client.overview.get()).checklist).toMatchObject({ logo: true, googleLink: true, testEmail: true })
+  expect((await other.client.overview.get()).checklist).toMatchObject({
+    logo: false,
+    googleLink: false,
+    testEmail: false,
+  })
+
+  await mine.client.hotel.update({ googleReviewUrl: null })
+  expect((await mine.client.overview.get()).checklist.googleLink).toBe(false)
+})
+
 test("last week compares with the week before, and only this hotel's unhandled low scores are alerts", async () => {
   const mine = await hotelOwner("overview-week")
   const other = await hotelOwner("overview-week-other")

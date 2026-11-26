@@ -5,12 +5,15 @@ import {
   offerLookupSchema,
   offerSchema,
   offerUpdateSchema,
+  redemptionListInputSchema,
+  redemptionListSchema,
   redemptionStatsSchema,
 } from "@ritorno/common/schemas"
 import { guests, hotelSettings, offerRedemptions, offers, user } from "@ritorno/db"
 import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"
+import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
 import { firstName, lookupCode, redeemCode } from "../lib/offers"
 import { can, hotelProcedure } from "../procedures"
 
@@ -129,7 +132,7 @@ export const offersRouter = {
     .route({
       method: "GET",
       path: "/offers/redemptions",
-      summary: "Redemption counts and the latest redemptions of the active hotel",
+      summary: "Redemption counts of the active hotel",
       tags: ["offers"],
     })
     .output(redemptionStatsSchema)
@@ -146,29 +149,49 @@ export const offersRouter = {
         .from(offerRedemptions)
         .innerJoin(hotelSettings, eq(hotelSettings.organizationId, offerRedemptions.hotelId))
         .where(mine)
-      const recent = await context.db
+      return { today: counts?.today ?? 0, week: counts?.week ?? 0, total: counts?.total ?? 0 }
+    }),
+
+  redemptions: hotelProcedure
+    .use(can({ offer: ["read"] }))
+    .route({
+      method: "GET",
+      path: "/offers/redemptions/history",
+      summary: "The active hotel's redemptions, newest first",
+      tags: ["offers"],
+    })
+    .input(redemptionListInputSchema)
+    .output(redemptionListSchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const rows = await context.db
         .select({
           id: offerRedemptions.id,
+          cursorAt: cursorAt(offerRedemptions.redeemedAt),
           offerTitle: offers.title,
           guestName: guests.name,
           redeemedAt: offerRedemptions.redeemedAt,
           redeemedBy: user.name,
         })
         .from(offerRedemptions)
-        .innerJoin(offers, eq(offers.id, offerRedemptions.offerId))
-        .leftJoin(guests, eq(guests.id, offerRedemptions.guestId))
+        .innerJoin(offers, and(eq(offers.id, offerRedemptions.offerId), eq(offers.hotelId, hotelId)))
+        .leftJoin(guests, and(eq(guests.id, offerRedemptions.guestId), eq(guests.hotelId, hotelId)))
         .leftJoin(user, eq(user.id, offerRedemptions.redeemedBy))
-        .where(mine)
-        .orderBy(desc(offerRedemptions.redeemedAt))
-        .limit(10)
+        .where(
+          and(
+            eq(offerRedemptions.hotelId, hotelId),
+            afterCursor(offerRedemptions.redeemedAt, offerRedemptions.id, input.cursor),
+          ),
+        )
+        .orderBy(desc(offerRedemptions.redeemedAt), offerRedemptions.id)
+        .limit(input.limit + 1)
+      const { items, nextCursor } = cursorPage(rows, input.limit)
       return {
-        today: counts?.today ?? 0,
-        week: counts?.week ?? 0,
-        total: counts?.total ?? 0,
-        recent: recent.map(({ guestName, ...row }) => ({
+        items: items.map(({ guestName, ...row }) => ({
           ...row,
           guestFirstName: guestName ? firstName(guestName) : null,
         })),
+        nextCursor,
       }
     }),
 }

@@ -20,6 +20,7 @@ import { useTranslations } from "next-intl"
 import { type FormEvent, useRef, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 type Touched = Partial<Record<"name" | "phone" | "email", boolean>>
 
@@ -49,9 +50,11 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const touch = (field: keyof Touched) => setTouched((current) => ({ ...current, [field]: true }))
   const shown = (field: keyof Touched) => (touched[field] ? problems[field] : null)
 
+  const refreshLists = useRefreshLists()
   const add = useMutation(
     orpc.guests.create.mutationOptions({
       onSuccess: (guest) => {
+        void refreshLists()
         toast.success(guest.merged ? t("merged") : t("added"))
         setLast({ id: guest.id, merged: guest.merged })
         setName("")

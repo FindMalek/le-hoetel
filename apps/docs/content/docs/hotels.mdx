@@ -73,9 +73,24 @@ Use `hotelProcedure` for anything about a hotel. It puts `context.hotel` (`hotel
 
 A hotel user's session starts with their oldest membership as the active hotel, so they land on `/guests` without picking anything. Someone in several hotels gets a switcher at the top of the sidebar (`hotel.mine` lists their hotels, switching calls better-auth `setActive`). A user without a hotel sees an empty state, never another hotel's data.
 
-The guest list (`/guests`) reads `guests.list`, which only returns the active hotel's guests. Filters live in the url (`q`, `consent`, `source`, `language`, `returning`, `page`), so a search can be shared. One search box matches the name, the email or the phone digits (`20 123 456` finds `+21620123456`). `consent=none` means no email and no WhatsApp consent, `returning=1` keeps guests with two visits or more, and each row carries its visit count for the returning badge. On phones each guest is a card, from `md` up it is a table.
+The guest list (`/guests`) reads `guests.list`, which only returns the active hotel's guests. Filters live in the url (`q`, `consent`, `source`, `language`, `returning`), so a search can be shared. One search box matches the name, the email or the phone digits (`20 123 456` finds `+21620123456`). `consent=none` means no email and no WhatsApp consent, `returning=1` keeps guests with two visits or more, and each row carries its visit count for the returning badge. On phones each guest is a card, from `md` up it is a table.
 
 The guest page (`/guests/[id]`) shows the profile, consent per channel with its log, stays, offers used, survey answers (`guests.activity`) and messages. Staff with `guest.update` edit the details at `/guests/[id]/edit` and change a consent after a confirm: withdrawing is logged as a guest request, granting shows the exact wording in the guest's language and is logged as `staff`. Deleting a guest asks to type their name.
+
+## Onboarding checklist
+
+Home shows owners and managers (and the app admin acting for a hotel) six first steps until all are done. Nobody ticks them: `overview.get` derives each one from the hotel's own data on every load, so a step opens again if the data is removed.
+
+| Step | Done when | Links to |
+|---|---|---|
+| Logo | `hotel_settings.logo_key` is set | `/hotel#logo` |
+| Colors | a primary color is set, at creation or later | `/hotel#colors` |
+| Google reviews | the review link is set | `/hotel#google-review` |
+| First QR code | a guest signed up from a room, table or front desk code. Printing alone does not count | `/qr-codes` |
+| First guests | the hotel has at least one guest, from any source | `/guests/new` |
+| Test email | someone sent a test from the emails page (the `email.send-test` audit entry). It counts with the log-only provider too | `/emails` |
+
+The test message is email only until WhatsApp templates are approved. Done steps stay listed and linked, and the whole card goes away once all six are done.
 
 ## Adding guests: quick add and CSV import
 

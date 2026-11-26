@@ -71,4 +71,6 @@ export const appRouter = {
 }
 
 export type AppRouter = typeof appRouter
-export type AppRouterClient = RouterClient<AppRouter>
+/** `hotelId`: the hotel on the caller's screen, sent as `x-hotel-id` so the api never answers with another's rows. */
+export type CallContext = { hotelId?: string }
+export type AppRouterClient = RouterClient<AppRouter, CallContext>

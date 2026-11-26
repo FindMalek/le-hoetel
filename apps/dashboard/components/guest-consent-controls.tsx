@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
+import { useRefreshLists } from "@/lib/use-refresh-lists"
 
 /**
  * Staff change one consent after a confirm. Withdrawing is logged as the guest's request. Granting shows the exact
@@ -30,6 +31,7 @@ export function ConsentChange({
   const tChannel = useTranslations("guests.consent")
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const refreshLists = useRefreshLists()
   const change = useMutation({
     mutationFn: () =>
       browserClient.guests.setConsent({
@@ -39,6 +41,7 @@ export function ConsentChange({
         source: granted ? "guest_request" : "staff",
       }),
     onSuccess: () => {
+      void refreshLists()
       setOpen(false)
       toast.success(t(granted ? "withdrawn" : "grantedToast"))
       router.refresh()
