@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
+import { parseSpots, QR_LOGO_RATIO } from "@ritorno/common/qr"
 import { guests, hotelSettings } from "@ritorno/db"
 import { eq } from "drizzle-orm"
+import jsQR from "jsqr"
+import sharp from "sharp"
 import { RATE_LIMITS } from "../../lib/rate-limit"
 import { createTestApp, type TestApp } from "../../testing"
 
@@ -118,6 +121,57 @@ test("capture is limited per ip and per hotel", async () => {
   }
   await expect(from("10.2.0.1").public.capture({ slug: "capture-limit", ...scan })).rejects.toThrow("Too many requests")
   expect((await client.guests.list({})).total).toBe(RATE_LIMITS.captureHotel.limit)
+})
+
+test("the printed code still decodes to its spot with a solid logo over its middle", async () => {
+  const owner = await app.signUp("capture-decode@ritorno.test")
+  const hotelId = await app.createHotel("capture-decode", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+
+  const [code] = await client.hotel.qrCodes({ source: "room", spots: ["12 A"] })
+  const width = 600
+  // the worst logo there is: opaque black filling the whole white pad's inside
+  const pad = Math.round(width * QR_LOGO_RATIO)
+  const square = (size: number, background: string) => ({
+    input: { create: { width: size, height: size, channels: 4 as const, background } },
+    left: Math.round((width - size) / 2),
+    top: Math.round((width - size) / 2),
+  })
+  const plain = await sharp(Buffer.from(code!.svg), { density: 600 }).resize(width, width).png().toBuffer()
+  const { data, info } = await sharp(plain)
+    .composite([square(pad, "#ffffff"), square(Math.round(pad * 0.86), "#000000")])
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const decoded = jsQR(new Uint8ClampedArray(data), info.width, info.height)?.data
+  expect(decoded).toBe(code!.url)
+  expect(decoded).toEndWith("/h/capture-decode?src=room&loc=12+A")
+})
+
+test("staff save rooms and tables in bulk, once each, and only for their own hotel", async () => {
+  const owner = await app.signUp("capture-spots@ritorno.test")
+  const staff = await app.signUp("capture-spots-staff@ritorno.test")
+  const hotelId = await app.createHotel("capture-spots", owner)
+  const { client } = await app.joinHotel(staff, hotelId, "staff")
+  const otherOwner = await app.signUp("capture-spots-other@ritorno.test")
+  const otherId = await app.createHotel("capture-spots-other", otherOwner)
+  const other = (await app.joinHotel(otherOwner, otherId, "owner")).client
+
+  await client.hotel.spots.add({ source: "table", names: parseSpots("1-2") })
+  await client.hotel.spots.add({ source: "room", names: parseSpots("101-102") })
+  await other.hotel.spots.add({ source: "room", names: ["101"] })
+  await client.hotel.spots.add({ source: "room", names: ["102", "9"] })
+  expect((await client.hotel.spots.list()).map((spot) => `${spot.source} ${spot.name}`)).toEqual([
+    "room 9",
+    "room 101",
+    "room 102",
+    "table 1",
+    "table 2",
+  ])
+
+  await client.hotel.spots.remove({ spots: [{ source: "room", name: "101" }] })
+  expect(await client.hotel.spots.list()).toHaveLength(4)
+  expect(await other.hotel.spots.list()).toEqual([{ source: "room", name: "101" }])
 })
 
 test("QR codes carry the hotel slug, source and spot, and the stats count captures per spot", async () => {

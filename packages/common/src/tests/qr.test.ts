@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { captureUrl, parseSpots, QR_SPOTS_MAX } from "../qr"
+import { captureUrl, parseSpots, QR_SPOTS_MAX, staffLabel } from "../qr"
 
 test("spots: ranges expand, lists split, repeats and blanks go, the count is capped", () => {
   expect(parseSpots("101-103, T1\nT1,, Pool")).toEqual(["101", "102", "103", "T1", "Pool"])
@@ -11,4 +11,9 @@ test("the capture url carries the source and the spot", () => {
     "https://ritorno.dev/h/palais?src=room&loc=12+A",
   )
   expect(captureUrl("https://ritorno.dev", "palais", "desk")).toBe("https://ritorno.dev/h/palais?src=desk")
+})
+
+test("the staff label marks table numbers with a T and leaves rooms and names alone", () => {
+  expect([staffLabel("table", "4"), staffLabel("table", "T4"), staffLabel("room", "383")]).toEqual(["T4", "T4", "383"])
+  expect(staffLabel("desk", null)).toBeNull()
 })
