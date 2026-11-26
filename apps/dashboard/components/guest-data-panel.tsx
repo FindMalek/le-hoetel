@@ -21,7 +21,6 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState("")
   const [confirming, setConfirming] = useState(false)
-  const [typed, setTyped] = useState("")
   const fail = () => toast.error(t("error"))
 
   const results = useQuery({
@@ -47,15 +46,12 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
     mutationFn: () => browserClient.guests.removeAll({ confirmCount: count }),
     onSuccess: async () => {
       setConfirming(false)
-      setTyped("")
       await queryClient.invalidateQueries({ queryKey: orpc.guests.key() })
       router.refresh()
       toast.success(t("deleted"))
     },
     onError: fail,
   })
-
-  const typedOk = typed.trim().toLowerCase() === hotelName.toLowerCase()
 
   return (
     <div className="flex flex-col">
@@ -147,29 +143,16 @@ export function GuestDataPanel({ hotelName }: { hotelName: string }) {
 
       <ConfirmDialog
         open={confirming}
-        onOpenChange={(open) => {
-          setConfirming(open)
-          if (!open) setTyped("")
-        }}
+        onOpenChange={setConfirming}
         destructive
         pending={removeAll.isPending}
-        confirmDisabled={!typedOk}
+        typedConfirmation={{ label: t("typeName", { hotel: hotelName }), expected: hotelName }}
         title={t("deleteAllTitle")}
         description={t("deleteAllBody", { count, hotel: hotelName })}
         confirmLabel={t("confirm")}
         cancelLabel={t("cancel")}
         onConfirm={() => removeAll.mutate()}
-      >
-        <div className="flex flex-col gap-2 text-sm">
-          <Label htmlFor="confirm-word">{t("typeName", { hotel: hotelName })}</Label>
-          <Input
-            id="confirm-word"
-            value={typed}
-            onChange={(event) => setTyped(event.target.value)}
-            autoComplete="off"
-          />
-        </div>
-      </ConfirmDialog>
+      />
     </div>
   )
 }

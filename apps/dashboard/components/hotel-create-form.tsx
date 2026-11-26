@@ -7,6 +7,7 @@ import { Button } from "@ritorno/ui/components/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@ritorno/ui/components/card"
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@ritorno/ui/components/field"
 import { Input } from "@ritorno/ui/components/input"
+import { Select } from "@ritorno/ui/components/select"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { type FormEvent, useRef } from "react"
@@ -104,18 +105,12 @@ export function HotelCreateForm({ labels }: { labels: Labels }) {
             <ColorInput name="accentColor" label={labels.accentColor} placeholder="#f2b134" labels={labels} />
             <Field>
               <FieldLabel htmlFor="defaultLanguage">{labels.language}</FieldLabel>
-              <select
+              <Select
                 id="defaultLanguage"
                 name="defaultLanguage"
                 defaultValue="fr"
-                className="h-11 w-full border border-input bg-background px-2.5 text-sm"
-              >
-                {HOTEL_LANGUAGES.map((language) => (
-                  <option key={language} value={language}>
-                    {language.toUpperCase()}
-                  </option>
-                ))}
-              </select>
+                options={HOTEL_LANGUAGES.map((language) => ({ value: language, label: language.toUpperCase() }))}
+              />
             </Field>
             <Button type="submit" disabled={create.isPending}>
               {labels.submit}

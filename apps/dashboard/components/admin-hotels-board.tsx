@@ -8,11 +8,11 @@ import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
+import { Select } from "@ritorno/ui/components/select"
 import { BuildingIcon, ChevronRightIcon, PlusIcon, SearchXIcon } from "lucide-react"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
-import { selectClass } from "@/components/admin-fields"
 import { HotelAvatar } from "@/components/hotel-avatar"
 import { relativeTime } from "@/components/relative-day"
 import { consentRate, daysUntil, HEALTH_TONE } from "@/lib/admin"
@@ -120,35 +120,27 @@ export function AdminHotelsBoard({ hotels, now }: { hotels: Hotel[]; now: Date }
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="hotel-status">{t("filters.status")}</Label>
-          <select
+          <Select
             id="hotel-status"
-            className={selectClass}
             value={status}
-            onChange={(event) => setStatus(event.target.value as HotelStatus | "")}
-          >
-            <option value="">{t("filters.any")}</option>
-            {HOTEL_STATUSES.map((value) => (
-              <option key={value} value={value}>
-                {t(`status.${value}`)}
-              </option>
-            ))}
-          </select>
+            onValueChange={setStatus}
+            options={[
+              { value: "", label: t("filters.any") },
+              ...HOTEL_STATUSES.map((value) => ({ value, label: t(`status.${value}`) })),
+            ]}
+          />
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="hotel-health">{t("filters.health")}</Label>
-          <select
+          <Select
             id="hotel-health"
-            className={selectClass}
             value={health}
-            onChange={(event) => setHealth(event.target.value as HotelHealth | "")}
-          >
-            <option value="">{t("filters.any")}</option>
-            {HOTEL_HEALTHS.map((value) => (
-              <option key={value} value={value}>
-                {t(`health.${value}`)}
-              </option>
-            ))}
-          </select>
+            onValueChange={setHealth}
+            options={[
+              { value: "", label: t("filters.any") },
+              ...HOTEL_HEALTHS.map((value) => ({ value, label: t(`health.${value}`) })),
+            ]}
+          />
         </div>
         {filtered && (
           <div className="flex items-end">

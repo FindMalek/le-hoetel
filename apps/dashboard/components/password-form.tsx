@@ -3,13 +3,13 @@
 import { authClient } from "@ritorno/auth/client"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { Label } from "@ritorno/ui/components/label"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 import { authErrorKey } from "@/lib/auth-errors"
 import { useForm } from "@/lib/use-form"
-import { FormField } from "./form-field"
 import { PasswordInput } from "./password-input"
 
 const MIN_LENGTH = 10

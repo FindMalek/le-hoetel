@@ -4,13 +4,13 @@ import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
 import { useMutation } from "@tanstack/react-query"
 import { DownloadIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
-import { FormField } from "./form-field"
 
 function download(name: string, content: unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(content, null, 2)], { type: "application/json" }))

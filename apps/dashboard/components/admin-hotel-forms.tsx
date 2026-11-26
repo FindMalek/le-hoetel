@@ -10,16 +10,8 @@ import {
 } from "@ritorno/common/hotel"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@ritorno/ui/components/alert-dialog"
 import { Button } from "@ritorno/ui/components/button"
+import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
@@ -143,13 +135,13 @@ export function AdminBrandingForm({ hotel }: { hotel: BrandingHotel }) {
           <AdminSelect
             label={t("language")}
             value={values.language}
-            onChange={(event) => set("language", event.target.value as HotelLanguage)}
+            onValueChange={(value) => set("language", value)}
             options={HOTEL_LANGUAGES.map((value) => ({ value, label: t(`languages.${value}`) }))}
           />
           <AdminSelect
             label={t("timezone")}
             value={values.timezone}
-            onChange={(event) => set("timezone", event.target.value)}
+            onValueChange={(value) => set("timezone", value)}
             options={[...new Set([hotel.timezone, ...TIMEZONES])].map((value) => ({
               value,
               label: value.replace("_", " "),
@@ -209,13 +201,13 @@ export function AdminPlanForm({
         <AdminSelect
           label={t("plan")}
           value={plan}
-          onChange={(event) => setPlan(event.target.value as HotelPlan)}
+          onValueChange={setPlan}
           options={HOTEL_PLANS.map((value) => ({ value, label: t(`plans.${value}`) }))}
         />
         <AdminSelect
           label={t("status")}
           value={status}
-          onChange={(event) => setStatus(event.target.value as HotelStatus)}
+          onValueChange={setStatus}
           options={HOTEL_STATUSES.map((value) => ({ value, label: t(`statuses.${value}`) }))}
         />
       </div>
@@ -245,7 +237,6 @@ export function AdminDangerZone({
   const t = useTranslations("adminHotel")
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const [typed, setTyped] = useState("")
   const suspended = hotel.status === "suspended"
   const setStatus = useMutation(
     orpc.admin.hotels.update.mutationOptions({
@@ -296,40 +287,18 @@ export function AdminDangerZone({
           {t("delete")}
         </Button>
       </div>
-      <AlertDialog
+      <ConfirmDialog
         open={open}
-        onOpenChange={(next) => {
-          setOpen(next)
-          if (!next) setTyped("")
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteTitle", { hotel: hotel.displayName })}</AlertDialogTitle>
-            <AlertDialogDescription>{t("deleteConsequence")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AdminInput
-            label={t("deleteType", { slug: hotel.slug })}
-            value={typed}
-            dir="ltr"
-            autoComplete="off"
-            autoCapitalize="none"
-            spellCheck={false}
-            onChange={(event) => setTyped(event.target.value)}
-          />
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={remove.isPending}>{t("cancel")}</AlertDialogCancel>
-            <Button
-              variant="destructive"
-              loading={remove.isPending}
-              disabled={typed !== hotel.slug}
-              onClick={() => remove.mutate({ id: hotel.id, confirmSlug: typed })}
-            >
-              {t("deleteConfirm")}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        onOpenChange={setOpen}
+        destructive
+        pending={remove.isPending}
+        title={t("deleteTitle", { hotel: hotel.displayName })}
+        description={t("deleteConsequence")}
+        typedConfirmation={{ label: t("deleteType", { slug: hotel.slug }), expected: hotel.slug }}
+        confirmLabel={t("deleteConfirm")}
+        cancelLabel={t("cancel")}
+        onConfirm={() => remove.mutate({ id: hotel.id, confirmSlug: hotel.slug })}
+      />
     </div>
   )
 }

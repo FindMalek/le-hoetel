@@ -1,10 +1,10 @@
 "use client"
 
 import { brandContrastIssues, readableForeground } from "@ritorno/common/color"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
 import { TriangleAlertIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { FormField } from "./form-field"
 
 const HEX = /^#[0-9a-fA-F]{6}$/
 

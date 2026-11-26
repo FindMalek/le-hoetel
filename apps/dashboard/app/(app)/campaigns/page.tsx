@@ -19,7 +19,7 @@ export default async function CampaignsPage() {
       <PageHeader
         title={t("title")}
         description={t("description")}
-        actions={
+        action={
           <Button className="h-11 md:h-9" render={<Link href="/campaigns/new" />} nativeButton={false}>
             <PlusIcon />
             {t("new")}

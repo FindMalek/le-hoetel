@@ -6,20 +6,20 @@ import { Button } from "@ritorno/ui/components/button"
 import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
 import { ListSkeleton } from "@ritorno/ui/components/loading-state"
 import { RadioGroup, RadioGroupItem } from "@ritorno/ui/components/radio-group"
 import { Section } from "@ritorno/ui/components/section"
+import { Select } from "@ritorno/ui/components/select"
 import { RotateCwIcon, SendIcon, UsersIcon, XIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useForm } from "@/lib/use-form"
-import { FormField } from "./form-field"
 import { LocalDate } from "./local-date"
-import { NativeSelect } from "./native-select"
 
 const ASSIGNABLE = ["manager", "staff"] as const
 type Assignable = (typeof ASSIGNABLE)[number]
@@ -157,25 +157,20 @@ export function TeamBoard({ meId, canManage }: { meId: string; canManage: boolea
       return <Badge variant={role === "owner" ? "default" : "secondary"}>{t(`roles.${role as "owner"}`)}</Badge>
     }
     return (
-      <NativeSelect
+      <Select
         aria-label={t("roleOf", { name: member.user.name })}
         value={role}
         disabled={busy === member.id}
         className="w-36"
-        onChange={(event) =>
+        onValueChange={(value) =>
           run(
             member.id,
-            orgClient.organization.updateMemberRole({ memberId: member.id, role: event.target.value }),
+            orgClient.organization.updateMemberRole({ memberId: member.id, role: value }),
             t("roleChanged"),
           )
         }
-      >
-        {ASSIGNABLE.map((value) => (
-          <option key={value} value={value}>
-            {t(`roles.${value}`)}
-          </option>
-        ))}
-      </NativeSelect>
+        options={ASSIGNABLE.map((value) => ({ value, label: t(`roles.${value}`) }))}
+      />
     )
   }
 

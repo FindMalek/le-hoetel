@@ -10,6 +10,9 @@ import {
   AlertDialogTitle,
 } from "@ritorno/ui/components/alert-dialog"
 import { Button } from "@ritorno/ui/components/button"
+import { FormField } from "@ritorno/ui/components/form-field"
+import { Input } from "@ritorno/ui/components/input"
+import { useState } from "react"
 
 type ConfirmDialogProps = {
   open: boolean
@@ -22,42 +25,71 @@ type ConfirmDialogProps = {
   destructive?: boolean
   pending?: boolean
   confirmDisabled?: boolean
-  /** Extra content between the text and the buttons, e.g. a field to type the name of what is deleted. */
+  /** Asks to type `expected` (a slug, a name, case and outer spaces ignored) before the confirm button works. */
+  typedConfirmation?: { label: React.ReactNode; expected: string }
+  /** Extra content between the text and the buttons. */
   children?: React.ReactNode
 }
 
-function ConfirmDialog({
-  open,
-  onOpenChange,
+const normalize = (value: string): string => value.trim().toLowerCase()
+
+/** Lives inside the popup, which unmounts on close, so the typed text never survives a reopen. */
+function ConfirmBody({
   title,
   description,
   confirmLabel,
   cancelLabel,
   onConfirm,
-  destructive = false,
-  pending = false,
-  confirmDisabled = false,
+  destructive,
+  pending,
+  confirmDisabled,
+  typedConfirmation,
   children,
-}: ConfirmDialogProps) {
+}: Omit<ConfirmDialogProps, "open" | "onOpenChange">) {
+  const [typed, setTyped] = useState("")
+  const mismatch = typedConfirmation ? normalize(typed) !== normalize(typedConfirmation.expected) : false
+  return (
+    <>
+      <AlertDialogHeader>
+        <AlertDialogTitle>{title}</AlertDialogTitle>
+        <AlertDialogDescription>{description}</AlertDialogDescription>
+      </AlertDialogHeader>
+      {typedConfirmation ? (
+        <FormField label={typedConfirmation.label}>
+          {(aria) => (
+            <Input
+              {...aria}
+              value={typed}
+              dir="auto"
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              onChange={(event) => setTyped(event.target.value)}
+            />
+          )}
+        </FormField>
+      ) : null}
+      {children}
+      <AlertDialogFooter>
+        <AlertDialogCancel disabled={pending}>{cancelLabel}</AlertDialogCancel>
+        <Button
+          variant={destructive ? "destructive" : "default"}
+          loading={pending}
+          disabled={confirmDisabled || mismatch}
+          onClick={onConfirm}
+        >
+          {confirmLabel}
+        </Button>
+      </AlertDialogFooter>
+    </>
+  )
+}
+
+function ConfirmDialog({ open, onOpenChange, ...body }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        {children}
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>{cancelLabel}</AlertDialogCancel>
-          <Button
-            variant={destructive ? "destructive" : "default"}
-            loading={pending}
-            disabled={confirmDisabled}
-            onClick={onConfirm}
-          >
-            {confirmLabel}
-          </Button>
-        </AlertDialogFooter>
+        <ConfirmBody {...body} />
       </AlertDialogContent>
     </AlertDialog>
   )

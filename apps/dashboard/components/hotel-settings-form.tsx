@@ -6,9 +6,11 @@ import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { FormSection } from "@ritorno/ui/components/form-section"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Input } from "@ritorno/ui/components/input"
+import { Select } from "@ritorno/ui/components/select"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
@@ -17,9 +19,7 @@ import { toast } from "sonner"
 import { useForm } from "@/lib/use-form"
 import { BrandPreview, type PreviewCopies } from "./brand-preview"
 import { ColorField, isHexColor } from "./color-field"
-import { FormField } from "./form-field"
 import { HotelLogo } from "./hotel-logo"
-import { NativeSelect } from "./native-select"
 
 const TIMEZONES = [
   "Africa/Tunis",
@@ -192,32 +192,22 @@ export function HotelSettingsForm({
           <FormSection title={t("sections.language.title")} description={t("sections.language.description")}>
             <FormField id="defaultLanguage" label={t("defaultLanguage")} hint={t("defaultLanguageHint")}>
               {(aria) => (
-                <NativeSelect
+                <Select
                   {...aria}
                   value={values.defaultLanguage}
-                  onChange={(event) => form.set("defaultLanguage", event.target.value as HotelLanguage)}
-                >
-                  {HOTEL_LANGUAGES.map((value) => (
-                    <option key={value} value={value}>
-                      {LOCALE_NAMES[value]}
-                    </option>
-                  ))}
-                </NativeSelect>
+                  onValueChange={(value) => form.set("defaultLanguage", value)}
+                  options={HOTEL_LANGUAGES.map((value) => ({ value, label: LOCALE_NAMES[value] }))}
+                />
               )}
             </FormField>
             <FormField id="timezone" label={t("timezone")} hint={t("timezoneHint")}>
               {(aria) => (
-                <NativeSelect
+                <Select
                   {...aria}
                   value={values.timezone}
-                  onChange={(event) => form.set("timezone", event.target.value)}
-                >
-                  {timezones.map((zone) => (
-                    <option key={zone} value={zone}>
-                      {zone.replace("_", " ")}
-                    </option>
-                  ))}
-                </NativeSelect>
+                  onValueChange={(value) => form.set("timezone", value)}
+                  options={timezones.map((zone) => ({ value: zone, label: zone.replace("_", " ") }))}
+                />
               )}
             </FormField>
           </FormSection>

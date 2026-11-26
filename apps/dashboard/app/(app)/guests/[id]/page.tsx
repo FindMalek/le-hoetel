@@ -83,7 +83,7 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
         breadcrumb={<GuestsBreadcrumb current={guest.name} />}
         title={guest.name}
         description={t("subtitle", { language: LOCALE_NAMES[guest.language] })}
-        actions={
+        secondaryActions={
           <GuestActions id={guest.id} name={guest.name} canExport={allowed("export")} canDelete={allowed("delete")} />
         }
       />

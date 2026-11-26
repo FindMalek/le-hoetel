@@ -33,14 +33,19 @@ Exported from `@ritorno/ui/components/*`. They take already translated text, so 
 
 | Component | Use it for |
 | --- | --- |
-| `page-header` `PageHeader` | The one title of a page, a quiet description and the page actions (full width buttons on a phone) |
+| `page-header` `PageHeader` | The one title of a page, a quiet description, breadcrumbs, one primary `action` at the inline end and optional `secondaryActions` before it (full width buttons on a phone) |
 | `section` `Section` | A titled block of a page. Sections are separated by space, not by boxes inside boxes |
-| `stat-card` `StatCard` | One number with a label and a hint. Numbers are tabular |
-| `data-table` `DataTable` | A list of rows. Table from `md` up with a sticky header, a list of cards on a phone (pass `card` for a custom card, else the first column is the title). Pass `empty` for the empty state |
+| `stat-card` `StatCard` | One number with a caption label, a hint, a `delta` chip (arrow, signed `value` from `formatDelta`, `context` words and tone, never color only) and a `link` to the full list. Numbers are tabular |
+| `chart-card` `ChartCard` | A chart with its title, a `control` slot for the period picker and an `empty` state shown when `isEmpty` |
+| `data-list` `DataList` | The list of a page: `filters` slot, `DataTable` underneath (table from `md` up, cards on a phone), `loading` skeleton rows, `empty`, and `pagination` with previous and next as links or handlers. Page mode passes `range` (from `pageWindow` in `@ritorno/ui/lib/pagination`) and the numbers are isolated left to right inside the translated sentence, cursor mode just passes the targets it has |
+| `num` `Num` | A number inside text: formatted with `formatNumber` from `@ritorno/ui/lib/number` (locale marks, Western digits in every language) and isolated in a `bdi dir="ltr"`, so `+12%` never reads `12%+` in Arabic. Use it for counts in badges and sentences |
+| `data-table` `DataTable` | The table part of `DataList`, for a list without filters or paging. Pass `card` for a custom phone card, else the first column is the title |
+| `status-badge` `StatusBadge` | A state chip: `success`, `warning`, `danger`, `info`, `neutral` on the soft token fills, each with an icon. The text carries the meaning |
+| `page-state` `PageState` | What a page or a panel shows instead of content: `loading` (skeleton), `empty` (`firstRun` adds the pattern), `error` (an `InlineAlert`), `forbidden` |
 | `form-section` `FormSection` | A group of fields with its title and help on the side from `md`, stacked on a phone |
 | `sticky-form-actions` `StickyFormActions` | Save and cancel. Sticks above the tab bar on a phone, sits at the end of the form from `md` |
 | `inline-alert` `InlineAlert` | A message that stays on the page: `info`, `success`, `warning`, `error` (the error is announced). Never color only, each tone has an icon |
-| `confirm-dialog` `ConfirmDialog` | Confirm a destructive or irreversible action, with the consequence in the text |
+| `confirm-dialog` `ConfirmDialog` | Confirm a destructive or irreversible action, with the consequence in the text. `typedConfirmation={{ label, expected }}` keeps the button disabled until the slug or name is typed (case and outer spaces ignored) |
 | `empty-state` `EmptyState` | Nothing here yet: icon, one sentence, one next action. `decorated` adds the quiet zellige pattern, for first run screens only |
 | `zellige-pattern` `ZelligePattern` | The one Tunisian detail: a khatim tile in the text color at 7% opacity. Auth pages, 404 and first run empty states, nowhere else |
 
@@ -52,8 +57,11 @@ Sign in, sign up, forgot password, reset password and accept invitation share on
 
 ### Forms
 
-- `FieldGroup` of `Field`s, one column on mobile, two on `md` only when fields are short
-- each `Field` has `FieldLabel`, the control, optional `FieldDescription`, and `FieldError` bound to the validation error. Set `data-invalid` on the field and `aria-invalid` on the control
+- `FieldGroup` of fields, one column on mobile, two on `md` only when fields are short
+- every field is a `FormField` (`@ritorno/ui/components/form-field`): label, `required` marker or `optional` text, the control, then the `hint` or the inline `error` with its icon. It hands the control `id`, `aria-invalid` and `aria-describedby`, so errors are announced and look the same everywhere
+- one `Select` (`@ritorno/ui/components/select`) for every choice from a list: pass `options`, then `value` and `onValueChange`, or `name` and `defaultValue` in a plain server form (it posts a hidden input). No hand rolled `<select>`. The only native select left is the dial code inside `PhoneInput`, where the picker sits inside the input and the native wheel is the expected phone control
+- `Input` with `type` or `inputMode` `email`, `tel` or `url` is `dir="ltr"` by default. Slugs, promo codes and other codes set `dir="ltr"` themselves
+- `SegmentedControl` for two to five options that should stay visible (period, language, a preference). Native radios underneath, so it works in a plain form. Give every option an `href` (and `linkComponent={Link}`) when the choice lives in the url, like the metrics period. Past five options, use `Select`
 - the submit button is `<Button loading={pending}>`, disabled while pending so a double tap cannot send twice
 - phone: `PhoneInput` with the dial code select. Default `+216`. Normalize and validate in the api
 - consent: separate unchecked `Checkbox` per channel (email, whatsapp), each with its own wording, never pre checked
@@ -63,7 +71,7 @@ Sign in, sign up, forgot password, reset password and accept invitation share on
 ### Lists and tables
 
 - mobile: a list of cards or `Item` rows, one tap target per row. Do not shrink a table to fit
-- desktop: a table with start aligned text, numbers end aligned. `DataTable` does both layouts
+- desktop: a table with start aligned text, numbers end aligned. `DataList` does both layouts
 - search and filters above the list. Pagination or "load more", not infinite scroll without a way to the footer
 
 ### Overlays
@@ -75,17 +83,65 @@ Sign in, sign up, forgot password, reset password and accept invitation share on
 ### Loading, empty and error
 
 ```tsx
-if (isPending) return <ListSkeleton rows={5} label={t("loading")} />
-if (error) return <Alert variant="destructive">...</Alert>
+if (isPending) return <PageState kind="loading" label={t("loading")} />
+if (error) return <PageState kind="error" title={t("error.title")} action={<Button onClick={retry}>{t("retry")}</Button>} />
 if (!items.length)
   return (
-    <EmptyState
+    <PageState
+      kind="empty"
       icon={<UsersIcon />}
       title={t("guests.empty.title")}
       description={t("guests.empty.description")}
       action={<Button>{t("guests.add")}</Button>}
     />
   )
+```
+
+### Examples
+
+```tsx
+<FormField id="channel" label={t("channel")} hint={t("channelHint")} error={form.error("channel")} required>
+  {(aria) => (
+    <Select
+      {...aria}
+      value={values.channel}
+      onValueChange={(channel) => form.set("channel", channel)}
+      options={CHANNELS.map((value) => ({ value, label: t(`channel.${value}`) }))}
+    />
+  )}
+</FormField>
+
+<SegmentedControl
+  label={t("periodLabel")}
+  value={String(days)}
+  linkComponent={Link}
+  options={PERIODS.map((period) => ({ value: String(period), label: t("period.days", { count: period }), href: `?days=${period}` }))}
+/>
+
+const page = pageWindow({ page: Number(params.page), pageSize: 20, total })
+<DataList
+  caption={t("title")}
+  filters={<Input type="search" aria-label={t("search")} />}
+  rows={rows}
+  columns={columns}
+  getRowKey={(row) => row.id}
+  empty={<PageState kind="empty" title={t("empty")} />}
+  linkComponent={Link}
+  pagination={{
+    previousLabel: t("previous"),
+    nextLabel: t("next"),
+    range: { ...page, total, locale, label: (n) => t.rich("range", { from: () => n.from, to: () => n.to, total: () => n.total }) },
+    previous: page.hasPrevious ? { href: `?page=${page.page - 1}` } : undefined,
+    next: page.hasNext ? { href: `?page=${page.page + 1}` } : undefined,
+  }}
+/>
+
+<StatCard
+  label={t("captured")}
+  value={formatNumber(total, locale)}
+  delta={{ direction: "up", value: formatDelta(change, locale, { style: "percent" }), context: t("vsLast") }}
+/>
+<StatusBadge tone="warning">{t("status.scheduled")}</StatusBadge>
 ```
 
 ### Hotel branding

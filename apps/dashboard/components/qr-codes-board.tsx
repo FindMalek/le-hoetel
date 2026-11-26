@@ -7,6 +7,7 @@ import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { Section } from "@ritorno/ui/components/section"
 import { Skeleton } from "@ritorno/ui/components/skeleton"
@@ -18,7 +19,6 @@ import { CheckIcon, CopyIcon, DownloadIcon, QrCodeIcon, RotateCwIcon } from "luc
 import { useTranslations } from "next-intl"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
-import { FormField } from "./form-field"
 
 // i18n-used: qrCodes.room
 // i18n-used: qrCodes.table
