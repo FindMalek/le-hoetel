@@ -21,7 +21,8 @@ type ConfirmDialogProps = {
   description: React.ReactNode
   confirmLabel: React.ReactNode
   cancelLabel: React.ReactNode
-  onConfirm: () => void
+  /** Gets the typed confirmation, so the server can check it again. */
+  onConfirm: (typed: string) => void
   destructive?: boolean
   pending?: boolean
   confirmDisabled?: boolean
@@ -76,7 +77,7 @@ function ConfirmBody({
           variant={destructive ? "destructive" : "default"}
           loading={pending}
           disabled={confirmDisabled || mismatch}
-          onClick={onConfirm}
+          onClick={() => onConfirm(typed)}
         >
           {confirmLabel}
         </Button>

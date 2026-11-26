@@ -383,7 +383,7 @@ export function AdminDangerZone({
         typedConfirmation={{ label: t("deleteType", { slug: hotel.slug }), expected: hotel.slug }}
         confirmLabel={t("deleteConfirm")}
         cancelLabel={t("cancel")}
-        onConfirm={() => remove.mutate({ id: hotel.id, confirmSlug: hotel.slug })}
+        onConfirm={(typed) => remove.mutate({ id: hotel.id, confirmSlug: typed })}
       />
     </div>
   )
