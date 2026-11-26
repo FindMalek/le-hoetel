@@ -1001,71 +1001,123 @@
       "description": "Guests join by QR code, you keep the contacts, and a low score reaches you the same day. More Google reviews, more guests coming back direct. Free pilot for hotels in Tunisia."
     },
     "nav": {
+      "label": "Main",
       "how": "How it works",
       "pricing": "Pricing",
       "faq": "FAQ",
+      "docs": "Docs",
       "demo": "Request a demo",
-      "menu": "Sections"
+      "menu": "Menu"
     },
     "hero": {
-      "eyebrow": "For hotels in Tunisia",
-      "title": "Hear about an unhappy guest before they write the review.",
-      "subtitle": "Guests join with a QR code, you keep the contact list, and a low score reaches you the same day. More Google reviews, more guests coming back direct.",
-      "demo": "Request a demo",
-      "whatsapp": "Chat on WhatsApp",
-      "note": "Free pilot for 60 to 90 days. No app for your guests."
+      "title": "Every guest,<br></br> <em>welcomed</em> back<br></br> by name",
+      "lead": "Hear about an unhappy guest before the review, and bring the happy ones back direct.",
+      "cta": "Request a demo",
+      "secondary": "See how it works"
     },
-    "outcomes": {
-      "alerts": {
-        "title": "Unhappy guests reach you first",
-        "body": "A low score alerts the manager within a day, so a problem is fixed before it becomes a review."
-      },
-      "reviews": {
-        "title": "More Google reviews",
-        "body": "Happy guests get a link to review you on Google. Unhappy ones talk to you instead."
-      },
-      "list": {
-        "title": "A guest list you own",
-        "body": "Name, phone and consent in your hands, not in the hands of a booking site."
-      }
+    "shot": {
+      "title": "The product",
+      "browser": "The hotel dashboard with sample data: guests, returning guests, the survey score and the latest guests with their consent per channel.",
+      "phone": "The page a guest opens from the QR code in the room, in the hotel colors.",
+      "addGuest": "Add guest",
+      "returning": "Returning",
+      "score": "Survey score",
+      "search": "Search guests",
+      "consent": "Consent",
+      "room": "Room {room}",
+      "stop": "Every message has a link to stop."
     },
     "how": {
-      "title": "How it works",
-      "subtitle": "Three steps, and the first one takes a guest ten seconds.",
-      "step": "Step {number}",
+      "title": "From a QR code to a guest who comes back",
+      "lead": "Six steps the hotel never has to think about. The first one takes a guest ten seconds.",
+      "link": "Read the docs",
+      "stars": "{count} out of 5",
       "qr": {
-        "title": "A QR code in every room",
-        "body": "Guests scan it in the room, at the table or at the desk. Name, phone, language and a clear yes, in French, Arabic or English."
+        "chip": "QR code",
+        "title": "Scan in the room",
+        "body": "At the desk, the table or the room. No app, no account.",
+        "place": "Room 12"
       },
-      "messages": {
-        "title": "Warm messages, only with consent",
-        "body": "A welcome, a thank-you after the stay, a birthday wish. On WhatsApp or email, only the channel the guest chose, with a way to stop every time."
+      "list": {
+        "chip": "Guest list",
+        "title": "Join your guest list",
+        "body": "Name, phone, language and a clear yes per channel."
       },
-      "feedback": {
-        "title": "Feedback that finds you",
-        "body": "One question after the stay. Happy guests are invited to Google. A low score lands on the manager's phone with the guest's contact."
+      "welcome": {
+        "chip": "WhatsApp",
+        "title": "A warm welcome",
+        "body": "Sent on the channel the guest chose, in their language.",
+        "message": "Welcome to {hotel}, {name}. Your welcome drink is waiting at the bar."
+      },
+      "survey": {
+        "chip": "Survey",
+        "title": "One question after the stay",
+        "body": "A short survey the day after checkout."
+      },
+      "alert": {
+        "chip": "Low score",
+        "title": "The manager hears first",
+        "body": "A low score reaches the manager the same day.",
+        "room": "Room 204",
+        "quote": "\"The air conditioning did not work.\"",
+        "action": "Call guest"
+      },
+      "review": {
+        "chip": "Happy guest",
+        "title": "A Google review invite",
+        "body": "Happy guests are asked to share it on Google."
       }
     },
-    "preview": {
-      "title": "What happened this week, on one screen",
-      "subtitle": "Who joined, who is unhappy, what to do next.",
-      "sample": "Sample data",
-      "label": "A sample of the hotel dashboard with made-up numbers",
-      "week": "This week",
-      "newGuests": "New guests",
-      "score": "Average score",
-      "invited": "Reviews invited",
-      "delta": "{value} vs last week",
-      "alertTitle": "Unhappy guest",
-      "alertBody": "Room 204 scored 2 out of 5: \"The air conditioning did not work.\"",
-      "alertAction": "Call guest",
-      "chart": "New guests per day",
-      "latest": "Latest guests",
-      "whatsapp": "WhatsApp",
-      "email": "Email",
-      "room": "Room {place}",
-      "table": "Table {place}",
-      "desk": "Front desk"
+    "features": {
+      "title": "Made for the front desk, not for a marketing team",
+      "lead": "Everything a small hotel needs to know its guests and bring them back, and nothing it does not.",
+      "recognition": {
+        "title": "Know who is back",
+        "body": "Returning guests are flagged the moment they check in, with what the team noted last time.",
+        "stays": "{count, plural, one {# stay} other {# stays}}",
+        "badge": "Returning",
+        "lastLabel": "Last stay",
+        "lastValue": "March, room 12",
+        "noteLabel": "Note",
+        "noteValue": "Sea view, no feathers"
+      },
+      "consent": {
+        "title": "Consent and data you own",
+        "body": "Every yes is logged per channel. Export or delete any guest in one click.",
+        "log": "Consent log",
+        "yes": "Yes",
+        "no": "No",
+        "export": "Export",
+        "delete": "Delete"
+      },
+      "offers": {
+        "title": "Offers that bring them back",
+        "body": "A welcome drink or a birthday dessert with a QR the desk scans.",
+        "offer": "A welcome drink on your return",
+        "detail": "Show the QR at the bar.",
+        "redeemed": "{count} redeemed"
+      }
+    },
+    "trust": {
+      "title": "Your guests' data, handled properly",
+      "subtitle": "Built for the Tunisian law on personal data (Law 2004-63) from the first line: consent, access and deletion.",
+      "privacy": "Read the privacy policy",
+      "consent": {
+        "title": "Consent per channel",
+        "body": "WhatsApp and email are separate choices, off by default, each logged with the date and the exact wording."
+      },
+      "control": {
+        "title": "Export or delete any guest",
+        "body": "One guest or the whole hotel, in one click."
+      },
+      "apart": {
+        "title": "Scoped to your hotel",
+        "body": "Hotels never see each other's guests, and we never sell or share your list."
+      },
+      "minimum": {
+        "title": "Only what is needed",
+        "body": "Never location, ID or passport numbers, or payment cards."
+      }
     },
     "pricing": {
       "badge": "Pilot pricing",
@@ -1098,31 +1150,6 @@
       },
       "note": "WhatsApp messages are billed at cost plus a small margin from a prepaid balance, so there are no surprise bills."
     },
-    "trust": {
-      "title": "Your guests' data, handled properly",
-      "subtitle": "Built for the Tunisian law on personal data from the first line.",
-      "privacy": "Read the privacy policy",
-      "consent": {
-        "title": "Consent per channel",
-        "body": "WhatsApp and email are separate choices, both off by default. Every yes is logged with the date and the exact wording."
-      },
-      "stop": {
-        "title": "A stop link in every message",
-        "body": "A guest leaves in one tap, and replying STOP on WhatsApp works too."
-      },
-      "control": {
-        "title": "Export or delete, any time",
-        "body": "One guest or the whole hotel, in one click."
-      },
-      "apart": {
-        "title": "Hotels never see each other's guests",
-        "body": "Every hotel's data is kept apart."
-      },
-      "minimum": {
-        "title": "Only what is needed",
-        "body": "Name, phone and language. Birthday and email only if the guest adds them. Never location, ID numbers or payment cards."
-      }
-    },
     "faq": {
       "title": "Questions hotels ask",
       "guest": {
@@ -1151,7 +1178,7 @@
       }
     },
     "demo": {
-      "title": "See it on your own hotel",
+      "title": "See it working in <em>your</em> hotel",
       "subtitle": "Leave your number. We call or message you on WhatsApp within one working day and show you a demo.",
       "name": "Your name",
       "nameError": "Add your name.",
@@ -1175,9 +1202,23 @@
     },
     "footer": {
       "tagline": "Guest relationships for hotels in Tunisia.",
+      "product": "Product",
+      "how": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "hotels": "For hotels",
+      "recognition": "Front desk recognition",
+      "consent": "Consent and data",
+      "offers": "Offers",
+      "resources": "Resources",
+      "docs": "Docs",
+      "status": "Status",
+      "legal": "Legal",
       "privacy": "Privacy",
       "terms": "Terms",
-      "status": "Status",
+      "contact": "Contact",
+      "demo": "Request a demo",
+      "whatsapp": "WhatsApp",
       "rights": "Made in Tunisia"
     }
   },

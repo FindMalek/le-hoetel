@@ -14,6 +14,8 @@ import { fontVariables } from "./fonts"
 
 /** Guest pages (QR capture, unsubscribe) ship none of the site chrome (feedback, consent banner, analytics): they must load fast on a weak connection. */
 const GUEST_PATHS = ["/h/", "/u/"]
+/** Marketing pages keep the floating feedback button out of the way of the content. */
+const NO_FEEDBACK_PATHS = ["/", "/privacy", "/terms"]
 
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, pathname] = await Promise.all([getLocale(), headers().then((h) => h.get(PATHNAME_HEADER) ?? "/")])
@@ -58,7 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <div className="absolute inset-0 bg-dots" />
               </div>
               {children}
-              <FeedbackButton />
+              {NO_FEEDBACK_PATHS.includes(pathname) ? null : <FeedbackButton />}
             </QueryProvider>
             <ConsentBanner />
           </>

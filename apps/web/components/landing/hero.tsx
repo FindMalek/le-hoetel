@@ -1,53 +1,35 @@
+import { Display } from "@ritorno/ui/brand/display"
+import { PixelSky } from "@ritorno/ui/brand/pixel-sky"
 import { buttonVariants } from "@ritorno/ui/components/button"
 import { cn } from "@ritorno/ui/lib/utils"
-import { MessageCircleIcon } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import { Zellige } from "../zellige"
-import { CONTAINER } from "./section"
 
-export async function Hero({ whatsappUrl }: { whatsappUrl: string | null }) {
-  const t = await getTranslations("landing")
-  const outcomes = [
-    { title: t("outcomes.alerts.title"), body: t("outcomes.alerts.body") },
-    { title: t("outcomes.reviews.title"), body: t("outcomes.reviews.body") },
-    { title: t("outcomes.list.title"), body: t("outcomes.list.body") },
-  ]
+export async function Hero() {
+  const t = await getTranslations("landing.hero")
   return (
-    <section id="top" className="relative isolate overflow-hidden bg-background">
-      <Zellige className="-z-10 text-primary/10" />
-      <div className={`${CONTAINER} pt-14 pb-12 md:pt-24 md:pb-16`}>
-        <div className="grid max-w-3xl gap-6">
-          <p className="font-medium text-muted-foreground text-sm uppercase tracking-wide rtl:tracking-normal rtl:normal-case">
-            {t("hero.eyebrow")}
-          </p>
-          <h1 className="text-balance font-display text-display">{t("hero.title")}</h1>
-          <p className="max-w-2xl text-lg text-muted-foreground leading-relaxed">{t("hero.subtitle")}</p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <a href="#demo" className={cn(buttonVariants({ size: "lg" }), "min-h-12 px-6")}>
-              {t("hero.demo")}
-            </a>
-            {whatsappUrl ? (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className={cn(buttonVariants({ size: "lg", variant: "outline" }), "min-h-12 bg-background px-6")}
-              >
-                <MessageCircleIcon data-icon="inline-start" />
-                {t("hero.whatsapp")}
-              </a>
-            ) : null}
-          </div>
-          <p className="text-muted-foreground text-sm">{t("hero.note")}</p>
+    <section
+      id="top"
+      className="relative isolate flex min-h-svh flex-col items-center justify-center px-4 pt-28 pb-44 text-center md:pt-32 md:pb-52"
+    >
+      <PixelSky clearCenter className="-z-10" />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 grid [--sky-cell:8px] md:[--sky-cell:12px]">
+        <span className="h-[calc(var(--sky-cell)*2)] bg-dither-25" />
+        <span className="h-[calc(var(--sky-cell)*2)] bg-dither-50" />
+        <span className="h-[calc(var(--sky-cell)*2)] bg-dither-75" />
+      </div>
+      <div data-sky-clear className="flex max-w-5xl flex-col items-center">
+        <Display size="xl" reveal className="max-w-5xl">
+          {t.rich("title", { em: (chunks) => <em>{chunks}</em>, br: () => <br className="max-lg:hidden" /> })}
+        </Display>
+        <p className="mt-6 max-w-md text-pretty text-lead text-muted-foreground">{t("lead")}</p>
+        <div className="mt-8 flex w-full max-w-xs flex-col gap-2 sm:w-auto sm:max-w-none sm:flex-row">
+          <a href="#demo" className={cn(buttonVariants({ size: "lg" }), "px-6")}>
+            {t("cta")}
+          </a>
+          <a href="#how" className={cn(buttonVariants({ size: "lg", variant: "secondary" }), "px-6")}>
+            {t("secondary")}
+          </a>
         </div>
-        <dl className="mt-14 grid gap-px overflow-hidden rounded-xl border bg-border md:mt-20 md:grid-cols-3">
-          {outcomes.map((outcome) => (
-            <div key={outcome.title} className="grid content-start gap-2 bg-background p-6">
-              <dt className="font-semibold">{outcome.title}</dt>
-              <dd className="text-muted-foreground text-sm leading-relaxed">{outcome.body}</dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
   )

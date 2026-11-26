@@ -1001,71 +1001,123 @@
       "description": "Vos clients s'inscrivent par QR code, vous gardez les contacts et une mauvaise note vous arrive le jour même. Plus d'avis Google, plus de clients qui reviennent en direct. Pilote gratuit pour les hôtels en Tunisie."
     },
     "nav": {
+      "label": "Principal",
       "how": "Comment ça marche",
       "pricing": "Tarifs",
       "faq": "FAQ",
+      "docs": "Docs",
       "demo": "Demander une démo",
-      "menu": "Sections"
+      "menu": "Menu"
     },
     "hero": {
-      "eyebrow": "Pour les hôtels en Tunisie",
-      "title": "Sachez qu'un client est mécontent avant qu'il n'écrive son avis.",
-      "subtitle": "Vos clients s'inscrivent avec un QR code, vous gardez la liste de contacts et une mauvaise note vous arrive le jour même. Plus d'avis Google, plus de clients qui reviennent en direct.",
-      "demo": "Demander une démo",
-      "whatsapp": "Écrire sur WhatsApp",
-      "note": "Pilote gratuit de 60 à 90 jours. Aucune application pour vos clients."
+      "title": "Chaque client,<br></br> <em>reconnu</em><br></br> à son retour",
+      "lead": "Sachez qu'un client est mécontent avant son avis, et faites revenir les autres en direct.",
+      "cta": "Demander une démo",
+      "secondary": "Voir comment ça marche"
     },
-    "outcomes": {
-      "alerts": {
-        "title": "Les clients mécontents vous parlent d'abord",
-        "body": "Une mauvaise note alerte le responsable dans la journée : le problème est réglé avant de devenir un avis."
-      },
-      "reviews": {
-        "title": "Plus d'avis Google",
-        "body": "Les clients satisfaits reçoivent un lien pour vous noter sur Google. Les mécontents vous parlent à vous."
-      },
-      "list": {
-        "title": "Un fichier clients qui vous appartient",
-        "body": "Nom, téléphone et consentement chez vous, pas chez un site de réservation."
-      }
+    "shot": {
+      "title": "Le produit",
+      "browser": "Le tableau de bord de l'hôtel avec des données d'exemple : clients, clients fidèles, note des enquêtes et derniers clients avec leur accord par canal.",
+      "phone": "La page qu'un client ouvre depuis le QR code de sa chambre, aux couleurs de l'hôtel.",
+      "addGuest": "Ajouter un client",
+      "returning": "Fidèle",
+      "score": "Note des enquêtes",
+      "search": "Rechercher",
+      "consent": "Accord",
+      "room": "Chambre {room}",
+      "stop": "Chaque message a un lien pour s'arrêter."
     },
     "how": {
-      "title": "Comment ça marche",
-      "subtitle": "Trois étapes, et la première prend dix secondes au client.",
-      "step": "Étape {number}",
+      "title": "D'un QR code à un client qui revient",
+      "lead": "Six étapes auxquelles l'hôtel n'a jamais à penser. La première prend dix secondes au client.",
+      "link": "Lire la documentation",
+      "stars": "{count} sur 5",
       "qr": {
-        "title": "Un QR code dans chaque chambre",
-        "body": "Le client le scanne en chambre, à table ou à la réception. Nom, téléphone, langue et un oui clair, en français, en arabe ou en anglais."
+        "chip": "QR code",
+        "title": "Un scan en chambre",
+        "body": "À la réception, à table ou en chambre. Sans application ni compte.",
+        "place": "Chambre 12"
       },
-      "messages": {
-        "title": "Des messages chaleureux, avec accord",
-        "body": "Un mot de bienvenue, un merci après le séjour, un message d'anniversaire. Sur WhatsApp ou par e-mail, seulement le canal choisi, avec toujours un moyen d'arrêter."
+      "list": {
+        "chip": "Liste clients",
+        "title": "Dans votre liste de clients",
+        "body": "Nom, téléphone, langue et un oui clair par canal."
       },
-      "feedback": {
-        "title": "Un retour qui vous trouve",
-        "body": "Une question après le séjour. Les clients satisfaits sont invités sur Google. Une mauvaise note arrive sur le téléphone du responsable avec le contact du client."
+      "welcome": {
+        "chip": "WhatsApp",
+        "title": "Un accueil chaleureux",
+        "body": "Sur le canal choisi par le client, dans sa langue.",
+        "message": "Bienvenue à {hotel}, {name}. Votre verre de bienvenue vous attend au bar."
+      },
+      "survey": {
+        "chip": "Enquête",
+        "title": "Une question après le séjour",
+        "body": "Une courte enquête le lendemain du départ."
+      },
+      "alert": {
+        "chip": "Mauvaise note",
+        "title": "Le directeur le sait en premier",
+        "body": "Une mauvaise note arrive au directeur le jour même.",
+        "room": "Chambre 204",
+        "quote": "« La climatisation ne marchait pas. »",
+        "action": "Appeler"
+      },
+      "review": {
+        "chip": "Client content",
+        "title": "Une invitation à un avis Google",
+        "body": "Les clients contents sont invités à le dire sur Google."
       }
     },
-    "preview": {
-      "title": "Ce qui s'est passé cette semaine, sur un écran",
-      "subtitle": "Qui s'est inscrit, qui est mécontent, quoi faire ensuite.",
-      "sample": "Données d'exemple",
-      "label": "Un exemple du tableau de bord de l'hôtel avec des chiffres inventés",
-      "week": "Cette semaine",
-      "newGuests": "Nouveaux clients",
-      "score": "Note moyenne",
-      "invited": "Avis demandés",
-      "delta": "{value} vs semaine dernière",
-      "alertTitle": "Client mécontent",
-      "alertBody": "La chambre 204 a donné 2 sur 5 : « La climatisation ne marchait pas. »",
-      "alertAction": "Appeler le client",
-      "chart": "Nouveaux clients par jour",
-      "latest": "Derniers clients",
-      "whatsapp": "WhatsApp",
-      "email": "E-mail",
-      "room": "Chambre {place}",
-      "table": "Table {place}",
-      "desk": "Réception"
+    "features": {
+      "title": "Pensé pour la réception, pas pour une équipe marketing",
+      "lead": "Tout ce qu'il faut à un petit hôtel pour connaître ses clients et les faire revenir, rien de plus.",
+      "recognition": {
+        "title": "Reconnaître qui revient",
+        "body": "Les clients fidèles sont signalés dès leur arrivée, avec ce que l'équipe a noté la dernière fois.",
+        "stays": "{count, plural, one {# séjour} other {# séjours}}",
+        "badge": "Fidèle",
+        "lastLabel": "Dernier séjour",
+        "lastValue": "Mars, chambre 12",
+        "noteLabel": "Note",
+        "noteValue": "Vue mer, sans plumes"
+      },
+      "consent": {
+        "title": "Des accords et des données à vous",
+        "body": "Chaque oui est enregistré par canal. Exportez ou supprimez un client en un clic.",
+        "log": "Journal des accords",
+        "yes": "Oui",
+        "no": "Non",
+        "export": "Exporter",
+        "delete": "Supprimer"
+      },
+      "offers": {
+        "title": "Des offres qui les font revenir",
+        "body": "Un verre de bienvenue ou un dessert d'anniversaire, avec un QR que la réception scanne.",
+        "offer": "Un verre de bienvenue à votre retour",
+        "detail": "Montrez le QR au bar.",
+        "redeemed": "{count} utilisées"
+      }
+    },
+    "trust": {
+      "title": "Les données de vos clients, traitées sérieusement",
+      "subtitle": "Conçu dès la première ligne pour la loi tunisienne sur les données personnelles (loi 2004-63) : accord, accès et suppression.",
+      "privacy": "Lire la politique de confidentialité",
+      "consent": {
+        "title": "Un accord par canal",
+        "body": "WhatsApp et e-mail sont deux choix séparés, désactivés par défaut, chacun enregistré avec la date et le texte exact."
+      },
+      "control": {
+        "title": "Export ou suppression de tout client",
+        "body": "Un client ou tout l'hôtel, en un clic."
+      },
+      "apart": {
+        "title": "Propre à votre hôtel",
+        "body": "Les hôtels ne voient jamais les clients des autres, et nous ne vendons ni ne partageons votre liste."
+      },
+      "minimum": {
+        "title": "Seulement le nécessaire",
+        "body": "Jamais de position, de numéro d'identité ou de passeport, ni de carte bancaire."
+      }
     },
     "pricing": {
       "badge": "Tarif pilote",
@@ -1098,31 +1150,6 @@
       },
       "note": "Les messages WhatsApp sont facturés au coût plus une petite marge, sur un solde prépayé : pas de mauvaise surprise."
     },
-    "trust": {
-      "title": "Les données de vos clients, traitées sérieusement",
-      "subtitle": "Conçu dès la première ligne pour la loi tunisienne sur les données personnelles.",
-      "privacy": "Lire la politique de confidentialité",
-      "consent": {
-        "title": "Un accord par canal",
-        "body": "WhatsApp et e-mail sont deux choix séparés, désactivés par défaut. Chaque oui est enregistré avec la date et le texte exact."
-      },
-      "stop": {
-        "title": "Un lien d'arrêt dans chaque message",
-        "body": "Le client se désabonne en un geste, et répondre STOP sur WhatsApp fonctionne aussi."
-      },
-      "control": {
-        "title": "Export ou suppression, à tout moment",
-        "body": "Un client ou tout l'hôtel, en un clic."
-      },
-      "apart": {
-        "title": "Les hôtels ne voient jamais les clients des autres",
-        "body": "Les données de chaque hôtel sont séparées."
-      },
-      "minimum": {
-        "title": "Seulement le nécessaire",
-        "body": "Nom, téléphone et langue. Date de naissance et e-mail seulement si le client les ajoute. Jamais de position, de pièce d'identité ni de carte bancaire."
-      }
-    },
     "faq": {
       "title": "Les questions des hôtels",
       "guest": {
@@ -1151,7 +1178,7 @@
       }
     },
     "demo": {
-      "title": "Voyez-le sur votre propre hôtel",
+      "title": "Voyez-le à l’œuvre dans <em>votre</em> hôtel",
       "subtitle": "Laissez votre numéro. Nous vous appelons ou vous écrivons sur WhatsApp sous un jour ouvré pour vous montrer une démo.",
       "name": "Votre nom",
       "nameError": "Ajoutez votre nom.",
@@ -1174,10 +1201,24 @@
       "whatsappText": "Bonjour, je souhaite une démo de Ritorno pour mon hôtel."
     },
     "footer": {
-      "tagline": "La relation client des hôtels en Tunisie.",
+      "tagline": "La relation client pour les hôtels en Tunisie.",
+      "product": "Produit",
+      "how": "Comment ça marche",
+      "pricing": "Tarifs",
+      "faq": "FAQ",
+      "hotels": "Pour les hôtels",
+      "recognition": "Reconnaissance à la réception",
+      "consent": "Accords et données",
+      "offers": "Offres",
+      "resources": "Ressources",
+      "docs": "Documentation",
+      "status": "État du service",
+      "legal": "Mentions légales",
       "privacy": "Confidentialité",
       "terms": "Conditions",
-      "status": "État du service",
+      "contact": "Contact",
+      "demo": "Demander une démo",
+      "whatsapp": "WhatsApp",
       "rights": "Fait en Tunisie"
     }
   },

@@ -7,6 +7,8 @@
 @custom-variant coarse (@media (pointer: coarse));
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
+@source "../../../compliance/src/**/*.{ts,tsx}";
+@source "../../../i18n/src/**/*.{ts,tsx}";
 
 @theme inline {
   --font-sans: var(--font-ui);
@@ -262,4 +264,48 @@
 @utility animate-word-rise {
   display: inline-block;
   animation: word-rise 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Landing art: glass rods of light behind the product shot, rings on the dark trust panel, the glow behind the demo form. */
+@utility bg-light-streaks {
+  background:
+    repeating-linear-gradient(
+      112deg,
+      transparent 0 26px,
+      color-mix(in oklch, var(--background) 75%, transparent) 26px 28px
+    ),
+    linear-gradient(112deg, var(--blue-100), var(--blue-300) 35%, var(--blue-500) 60%, var(--blue-200));
+  mask-image: radial-gradient(closest-side, black 30%, transparent);
+}
+
+@utility bg-rings {
+  background: repeating-radial-gradient(
+    circle,
+    transparent 0 38px,
+    color-mix(in oklch, var(--background) 9%, transparent) 38px 39px
+  );
+  mask-image: radial-gradient(closest-side, black 40%, transparent);
+}
+
+@utility bg-soft-glow {
+  background:
+    radial-gradient(35% 45% at 15% 80%, var(--blue-100), transparent 70%),
+    radial-gradient(30% 40% at 90% 60%, var(--blue-200), transparent 70%);
+}
+
+/* Stepped dither from the pixel sky into the canvas: one canvas cell in four, two, then three of every 2x2 block. */
+@utility bg-dither-25 {
+  background:
+    conic-gradient(var(--canvas) 0 25%, transparent 0) 0 0 / calc(var(--sky-cell) * 2) calc(var(--sky-cell) * 2);
+}
+
+@utility bg-dither-50 {
+  background:
+    repeating-conic-gradient(var(--canvas) 0 25%, transparent 0 50%) 0 0 / calc(var(--sky-cell) * 2)
+    calc(var(--sky-cell) * 2);
+}
+
+@utility bg-dither-75 {
+  background:
+    conic-gradient(transparent 0 25%, var(--canvas) 0) 0 0 / calc(var(--sky-cell) * 2) calc(var(--sky-cell) * 2);
 }

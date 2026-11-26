@@ -19,10 +19,12 @@ export function LocaleSwitcherMenu({
   locale,
   mode,
   label,
+  variant = "outline",
 }: {
   locale: Locale
   mode: "path" | "cookie"
   label: string
+  variant?: "outline" | "ghost"
 }) {
   const change = (value: string) => {
     if (!isLocale(value) || value === locale) return
@@ -35,7 +37,7 @@ export function LocaleSwitcherMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="outline" size="sm" aria-label={`${LOCALE_NAMES[locale]}, ${label}`} />}
+        render={<Button variant={variant} size="sm" aria-label={`${LOCALE_NAMES[locale]}, ${label}`} />}
       >
         <LanguagesIcon data-icon="inline-start" />
         {LOCALE_NAMES[locale]}
