@@ -62,7 +62,6 @@ export const composeKeys = () => {
 
 /** In `.env.example` for docs or tooling, not validated by `packages/env`. */
 export const NOT_IN_ENV_PACKAGE = new Set([
-  "DOCS_URL",
   "POSTGRES_PORT",
   "POSTGRES_USER",
   "POSTGRES_DB",
