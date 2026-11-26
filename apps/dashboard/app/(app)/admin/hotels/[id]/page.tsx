@@ -19,8 +19,10 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
+import { InvoiceForm } from "@/components/admin-billing-forms"
 import { AdminCaptureLink } from "@/components/admin-capture-link"
 import { AdminBrandingForm, AdminDangerZone, AdminPlanForm, AdminRename } from "@/components/admin-hotel-forms"
+import { InvoiceExport, InvoiceList } from "@/components/admin-invoices"
 import { AdminTopUp } from "@/components/admin-top-up"
 import { HotelAvatar } from "@/components/hotel-avatar"
 import { PageHeader } from "@/components/page-header"
@@ -33,15 +35,18 @@ export const metadata: Metadata = { title: "Hotel" }
 
 export default async function AdminHotelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const [t, tList, locale, hotel, balance] = await Promise.all([
+  const [t, tList, tBilling, locale, hotel, balance, plans, invoices] = await Promise.all([
     getTranslations("adminHotel"),
     getTranslations("adminHotels"),
+    getTranslations("adminBilling"),
     getLocale(),
     call((api) => api.admin.hotels.get({ id })).catch((error) => {
       if (isNotFound(error)) notFound()
       throw error
     }),
     call((api) => api.admin.hotels.balance.get({ id })),
+    call((api) => api.admin.billing.plans()),
+    call((api) => api.admin.billing.invoices({ hotelId: id })),
   ])
   const now = new Date()
   const rate = consentRate(hotel)
@@ -120,7 +125,16 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
 
         <div className="flex flex-col">
           <FormSection title={t("pilotPlan")} description={t("pilotPlanHint")}>
-            <AdminPlanForm hotel={hotel} />
+            <AdminPlanForm hotel={hotel} plans={plans} />
+          </FormSection>
+
+          <FormSection title={tBilling("invoices")} description={tBilling("hotelHint")}>
+            <InvoiceForm
+              hotelId={hotel.id}
+              defaultMillimes={plans.find((plan) => plan.plan === hotel.plan)?.monthlyMillimes ?? null}
+            />
+            <InvoiceList invoices={invoices} />
+            {invoices.length ? <InvoiceExport hotelId={hotel.id} disabled={false} /> : null}
           </FormSection>
 
           <FormSection title={t("rename")} description={t("renameHint")}>

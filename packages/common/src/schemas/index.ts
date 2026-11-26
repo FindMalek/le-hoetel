@@ -1,4 +1,5 @@
 export * from "./account"
+export * from "./billing"
 export * from "./capture"
 export * from "./guest"
 export * from "./hotel"

@@ -239,7 +239,8 @@
     "groupSettings": "Réglages",
     "unhappyGuests": "Clients mécontents",
     "whatsappScans": "WhatsApp",
-    "activityLog": "Journal d'activité"
+    "activityLog": "Journal d'activité",
+    "billing": "Facturation"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -1763,6 +1764,12 @@
       },
       "whatsapp-scan": {
         "delete": "Scan WhatsApp supprimé"
+      },
+      "billing": {
+        "export": "A exporté des factures",
+        "invoice-create": "A créé une facture",
+        "invoice-status": "A changé le statut d'une facture",
+        "plan-update": "A modifié le nom ou le prix d'une offre"
       }
     },
     "loadMore": "Voir plus",
@@ -2253,5 +2260,42 @@
       "desk": "Réception"
     },
     "loading": "Chargement des scans WhatsApp"
+  },
+  "adminBilling": {
+    "title": "Facturation",
+    "description": "Offres et factures, gérées à la main. Aucun paiement en ligne.",
+    "invoices": "Factures",
+    "plans": "Offres",
+    "hotelHint": "Une facture par mois. Encaissez en dehors de l'application, puis marquez-la payée.",
+    "planName": "Nom de l'offre",
+    "monthlyPrice": "Prix mensuel (TND)",
+    "monthlyPriceHint": "Laissez vide tant que le prix n'est pas décidé.",
+    "savePlan": "Enregistrer l'offre",
+    "planSaved": "Offre enregistrée.",
+    "month": "Mois",
+    "amount": "Montant de la facture (TND)",
+    "amountHint": "Laissez vide pour reprendre le prix de l'offre.",
+    "amountNoPrice": "L'offre n'a pas encore de prix, saisissez un montant.",
+    "amountError": "Saisissez un montant comme 120 ou 120,500.",
+    "note": "Note de facture (facultative)",
+    "noteHint": "Par exemple la référence du virement. Jamais de données de carte.",
+    "create": "Créer la facture",
+    "invoiceCreated": "Facture créée.",
+    "invoiceUpdated": "Facture mise à jour.",
+    "export": "Exporter en CSV",
+    "empty": "Aucune facture pour l'instant.",
+    "statuses": {
+      "issued": "Impayée",
+      "paid": "Payée",
+      "void": "Annulée"
+    },
+    "issuedOn": "Émise le {date}",
+    "paidOn": "Payée le {date}",
+    "markPaid": "Marquer payée",
+    "markUnpaid": "Marquer impayée",
+    "void": "Annuler la facture",
+    "voidTitle": "Annuler la facture {number} ?",
+    "voidConsequence": "Elle reste dans la liste et l'export comme annulée et ne peut plus être modifiée. Vous pourrez ensuite créer une autre facture pour ce mois.",
+    "cancel": "Retour"
   }
 }
