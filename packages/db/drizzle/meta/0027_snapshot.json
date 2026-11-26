@@ -1,5 +1,5 @@
 {
-  "id": "4a2a779e-df85-46b3-aace-e7951be79f72",
+  "id": "ebf671b7-37f4-4e53-bfe5-530270800e2d",
   "prevId": "b327dc80-37c9-4f0c-9b2f-f3cfdef88f24",
   "version": "7",
   "dialect": "postgresql",
@@ -1875,6 +1875,68 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.capture_spots": {
+      "name": "capture_spots",
+      "schema": "",
+      "columns": {
+        "hotel_id": {
+          "name": "hotel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "spot_source",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "capture_spots_hotel_id_organization_id_fk": {
+          "name": "capture_spots_hotel_id_organization_id_fk",
+          "tableFrom": "capture_spots",
+          "tableTo": "organization",
+          "columnsFrom": [
+            "hotel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "capture_spots_hotel_id_source_name_pk": {
+          "name": "capture_spots_hotel_id_source_name_pk",
+          "columns": [
+            "hotel_id",
+            "source",
+            "name"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.hotel_settings": {
       "name": "hotel_settings",
       "schema": "",
@@ -3283,130 +3345,6 @@
         }
       },
       "isRLSEnabled": false
-    },
-    "public.whatsapp_scans": {
-      "name": "whatsapp_scans",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "hotel_id": {
-          "name": "hotel_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "phone_e164": {
-          "name": "phone_e164",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source": {
-          "name": "source",
-          "type": "guest_source",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "location": {
-          "name": "location",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "language": {
-          "name": "language",
-          "type": "hotel_language",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "last_scan_at": {
-          "name": "last_scan_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "replied_at": {
-          "name": "replied_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "whatsapp_scans_hotel_last_idx": {
-          "name": "whatsapp_scans_hotel_last_idx",
-          "columns": [
-            {
-              "expression": "hotel_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "last_scan_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "whatsapp_scans_phone_idx": {
-          "name": "whatsapp_scans_phone_idx",
-          "columns": [
-            {
-              "expression": "phone_e164",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "whatsapp_scans_hotel_id_organization_id_fk": {
-          "name": "whatsapp_scans_hotel_id_organization_id_fk",
-          "tableFrom": "whatsapp_scans",
-          "tableTo": "organization",
-          "columnsFrom": [
-            "hotel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "whatsapp_scans_hotel_phone_unique": {
-          "name": "whatsapp_scans_hotel_phone_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "hotel_id",
-            "phone_e164"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -3516,6 +3454,14 @@
         "pilot",
         "active",
         "suspended"
+      ]
+    },
+    "public.spot_source": {
+      "name": "spot_source",
+      "schema": "public",
+      "values": [
+        "room",
+        "table"
       ]
     },
     "public.message_channel": {

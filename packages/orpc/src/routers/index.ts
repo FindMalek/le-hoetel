@@ -8,7 +8,7 @@ import { feedbackRouter } from "./feedback"
 import { feedbackCasesRouter } from "./feedback-cases"
 import { guestsRouter } from "./guests"
 import { holidaysRouter } from "./holidays"
-import { adminHotelsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
+import { adminHotelsRouter, captureSpotsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
 import { inboxAdminRouter, inboxRouter } from "./inbox"
 import { jobsRouter } from "./jobs"
 import { leadsRouter } from "./leads"
@@ -44,7 +44,13 @@ export const appRouter = {
   campaigns: campaignsRouter,
   holidays: holidaysRouter,
   leads: leadsRouter,
-  hotel: { ...hotelRouter, logo: hotelLogoRouter, alerts: managerAlertsRouter, balance: balanceRouter },
+  hotel: {
+    ...hotelRouter,
+    spots: captureSpotsRouter,
+    logo: hotelLogoRouter,
+    alerts: managerAlertsRouter,
+    balance: balanceRouter,
+  },
   emails: emailsRouter,
   guests: guestsRouter,
   messages: messagesRouter,

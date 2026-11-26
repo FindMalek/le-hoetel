@@ -1,6 +1,6 @@
 // Fails a pull request that misses a milestone, priority, area, owner, type or size label.
-// Env: PR_LABELS (json array of label names), PR_AUTHOR.
-import { isBot } from "./policy.mjs"
+// Env: PR_LABELS (json array of label names), PR_AUTHOR, HEAD_REF, FROM_FORK.
+import { isBot, isReleasePr } from "./policy.mjs"
 
 const REQUIRED = [
   { name: "milestone", re: /^milestone:\d+$/, hint: "milestone:N" },
@@ -11,10 +11,10 @@ const REQUIRED = [
   { name: "size", re: /^size:[SML]$/, hint: "size:S, size:M or size:L" },
 ]
 
-const { PR_LABELS = "[]", PR_AUTHOR = "" } = process.env
+const { PR_LABELS = "[]", PR_AUTHOR = "", HEAD_REF, FROM_FORK } = process.env
 
-if (isBot(PR_AUTHOR)) {
-  console.log("bot pull request, label check skipped")
+if (isBot(PR_AUTHOR) || isReleasePr(HEAD_REF, FROM_FORK)) {
+  console.log("bot or release pull request, label check skipped")
   process.exit(0)
 }
 

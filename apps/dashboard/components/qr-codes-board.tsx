@@ -1,7 +1,7 @@
 "use client"
 
 import { parseSpots } from "@ritorno/common/qr"
-import type { CaptureSource } from "@ritorno/common/schemas"
+import { type CaptureSource, SPOT_SOURCES } from "@ritorno/common/schemas"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -14,11 +14,13 @@ import { Skeleton } from "@ritorno/ui/components/skeleton"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { Tabs, TabsList, TabsTrigger } from "@ritorno/ui/components/tabs"
 import { Textarea } from "@ritorno/ui/components/textarea"
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query"
-import { CheckIcon, CopyIcon, DownloadIcon, QrCodeIcon, RotateCwIcon } from "lucide-react"
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { CheckIcon, CopyIcon, DownloadIcon, PrinterIcon, QrCodeIcon, RotateCwIcon } from "lucide-react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
+import { QrSpots } from "@/components/qr-spots"
 
 // i18n-used: qrCodes.room
 // i18n-used: qrCodes.table
@@ -62,6 +64,13 @@ export function QrCodesBoard() {
   const generate = useMutation(
     orpc.hotel.qrCodes.mutationOptions({ onError: (error: Error) => toast.error(errorMessage(error)) }),
   )
+  const queryClient = useQueryClient()
+  const saveSpots = useMutation(
+    orpc.hotel.spots.add.mutationOptions({
+      onSuccess: (spots) => queryClient.setQueryData(orpc.hotel.spots.list.queryKey(), spots),
+      onError: (error: Error) => toast.error(errorMessage(error)),
+    }),
+  )
   const current: Source = SOURCES.find((item) => item.value === source) ?? SOURCES[2]
   const guestsAt = (location: string | null) =>
     stats.find((row) => row.source === current.stored && row.location === location)?.guests ?? 0
@@ -75,7 +84,10 @@ export function QrCodesBoard() {
 
   const run = (event?: React.FormEvent) => {
     event?.preventDefault()
-    generate.mutate({ source, spots: parseSpots(spots) })
+    const names = parseSpots(spots)
+    generate.mutate({ source, spots: names })
+    const kept = SPOT_SOURCES.find((item) => item === source)
+    if (kept && names.length) saveSpots.mutate({ source: kept, names })
   }
 
   async function copy(url: string) {
@@ -89,6 +101,11 @@ export function QrCodesBoard() {
     const found = SOURCES.find((item) => item.stored === stored)
     return found ? t(found.one) : stored
   }
+  // the kit prints what is on screen, not the tab picked since
+  const made = generate.variables ?? { source: "desk", spots: [] }
+  const kitQuery = new URLSearchParams({ piece: made.source })
+  if (made.spots.length) kitQuery.set("spots", made.spots.join(","))
+
   const columns: DataColumn<Stat>[] = [
     { id: "spot", header: t("colSpot"), cell: (row) => row.location ?? t("noSpot") },
     { id: "where", header: t("colWhere"), cell: (row) => labelOf(row.source) },
@@ -142,6 +159,20 @@ export function QrCodesBoard() {
 
       <div className="flex min-w-0 flex-col gap-10">
         <Section title={t("resultsTitle")} description={t("resultsHint")}>
+          <div className="flex flex-col gap-3 rounded-lg border bg-accent p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <p className="font-medium">{t("kitTitle")}</p>
+              <p className="text-muted-foreground text-sm">{t("kitDescription")}</p>
+            </div>
+            <Button
+              className="min-h-touch shrink-0"
+              render={<Link href={`/print/qr-kit?${kitQuery}`} target="_blank" prefetch={false} />}
+              nativeButton={false}
+            >
+              <PrinterIcon data-icon="inline-start" />
+              {t("kitOpen")}
+            </Button>
+          </div>
           {generate.isPending && !generate.data ? (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="status" aria-busy="true">
               <span className="sr-only">{t("generating")}</span>
@@ -203,6 +234,8 @@ export function QrCodesBoard() {
             </ul>
           )}
         </Section>
+
+        <QrSpots />
 
         <Section title={t("tableTitle")} description={t("tableDescription")}>
           <DataTable

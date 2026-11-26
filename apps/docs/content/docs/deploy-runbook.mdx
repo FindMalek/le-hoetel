@@ -9,14 +9,14 @@ Each environment is one Dokploy compose service built from `docker-compose.deplo
 
 | | staging | production |
 | --- | --- | --- |
-| trigger | every merge to `main` | published release (tag) |
+| trigger | every merge to `main` | merged release PR (tag) |
 | hosts | `staging-ritorno`, `app-staging-ritorno`, `api-staging-ritorno`, `docs-staging-ritorno` | `ritorno`, `app-ritorno`, `api-ritorno`, `docs-ritorno` |
 | `SEED` | `demo` | `none` |
 | `MESSAGING_LIVE` | `false` | `true` (a channel still needs its provider keys) |
 | `ALLOW_PREVIEW_ORIGINS` | `true` | `false` |
 | `S3_PREFIX` | `staging/` | empty |
 
-All hosts are under `findmalek.engineer`. Health: the api answers `/health` with the commit it was built from (`sha`, the `GIT_SHA` build arg), every image ships a docker `HEALTHCHECK`, and the deploy job resolves the deployed ref to a commit and waits until `/health` reports that `sha`. After 20 minutes it fails and prints the last status and `sha` it saw. The worker starts once the api is healthy, so migrations have run.
+All hosts are under `findmalek.engineer`. Health: the api answers `/health`, and `web`, `dashboard` and `docs` answer `/api/version`, each with the commit its image was built from (`sha`, the `GIT_SHA` build arg). Every image also ships a docker `HEALTHCHECK`. The deploy job resolves the deployed ref to a commit and waits until all four report that `sha`. After 20 minutes it fails, prints the status and `sha` of each app that did not, and on staging nothing is released. Rolling back to a tag older than these routes redeploys it, but the job ends red: check the apps by hand. The worker starts once the api is healthy, so migrations have run.
 
 ## Secrets
 
@@ -40,9 +40,13 @@ To move an environment to `ritorno`: dump the database with `pg_dump --no-owner`
 
 The Ritorno hosts are added next to the old ones, nothing is removed. Once DNS for the new hosts points to the server, run the `dokploy-domains` workflow (or `TARGET=staging node .github/scripts/dokploy-domains.mjs` with the Dokploy env) for staging and production. Remove the old domains in Dokploy only after the new ones answer.
 
+## Releasing
+
+Merging to `main` deploys staging only. Production deploys when the release PR is merged, see [releases](/docs/releases).
+
 ## Rollback
 
-Run the `release` workflow by hand with an older tag. It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
+Run the `release` workflow by hand with `tag` set to an older tag (or to the current one to only redeploy). It points the production compose service at that tag and rebuilds it. Migrations only go forward: if a migration must be undone, restore the database from a backup first.
 
 ## Backups
 

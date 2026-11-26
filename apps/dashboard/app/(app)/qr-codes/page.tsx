@@ -10,7 +10,10 @@ export const metadata: Metadata = { title: "QR codes" }
 export default async function QrCodesPage() {
   const t = await getTranslations("qrCodes")
   const queryClient = getQueryClient()
-  await queryClient.prefetchQuery(serverOrpc.hotel.captureStats.queryOptions())
+  await Promise.all([
+    queryClient.prefetchQuery(serverOrpc.hotel.captureStats.queryOptions()),
+    queryClient.prefetchQuery(serverOrpc.hotel.spots.list.queryOptions()),
+  ])
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />

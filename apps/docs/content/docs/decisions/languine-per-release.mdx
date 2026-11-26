@@ -33,7 +33,7 @@ The money is not the deciding factor. Our message files are small, so model cost
 
 Translate once per release, with a manual run for urgent changes.
 
-- the `languine` workflow runs on `release: published` and on `workflow_dispatch`
+- the `languine` workflow is called by `release.yml` after a release and runs on `workflow_dispatch`
 - it translates `en` into `fr` and `ar`, runs `pnpm i18n:check` and opens one pull request on a `i18n/<tag>` branch with the review checklist in `.github/translation-pr-body.md`
 - if a translation pull request is already open it does nothing, so there is never more than one
 - reviewers come from `.github/translation-reviewers` (one GitHub login per line, `yasin` is a placeholder to replace)
