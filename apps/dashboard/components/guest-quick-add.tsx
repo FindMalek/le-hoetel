@@ -17,7 +17,7 @@ import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { useFormatter, useTranslations } from "next-intl"
-import { type FormEvent, useEffect, useRef, useState } from "react"
+import { type FormEvent, useRef, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
 import { MarkVisitButton } from "@/components/mark-visit-button"
@@ -32,7 +32,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const [name, setName] = useState("")
   const [dialCode, setDialCode] = useState("+216")
   const [phone, setPhone] = useState("")
-  const [language, setLanguage] = useState<HotelLanguage>(defaultLanguage)
+  const [picked, setPicked] = useState<HotelLanguage | null>(null)
   const [email, setEmail] = useState("")
   const [whatsapp, setWhatsapp] = useState(false)
   const [emailConsent, setEmailConsent] = useState(false)
@@ -48,10 +48,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const found = useQuery({ ...orpc.guests.find.queryOptions({ input: { q: lookup } }), enabled: lookup !== "" })
   const known = found.data?.find((guest) => guest.phoneE164 === parsed?.e164)
   // the form's default language must not overwrite the one the guest already has
-  const knownLanguage = known?.language
-  useEffect(() => {
-    if (knownLanguage) setLanguage(knownLanguage)
-  }, [knownLanguage])
+  const language = picked ?? known?.language ?? defaultLanguage
 
   const problems = {
     name: name.trim() ? null : t("nameRequired"),
@@ -74,6 +71,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
         setWhatsapp(false)
         setEmailConsent(false)
         setTouched({})
+        setPicked(null)
         phoneBox.current?.querySelector("input")?.focus()
       },
       onError: () => toast.error(t("error")),
@@ -118,7 +116,10 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
               <PhoneInput
                 {...aria}
                 value={phone}
-                onValueChange={setPhone}
+                onValueChange={(value) => {
+                  setPhone(value)
+                  setPicked(null)
+                }}
                 dialCode={dialCode}
                 onDialCodeChange={setDialCode}
                 dialCodeLabel={t("dialCode")}
@@ -147,7 +148,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
             />
           )}
         </FormField>
-        <LanguageChoice name="quick-language" value={language} onChange={setLanguage} legend={t("language")} />
+        <LanguageChoice name="quick-language" value={language} onChange={setPicked} legend={t("language")} />
         <FormField id="quick-email" label={t("email")} error={shown("email")}>
           {(aria) => (
             <Input
