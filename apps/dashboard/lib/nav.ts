@@ -75,6 +75,7 @@ export const NAV: NavItem[] = [
   { href: "/hotel", label: "hotelNav", icon: HotelIcon, group: "settings" },
   { href: "/team", label: "team", icon: UsersIcon, group: "settings" },
   { href: "/data", label: "data", icon: DatabaseIcon, group: "settings" },
+  { href: "/activity", label: "activityLog", icon: HistoryIcon, group: "settings" },
   { href: "/usage", label: "usage", icon: ReceiptIcon, group: "settings" },
   { href: "/settings", label: "account", icon: CircleUserIcon, group: "settings", shortcut: "s" },
   { href: "/admin/overview", label: "adminOverview", icon: GaugeIcon, group: "admin" },

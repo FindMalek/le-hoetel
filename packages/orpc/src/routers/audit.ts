@@ -1,8 +1,8 @@
 import { ADMIN_LIST_LIMIT } from "@ritorno/common/constants"
-import { auditLog, hotelSettings, user } from "@ritorno/db"
-import { and, desc, eq, gte, ilike, lt, sql } from "drizzle-orm"
+import { auditLog, hotelSettings, member, user } from "@ritorno/db"
+import { and, desc, eq, gte, ilike, lt, type SQL, sql } from "drizzle-orm"
 import { z } from "zod"
-import { adminProcedure } from "../procedures"
+import { adminProcedure, can, hotelProcedure } from "../procedures"
 
 const entrySchema = z.object({
   id: z.string(),
@@ -17,18 +17,63 @@ const entrySchema = z.object({
   createdAt: z.date(),
 })
 
+/** What a hotel reads of its own log: no ip, no metadata, and nothing that names a platform admin. */
+const hotelEntrySchema = z.object({
+  id: z.string(),
+  actorEmail: z.string().nullable(),
+  /** Done by Ritorno staff who are not on the hotel's team. */
+  platform: z.boolean(),
+  action: z.string(),
+  createdAt: z.date(),
+})
+
+const actionFilter = z.string().trim().max(80).optional()
+const cursorSchema = z.uuid().nullish()
+
 const filterSchema = z.object({
-  action: z.string().trim().max(80).optional(),
+  action: actionFilter,
   actorId: z.string().optional(),
   hotelId: z.string().optional(),
   from: z.date().optional(),
   to: z.date().optional(),
+  cursor: cursorSchema,
+})
+
+const hotelFilterSchema = z.object({
+  action: actionFilter,
+  actorId: z.string().optional(),
+  /** Days on the hotel's calendar, both included. */
+  from: z.iso.date().optional(),
+  to: z.iso.date().optional(),
+  cursor: cursorSchema,
 })
 
 /** The hotel an entry is about: the one the actor worked on, else the target when it is a hotel itself. */
+const aboutHotel = sql<string | null>`coalesce(${auditLog.metadata}->>'hotelId', ${auditLog.targetId})`
 const entryHotelId = sql<string | null>`coalesce(${auditLog.metadata}->>'hotelId', ${hotelSettings.organizationId})`
 
-export const auditRouter = {
+/** An action name, or every action of a noun when it ends with a dot (`guest.`). */
+const ofAction = (action: string | undefined): SQL | undefined => {
+  if (!action) return undefined
+  return action.endsWith(".")
+    ? ilike(auditLog.action, `${action.replace(/[\\%_]/g, "\\$&")}%`)
+    : eq(auditLog.action, action)
+}
+
+/** Keyset paging: rows older than the cursor row. Compared in the database, which keeps the microseconds a Date drops. */
+const olderThan = (cursor: string | null | undefined): SQL | undefined =>
+  cursor
+    ? sql`(${auditLog.createdAt}, ${auditLog.id}) < (select created_at, id from ${auditLog} where id = ${cursor})`
+    : undefined
+
+const newestFirst = [desc(auditLog.createdAt), desc(auditLog.id)] as const
+
+const page = <T extends { id: string }>(rows: T[]) => {
+  const entries = rows.slice(0, ADMIN_LIST_LIMIT)
+  return { entries, nextCursor: rows.length > ADMIN_LIST_LIMIT ? entries[entries.length - 1]!.id : null }
+}
+
+export const adminAuditRouter = {
   list: adminProcedure
     .route({
       method: "GET",
@@ -36,8 +81,8 @@ export const auditRouter = {
       summary: "The audit log, newest first, filtered by actor, action, hotel and dates (admins only)",
       tags: ["admin"],
     })
-    .input(filterSchema.extend({ offset: z.number().int().min(0).default(0) }).default({ offset: 0 }))
-    .output(z.object({ entries: z.array(entrySchema), hasMore: z.boolean() }))
+    .input(filterSchema.default({}))
+    .output(z.object({ entries: z.array(entrySchema), nextCursor: z.string().nullable() }))
     .handler(async ({ context, input }) => {
       const rows = await context.db
         .select({
@@ -54,29 +99,20 @@ export const auditRouter = {
         })
         .from(auditLog)
         .leftJoin(user, eq(user.id, auditLog.actorId))
-        .leftJoin(
-          hotelSettings,
-          eq(hotelSettings.organizationId, sql`coalesce(${auditLog.metadata}->>'hotelId', ${auditLog.targetId})`),
-        )
+        .leftJoin(hotelSettings, eq(hotelSettings.organizationId, aboutHotel))
         .where(
           and(
-            input.action
-              ? input.action.endsWith(".")
-                ? ilike(auditLog.action, `${input.action.replace(/[\\%_]/g, "\\$&")}%`)
-                : eq(auditLog.action, input.action)
-              : undefined,
+            ofAction(input.action),
             input.actorId ? eq(auditLog.actorId, input.actorId) : undefined,
-            input.hotelId
-              ? sql`coalesce(${auditLog.metadata}->>'hotelId', ${auditLog.targetId}) = ${input.hotelId}`
-              : undefined,
+            input.hotelId ? sql`${aboutHotel} = ${input.hotelId}` : undefined,
             input.from ? gte(auditLog.createdAt, input.from) : undefined,
             input.to ? lt(auditLog.createdAt, input.to) : undefined,
+            olderThan(input.cursor),
           ),
         )
-        .orderBy(desc(auditLog.createdAt), desc(auditLog.id))
+        .orderBy(...newestFirst)
         .limit(ADMIN_LIST_LIMIT + 1)
-        .offset(input.offset)
-      return { entries: rows.slice(0, ADMIN_LIST_LIMIT), hasMore: rows.length > ADMIN_LIST_LIMIT }
+      return page(rows)
     }),
 
   actions: adminProcedure
@@ -90,5 +126,91 @@ export const auditRouter = {
     .handler(async ({ context }) => {
       const rows = await context.db.selectDistinct({ action: auditLog.action }).from(auditLog).orderBy(auditLog.action)
       return rows.map((row) => row.action)
+    }),
+}
+
+/** Owners and managers. Staff can't read who did what. */
+const auditReader = hotelProcedure.use(can({ organization: ["update"] }))
+
+/** The actor is on the platform, not on this hotel's team. Needs both joins below. */
+const isPlatform = sql<boolean>`coalesce(${user.role} = 'admin' and ${member.id} is null, false)`
+const teamOf = (hotelId: string) => and(eq(member.userId, auditLog.actorId), eq(member.organizationId, hotelId))
+
+export const hotelAuditRouter = {
+  list: auditReader
+    .route({
+      method: "GET",
+      path: "/audit",
+      summary: "The hotel's audit log, newest first, filtered by actor, action and dates (owners and managers)",
+      tags: ["hotel"],
+    })
+    .input(hotelFilterSchema.default({}))
+    .output(z.object({ entries: z.array(hotelEntrySchema), nextCursor: z.string().nullable() }))
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const timezone = sql`coalesce((select timezone from ${hotelSettings} where organization_id = ${hotelId}), 'UTC')`
+      const rows = await context.db
+        .select({
+          id: auditLog.id,
+          actorEmail: sql<string | null>`case when ${isPlatform} then null else ${user.email} end`,
+          platform: isPlatform,
+          action: auditLog.action,
+          createdAt: auditLog.createdAt,
+        })
+        .from(auditLog)
+        .leftJoin(user, eq(user.id, auditLog.actorId))
+        .leftJoin(member, teamOf(hotelId))
+        .where(
+          and(
+            sql`${aboutHotel} = ${hotelId}`,
+            ofAction(input.action),
+            // A platform admin is not in the person filter, so their id selects nothing.
+            input.actorId ? and(eq(auditLog.actorId, input.actorId), sql`not ${isPlatform}`) : undefined,
+            input.from
+              ? sql`${auditLog.createdAt} >= (${input.from}::date::timestamp at time zone ${timezone})`
+              : undefined,
+            input.to
+              ? sql`${auditLog.createdAt} < ((${input.to}::date + 1)::timestamp at time zone ${timezone})`
+              : undefined,
+            olderThan(input.cursor),
+          ),
+        )
+        .orderBy(...newestFirst)
+        .limit(ADMIN_LIST_LIMIT + 1)
+      return page(rows)
+    }),
+
+  filters: auditReader
+    .route({
+      method: "GET",
+      path: "/audit/filters",
+      summary: "The actions and people in the hotel's audit log, and the timezone its dates are read in",
+      tags: ["hotel"],
+    })
+    .output(
+      z.object({
+        timezone: z.string(),
+        actions: z.array(z.string()),
+        actors: z.array(z.object({ id: z.string(), email: z.string() })),
+      }),
+    )
+    .handler(async ({ context }) => {
+      const { hotelId } = context.hotel
+      const mine = sql`${aboutHotel} = ${hotelId}`
+      const [[settings], actions, actors] = await Promise.all([
+        context.db
+          .select({ timezone: hotelSettings.timezone })
+          .from(hotelSettings)
+          .where(eq(hotelSettings.organizationId, hotelId)),
+        context.db.selectDistinct({ action: auditLog.action }).from(auditLog).where(mine).orderBy(auditLog.action),
+        context.db
+          .selectDistinct({ id: user.id, email: user.email })
+          .from(auditLog)
+          .innerJoin(user, eq(user.id, auditLog.actorId))
+          .leftJoin(member, teamOf(hotelId))
+          .where(and(mine, sql`not ${isPlatform}`))
+          .orderBy(user.email),
+      ])
+      return { timezone: settings?.timezone ?? "UTC", actions: actions.map((row) => row.action), actors }
     }),
 }

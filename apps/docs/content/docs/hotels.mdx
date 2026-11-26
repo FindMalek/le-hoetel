@@ -90,3 +90,16 @@ The Metrics page (`/metrics`, linked from the dashboard home) answers "what did 
 - Messages sent and the share delivered, from the `messages` table
 - Offer codes sent in the period and how many of those same codes were redeemed, so a redemption of an older code never inflates the rate
 - Reviews requested (guests who tapped the Google review link after the survey) and the survey score with the number of unhappy answers (0 to 6), from `survey_responses`. With no answers yet the cards show a dash and say so, the page never invents a number
+
+The chart says under its title whether a bar is a day or a week.
+
+## Audit log
+
+Sensitive actions are written to the append-only `audit_log` table. The action names are listed in `packages/common/src/audit.ts`: writers are typed against that list, and a test fails when one of them has no en, fr or ar label in `adminAudit.actions`.
+
+| Who | Page | Sees |
+|---|---|---|
+| Owners and managers | **Activity log** (`/activity`, `audit.list`) | their hotel only: action, person, time on the hotel's clock. No IP or metadata, and platform admins who are not on the team show as "Ritorno team" |
+| App admins | **Audit log** (`/audit-log`, `admin.audit.list`) | every entry, with target and IP, filtered by hotel too |
+
+Staff cannot read it. Both filter by action, person and dates (kept in the url) and load 100 entries at a time as you scroll, with a `cursor` so new entries never shift the next page. An entry belongs to a hotel when its `metadata.hotelId` or its target is that hotel, so account actions (profile, ban, impersonation) only show to the admin.

@@ -1,10 +1,11 @@
+import type { AuditAction } from "@ritorno/common/audit"
 import { auditLog } from "@ritorno/db"
 import type { Context } from "../context"
 import type { ActiveHotel } from "./hotel"
 
 export interface AuditEntry {
   /** `noun.verb`, e.g. `note.delete`. */
-  action: string
+  action: AuditAction
   targetId?: string
   metadata?: Record<string, unknown>
 }

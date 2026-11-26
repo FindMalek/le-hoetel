@@ -71,12 +71,16 @@ export default async function MetricsPage({ searchParams }: PageProps<"/metrics"
         <ChartCard
           title={t("captured.title")}
           description={
-            data.captured.total > 0 &&
-            t.rich("captured.description", {
-              count: data.captured.total,
-              shown: num(data.captured.total),
-              n: isolated,
-            })
+            data.captured.total > 0 && (
+              <>
+                {t.rich("captured.description", {
+                  count: data.captured.total,
+                  shown: num(data.captured.total),
+                  n: isolated,
+                })}{" "}
+                {data.bucket === "day" ? t("captured.byDay") : t("captured.byWeek")}
+              </>
+            )
           }
           isEmpty={data.captured.total === 0}
           empty={
