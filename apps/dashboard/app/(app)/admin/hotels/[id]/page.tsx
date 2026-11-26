@@ -28,13 +28,14 @@ import { HotelAvatar } from "@/components/hotel-avatar"
 import { PageHeader } from "@/components/page-header"
 import { relativeTime } from "@/components/relative-day"
 import { consentRate, HEALTH_TONE, STATUS_TONE } from "@/lib/admin"
-import { call } from "@/lib/api"
+import { call, requireAdmin } from "@/lib/api"
 import { openAsHotel } from "../actions"
 
 export const metadata: Metadata = { title: "Hotel" }
 
 // i18n-used: adminBilling.hotelHint
 export default async function AdminHotelPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin()
   const { id } = await params
   const [t, tList, tBilling, locale, hotel, balance, plans, invoices] = await Promise.all([
     getTranslations("adminHotel"),

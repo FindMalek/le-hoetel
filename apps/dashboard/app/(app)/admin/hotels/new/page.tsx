@@ -2,10 +2,12 @@ import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { AdminHotelWizard } from "@/components/admin-hotel-wizard"
 import { PageHeader } from "@/components/page-header"
+import { requireAdmin } from "@/lib/api"
 
 export const metadata: Metadata = { title: "New hotel" }
 
 export default async function NewHotelPage() {
+  await requireAdmin()
   const t = await getTranslations("adminWizard")
   return (
     <>

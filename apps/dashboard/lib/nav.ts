@@ -26,6 +26,7 @@ import {
   WalletIcon,
 } from "lucide-react"
 import type { Route } from "next"
+import { allows, type HotelPermission, type Viewer } from "@/lib/viewer"
 
 type NavLabel = keyof Messages["nav"]
 
@@ -36,6 +37,8 @@ export interface NavItem {
   label: NavLabel
   icon: typeof HomeIcon
   group: NavGroupKey
+  /** Needs a hotel on screen: any role, or one holding this permission. */
+  hotel?: "any" | HotelPermission
   /** Second key after `g`, Linear style: `g` then `h` goes home. */
   shortcut?: string
 }
@@ -61,23 +64,50 @@ const GROUP_LABELS: Record<NavGroupKey, NavLabel> = {
 export const NAV: NavItem[] = [
   { href: "/", label: "home", icon: HomeIcon, group: "today", shortcut: "h" },
   { href: "/inbox", label: "inbox", icon: InboxIcon, group: "today", shortcut: "i" },
-  { href: "/feedback", label: "unhappyGuests", icon: FrownIcon, group: "today" },
-  { href: "/whatsapp", label: "whatsappScans", icon: MessageCircleIcon, group: "today" },
-  { href: "/redeem", label: "redeem", icon: ScanLineIcon, group: "today", shortcut: "r" },
-  { href: "/guests", label: "guests", icon: UsersRoundIcon, group: "guests", shortcut: "g" },
-  { href: "/guests/import", label: "import", icon: UploadIcon, group: "guests" },
-  { href: "/campaigns", label: "campaigns", icon: MegaphoneIcon, group: "grow", shortcut: "c" },
-  { href: "/offers", label: "offers", icon: GiftIcon, group: "grow", shortcut: "o" },
-  { href: "/holidays", label: "holidays", icon: CalendarHeartIcon, group: "grow" },
-  { href: "/emails", label: "emails", icon: MailIcon, group: "grow" },
-  { href: "/qr-codes", label: "qrCodes", icon: QrCodeIcon, group: "grow" },
-  { href: "/metrics", label: "metrics", icon: ChartColumnIcon, group: "insights", shortcut: "m" },
-  { href: "/messages", label: "messages", icon: MessageSquareIcon, group: "insights" },
-  { href: "/hotel", label: "hotelNav", icon: HotelIcon, group: "settings" },
-  { href: "/team", label: "team", icon: UsersIcon, group: "settings" },
-  { href: "/data", label: "data", icon: DatabaseIcon, group: "settings" },
-  { href: "/activity", label: "activityLog", icon: HistoryIcon, group: "settings" },
-  { href: "/usage", label: "usage", icon: ReceiptIcon, group: "settings" },
+  { href: "/feedback", label: "unhappyGuests", icon: FrownIcon, group: "today", hotel: { guest: ["read"] } },
+  { href: "/whatsapp", label: "whatsappScans", icon: MessageCircleIcon, group: "today", hotel: { guest: ["read"] } },
+  { href: "/redeem", label: "redeem", icon: ScanLineIcon, group: "today", hotel: { offer: ["redeem"] }, shortcut: "r" },
+  {
+    href: "/guests",
+    label: "guests",
+    icon: UsersRoundIcon,
+    group: "guests",
+    hotel: { guest: ["read"] },
+    shortcut: "g",
+  },
+  { href: "/guests/import", label: "import", icon: UploadIcon, group: "guests", hotel: { guest: ["import"] } },
+  {
+    href: "/campaigns",
+    label: "campaigns",
+    icon: MegaphoneIcon,
+    group: "grow",
+    hotel: { campaign: ["read"] },
+    shortcut: "c",
+  },
+  { href: "/offers", label: "offers", icon: GiftIcon, group: "grow", hotel: { offer: ["read"] }, shortcut: "o" },
+  { href: "/holidays", label: "holidays", icon: CalendarHeartIcon, group: "grow", hotel: { organization: ["update"] } },
+  { href: "/emails", label: "emails", icon: MailIcon, group: "grow", hotel: "any" },
+  { href: "/qr-codes", label: "qrCodes", icon: QrCodeIcon, group: "grow", hotel: "any" },
+  {
+    href: "/metrics",
+    label: "metrics",
+    icon: ChartColumnIcon,
+    group: "insights",
+    hotel: { guest: ["read"] },
+    shortcut: "m",
+  },
+  { href: "/messages", label: "messages", icon: MessageSquareIcon, group: "insights", hotel: { guest: ["read"] } },
+  { href: "/hotel", label: "hotelNav", icon: HotelIcon, group: "settings", hotel: { organization: ["update"] } },
+  { href: "/team", label: "team", icon: UsersIcon, group: "settings", hotel: "any" },
+  { href: "/data", label: "data", icon: DatabaseIcon, group: "settings", hotel: { guest: ["export", "delete"] } },
+  {
+    href: "/activity",
+    label: "activityLog",
+    icon: HistoryIcon,
+    group: "settings",
+    hotel: { organization: ["update"] },
+  },
+  { href: "/usage", label: "usage", icon: ReceiptIcon, group: "settings", hotel: { organization: ["update"] } },
   { href: "/settings", label: "account", icon: CircleUserIcon, group: "settings", shortcut: "s" },
   { href: "/admin/overview", label: "adminOverview", icon: GaugeIcon, group: "admin" },
   { href: "/admin/hotels", label: "hotels", icon: BuildingIcon, group: "admin" },
@@ -86,11 +116,16 @@ export const NAV: NavItem[] = [
   { href: "/audit-log", label: "auditLog", icon: HistoryIcon, group: "admin" },
 ]
 
-export const visibleNav = (role: string | null): NavItem[] =>
-  NAV.filter((item) => item.group !== "admin" || role === "admin")
+const isVisible = (item: NavItem, { admin, role }: Viewer): boolean => {
+  if (item.group === "admin") return admin
+  if (!item.hotel) return true
+  return item.hotel === "any" ? role !== null : allows(role, item.hotel)
+}
 
-export const navGroups = (role: string | null): NavGroup[] => {
-  const items = visibleNav(role)
+export const visibleNav = (viewer: Viewer): NavItem[] => NAV.filter((item) => isVisible(item, viewer))
+
+export const navGroups = (viewer: Viewer): NavGroup[] => {
+  const items = visibleNav(viewer)
   return (Object.keys(GROUP_LABELS) as NavGroupKey[])
     .map((key) => ({ key, label: GROUP_LABELS[key], items: items.filter((item) => item.group === key) }))
     .filter((group) => group.items.length)

@@ -5,15 +5,18 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { CampaignDetail } from "@/components/campaign-detail"
+import { CampaignsForbidden } from "@/components/campaigns-forbidden"
 import { PageHeader } from "@/components/page-header"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, getQueryClient, hotelRole, serverOrpc } from "@/lib/api"
 import { getCampaignPreviewCopies } from "@/lib/preview-copy"
+import { allows } from "@/lib/viewer"
 
 export const metadata: Metadata = { title: "Campaign" }
 
 export default async function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const t = await getTranslations("campaigns")
+  if (!allows(await hotelRole(), { campaign: ["read"] })) return <CampaignsForbidden />
   const queryClient = getQueryClient()
   const [campaign, hotel, copies] = await Promise.all([
     queryClient.fetchQuery(serverOrpc.campaigns.get.queryOptions({ input: { id } })),

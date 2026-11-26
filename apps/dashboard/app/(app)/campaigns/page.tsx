@@ -1,11 +1,11 @@
 import { isForbidden } from "@ritorno/orpc/errors"
 import { Button } from "@ritorno/ui/components/button"
-import { PageState } from "@ritorno/ui/components/page-state"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import { MegaphoneIcon, PlusIcon } from "lucide-react"
+import { PlusIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
+import { CampaignsForbidden } from "@/components/campaigns-forbidden"
 import { CampaignsList } from "@/components/campaigns-list"
 import { PageHeader } from "@/components/page-header"
 import { call, getQueryClient, serverOrpc } from "@/lib/api"
@@ -23,21 +23,7 @@ export default async function CampaignsPage() {
       throw error
     },
   )
-  if (!allowed) {
-    return (
-      <>
-        <PageHeader title={t("title")} description={t("description")} />
-        <div className="p-4 md:p-6">
-          <PageState
-            kind="forbidden"
-            icon={<MegaphoneIcon />}
-            title={t("forbiddenTitle")}
-            description={t("forbiddenBody")}
-          />
-        </div>
-      </>
-    )
-  }
+  if (!allowed) return <CampaignsForbidden />
   return (
     <>
       <PageHeader

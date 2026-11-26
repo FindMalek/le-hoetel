@@ -2,11 +2,12 @@ import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { AdminUsersBoard } from "@/components/admin-users-board"
 import { PageHeader } from "@/components/page-header"
-import { call } from "@/lib/api"
+import { call, requireAdmin } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Users" }
 
 export default async function UsersPage() {
+  await requireAdmin()
   const [t, { total, users }, me] = await Promise.all([
     getTranslations("adminUsers"),
     call((api) => api.admin.users()),
