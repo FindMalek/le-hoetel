@@ -13,7 +13,12 @@ One short survey per guest after the stay: six questions at most, one minute on 
 
 ## When it is sent
 
-The `survey-invites` job runs every hour (pg-boss, jobs module). A guest is due 24 hours after check-out (counted from noon hotel time). With no check-out date it is 24 hours after the guest was captured. A guest from a csv import is only surveyed once they have a check-out date, never from the import time. Only guests due in the last 14 days are picked up, so a new deploy never surveys old guests.
+The `survey-invites` job runs every hour (pg-boss, jobs module). A guest is due 24 hours after check-out (counted from noon hotel time). With no check-out date it is 8 days after the guest was captured, longer than a week's stay (a stay over a week with no date can still be asked early). A guest from a restaurant table code or a csv import is only surveyed once they have a check-out date. Only guests due in the last 14 days are picked up, so a new deploy never surveys old guests.
+
+Where the check-out date comes from:
+
+- The guest, on the capture page: an optional "when do you leave?" (tomorrow, in 2, 3 or 7 nights, or a date up to 90 days away). It is only kept when the guest also switches on the toggle shown under it, which grants the whole `profile` consent; otherwise neither is stored. Scanning again does not change a check-out that is today or later, staff do that.
+- Staff, on the guest's edit page, once the guest has the `profile` consent.
 
 - Sent through `sendToGuest` on the channels the guest agreed to: the `survey` email and the `guest_survey` WhatsApp template (see `whatsapp-templates`).
 - Never in quiet hours, 21:00 to 08:00 hotel time. The next hourly run sends it.

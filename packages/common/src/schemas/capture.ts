@@ -1,6 +1,7 @@
 import { z } from "zod"
 import type { GuestSource } from "../consent"
 import { HOTEL_LANGUAGES } from "../hotel"
+import { STAY_MAX_NIGHTS } from "../hotel-time"
 import { guestFields, phoneInputSchema } from "./guest"
 import { welcomeOfferSchema } from "./offers"
 
@@ -24,6 +25,13 @@ export const publicHotelSchema = z.object({
 })
 export type PublicHotel = z.infer<typeof publicHotelSchema>
 
+const utcDay = (offset: number) => new Date(Date.now() + offset * 864e5).toISOString().slice(0, 10)
+
+/** Today to `STAY_MAX_NIGHTS` ahead, with a day either side because the guest's calendar day is not UTC's. */
+const departure = z.iso
+  .date()
+  .refine((value) => value >= utcDay(-1) && value <= utcDay(STAY_MAX_NIGHTS + 1), "Check your departure date.")
+
 export const captureInputSchema = z.object({
   slug: z.string().min(1).max(100),
   name: guestFields.name,
@@ -33,7 +41,9 @@ export const captureInputSchema = z.object({
   birthday: guestFields.birthday.nullish(),
   source: z.enum(Object.keys(CAPTURE_SOURCES) as [CaptureSource, ...CaptureSource[]]),
   location: z.string().trim().max(CAPTURE_LOCATION_MAX).nullish(),
-  consents: z.object({ email: z.boolean(), whatsapp: z.boolean() }),
+  /** Only stored with the `profile` consent. */
+  stayCheckOut: departure.nullish(),
+  consents: z.object({ email: z.boolean(), whatsapp: z.boolean(), profile: z.boolean().default(false) }),
   /** Hidden field no person fills: any value means a bot. */
   website: z.string().max(200).nullish(),
 })

@@ -476,7 +476,8 @@
       "grantBody": "Read this to the guest. Confirm only if they say yes. The change is added to the consent log.",
       "grantConfirm": "The guest agrees",
       "grantedToast": "Consent recorded.",
-      "deleteType": "Type {name} to confirm"
+      "deleteType": "Type {name} to confirm",
+      "checkOut": "Check-out"
     },
     "finder": {
       "label": "Find a guest",
@@ -512,7 +513,10 @@
       "submit": "Save changes",
       "cancel": "Cancel",
       "saved": "Guest updated.",
-      "error": "The changes could not be saved. Try again."
+      "error": "The changes could not be saved. Try again.",
+      "checkOut": "Check-out date",
+      "checkOutHint": "The survey goes out the day after.",
+      "checkOutNeedsConsent": "Needs the stay details consent. Turn it on from the guest page, if the guest agrees."
     }
   },
   "guestData": {
@@ -655,7 +659,15 @@
     "submitHint": "No message is sent unless you switch one on.",
     "thanksPerk": "Show this screen at the front desk to get it.",
     "whatsappButton": "Continue on WhatsApp",
-    "whatsappHint": "This opens a chat with Ritorno's number, which sends one automatic welcome for {hotel}. The hotel team sees your number and may write to you, but not what you write: for requests, ask the front desk. It does not sign you up for messages."
+    "whatsappHint": "This opens a chat with Ritorno's number, which sends one automatic welcome for {hotel}. The hotel team sees your number and may write to you, but not what you write: for requests, ask the front desk. It does not sign you up for messages.",
+    "departure": "When do you leave?",
+    "departureOptional": "Optional",
+    "departureTomorrow": "Tomorrow",
+    "departureNights": "In {count} nights",
+    "departurePick": "Pick a date",
+    "departureDate": "Departure date",
+    "departureDateError": "Pick a date from today on, within 90 days.",
+    "departureKeep": "Remember my departure date"
   },
   "guest": {
     "languageLabel": "Language",
