@@ -30,6 +30,7 @@ Every extra question lowers the number of guests who finish the form, and every 
 
 - Consent is logged per channel: email, WhatsApp, and later SMS.
 - Each entry records the timestamp, the source, and the wording version.
+- When signed-in staff make the change (adding a guest, a CSV import, a consent switch), the entry also keeps their user id (`consent_events.staff_user_id`). It stays empty for the guest's own answers (QR, unsubscribe, STOP) and is cleared if the staff account is deleted. It is not part of the guest export.
 - The log is append only. A change of mind is a new entry, never an edit. See [consent log is append only](/docs/decisions/consent-log-append-only).
 - WhatsApp and email have separate toggles on the capture page, both off by default, each with the exact logged wording under it.
 - Every message carries an unsubscribe link or STOP. Messaging builds them with `packages/common/src/unsubscribe.ts`: `signUnsubscribeToken`, `unsubscribePageUrl`, `listUnsubscribeHeaders` (RFC 8058 one tap, for email) and `unsubscribeFooter` (the line every message ends with). The link opens `/u/<token>` on the web app (en, fr, ar, the hotel's branding): one switch per channel and one tap to stop everything. Each change is a consent event with source `unsubscribe_link`. Email clients that show their own button POST to `/unsubscribe/<token>` on the api.

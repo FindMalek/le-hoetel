@@ -45,6 +45,7 @@ export const surveyResponses = pgTable(
   },
   (t) => [
     unique("survey_responses_invite_unique").on(t.inviteId),
+    index("survey_responses_guest_idx").on(t.guestId, t.submittedAt),
     index("survey_responses_hotel_idx").on(t.hotelId, t.submittedAt),
     check("survey_responses_nps_range", sql`${t.nps} between 0 and 10`),
   ],

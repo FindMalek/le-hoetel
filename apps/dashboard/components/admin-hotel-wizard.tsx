@@ -1,6 +1,7 @@
 "use client"
 
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { hotelCreateSchema } from "@ritorno/common/schemas"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -21,7 +22,6 @@ const STEPS = ["basics", "branding", "languages", "owner"] as const
 type Step = (typeof STEPS)[number]
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 interface Values {
   name: string
@@ -82,7 +82,8 @@ export function AdminHotelWizard() {
   else if (taken) errors.slug = t("errors.slugTaken")
   if (values.primaryColor && !isHex(values.primaryColor)) errors.primaryColor = t("errors.color")
   if (values.accentColor && !isHex(values.accentColor)) errors.accentColor = t("errors.color")
-  if (!EMAIL.test(values.ownerEmail)) errors.ownerEmail = t("errors.email")
+  if (!hotelCreateSchema.shape.ownerEmail.safeParse(values.ownerEmail.trim()).success)
+    errors.ownerEmail = t("errors.email")
 
   const stepFields: Record<Step, (keyof Errors)[]> = {
     basics: ["name", "slug"],

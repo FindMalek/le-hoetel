@@ -1,6 +1,7 @@
 "use client"
 
 import { authClient } from "@ritorno/auth/client"
+import { emailSchema } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { FieldGroup, FieldSeparator } from "@ritorno/ui/components/field"
@@ -14,8 +15,6 @@ import { authErrorKey } from "@/lib/auth-errors"
 
 type Field = "name" | "email" | "password"
 type Errors = Partial<Record<Field, string>>
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function AuthForm({
   mode,
@@ -40,7 +39,7 @@ export function AuthForm({
 
   const check = (field: Field, value: string): string | undefined => {
     if (!value.trim()) return t("errors.required")
-    if (field === "email" && !EMAIL.test(value.trim())) return t("errors.email")
+    if (field === "email" && !emailSchema.safeParse(value.trim()).success) return t("errors.email")
     if (field === "password" && signUp && value.length < 10) return t("errors.passwordShort")
     return undefined
   }

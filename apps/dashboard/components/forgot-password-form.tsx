@@ -1,6 +1,7 @@
 "use client"
 
 import { authClient } from "@ritorno/auth/client"
+import { emailSchema } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
 import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { MailCheckIcon } from "lucide-react"
@@ -10,8 +11,6 @@ import { type FormEvent, useState } from "react"
 import { AuthField } from "@/components/auth-field"
 import { authErrorKey } from "@/lib/auth-errors"
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 export function ForgotPasswordForm() {
   const t = useTranslations("auth")
   const [sentTo, setSentTo] = useState<string | null>(null)
@@ -20,7 +19,7 @@ export function ForgotPasswordForm() {
   const [busy, setBusy] = useState(false)
 
   const check = (value: string) =>
-    !value.trim() ? t("errors.required") : EMAIL.test(value.trim()) ? null : t("errors.email")
+    !value.trim() ? t("errors.required") : emailSchema.safeParse(value.trim()).success ? null : t("errors.email")
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

@@ -83,6 +83,7 @@ export const offerRedemptions = pgTable(
   (t) => [
     unique("offer_redemptions_offer_guest_unique").on(t.offerId, t.guestId),
     foreignKey({ columns: [t.offerId, t.hotelId], foreignColumns: [offers.id, offers.hotelId] }).onDelete("cascade"),
+    index("offer_redemptions_guest_idx").on(t.guestId, t.redeemedAt),
     index("offer_redemptions_hotel_idx").on(t.hotelId, t.redeemedAt),
   ],
 )

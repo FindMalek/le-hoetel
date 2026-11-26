@@ -12,6 +12,7 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core"
+import { user } from "./auth"
 import { hotelLanguage } from "./hotels"
 import { organization } from "./orgs"
 
@@ -93,6 +94,8 @@ export const consentEvents = pgTable(
     wordingVersion: text("wording_version").notNull(),
     /** Salted hash of the capture ip, never the ip itself. Optional. */
     ipHash: text("ip_hash"),
+    /** Who on staff made the change. Null for the guest's own answers (QR, unsubscribe, STOP) and once that account is deleted. */
+    staffUserId: text("staff_user_id").references(() => user.id, { onDelete: "set null" }),
     at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [

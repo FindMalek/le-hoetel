@@ -3,6 +3,7 @@
 import { consentWording } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { parsePhone } from "@ritorno/common/phone"
+import { guestCreateSchema } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
@@ -19,8 +20,6 @@ import { useTranslations } from "next-intl"
 import { type FormEvent, useRef, useState } from "react"
 import { toast } from "sonner"
 import { LanguageChoice } from "@/components/language-choice"
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type Touched = Partial<Record<"name" | "phone" | "email", boolean>>
 
@@ -45,7 +44,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const problems = {
     name: name.trim() ? null : t("nameRequired"),
     phone: parsed ? null : t("phoneInvalid"),
-    email: !hasEmail || EMAIL.test(email.trim()) ? null : t("emailInvalid"),
+    email: !hasEmail || guestCreateSchema.shape.email.safeParse(email.trim()).success ? null : t("emailInvalid"),
   }
   const touch = (field: keyof Touched) => setTouched((current) => ({ ...current, [field]: true }))
   const shown = (field: keyof Touched) => (touched[field] ? problems[field] : null)
