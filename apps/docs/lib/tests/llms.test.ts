@@ -23,9 +23,10 @@ afterAll(() => server?.kill())
 
 describe.skipIf(!built)("llms.txt against the build", () => {
   test("llms.txt and llms-full.txt list every docs page", async () => {
-    const slugs = readdirSync("content/docs")
+    // a folder's index.mdx is served at the folder url
+    const slugs = readdirSync("content/docs", { recursive: true, encoding: "utf8" })
       .filter((file) => file.endsWith(".mdx"))
-      .map((file) => file.replace(/\.mdx$/, ""))
+      .map((file) => file.replace(/\.mdx$/, "").replace(/\/index$/, ""))
     const index = await (await get("/llms.txt")).text()
     const full = await (await get("/llms-full.txt")).text()
     expect(slugs.length).toBeGreaterThan(0)
