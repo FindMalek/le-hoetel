@@ -48,6 +48,9 @@ export function createAuth(config: AuthConfig) {
   const audit = auditHooks(config.db)
   return betterAuth({
     baseURL: config.dashboardUrl,
+    // On in production by default with 3 sign-ins per 10s per ip, which locks out a hotel desk sharing one network
+    // after a few typos. The api caps auth posts too (`RATE_LIMITS.auth`); reset and magic link emails keep the defaults.
+    rateLimit: { customRules: { "/sign-in/*": { window: 60, max: 20 } } },
     hooks: audit.hooks,
     databaseHooks: {
       user: {
