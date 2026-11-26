@@ -884,7 +884,7 @@
     "edit": "Modifier",
     "remove": "Supprimer",
     "removeTitle": "Supprimer cette offre ?",
-    "removeBody": "« {title} » et ses utilisations seront supprimées. Les clients perdent leur QR.",
+    "removeBody": "« {title} » et {count, plural, =0 {ses utilisations} one {# utilisation} other {# utilisations}} seront supprimés. Les clients perdent leur QR.{campaigns, plural, =0 {} one { # campagne partira sans elle.} other { # campagnes partiront sans elle.}}",
     "cancel": "Annuler",
     "save": "Enregistrer",
     "saved": "Offre enregistrée.",
@@ -904,10 +904,8 @@
     "fieldMax": "Utilisations maximum",
     "fieldMaxHint": "Vide : pas de limite.",
     "fieldActive": "Active",
-    "redeemed": "{count} utilisée(s)",
-    "redeemedOf": "{count} sur {max} utilisées",
-    "forever": "Sans date de fin",
-    "until": "Jusqu’au {date}",
+    "redeemed": "<n></n> utilisées",
+    "redeemedOf": "<n></n> sur <max></max> utilisées",
     "state": {
       "ready": "Active",
       "inactive": "En pause",
@@ -919,14 +917,6 @@
       "title": "Ce que voit le client",
       "titlePlaceholder": "Le titre de votre offre",
       "hint": "Affiché dans la langue des clients de l'hôtel, avec un code d'exemple."
-    },
-    "columns": {
-      "offer": "Offre",
-      "status": "Statut",
-      "trigger": "Attribuée à",
-      "redeemed": "Utilisations",
-      "valid": "Validité",
-      "actions": "Actions"
     },
     "trigger": {
       "welcome": "Nouveaux clients",
@@ -966,7 +956,11 @@
     "fieldTextHint": "Jusqu'à {max} caractères.",
     "optional": "Facultatif",
     "fieldActiveHint": "Mettez-la en pause pour empêcher son utilisation.",
-    "create": "Créer l'offre"
+    "create": "Créer l'offre",
+    "inCampaigns": "{count, plural, one {Dans <n></n> campagne} other {Dans <n></n> campagnes}}",
+    "between": "Du {from} au {until}",
+    "since": "Dès le {from}, sans fin",
+    "removeNamed": "Supprimer {title}"
   },
   "offer": {
     "invalidTitle": "Lien non valide",
@@ -1030,8 +1024,6 @@
   "holidays": {
     "title": "Messages de fête",
     "description": "Un petit mot les jours qui comptent pour vos clients. Désactivé tant que vous n'activez pas une fête.",
-    "saved": "Enregistré",
-    "next": "Prochaine : {date}",
     "noDate": "Date pas encore connue",
     "channelFor": "Canal pour {name}",
     "switchFor": "Envoyer le message {name}",
@@ -1040,7 +1032,14 @@
       "email": "E-mail seulement",
       "whatsapp": "WhatsApp seulement"
     },
-    "footnote": "Envoyé à 9 h, heure de l'hôtel, uniquement aux clients qui ont accepté le canal. Les dates islamiques suivent le calendrier astronomique et peuvent varier d'un jour."
+    "footnote": "Envoyé à 9 h, heure de l'hôtel, uniquement aux clients qui ont accepté le canal. Les dates islamiques suivent le calendrier astronomique et peuvent varier d'un jour.",
+    "savedOn": "Activé. Le message part le jour même.",
+    "savedOff": "Désactivé",
+    "summary": "<on></on> vœux activés sur <total></total>",
+    "previewIn": "Aperçu en",
+    "inDays": "{count, plural, =0 {aujourd'hui} one {dans <n></n> jour} other {dans <n></n> jours}}",
+    "on": "Activé",
+    "off": "Désactivé"
   },
   "landing": {
     "meta": {
@@ -1615,20 +1614,22 @@
     "new": "Nouvelle campagne",
     "empty": "Aucune campagne pour l'instant",
     "emptyHint": "Écrivez un message, choisissez les destinataires, puis envoyez-le ou programmez-le.",
-    "resultsLine": "{sent} sur {total} envoyés",
+    "resultsLine": "<sent></sent> sur <total></total> envoyés",
     "columns": {
       "name": "Nom",
       "channel": "Canal",
       "status": "Statut",
       "results": "Résultats",
-      "when": "Quand"
+      "when": "Quand",
+      "audience": "Audience"
     },
     "status": {
       "draft": "Brouillon",
       "scheduled": "Programmée",
       "sending": "En cours",
       "sent": "Envoyée",
-      "cancelled": "Annulée"
+      "cancelled": "Annulée",
+      "failed": "Échec"
     },
     "channel": {
       "both": "E-mail et WhatsApp",
@@ -1640,38 +1641,48 @@
       "sent": "Envoyés",
       "delivered": "Reçus",
       "failed": "Échecs",
-      "skipped": "Ignorés"
+      "skipped": "Ignorés",
+      "audience": "Audience aujourd'hui",
+      "skippedHint": "Ignorés ou en attente"
     },
     "detail": {
       "title": "Campagne",
       "description": "Vérifiez le message, envoyez-vous un test, puis envoyez ou programmez.",
-      "actions": "Actions",
       "edit": "Modifier",
       "delete": "Supprimer",
       "cancel": "Annuler la campagne",
       "cancelTitle": "Annuler cette campagne ?",
-      "cancelBody": "Les messages pas encore envoyés ne partiront pas.",
       "cancelled": "Campagne annulée",
-      "keep": "La garder",
       "messageTitle": "Message",
       "quietNote": "Les messages partent seulement entre 9h et 20h, heure de l'hôtel.",
       "schedule": "Programmer",
       "scheduleAt": "Envoyer le",
       "scheduled": "Campagne programmée",
       "sendNow": "Envoyer maintenant",
-      "startsAt": "Début : {date}",
       "testSend": "M'envoyer un test",
-      "testSent": "Test envoyé à {to}"
+      "testSent": "Test envoyé à {to}",
+      "sendTitle": "Envoyer",
+      "or": "ou",
+      "sending": "Envoi de la campagne en cours",
+      "deleted": "Campagne supprimée",
+      "dangerTitle": "Arrêter ou supprimer",
+      "cancelHint": "Arrête les messages qui ne sont pas encore partis.",
+      "deleteHint": "Supprime la campagne et ses résultats.",
+      "state": {
+        "draft": "Pas envoyée. Rien ne part tant que vous n'envoyez ou ne programmez pas.",
+        "scheduled": "Départ le {date}.",
+        "sending": "Envoi en cours : {done} sur {total} traités.",
+        "sent": "Envoyée le {date}.",
+        "failed": "Aucun message n'est passé. Vérifiez la configuration e-mail et WhatsApp.",
+        "cancelled": "Annulée le {date}."
+      }
     },
     "form": {
       "newTitle": "Nouvelle campagne",
       "editTitle": "Modifier la campagne",
       "hint": "Seuls les clients ayant donné leur accord pour le canal le reçoivent.",
-      "basics": "Général",
-      "basicsHint": "Le nom n'est visible que par vous.",
       "name": "Nom de la campagne",
       "channel": "Canal",
-      "audience": "Destinataires",
       "audienceHint": "Laissez tout vide pour joindre tous les clients.",
       "languages": "Langues",
       "countries": "Pays",
@@ -1681,20 +1692,102 @@
       "anyTime": "À tout moment",
       "lastDays": "Derniers {days} jours",
       "reachLoading": "Comptage des clients…",
-      "reach": "{guests} clients, {email} par e-mail, {whatsapp} sur WhatsApp",
       "consentNote": "Les clients désinscrits ou sans accord sont toujours exclus.",
-      "message": "Message",
       "messageHint": "Écrivez-le dans une ou plusieurs langues. Chaque client reçoit sa langue.",
       "subject": "Objet",
       "body": "Texte du message",
-      "bodyHint": "Restez court et chaleureux.",
+      "bodyHint": "Court et chaleureux, c'est mieux. {count}/{max}",
       "offer": "Offre",
       "offerHint": "Joignez une offre que le client peut utiliser.",
       "noOffer": "Aucune offre",
-      "needText": "Écrivez le message dans au moins une langue",
       "saveDraft": "Enregistrer le brouillon",
-      "saving": "Enregistrement…",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "steps": {
+        "audience": "Audience",
+        "channel": "Canal",
+        "message": "Message",
+        "send": "Envoi"
+      },
+      "stepHasError": "à corriger",
+      "reachTitle": "Joignables aujourd'hui",
+      "reachSplit": "<email></email> par e-mail, <whatsapp></whatsapp> sur WhatsApp",
+      "channelHint": "Chaque client ne le reçoit que sur un canal qu'il a accepté.",
+      "nameHint": "Seule votre équipe le voit.",
+      "writeIn": "Langue",
+      "written": "rédigé",
+      "counter": "{count}/{max}",
+      "when": {
+        "draft": "Enregistrer en brouillon",
+        "draftHint": "Rien ne part. Envoyez ou programmez plus tard.",
+        "now": "Envoyer maintenant",
+        "nowHint": "Démarre tout de suite, entre 9h et 20h heure de l'hôtel.",
+        "later": "Programmer",
+        "laterHint": "Choisissez le jour et l'heure de départ."
+      },
+      "summary": {
+        "audience": "Audience",
+        "channel": "Canal",
+        "languages": "Langues",
+        "offer": "Offre",
+        "none": "Aucune pour l'instant"
+      },
+      "back": "Retour",
+      "next": "Suivant",
+      "reviewSend": "Envoyer maintenant",
+      "reviewSchedule": "Programmer",
+      "savedDraft": "Brouillon enregistré"
+    },
+    "guests": "{count, plural, one {<n></n> client} other {<n></n> clients}}",
+    "counting": "Comptage…",
+    "notSentYet": "Pas encore envoyée",
+    "failedLine": "<n></n> en échec",
+    "when": {
+      "sentOn": "Envoyée le {date}",
+      "scheduledFor": "Prévue le {date}",
+      "createdOn": "Créée le {date}"
+    },
+    "filterLabel": "Afficher les campagnes",
+    "filter": {
+      "all": "Toutes",
+      "draft": "Brouillons",
+      "scheduled": "Programmées",
+      "sent": "Terminées"
+    },
+    "filterEmpty": "Aucune campagne dans cette liste",
+    "preview": {
+      "title": "Aperçu",
+      "viewLabel": "Aperçu en",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp",
+      "label": "Le message tel que le client le reçoit",
+      "subjectPlaceholder": "Votre objet",
+      "bodyPlaceholder": "Votre message s'affiche ici pendant que vous l'écrivez."
+    },
+    "guestCopy": {
+      "offer": "Votre offre",
+      "unsubscribe": "Se désinscrire",
+      "stop": "Répondez STOP pour ne plus recevoir ces messages."
+    },
+    "errors": {
+      "count": "Impossible de compter les clients. Fermez et réessayez.",
+      "name": "Donnez un nom à la campagne.",
+      "subject": "Écrivez un objet pour cette langue.",
+      "body": "Écrivez le message pour cette langue.",
+      "needText": "Écrivez le message dans au moins une langue.",
+      "at": "Choisissez une date et une heure.",
+      "atPast": "Choisissez un moment dans le futur.",
+      "audience": "Aucun client ne correspond encore. Élargissez l'audience à l'étape Audience."
+    },
+    "confirm": {
+      "sendTitle": "Envoyer à {count, plural, one {<n></n> client} other {<n></n> clients}} maintenant ?",
+      "sendBody": "Envoi par {channel}, entre 9h et 20h heure de l'hôtel. Les messages déjà partis ne peuvent pas être repris.",
+      "scheduleTitle": "Programmer pour {count, plural, one {<n></n> client} other {<n></n> clients}} ?",
+      "scheduleBody": "Départ le {date} par {channel}. L'audience est recomptée à ce moment-là, le nombre peut donc changer. Vous pouvez annuler tant que ce n'est pas envoyé.",
+      "cancelBody": "{count, plural, =0 {Rien en attente} one {# message en attente} other {# messages en attente}} par {channel} ne partira pas. Les messages déjà envoyés le restent.",
+      "deleteTitle": "Supprimer « {name} » ?",
+      "deleteDraftBody": "Elle devait joindre {count, plural, one {# client} other {# clients}} par {channel}. Personne ne la reçoit et le brouillon est supprimé définitivement.",
+      "deleteBody": "Elle a contacté {count, plural, one {# client} other {# clients}} par {channel}. La campagne et ses résultats sont supprimés définitivement.",
+      "back": "Retour"
     }
   },
   "settings": {

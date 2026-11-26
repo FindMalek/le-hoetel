@@ -4,14 +4,16 @@ import { getTranslations } from "next-intl/server"
 import { CampaignForm } from "@/components/campaign-form"
 import { PageHeader } from "@/components/page-header"
 import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { getCampaignPreviewCopies } from "@/lib/preview-copy"
 
 export const metadata: Metadata = { title: "New campaign" }
 
 export default async function NewCampaignPage() {
   const t = await getTranslations("campaigns")
   const queryClient = getQueryClient()
-  const [hotel] = await Promise.all([
+  const [hotel, copies] = await Promise.all([
     call((api) => api.hotel.get()),
+    getCampaignPreviewCopies(),
     queryClient.prefetchQuery(serverOrpc.offers.list.queryOptions()),
   ])
   return (
@@ -19,7 +21,7 @@ export default async function NewCampaignPage() {
       <PageHeader title={t("form.newTitle")} description={t("form.hint")} />
       <div className="p-4 md:p-6">
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <CampaignForm defaultLanguage={hotel.defaultLanguage} />
+          <CampaignForm defaultLanguage={hotel.defaultLanguage} hotelName={hotel.displayName} copies={copies} />
         </HydrationBoundary>
       </div>
     </>
