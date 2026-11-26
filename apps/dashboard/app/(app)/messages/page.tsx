@@ -1,5 +1,5 @@
 import { MESSAGE_CHANNELS, type MessageChannel } from "@ritorno/common/consent"
-import { MESSAGE_STATUSES, type MessageStatus } from "@ritorno/common/message"
+import { HOTEL_EMAIL_KEYS, MESSAGE_STATUSES, type MessageStatus } from "@ritorno/common/message"
 import { formatTnd } from "@ritorno/common/pricing"
 import { isForbidden } from "@ritorno/orpc/errors"
 import { Button } from "@ritorno/ui/components/button"
@@ -23,7 +23,6 @@ import { MessageFilterSelect } from "./message-filter-select"
 export const metadata: Metadata = { title: "Messages" }
 
 const PAGE_SIZE = 25
-const TEMPLATES = ["welcome", "birthday", "survey", "reminder", "message"] as const
 const PERIODS = ["7", "30", "90"] as const
 
 const STATUS_TONE: Record<MessageStatus, StatusTone> = {
@@ -38,7 +37,7 @@ const STATUS_TONE: Record<MessageStatus, StatusTone> = {
 type Filters = {
   channel?: MessageChannel
   status?: MessageStatus
-  template?: (typeof TEMPLATES)[number]
+  template?: (typeof HOTEL_EMAIL_KEYS)[number]
   days?: (typeof PERIODS)[number]
 }
 
@@ -50,7 +49,7 @@ function parseSearch(raw: Record<string, string | string[] | undefined>): Filter
   return {
     channel: oneOf(MESSAGE_CHANNELS, first(raw.channel)),
     status: oneOf(MESSAGE_STATUSES, first(raw.status)),
-    template: oneOf(TEMPLATES, first(raw.template)),
+    template: oneOf(HOTEL_EMAIL_KEYS, first(raw.template)),
     days: oneOf(PERIODS, first(raw.days)),
     page: Number(first(raw.page)),
   }
@@ -123,7 +122,7 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
     </time>
   )
   const template = (key: string) => {
-    const known = oneOf(TEMPLATES, key)
+    const known = oneOf(HOTEL_EMAIL_KEYS, key)
     return known ? t(`templates.${known}`) : key
   }
   const status = (row: Row) => (
@@ -225,7 +224,7 @@ export default async function MessagesPage({ searchParams }: PageProps<"/message
         value={filters.template}
         options={[
           { value: "any", label: t("filters.anyTemplate") },
-          ...TEMPLATES.map((value) => ({ value, label: t(`templates.${value}`) })),
+          ...HOTEL_EMAIL_KEYS.map((value) => ({ value, label: t(`templates.${value}`) })),
         ]}
       />
       {filtered ? (
