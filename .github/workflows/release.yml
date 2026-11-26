@@ -81,7 +81,7 @@ jobs:
           node-version: 24
       - name: join the tailnet (Infisical is tailnet only)
         if: env.HAS_TAILSCALE == 'true'
-        uses: tailscale/github-action@v3
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_CLIENT_SECRET }}
