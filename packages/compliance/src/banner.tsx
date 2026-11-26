@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { CONSENT_COOKIE, type Consent, consentCookie } from "./consent"
 
-/** Set on `<html>` while the banner shows. `globals.css` pads the body by it and `bottom-consent` lifts fixed bars above it, so the banner never covers a form button, the phone tabs or the sidebar footer. */
+/** Room the card takes above the bottom edge, set on `<html>` while it shows. The body, sidebar footer, sticky form actions and feedback button keep clear of it, so the card never covers them. */
 const HEIGHT_VAR = "--consent-banner-height"
 
 export type ConsentBannerLabels = { label: string; text: string; decline: string; accept: string }
@@ -25,7 +25,9 @@ export function ConsentBanner({ labels }: { labels: ConsentBannerLabels }) {
     const element = ref.current
     if (!open || !element) return
     const root = document.documentElement
-    const observer = new ResizeObserver(() => root.style.setProperty(HEIGHT_VAR, `${element.offsetHeight}px`))
+    const observer = new ResizeObserver(() =>
+      root.style.setProperty(HEIGHT_VAR, `calc(${element.offsetHeight}px + 0.75rem)`),
+    )
     observer.observe(element)
     return () => {
       observer.disconnect()
@@ -44,18 +46,14 @@ export function ConsentBanner({ labels }: { labels: ConsentBannerLabels }) {
     <section
       ref={ref}
       aria-label={labels.label}
-      className="fixed inset-x-0 bottom-0 z-50 border-t bg-card pb-[env(safe-area-inset-bottom)] text-card-foreground shadow-lg"
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto mb-(--consent-banner-offset,env(safe-area-inset-bottom)) flex max-w-xl flex-col gap-3 rounded-2xl border bg-card p-4 text-card-foreground shadow-md sm:flex-row sm:items-center sm:gap-4"
     >
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 sm:gap-4 sm:py-3">
-        <p className="min-w-0 flex-1 text-muted-foreground text-xs sm:text-sm">{labels.text}</p>
-        <div className="flex shrink-0 gap-2">
-          <Button variant="outline" className="px-3 sm:px-4" onClick={() => choose("denied")}>
-            {labels.decline}
-          </Button>
-          <Button className="px-3 sm:px-4" onClick={() => choose("granted")}>
-            {labels.accept}
-          </Button>
-        </div>
+      <p className="min-w-0 flex-1 text-muted-foreground text-sm">{labels.text}</p>
+      <div className="grid shrink-0 grid-cols-2 gap-2">
+        <Button variant="outline" onClick={() => choose("denied")}>
+          {labels.decline}
+        </Button>
+        <Button onClick={() => choose("granted")}>{labels.accept}</Button>
       </div>
     </section>
   )

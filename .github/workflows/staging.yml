@@ -56,13 +56,14 @@ jobs:
           INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
           INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
 
-  # Releases the exact commit staging just proved healthy, only after an automatic (ci triggered) deploy.
+  # Keeps the release PR up to date and releases it once merged, only after an automatic (ci triggered) healthy deploy.
   release:
     needs: deploy
     if: github.event_name == 'workflow_run' && needs.deploy.outputs.healthy-sha != ''
     permissions:
       contents: write
-      pull-requests: read
+      issues: write
+      pull-requests: write
       checks: read
     uses: ./.github/workflows/release.yml
     with:

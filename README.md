@@ -110,9 +110,9 @@ The Next apps also run on Vercel with the app folder as the root directory. Set 
 | production | [ritorno](https://ritorno.findmalek.engineer) | [app-ritorno](https://app-ritorno.findmalek.engineer) | [api-ritorno](https://api-ritorno.findmalek.engineer/health) | [docs-ritorno](https://docs-ritorno.findmalek.engineer) |
 | staging | [staging-ritorno](https://staging-ritorno.findmalek.engineer) | [app-staging-ritorno](https://app-staging-ritorno.findmalek.engineer) | [api-staging-ritorno](https://api-staging-ritorno.findmalek.engineer/health) | [docs-staging-ritorno](https://docs-staging-ritorno.findmalek.engineer) |
 
-- every merge to `main` deploys staging, a published release deploys production (`.github/workflows/staging.yml`, `release.yml`)
+- every merge to `main` deploys staging only, merging the release PR deploys production (`.github/workflows/staging.yml`, `release.yml`)
 - every PR gets a preview at `pr-<N>-<app>.preview-ritorno.findmalek.engineer` for what changed, the rest links to staging, see the docs page `previews`. WhoDB for preview databases: [whodb-ritorno](https://whodb-ritorno.findmalek.engineer)
-- releases: run the `release` workflow by hand, it tags `vX.Y.Z`, writes notes from merged PR titles and deploys production. Cut a release when a milestone is done: `v0.1.0` foundation and hotel core, `v0.2.0` messaging, `v0.3.0` feedback and dashboard, `v1.0.0` pilot launch
+- releases: release-please keeps a release PR open (version and `CHANGELOG.md`), merging it tags `vX.Y.Z` and deploys production. Rollback or redeploy: run the `release` workflow with a tag
 - rollback, backups and setup: docs pages `deploy-runbook` and `releases`
 
 ---
