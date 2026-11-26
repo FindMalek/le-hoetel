@@ -238,7 +238,8 @@
     "groupInsights": "Analyses",
     "groupSettings": "Réglages",
     "unhappyGuests": "Clients mécontents",
-    "whatsappScans": "WhatsApp"
+    "whatsappScans": "WhatsApp",
+    "activityLog": "Journal d'activité"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -1668,8 +1669,6 @@
     "title": "Journal d'audit",
     "description": "Qui a fait quoi, du plus récent au plus ancien. Réservé aux admins.",
     "system": "Système",
-    "newer": "Plus récents",
-    "older": "Plus anciens",
     "columns": {
       "action": "Action",
       "who": "Auteur",
@@ -1749,9 +1748,27 @@
       },
       "note": {
         "delete": "A supprimé une note"
+      },
+      "feedback-case": {
+        "update": "Suivi d'un avis client mis à jour"
+      },
+      "email": {
+        "send-test": "E-mail de test envoyé"
+      },
+      "whatsapp-scan": {
+        "delete": "Scan WhatsApp supprimé"
       }
     },
-    "range": "Entrées {from} à {to}"
+    "loadMore": "Voir plus",
+    "loading": "Chargement des entrées",
+    "loadFailed": "Impossible de charger le journal.",
+    "retry": "Réessayer",
+    "hotel": {
+      "title": "Journal d'activité",
+      "description": "Ce que votre équipe et Ritorno ont fait sur cet hôtel, du plus récent au plus ancien.",
+      "forbidden": "Seuls les propriétaires et les managers peuvent lire le journal d'activité.",
+      "platform": "Équipe Ritorno"
+    }
   },
   "campaigns": {
     "title": "Campagnes",
@@ -2116,7 +2133,9 @@
       "summary": "{count, plural, one {# client capté} other {# clients captés}}.",
       "emptyTitle": "Aucun nouveau client sur la période",
       "emptyBody": "Les clients apparaissent ici quand ils scannent votre QR code ou quand l'équipe les ajoute. Imprimez un code pour la réception, une chambre ou une table.",
-      "emptyAction": "Obtenir un QR code"
+      "emptyAction": "Obtenir un QR code",
+      "byDay": "Chaque barre représente un jour.",
+      "byWeek": "Chaque barre représente une semaine, à partir du lundi."
     },
     "reach": {
       "title": "Portée",

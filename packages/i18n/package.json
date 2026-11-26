@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./config": "./src/config.ts",
+    "./messages/*": "./src/messages/*",
     "./proxy": "./src/proxy.ts",
     "./switcher": "./src/locale-switcher.tsx"
   },

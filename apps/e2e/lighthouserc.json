@@ -32,16 +32,30 @@
               }
             ],
             "largest-contentful-paint": [
-              "warn",
+              "error",
               {
-                "maxNumericValue": 3000,
+                "maxNumericValue": 2500,
                 "aggregationMethod": "median"
               }
             ],
-            "resource-summary:script:size": [
-              "warn",
+            "cumulative-layout-shift": [
+              "error",
               {
-                "maxNumericValue": 300000,
+                "maxNumericValue": 0.1,
+                "aggregationMethod": "median"
+              }
+            ],
+            "total-blocking-time": [
+              "error",
+              {
+                "maxNumericValue": 600,
+                "aggregationMethod": "optimistic"
+              }
+            ],
+            "resource-summary:script:size": [
+              "error",
+              {
+                "maxNumericValue": 250000,
                 "aggregationMethod": "median"
               }
             ]
@@ -70,8 +84,22 @@
                 "aggregationMethod": "median"
               }
             ],
+            "cumulative-layout-shift": [
+              "error",
+              {
+                "maxNumericValue": 0.1,
+                "aggregationMethod": "median"
+              }
+            ],
+            "total-blocking-time": [
+              "error",
+              {
+                "maxNumericValue": 600,
+                "aggregationMethod": "optimistic"
+              }
+            ],
             "resource-summary:script:size": [
-              "warn",
+              "error",
               {
                 "maxNumericValue": 300000,
                 "aggregationMethod": "median"
