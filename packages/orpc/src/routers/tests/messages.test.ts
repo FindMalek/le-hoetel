@@ -206,3 +206,35 @@ test("kapso status events move a whatsapp message and a failure keeps the numeri
   expect(rows.find((row) => row.providerId === "wamid.ok")).toMatchObject({ status: "delivered" })
   expect(rows.find((row) => row.providerId === "wamid.bad")).toMatchObject({ status: "failed", errorCode: "131026" })
 })
+
+test("the log filters by channel, template and period, pages with a total, and stays in its hotel", async () => {
+  const { hotelId, guestId, client } = await hotelWithGuest("msg-filters", { email: true, whatsapp: true })
+  const other = await hotelWithGuest("msg-filters-other", { email: true, whatsapp: true })
+  const now = Date.now()
+  const row = (channel: "email" | "whatsapp", templateKey: string, daysAgo: number) => ({
+    hotelId,
+    guestId,
+    channel,
+    templateKey,
+    language: "fr" as const,
+    status: "sent" as const,
+    createdAt: new Date(now - daysAgo * 86_400_000),
+  })
+  await app.services.db
+    .insert(messages)
+    .values([
+      row("email", "welcome", 1),
+      row("whatsapp", "welcome", 2),
+      row("whatsapp", "birthday", 3),
+      row("whatsapp", "welcome", 40),
+      { ...row("whatsapp", "welcome", 1), hotelId: other.hotelId, guestId: other.guestId },
+    ])
+
+  const recent = await client.messages.list({ channel: "whatsapp", template: "welcome", days: 30 })
+  expect(recent.total).toBe(1)
+  expect(recent.items).toMatchObject([{ channel: "whatsapp", templateKey: "welcome" }])
+
+  const second = await client.messages.list({ limit: 3, offset: 3 })
+  expect(second.total).toBe(4)
+  expect(second.items).toHaveLength(1)
+})

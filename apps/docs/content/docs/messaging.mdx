@@ -51,7 +51,7 @@ The same webhook gets `whatsapp.message.received` (single or batched). `handleIn
 
 ## Dashboard
 
-`/messages` in the dashboard lists the hotel's latest messages in en, fr and ar. Owners, managers and staff can read it.
+`/messages` in the dashboard lists the hotel's messages in en, fr and ar, 25 a page, newest first. Owners, managers and staff can read it. Filters live in the url: channel, status, template and the last 7, 30 or 90 days (`messages.list` takes `channel`, `status`, `template`, `days`, `limit` and `offset` and returns a `total`). Each row shows the guest, the channel, the template by its readable name, the language and the status, plus the provider error code on a failure. Never the body or the recipient: the log does not hold them. Dates use the hotel's timezone.
 
 ## Automatic messages
 

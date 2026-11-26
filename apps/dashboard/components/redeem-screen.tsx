@@ -8,14 +8,27 @@ import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
 import { Section } from "@ritorno/ui/components/section"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
+import { formatDate } from "@ritorno/ui/lib/date"
 import { cn } from "@ritorno/ui/lib/utils"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CameraIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { CameraIcon, CheckCircle2Icon, CircleAlertIcon, XCircleIcon } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
 import { type FormEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
-import { LocalDate } from "./local-date"
 import { canScanQr, QrScanner } from "./qr-scanner"
+
+type Tone = "good" | "warn" | "bad"
+
+const TONE = {
+  good: { icon: CheckCircle2Icon, panel: "bg-success text-background", mark: "" },
+  warn: { icon: CircleAlertIcon, panel: "bg-warning-soft text-foreground", mark: "text-warning" },
+  bad: { icon: XCircleIcon, panel: "bg-destructive-soft text-foreground", mark: "text-destructive" },
+} as const
+
+function toneOf(result: OfferLookup): Tone {
+  if (result.status === "ready" || (result.status === "redeemed" && result.justNow)) return "good"
+  return result.status === "wrongHotel" || result.status === "unknown" ? "bad" : "warn"
+}
 
 function Stat({ label, value }: { label: string; value: number | undefined }) {
   return (
@@ -30,8 +43,20 @@ function buzz(good: boolean) {
   navigator.vibrate?.(good ? 60 : [80, 60, 80])
 }
 
-export function RedeemScreen() {
+/** `timeZone` is the hotel's, so a validity date never shifts by a day near midnight. */
+export function RedeemScreen({ timeZone }: { timeZone?: string }) {
   const t = useTranslations("redeem")
+  const locale = useLocale()
+  const day = (value: Date) => formatDate(value, locale, timeZone)
+  const clock = (value: Date) =>
+    new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", numberingSystem: "latn", timeZone }).format(
+      value,
+    )
+  const moment = (value: Date) => (
+    <time dateTime={value.toISOString()} suppressHydrationWarning>
+      {day(value)} · <bdi dir="ltr">{clock(value)}</bdi>
+    </time>
+  )
   const queryClient = useQueryClient()
   const stats = useQuery(orpc.offers.redemptionStats.queryOptions())
   const [scanning, setScanning] = useState(false)
@@ -77,43 +102,54 @@ export function RedeemScreen() {
 
   if (result) {
     const done = result.status === "redeemed" && result.justNow
-    const good = result.status === "ready" || done
-    const Icon = good ? CheckCircle2Icon : XCircleIcon
+    const tone = toneOf(result)
+    const { icon: Icon, panel, mark } = TONE[tone]
     return (
       <div className="flex flex-col gap-6">
         <div
-          role={good ? "status" : "alert"}
+          role={tone === "good" ? "status" : "alert"}
           className={cn(
-            "flex min-h-[45dvh] flex-col items-center justify-center gap-5 rounded-3xl p-8 text-center md:min-h-80",
-            good ? "bg-primary text-primary-foreground" : "bg-destructive text-background",
+            "flex min-h-[40dvh] flex-col items-center justify-center gap-4 rounded-3xl p-6 text-center md:min-h-80",
+            panel,
           )}
         >
-          <Icon className="size-28 md:size-24" strokeWidth={1.5} aria-hidden />
+          <Icon className={cn("size-20 md:size-24", mark)} strokeWidth={1.5} aria-hidden />
           <p className="text-balance font-heading font-semibold text-3xl leading-tight tracking-tight md:text-4xl">
             {done ? t("justNow") : t(`status.${result.status}`)}
           </p>
-          {result.offer ? <p className="text-balance text-xl opacity-90">{result.offer.title}</p> : null}
+          {result.guestFirstName ? (
+            <p className="font-semibold text-2xl">
+              <span className="sr-only">{t("guest")}: </span>
+              {result.guestFirstName}
+            </p>
+          ) : null}
+          {result.offer ? (
+            <p dir="auto" className="text-balance text-lg opacity-90">
+              {result.offer.title}
+            </p>
+          ) : null}
+          {tone !== "good" ? (
+            <p className="max-w-sm text-pretty text-muted-foreground">{t(`hints.${result.status as "expired"}`)}</p>
+          ) : null}
         </div>
 
         <dl className="grid gap-4 text-base">
-          {result.offer?.text ? <p className="text-muted-foreground">{result.offer.text}</p> : null}
-          {result.guestFirstName ? (
-            <div className="flex items-baseline justify-between gap-4 border-b pb-3">
-              <dt className="text-muted-foreground">{t("guest")}</dt>
-              <dd className="font-semibold text-xl">{result.guestFirstName}</dd>
-            </div>
+          {result.offer?.text ? (
+            <p dir="auto" className="text-start text-muted-foreground">
+              {result.offer.text}
+            </p>
           ) : null}
           {result.offer ? (
             <div className="flex items-baseline justify-between gap-4 border-b pb-3">
               <dt className="text-muted-foreground">{t("validUntil")}</dt>
-              <dd>{result.offer.validUntil ? <LocalDate value={result.offer.validUntil} /> : t("noEnd")}</dd>
+              <dd>{result.offer.validUntil ? day(result.offer.validUntil) : t("noEnd")}</dd>
             </div>
           ) : null}
           {result.redeemed ? (
             <div className="flex items-baseline justify-between gap-4 border-b pb-3">
               <dt className="text-muted-foreground">{t("redeemedAt")}</dt>
               <dd className="text-end">
-                <LocalDate value={result.redeemed.at} time />
+                {moment(result.redeemed.at)}
                 {result.redeemed.by ? (
                   <span className="block text-muted-foreground text-sm">
                     {t("redeemedBy")} {result.redeemed.by}
@@ -151,7 +187,7 @@ export function RedeemScreen() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        <div className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-3xl bg-muted md:aspect-video">
+        <div className="relative isolate aspect-square w-full overflow-hidden rounded-3xl bg-muted md:aspect-video">
           {scanning ? (
             <>
               <QrScanner
@@ -236,14 +272,23 @@ export function RedeemScreen() {
             {stats.data.recent.map((row) => (
               <li key={row.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                 <span className="flex min-w-0 flex-col">
-                  <span className="truncate font-medium">{row.offerTitle}</span>
+                  <span dir="auto" className="truncate text-start font-medium">
+                    {row.offerTitle}
+                  </span>
                   {row.guestFirstName ? (
                     <span className="truncate text-muted-foreground">{row.guestFirstName}</span>
                   ) : null}
                 </span>
-                <span className="shrink-0 text-muted-foreground">
-                  <LocalDate value={row.redeemedAt} time />
-                </span>
+                <time
+                  dateTime={row.redeemedAt.toISOString()}
+                  className="flex shrink-0 flex-col items-end text-muted-foreground tabular-nums"
+                  suppressHydrationWarning
+                >
+                  <span>{day(row.redeemedAt)}</span>
+                  <bdi dir="ltr" className="text-xs">
+                    {clock(row.redeemedAt)}
+                  </bdi>
+                </time>
               </li>
             ))}
           </ul>

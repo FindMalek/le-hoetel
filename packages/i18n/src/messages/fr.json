@@ -785,7 +785,6 @@
   "messages": {
     "title": "Messages",
     "description": "Chaque message envoyé à vos clients et son issue. Jamais le texte ni le contact.",
-    "empty": "Aucun message pour le moment.",
     "guest": "Client",
     "channel": "Canal",
     "template": "Message",
@@ -806,7 +805,35 @@
     },
     "lowBalance": "Le solde WhatsApp est bas",
     "lowBalanceHint": "Il reste {balance}. À zéro, les messages WhatsApp sont mis en attente (l'e-mail continue). Demandez-nous une recharge.",
-    "seeUsage": "Voir la consommation"
+    "seeUsage": "Voir la consommation",
+    "templates": {
+      "welcome": "Bienvenue",
+      "birthday": "Offre d’anniversaire",
+      "survey": "Questionnaire de séjour",
+      "reminder": "Rappel d’offre",
+      "message": "Campagne"
+    },
+    "filters": {
+      "channel": "Canal",
+      "status": "Statut",
+      "template": "Message",
+      "period": "Période",
+      "all": "Tous",
+      "anyStatus": "Tous les statuts",
+      "anyTemplate": "Tous les messages",
+      "days": "{count} jours",
+      "reset": "Effacer les filtres"
+    },
+    "range": "<from></from>–<to></to> sur <total></total>",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "emptyTitle": "Aucun message envoyé pour l’instant",
+    "emptyBody": "Les messages partent tout seuls : une bienvenue quand un client dit oui sur votre formulaire QR, une offre d’anniversaire, un questionnaire après le séjour, et les campagnes que vous envoyez. Chacun apparaît ici avec son issue.",
+    "noMatchTitle": "Aucun message ne correspond",
+    "noMatchBody": "Essayez une autre période ou effacez les filtres.",
+    "forbiddenTitle": "Messages indisponibles",
+    "forbiddenBody": "Choisissez un hôtel dont vous êtes membre, ou demandez l’accès à son propriétaire.",
+    "caption": "Messages envoyés aux clients"
   },
   "emails": {
     "title": "E-mails",
@@ -984,7 +1011,16 @@
       "unknown": "Code introuvable"
     },
     "scanning": "Recherche d'un QR code...",
-    "scanHint": "Touchez pour lancer la caméra."
+    "scanHint": "Touchez pour lancer la caméra.",
+    "hints": {
+      "redeemed": "Elle a déjà servi. Voyez quand et par qui ci-dessous.",
+      "expired": "Cette offre est terminée. Elle ne peut plus servir.",
+      "notStarted": "Cette offre commence plus tard. Le client peut revenir à ce moment-là.",
+      "inactive": "L’offre est en pause dans Offres. Rien à valider pour l’instant.",
+      "exhausted": "Toutes les utilisations de ce code sont épuisées.",
+      "wrongHotel": "Demandez au client le code envoyé par cet hôtel.",
+      "unknown": "Vérifiez le code avec le client et réessayez."
+    }
   },
   "notFound": {
     "title": "Page introuvable",
@@ -1851,5 +1887,18 @@
       "surveyHint": "{count, plural, one {# réponse} other {# réponses}}, {unhappy} mécontents",
       "surveyEmpty": "Aucune réponse au sondage pour l'instant."
     }
+  },
+  "inbox": {
+    "title": "Boîte de réception",
+    "unread": "{count, plural, one {# non lu} other {# non lus}}",
+    "caughtUp": "Tout est lu.",
+    "markAll": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu",
+    "open": "Ouvrir",
+    "new": "Nouveau",
+    "emptyTitle": "Rien pour l’instant",
+    "emptyBody": "Les messages de l’équipe Ritorno et les alertes sur votre hôtel arrivent ici.",
+    "today": "Aujourd’hui",
+    "yesterday": "Hier"
   }
 }
