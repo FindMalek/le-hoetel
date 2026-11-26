@@ -49,7 +49,13 @@ async function NoHotelHome({ name }: { name: string }) {
 }
 
 // i18n-used: home.languages
-async function HotelHome({ name, hotel }: { name: string; hotel: { displayName: string; slug: string; timezone: string } }) {
+async function HotelHome({
+  name,
+  hotel,
+}: {
+  name: string
+  hotel: { displayName: string; slug: string; timezone: string }
+}) {
   const t = await getTranslations("home")
   const tLang = await getTranslations("home.languages")
   const locale = await getLocale()
