@@ -11,6 +11,7 @@
     "./hotel": "./src/hotel.ts",
     "./color": "./src/color.ts",
     "./consent": "./src/consent.ts",
+    "./feedback-case": "./src/feedback-case.ts",
     "./phone": "./src/phone.ts",
     "./guest-export": "./src/guest-export.ts",
     "./message": "./src/message.ts",

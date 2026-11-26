@@ -57,7 +57,7 @@ export async function HomeAttention({ alerts, unread, timeZone }: HomeAttentionP
             </StatusBadge>
             <div className="flex min-w-0 flex-col gap-0.5">
               <Link
-                href={`/guests/${alert.guestId}`}
+                href={`/feedback/${alert.id}`}
                 className="w-fit font-medium text-small underline-offset-4 hover:underline"
               >
                 {alert.name}

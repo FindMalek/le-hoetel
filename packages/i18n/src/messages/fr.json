@@ -236,7 +236,8 @@
     "groupGuests": "Clients",
     "groupGrow": "Croissance",
     "groupInsights": "Analyses",
-    "groupSettings": "Réglages"
+    "groupSettings": "Réglages",
+    "unhappyGuests": "Clients mécontents"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -2104,6 +2105,46 @@
     "emptyTitle": "Rien pour l’instant",
     "emptyBody": "Les messages de l’équipe Ritorno et les alertes sur votre hôtel arrivent ici.",
     "today": "Aujourd’hui",
-    "yesterday": "Hier"
+    "yesterday": "Hier",
+    "notifications": "Notifications"
+  },
+  "feedbackCases": {
+    "status": {
+      "new": "Nouveau",
+      "contacted": "Contacté",
+      "resolved": "Résolu"
+    },
+    "all": "Tous",
+    "waiting": "{count, plural, =0 {Personne n'attend un premier contact.} one {# client attend un premier contact.} other {# clients attendent un premier contact.}}",
+    "columns": {
+      "guest": "Client",
+      "score": "Note",
+      "comment": "Commentaire",
+      "status": "Statut",
+      "date": "Répondu"
+    },
+    "caption": "Clients mécontents",
+    "noComment": "Aucun commentaire",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "loading": "Chargement des clients mécontents",
+    "emptyTitle": "Aucun client mécontent",
+    "emptyBody": "Un client qui laisse une note basse à l'enquête de séjour apparaît ici, pour que vous puissiez le recontacter.",
+    "noMatchTitle": "Rien avec ce statut",
+    "noMatchBody": "Choisissez un autre statut pour voir les autres clients.",
+    "noHotelTitle": "Pas encore d'hôtel",
+    "noHotelBody": "Choisissez ou créez un hôtel pour voir ses clients mécontents.",
+    "call": "Appeler",
+    "callGuest": "Appeler {name}",
+    "email": "E-mail",
+    "profile": "Fiche client",
+    "answer": "Réponse à l'enquête",
+    "followUp": "Suivi",
+    "handledBy": "Dernier enregistrement par {name}, {date}",
+    "notes": "Notes de l'équipe",
+    "notesHint": "Visibles par votre équipe uniquement. Supprimées avec le client.",
+    "notesPlaceholder": "Qu'avez-vous convenu avec le client ?",
+    "save": "Enregistrer",
+    "saved": "Enregistré"
   }
 }

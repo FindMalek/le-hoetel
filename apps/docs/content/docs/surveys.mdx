@@ -36,10 +36,20 @@ Seed data: about one guest in five of the four demo hotels has an invite, 70% of
 
 A response with `nps` at or below the hotel's `hotel_settings.low_score_threshold` (default 6, `hotel.update` takes `lowScoreThreshold` 0 to 10) does two things:
 
-- opens a `feedback_cases` row for the response with status `new` (then `contacted`, `resolved`), `notes` and `handled_by`, so it shows in the feedback inbox
+- opens a `feedback_cases` row for the response with status `new` (then `contacted`, `resolved`), `notes` and `handled_by`, so it shows in the [feedback inbox](#feedback-inbox)
 - calls `notifyManager(hotelId, text)`, which emails the manager. The text has the guest's first name, the score, a comment excerpt (140 characters) and a link to `/feedback/<case id>` in the dashboard. Never a phone number or email.
 
 A failed alert never fails the guest's answer. One case per response.
+
+## Feedback inbox
+
+Unhappy guests are the second half of the dashboard Inbox: `/feedback`, also in the sidebar as "Unhappy guests". The alert email and the home page link straight to `/feedback/<case id>`.
+
+- The list shows the guest, score, comment, status and date, newest first, filtered by status (`new`, `contacted`, `resolved`) with a count on each.
+- A case shows the survey answer, call, email and guest profile buttons, the status and one shared staff note (2000 characters), with who saved it last.
+- Every hotel role (owner, manager, staff) can read and update cases: it needs `guest: read` and `guest: update`.
+- API: `feedbackCases.list`, `feedbackCases.get`, `feedbackCases.update`, all scoped by the active hotel. Each update writes a `feedback-case.update` audit entry with the status, never the note text.
+- A deleted guest's case leaves the inbox and its note is erased. The survey answer stays, anonymous.
 
 ## Share on Google
 

@@ -236,7 +236,8 @@
     "groupGuests": "Guests",
     "groupGrow": "Grow",
     "groupInsights": "Insights",
-    "groupSettings": "Settings"
+    "groupSettings": "Settings",
+    "unhappyGuests": "Unhappy guests"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -2104,6 +2105,46 @@
     "emptyTitle": "Nothing here yet",
     "emptyBody": "Notes from the Ritorno team and alerts about your hotel land here.",
     "today": "Today",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "notifications": "Notifications"
+  },
+  "feedbackCases": {
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "resolved": "Resolved"
+    },
+    "all": "All",
+    "waiting": "{count, plural, =0 {Nobody is waiting for a first contact.} one {# guest is waiting for a first contact.} other {# guests are waiting for a first contact.}}",
+    "columns": {
+      "guest": "Guest",
+      "score": "Score",
+      "comment": "Comment",
+      "status": "Status",
+      "date": "Answered"
+    },
+    "caption": "Unhappy guests",
+    "noComment": "No comment",
+    "previous": "Previous",
+    "next": "Next",
+    "loading": "Loading unhappy guests",
+    "emptyTitle": "No unhappy guests",
+    "emptyBody": "A guest who leaves a low score on the stay survey shows up here, so you can follow up.",
+    "noMatchTitle": "Nothing with this status",
+    "noMatchBody": "Pick another status to see the other guests.",
+    "noHotelTitle": "No hotel yet",
+    "noHotelBody": "Pick or create a hotel to see its unhappy guests.",
+    "call": "Call",
+    "callGuest": "Call {name}",
+    "email": "Email",
+    "profile": "Guest profile",
+    "answer": "Survey answer",
+    "followUp": "Follow-up",
+    "handledBy": "Last saved by {name}, {date}",
+    "notes": "Staff notes",
+    "notesHint": "Only your team sees these. Deleted with the guest.",
+    "notesPlaceholder": "What did you agree with the guest?",
+    "save": "Save",
+    "saved": "Saved"
   }
 }
