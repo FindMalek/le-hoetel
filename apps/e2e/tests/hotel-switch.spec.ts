@@ -5,8 +5,8 @@ import { e2eDatabaseUrl, URLS } from "../env"
 
 /** The demo seeds nobody with two hotels, so these memberships are added here and taken back after. */
 const MEMBERS = [
-  { id: "e2e-switch-owner", hotel: "demo-hotel-sunset-bay", email: demoOwnerEmail("dar-zitouna") },
-  // Its own user: the api caps calls per user and minute, and the sweeps use up the first one's.
+  { id: "e2e-switch-owner", hotel: "demo-hotel-sunset-bay", email: demoOwnerEmail("riad-dattier") },
+  // Users no other spec leans on: the api caps calls per user and minute, and the sweeps spend them.
   { id: "e2e-switch-tabs", hotel: "demo-hotel-sunset-bay", email: demoOwnerEmail("villa-mimosa") },
   { id: "e2e-switch-admin", hotel: "demo-hotel-dar-zitouna", email: DEMO_SUPER_ADMIN_EMAIL },
 ]
@@ -82,15 +82,15 @@ async function sweep(page: Page, hotel: string, other: string): Promise<Record<s
 
 test("a member of two hotels switches and every page follows", async ({ page }) => {
   test.slow()
-  await signIn(page, demoOwnerEmail("dar-zitouna"))
-  await onScreen(page, "Dar Zitouna")
-  const before = await sweep(page, "Dar Zitouna", "Sunset Bay")
-  await expect(page.locator("#main")).toContainText("manager.dar-zitouna@")
+  await signIn(page, demoOwnerEmail("riad-dattier"))
+  await onScreen(page, "Riad Dattier")
+  const before = await sweep(page, "Riad Dattier", "Sunset Bay")
+  await expect(page.locator("#main")).toContainText("manager.riad-dattier@")
 
   await open(page, "/")
   await pick(page, "Sunset Bay Resort")
   await onScreen(page, "Sunset Bay Resort")
-  const after = await sweep(page, "Sunset Bay Resort", "Zitouna")
+  const after = await sweep(page, "Sunset Bay Resort", "Dattier")
   await expect(page.locator("#main")).toContainText("manager.sunset-bay@")
   for (const path of PAGES) expect(after[path], path).not.toBe(before[path])
 
@@ -98,9 +98,9 @@ test("a member of two hotels switches and every page follows", async ({ page }) 
   await page.setViewportSize({ width: 390, height: 844 })
   await open(page, "/")
   await page.getByRole("button", { name: "More" }).click()
-  await pick(page, "Dar Zitouna")
+  await pick(page, "Riad Dattier")
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
-  await expect(page.locator("#main")).toContainText("how Dar Zitouna is doing")
+  await expect(page.locator("#main")).toContainText("how Riad Dattier is doing")
 })
 
 test("the app admin changes hotel from the Hotels page and the switcher", async ({ page }) => {
