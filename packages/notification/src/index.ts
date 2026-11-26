@@ -1,8 +1,7 @@
 import { type Logger, logger } from "@ritorno/logger"
 import { createEmailChannel, type EmailExtras } from "./channels/email"
-import { createTelegramChannel, type TelegramStartHandler } from "./channels/telegram"
 import { createWhatsAppChannel } from "./channels/whatsapp"
-import { type RenderedEmail, renderEmail, summarize, toTelegram, toWhatsApp } from "./render"
+import { type RenderedEmail, renderEmail, summarize, toWhatsApp } from "./render"
 import type { TemplateData, TemplateName } from "./templates"
 
 export { type AuthEmails, authEmails } from "./auth"
@@ -16,7 +15,7 @@ export {
   guestTemplateParams,
 } from "./whatsapp-guest"
 
-export const CHANNELS = ["email", "telegram", "whatsapp"] as const
+export const CHANNELS = ["email", "whatsapp"] as const
 export type Channel = (typeof CHANNELS)[number]
 
 /** The slice of the api env the notifier reads. Every key is optional: a channel is on when its keys are set. */
@@ -26,9 +25,6 @@ export interface NotificationEnv {
   MESSAGING_LIVE?: string
   RESEND_API_KEY?: string
   EMAIL_FROM?: string
-  TELEGRAM_BOT_TOKEN?: string
-  TELEGRAM_CHAT_ID?: string
-  TELEGRAM_WEBHOOK_SECRET?: string
   KAPSO_API_KEY?: string
   WHATSAPP_PHONE_NUMBER_ID?: string
   WHATSAPP_NOTIFY_TO?: string
@@ -45,7 +41,7 @@ export interface NotifierOptions {
 
 export interface SendInput<Name extends TemplateName = TemplateName> {
   channel: Channel
-  /** Email address, Telegram chat id or phone number. Telegram and WhatsApp fall back to the configured one. */
+  /** Email address or phone number. WhatsApp falls back to the configured one. */
   to?: string
   template: Name
   data: TemplateData<Name>
@@ -89,17 +85,13 @@ export interface Notifier {
   sendWhatsApp: (input: SendWhatsAppInput) => Promise<SendResult>
   /** Plain text to every configured channel (or the ones asked for). One channel failing doesn't stop the rest. */
   notify: (text: string, options?: { channels?: Channel[] }) => Promise<SendResult[]>
-  /** Plain text to one Telegram chat. Log-only outside live messaging; a provider failure throws. */
-  sendTelegram: (chatId: string, text: string) => Promise<SendResult>
-  /** The api route for Telegram's webhook; answers 404 when Telegram isn't configured. `onStart` binds `/start <code>`. */
-  handleTelegramWebhook: (request: Request, onStart?: TelegramStartHandler) => Promise<Response>
 }
 
 export const isMessagingLive = (env: NotificationEnv): boolean =>
   env.NODE_ENV === "production" && env.MESSAGING_LIVE === "true"
 
 /**
- * One entry point for email, Telegram and WhatsApp. Channels without keys are simply off.
+ * One entry point for email and WhatsApp. Channels without keys are simply off.
  * Outside live messaging every channel is on but only logs the channel and template, never the recipient or the text.
  */
 export function createNotifier(env: NotificationEnv, options: NotifierOptions = {}): Notifier {
@@ -112,14 +104,6 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
         from: env.EMAIL_FROM ?? "onboarding@resend.dev",
         fetch: options.fetch,
       })
-  const telegram = !live
-    ? null
-    : createTelegramChannel({
-        token: env.TELEGRAM_BOT_TOKEN,
-        chatId: env.TELEGRAM_CHAT_ID,
-        webhookSecret: env.TELEGRAM_WEBHOOK_SECRET,
-        fetch: options.fetch,
-      })
   const whatsapp = !live
     ? null
     : createWhatsAppChannel({
@@ -130,17 +114,9 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
         templateLanguage: env.WHATSAPP_TEMPLATE_LANGUAGE ?? "en_US",
         fetch: options.fetch,
       })
-  const channels = live ? CHANNELS.filter((channel) => ({ email, telegram, whatsapp })[channel]) : [...CHANNELS]
+  const channels = live ? CHANNELS.filter((channel) => ({ email, whatsapp })[channel]) : [...CHANNELS]
 
   const on = (channel: Channel) => channels.includes(channel)
-
-  async function sendChat(channel: "telegram" | "whatsapp", to: string | undefined, text: string, markdown = false) {
-    if (channel === "telegram") {
-      await telegram?.send(text, { to, markdown })
-      return {}
-    }
-    return (await whatsapp?.send(text, { to })) ?? {}
-  }
 
   return {
     live,
@@ -156,9 +132,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
         const result = await email?.send(to, await renderEmail(template, data, options.appUrl, footer))
         return { channel, sent: true, id: result?.id }
       }
-      const summary = summarize(template, data)
-      const text = channel === "telegram" ? toTelegram(summary) : toWhatsApp(summary, footer)
-      const result = await sendChat(channel, to, text, channel === "telegram")
+      const result = (await whatsapp?.send(toWhatsApp(summarize(template, data), footer), { to })) ?? {}
       return { channel, sent: true, id: result.id }
     },
     async sendEmail({ to, email: rendered, ...extras }) {
@@ -200,7 +174,7 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
         targets.map(async (channel): Promise<SendResult> => {
           if (channel === "email" || !on(channel)) return { channel, sent: false }
           try {
-            const result = await sendChat(channel, undefined, text)
+            const result = (await whatsapp?.send(text)) ?? {}
             return { channel, sent: true, id: result.id }
           } catch (error) {
             return { channel, sent: false, error: error instanceof Error ? error.message : "Send failed." }
@@ -208,17 +182,5 @@ export function createNotifier(env: NotificationEnv, options: NotifierOptions = 
         }),
       )
     },
-    async sendTelegram(chatId, text) {
-      if (!live) {
-        log.info("message not sent, log-only provider", { channel: "telegram", template: "manager_alert" })
-        return { channel: "telegram", sent: false }
-      }
-      if (!telegram) return { channel: "telegram", sent: false }
-      await telegram.send(text, { to: chatId })
-      return { channel: "telegram", sent: true }
-    },
-    handleTelegramWebhook: (request, onStart) =>
-      telegram?.handleWebhook(request, onStart) ??
-      Promise.resolve(Response.json({ message: "Telegram is not configured." }, { status: 404 })),
   }
 }
