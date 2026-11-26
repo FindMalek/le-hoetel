@@ -8,6 +8,8 @@ const schema = z.object({
   PORT: z.coerce.number().default(3001),
   /** "production", "pr-<n>" for previews, or "local". */
   DEPLOY_ENV: z.string().default("local"),
+  /** Commit the image was built from (Docker build arg), reported by /health so a deploy can wait for it. */
+  GIT_SHA: optional,
   DATABASE_URL: z.string().min(1),
   SEED: z.enum(["none", "demo"]).default("demo"),
   /** Password of every seeded demo account (fake, on @demo.ritorno.test). Defaults to the one in the docs. */
