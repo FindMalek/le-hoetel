@@ -276,14 +276,14 @@ export function AdminHotelWizard() {
                 label={t("language")}
                 hint={t("languageHint")}
                 value={values.language}
-                onChange={(event) => set("language", event.target.value as HotelLanguage)}
+                onValueChange={(value) => set("language", value)}
                 options={HOTEL_LANGUAGES.map((value) => ({ value, label: tHotel(`languages.${value}`) }))}
               />
               <AdminSelect
                 label={t("timezone")}
                 hint={t("timezoneHint")}
                 value={values.timezone}
-                onChange={(event) => set("timezone", event.target.value)}
+                onValueChange={(value) => set("timezone", value)}
                 options={TIMEZONES.map((value) => ({ value, label: value.replace("_", " ") }))}
               />
             </>

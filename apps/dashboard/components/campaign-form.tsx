@@ -22,6 +22,7 @@ import { Field, FieldDescription, FieldLabel } from "@ritorno/ui/components/fiel
 import { FormSection } from "@ritorno/ui/components/form-section"
 import { Input } from "@ritorno/ui/components/input"
 import { Label } from "@ritorno/ui/components/label"
+import { Select } from "@ritorno/ui/components/select"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { Textarea } from "@ritorno/ui/components/textarea"
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query"
@@ -30,9 +31,6 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { type FormEvent, useState } from "react"
 import { toast } from "sonner"
-
-const SELECT_CLASS =
-  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface md:text-sm"
 
 const WINDOWS = [30, 90, 180, 365] as const
 
@@ -113,18 +111,12 @@ export function CampaignForm({ defaultLanguage, campaign }: { defaultLanguage: H
         </Field>
         <Field>
           <FieldLabel htmlFor="campaign-channel">{t("form.channel")}</FieldLabel>
-          <select
+          <Select
             id="campaign-channel"
-            className={SELECT_CLASS}
             value={channel}
-            onChange={(event) => setChannel(event.target.value as CampaignChannel)}
-          >
-            {CAMPAIGN_CHANNELS.map((value) => (
-              <option key={value} value={value}>
-                {t(`channel.${value}`)}
-              </option>
-            ))}
-          </select>
+            onValueChange={setChannel}
+            options={CAMPAIGN_CHANNELS.map((value) => ({ value, label: t(`channel.${value}`) }))}
+          />
         </Field>
       </FormSection>
 
@@ -170,21 +162,15 @@ export function CampaignForm({ defaultLanguage, campaign }: { defaultLanguage: H
         </Field>
         <Field>
           <FieldLabel htmlFor="campaign-offer">{t("form.offer")}</FieldLabel>
-          <select
+          <Select
             id="campaign-offer"
-            className={SELECT_CLASS}
             value={offerId}
-            onChange={(event) => setOfferId(event.target.value)}
-          >
-            <option value="">{t("form.noOffer")}</option>
-            {offers
-              .filter((offer) => offer.active)
-              .map((offer) => (
-                <option key={offer.id} value={offer.id}>
-                  {offer.title}
-                </option>
-              ))}
-          </select>
+            onValueChange={setOfferId}
+            options={[
+              { value: "", label: t("form.noOffer") },
+              ...offers.filter((offer) => offer.active).map((offer) => ({ value: offer.id, label: offer.title })),
+            ]}
+          />
           <FieldDescription>{t("form.offerHint")}</FieldDescription>
         </Field>
       </FormSection>
@@ -232,21 +218,15 @@ export function CampaignForm({ defaultLanguage, campaign }: { defaultLanguage: H
         </Field>
         <Field>
           <FieldLabel htmlFor="seg-window">{t("form.lastVisit")}</FieldLabel>
-          <select
+          <Select
             id="seg-window"
-            className={SELECT_CLASS}
-            value={segment.lastVisitDays ?? ""}
-            onChange={(event) =>
-              setSegment({ ...segment, lastVisitDays: event.target.value ? Number(event.target.value) : null })
-            }
-          >
-            <option value="">{t("form.anyTime")}</option>
-            {WINDOWS.map((days) => (
-              <option key={days} value={days}>
-                {t("form.lastDays", { days })}
-              </option>
-            ))}
-          </select>
+            value={String(segment.lastVisitDays ?? "")}
+            onValueChange={(value) => setSegment({ ...segment, lastVisitDays: value ? Number(value) : null })}
+            options={[
+              { value: "", label: t("form.anyTime") },
+              ...WINDOWS.map((days) => ({ value: String(days), label: t("form.lastDays", { days }) })),
+            ]}
+          />
         </Field>
         <p className="rounded-lg border bg-muted/40 p-4 text-sm" aria-live="polite">
           {reach.data

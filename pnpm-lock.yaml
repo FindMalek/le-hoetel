@@ -917,6 +917,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.3.3
+      '@types/bun':
+        specifier: 'catalog:'
+        version: 1.4.3
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2

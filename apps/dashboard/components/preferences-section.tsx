@@ -1,39 +1,26 @@
 "use client"
 
 import { LOCALE_NAMES, LOCALES, type Locale } from "@ritorno/i18n"
-import { Button } from "@ritorno/ui/components/button"
+import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { useLocale, useTranslations } from "next-intl"
 import { setLocale } from "@/components/preferences-menu"
 
-function Choice({ legend, hint, children }: { legend: string; hint?: string; children: React.ReactNode }) {
-  return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 font-medium text-sm">{legend}</legend>
-      <div className="grid grid-cols-3 gap-2">{children}</div>
-      {hint ? <p className="text-muted-foreground text-sm">{hint}</p> : null}
-    </fieldset>
-  )
-}
-
-/** Language as a row of buttons: one tap, no menu to open. */
+/** Language as a row of segments: one tap, no menu to open. */
 export function PreferencesSection() {
   const t = useTranslations("shell")
   const tLanguage = useTranslations("language")
   const locale = useLocale() as Locale
   return (
-    <div className="flex flex-col gap-6">
-      <Choice legend={t("language")} hint={tLanguage("description")}>
-        {LOCALES.map((value) => (
-          <Button
-            key={value}
-            variant={locale === value ? "default" : "outline"}
-            aria-pressed={locale === value}
-            onClick={() => value !== locale && setLocale(value)}
-          >
-            {LOCALE_NAMES[value]}
-          </Button>
-        ))}
-      </Choice>
+    <div className="flex flex-col gap-2">
+      <span className="font-medium text-sm">{t("language")}</span>
+      <SegmentedControl
+        label={t("language")}
+        block
+        value={locale}
+        onValueChange={(value) => value !== locale && setLocale(value)}
+        options={LOCALES.map((value) => ({ value, label: LOCALE_NAMES[value] }))}
+      />
+      <p className="text-muted-foreground text-sm">{tLanguage("description")}</p>
     </div>
   )
 }

@@ -64,23 +64,23 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
       <PageHeader
         title={hotel.displayName}
         description={`${hotel.slug} · ${t(`statuses.${hotel.status}`)}`}
-        actions={
-          <>
-            <Button
-              variant="outline"
-              render={<a href={publicUrl} target="_blank" rel="noreferrer" />}
-              nativeButton={false}
-            >
-              <ExternalLinkIcon data-icon="inline-start" />
-              {t("capturePage")}
+        secondaryActions={
+          <Button
+            variant="outline"
+            render={<a href={publicUrl} target="_blank" rel="noreferrer" />}
+            nativeButton={false}
+          >
+            <ExternalLinkIcon data-icon="inline-start" />
+            {t("capturePage")}
+          </Button>
+        }
+        action={
+          <form action={openAsHotel.bind(null, hotel.id, "/")}>
+            <Button type="submit" className="w-full">
+              <EyeIcon data-icon="inline-start" />
+              {t("openAs")}
             </Button>
-            <form action={openAsHotel.bind(null, hotel.id, "/")}>
-              <Button type="submit" className="w-full">
-                <EyeIcon data-icon="inline-start" />
-                {t("openAs")}
-              </Button>
-            </form>
-          </>
+          </form>
         }
       />
       <div className="flex flex-col gap-10 p-4 md:p-6">

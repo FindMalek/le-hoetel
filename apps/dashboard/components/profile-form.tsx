@@ -5,6 +5,7 @@ import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@ritorno/ui/components/avatar"
 import { Button } from "@ritorno/ui/components/button"
+import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
@@ -12,7 +13,6 @@ import { useTranslations } from "next-intl"
 import { useRef } from "react"
 import { toast } from "sonner"
 import { useForm } from "@/lib/use-form"
-import { FormField } from "./form-field"
 
 export function ProfileForm({ me }: { me: { name: string; email: string; image: string | null } }) {
   const t = useTranslations("settings")

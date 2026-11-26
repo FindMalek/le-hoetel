@@ -5,7 +5,7 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
-const Select = SelectPrimitive.Root
+const SelectRoot = SelectPrimitive.Root
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
@@ -186,8 +186,76 @@ function SelectScrollDownButton({
   )
 }
 
+type SelectOption<V extends string = string> = {
+  value: V
+  label: React.ReactNode
+  disabled?: boolean
+}
+
+type SelectProps<V extends string> = Pick<
+  SelectPrimitive.Root.Props<V>,
+  "id" | "name" | "disabled" | "required"
+> & {
+  options: readonly SelectOption<V>[]
+  value?: V
+  defaultValue?: V
+  onValueChange?: (value: V) => void
+  placeholder?: React.ReactNode
+  size?: "sm" | "default"
+  className?: string
+  onBlur?: () => void
+  "aria-label"?: string
+  "aria-invalid"?: boolean
+  "aria-describedby"?: string
+}
+
+/** The one select of the app: a list of options, controlled or not, and `name` posts it with a plain form. */
+function Select<V extends string>({
+  options,
+  value,
+  defaultValue,
+  onValueChange,
+  placeholder,
+  size,
+  className,
+  onBlur,
+  id,
+  name,
+  disabled,
+  required,
+  ...aria
+}: SelectProps<V>) {
+  return (
+    <SelectRoot<V>
+      items={options}
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={(next) => {
+        if (next !== null) onValueChange?.(next)
+      }}
+      id={id}
+      name={name}
+      disabled={disabled}
+      required={required}
+    >
+      <SelectTrigger size={size} className={cn("w-full", className)} onBlur={onBlur} {...aria}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </SelectRoot>
+  )
+}
+
 export {
   Select,
+  type SelectOption,
+  SelectRoot,
   SelectContent,
   SelectGroup,
   SelectItem,
