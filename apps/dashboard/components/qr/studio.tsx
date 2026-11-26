@@ -330,6 +330,19 @@ function TestPage({ target, language }: { target: Target; language: HotelLanguag
   const url = link.data?.url
   return (
     <>
+      {link.isError ? (
+        <InlineAlert
+          tone="error"
+          title={t("testFailed")}
+          className="col-span-full"
+          action={
+            <Button size="sm" variant="outline" loading={link.isFetching} onClick={() => link.refetch()}>
+              <RotateCwIcon data-icon="inline-start" />
+              {t("retry")}
+            </Button>
+          }
+        />
+      ) : null}
       <a
         href={url}
         target="_blank"
@@ -395,7 +408,14 @@ function Stats() {
   )
 }
 
-export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) {
+export function QrStudio({
+  words,
+  fixable,
+}: {
+  words: Record<HotelLanguage, KitWords>
+  /** The warnings this role can do something about: the others get no link to a page that would refuse. */
+  fixable: readonly PrintWarning[]
+}) {
   const t = useTranslations("qrCodes")
   const locale = useLocale()
   const { data: hotel } = useSuspenseQuery(orpc.hotel.get.queryOptions())
@@ -489,12 +509,14 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
                 {warnings.map((warning) => (
                   <li key={warning}>
                     {t(`warn_${warning}`, { date: expires })}{" "}
-                    <Link
-                      href={WARNING_LINKS[warning]}
-                      className="font-medium text-foreground underline coarse:inline-flex coarse:min-h-touch coarse:items-center"
-                    >
-                      {warning === "noLogo" ? t("fixLogo") : t("fixOffer")}
-                    </Link>
+                    {fixable.includes(warning) ? (
+                      <Link
+                        href={WARNING_LINKS[warning]}
+                        className="font-medium text-foreground underline coarse:inline-flex coarse:min-h-touch coarse:items-center"
+                      >
+                        {warning === "noLogo" ? t("fixLogo") : t("fixOffer")}
+                      </Link>
+                    ) : null}
                   </li>
                 ))}
               </ul>

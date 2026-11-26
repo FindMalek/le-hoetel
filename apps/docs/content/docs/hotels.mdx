@@ -91,7 +91,7 @@ Every printed piece and download opens `<web url>/q/<code>` and shows that addre
 - **My printer (A4)**: several pieces per sheet with crop marks in the margins. Cards come out a little under A6 and A5 (90 mm and 131 mm wide) so the marks and the white edge no office printer can reach fit around them.
 - **Print shop**: one piece per page at its final size, 3 mm of bleed and crop marks outside it. The page is the piece plus 8.5 mm on every side (`125 x 165 mm` for a room card).
 
-The geometry is in `components/qr/layout.ts`. Cards have a band of the hotel's color that runs into the bleed. Words and codes stay inside a safe margin, and sticker edges are white. Every card and sticker shows its spot in a bordered tag or in bold (`383`, `T4`) so staff can sort a stack of them.
+The geometry is in `components/qr/layout.ts`. Cards have a band of the hotel's color that runs into the bleed. Words and codes stay inside a safe margin (at least 3 mm from the cut on stickers), and sticker edges are white. Every card and sticker shows its spot in a bordered tag or in bold (`383`, `T4`) so staff can sort a stack of them.
 
 **The preview is the print.** One component (`components/qr/art.tsx`) draws the thumbnails, the preview pages, the printed pages and the saved images. **Print or save PDF** puts every page of the selection under `body` and opens the browser's print dialog: choose **Save as PDF** to download one file with all pages. No PDF library: the browser already shapes Arabic and lays out right to left with the app's fonts, and the QR stays vector. `@page` sets the paper size; print at 100% scale. The preview stays short enough to be seen whole above the analytics consent card.
 
@@ -99,7 +99,7 @@ The geometry is in `components/qr/layout.ts`. Cards have a band of the hotel's c
 
 Cards carry the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
 
-The page warns before printing when there is no welcome offer, when it ends within 30 days (`OFFER_SOON_DAYS`), and when there is no logo.
+The page warns before printing when there is no welcome offer, when it ends within 30 days (`OFFER_SOON_DAYS`), and when there is no logo. The link to fix it shows only to roles that can (staff just read the warning).
 
 **Trying it out.** **Open guest page** and **Test on my phone** (a QR on screen) open `/h/<slug>?src=&loc=&lang=&preview=1` for the first selected spot (`hotel.testLink`). That page says it is a preview, its submit button is off and it has no WhatsApp button, so no guest is created. It makes no short link, logs no scan and guest pages load no analytics.
 

@@ -1,11 +1,13 @@
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import type { PrintWarning } from "@ritorno/common/qr"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { PageHeader } from "@/components/page-header"
 import type { KitWords } from "@/components/qr/art"
 import { QrStudio } from "@/components/qr/studio"
-import { call, getQueryClient, serverOrpc } from "@/lib/api"
+import { call, getQueryClient, hotelRole, serverOrpc } from "@/lib/api"
+import { allows } from "@/lib/viewer"
 
 export const metadata: Metadata = { title: "QR codes" }
 
@@ -37,12 +39,17 @@ export default async function QrCodesPage() {
   const words = Object.fromEntries(
     await Promise.all(HOTEL_LANGUAGES.map(async (item) => [item, await kitWords(item, hotel.displayName)])),
   ) as Record<HotelLanguage, KitWords>
+  const role = await hotelRole()
+  const fixable: PrintWarning[] = [
+    ...(allows(role, { offer: ["update"] }) ? (["noOffer", "offerExpires"] as const) : []),
+    ...(allows(role, { organization: ["update"] }) ? (["noLogo"] as const) : []),
+  ]
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
       <div className="p-4 md:p-6">
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <QrStudio words={words} />
+          <QrStudio words={words} fixable={fixable} />
         </HydrationBoundary>
       </div>
     </>

@@ -912,7 +912,8 @@
     "stickerSmall": "Small, 20 per A4",
     "stickerLarge": "Large, 6 per A4",
     "printHintOffice": "A4 paper, 100% scale, no margins. Cut along the marks. Save as PDF to download.",
-    "printHintShop": "One piece per page at {size}, with 3 mm bleed and crop marks. Save as PDF and send the file."
+    "printHintShop": "One piece per page at {size}, with 3 mm bleed and crop marks. Save as PDF and send the file.",
+    "testFailed": "Could not make the test link"
   },
   "qrKit": {
     "headlineRoom": "Welcome to your room",

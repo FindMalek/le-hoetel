@@ -90,14 +90,14 @@ function Code({ face, className }: { face: Face; className: string }) {
 function StaffLabel({ code, className }: { code: KitCode; className: string }) {
   const spot = staffLabel(code.source, code.location)
   return spot ? (
+    // no `dir` here: the corner follows the card's direction, only the name itself reads left to right
     <p
-      dir="ltr"
       className={cn(
         "absolute max-w-1/2 truncate rounded-[1.2cqw] border-[0.4cqw] border-foreground bg-white px-[2cqw] font-bold tabular-nums leading-snug",
         className,
       )}
     >
-      {spot}
+      <bdi dir="ltr">{spot}</bdi>
     </p>
   ) : null
 }
@@ -229,7 +229,8 @@ export function CardArt({
 }
 
 /** The drawing of one sticker, in its own units: the large one is the same drawing scaled up. */
-const STICKER = { width: TRIM.small.width, height: TRIM.small.height, code: 30 }
+/** `safe` is how far words and shapes stay from the cut, in mm on the small sticker. */
+const STICKER = { width: TRIM.small.width, height: TRIM.small.height, code: 29, safe: 3 }
 
 const RTL_LETTERS = /[\u0590-\u08FF]/
 
@@ -287,12 +288,19 @@ export function StickerArt({
     >
       <title>{words.alt}</title>
       <rect width={STICKER.width} height={STICKER.height} className="fill-white" />
-      <rect x="2.5" y="1.5" width={STICKER.width - 5} height="6" rx="3" className="fill-primary" />
+      <rect
+        x={STICKER.safe}
+        y={STICKER.safe}
+        width={STICKER.width - 2 * STICKER.safe}
+        height="5.2"
+        rx="2.6"
+        className="fill-primary"
+      />
       <Line
         text={hotel.displayName}
-        size={3.1}
-        room={STICKER.width - 9}
-        y="4.6"
+        size={3}
+        room={STICKER.width - 2 * STICKER.safe - 4}
+        y="5.6"
         dominantBaseline="central"
         className={cn("fill-primary-foreground font-semibold", font)}
       />
@@ -301,7 +309,7 @@ export function StickerArt({
         hotel={hotel}
         label={words.alt}
         x={(STICKER.width - STICKER.code) / 2}
-        y={8}
+        y={8.4}
         width={STICKER.code}
         height={STICKER.code}
       />
@@ -309,32 +317,32 @@ export function StickerArt({
         <Line
           text={benefit}
           size={2.7}
-          room={STICKER.width - 5}
-          y="40.9"
+          room={STICKER.width - 2 * STICKER.safe}
+          y="39.9"
           className={cn("fill-foreground font-semibold", font)}
         />
       ) : null}
       <Line
         text={words.sheetScan}
         size={2.3}
-        room={STICKER.width - 5}
-        y="44"
+        room={STICKER.width - 2 * STICKER.safe}
+        y="42.5"
         lang={language}
         className={cn("fill-foreground", font)}
       />
       <Line
         text={printedUrl(code.url)}
         size={2}
-        room={STICKER.width - 4}
-        y="46.8"
+        room={STICKER.width - 2 * STICKER.safe}
+        y="44.9"
         className="fill-foreground font-mono"
       />
       {label ? (
         <Line
           text={label}
-          size={3.6}
-          room={STICKER.width - 8}
-          y="50.8"
+          size={3.4}
+          room={STICKER.width - 2 * STICKER.safe}
+          y="48"
           className="fill-foreground font-bold font-sans"
         />
       ) : null}

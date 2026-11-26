@@ -912,7 +912,8 @@
     "stickerSmall": "Petits, 20 par A4",
     "stickerLarge": "Grands, 6 par A4",
     "printHintOffice": "Papier A4, échelle 100 %, sans marges. Découpez aux repères. Enregistrez en PDF pour télécharger.",
-    "printHintShop": "Une pièce par page au format {size}, avec 3 mm de fond perdu et repères de coupe. Enregistrez en PDF et envoyez le fichier."
+    "printHintShop": "Une pièce par page au format {size}, avec 3 mm de fond perdu et repères de coupe. Enregistrez en PDF et envoyez le fichier.",
+    "testFailed": "Impossible de créer le lien de test"
   },
   "qrKit": {
     "headlineRoom": "Bienvenue dans votre chambre",
