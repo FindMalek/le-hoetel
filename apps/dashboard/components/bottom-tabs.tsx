@@ -30,7 +30,7 @@ export function BottomTabs({ unread }: { unread: number }) {
   return (
     <nav
       aria-label={tShell("tabs")}
-      className="fixed inset-x-0 bottom-0 z-40 flex border-border border-t bg-background pb-safe md:hidden"
+      className="fixed inset-x-0 bottom-consent z-40 flex border-border border-t bg-background pb-safe md:hidden"
     >
       {TABS.map((tab) => {
         const current = tab.href === active

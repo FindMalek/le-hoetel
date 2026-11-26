@@ -148,6 +148,8 @@
   body {
     @apply bg-background font-sans text-body text-foreground antialiased;
     font-variant-numeric: lining-nums;
+    /* Room for the analytics consent bar (`@ritorno/compliance/banner`) while it shows. */
+    padding-block-end: var(--consent-banner-height, 0px);
   }
   :lang(ar) body {
     line-height: 1.75;
@@ -209,6 +211,11 @@
 
 @utility bottom-nav {
   bottom: var(--bottom-nav-height, 0px);
+}
+
+/* Bottom-fixed bars sit on top of the analytics consent bar instead of under it. */
+@utility bottom-consent {
+  bottom: var(--consent-banner-height, 0px);
 }
 
 @utility pb-nav {

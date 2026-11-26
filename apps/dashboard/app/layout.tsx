@@ -7,7 +7,7 @@ import { TooltipProvider } from "@ritorno/ui/components/tooltip"
 import { cn } from "@ritorno/ui/lib/utils"
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
-import { getLocale } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 import { dashboardUrl, SITE } from "@/lib/site"
 import { fontVariables } from "./fonts"
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const locale = await getLocale()
+  const [locale, t] = await Promise.all([getLocale(), getTranslations("consentBanner")])
   const { lang, dir } = htmlAttributes(isLocale(locale) ? locale : DEFAULT_LOCALE)
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning className={cn("antialiased", fontVariables, "font-sans")}>
@@ -35,7 +35,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </NextIntlClientProvider>
         </QueryProvider>
         <Toaster position="top-center" />
-        <ConsentBanner />
+        <ConsentBanner
+          labels={{
+            label: t("label"),
+            text: t("text"),
+            decline: t("decline"),
+            accept: t("accept"),
+          }}
+        />
       </body>
     </html>
   )

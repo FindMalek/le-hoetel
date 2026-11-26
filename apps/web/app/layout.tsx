@@ -5,7 +5,7 @@ import { QueryProvider } from "@ritorno/orpc/react"
 import { cn } from "@ritorno/ui/lib/utils"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
-import { getLocale } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 import { FeedbackButton } from "@/components/feedback-button"
 import { Umami } from "@/components/umami"
 import { siteUrl } from "@/lib/seo"
@@ -39,7 +39,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [locale, pathname] = await Promise.all([getLocale(), headers().then((h) => h.get(PATHNAME_HEADER) ?? "/")])
+  const [locale, pathname, t] = await Promise.all([
+    getLocale(),
+    headers().then((h) => h.get(PATHNAME_HEADER) ?? "/"),
+    getTranslations("consentBanner"),
+  ])
   const { lang, dir } = htmlAttributes(isLocale(locale) ? locale : DEFAULT_LOCALE)
   return (
     <html
@@ -62,7 +66,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               {children}
               {NO_FEEDBACK_PATHS.includes(pathname) ? null : <FeedbackButton />}
             </QueryProvider>
-            <ConsentBanner />
+            <ConsentBanner
+              labels={{
+                label: t("label"),
+                text: t("text"),
+                decline: t("decline"),
+                accept: t("accept"),
+              }}
+            />
           </>
         )}
       </body>
