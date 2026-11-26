@@ -28,6 +28,7 @@
     "dev:secrets": "infisical run --env=dev -- turbo dev",
     "env:check": "node scripts/env-check.mjs",
     "secrets:pull": "node .github/scripts/secrets-pull.mjs",
+    "preview:creds": "node .github/scripts/preview-creds.mjs",
     "i18n:check": "bun packages/i18n/src/check-cli.ts"
   },
   "devDependencies": {

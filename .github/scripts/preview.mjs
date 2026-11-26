@@ -13,6 +13,7 @@ import {
   getPostgres,
   inspectUrl,
   listDeployments,
+  removePostgres,
   saveBuildType,
   saveEnvironment,
   saveGitProvider,
@@ -22,6 +23,7 @@ import {
 import { demoOwnerEmail } from "./preview-demo.mjs"
 import {
   dockerPort,
+  PREVIEW_SECRET_VERSION,
   pickLatest,
   prAppName,
   previewDb,
@@ -121,9 +123,8 @@ function extraInfo() {
     extra.creds = {
       ownerEmail: demoOwnerEmail("dar-zitouna"),
       adminEmail: env.PREVIEW_ADMIN_EMAIL ?? "admin@ritorno.local",
-      password,
     }
-    if (state._db) extra.db = { ...db, host: state._db }
+    if (state._db) extra.db = { host: state._db, port: db.port, database: db.database, user: db.user }
     extra.whodbUrl = env.WHODB_URL || "https://whodb-ritorno.findmalek.engineer"
   }
   return extra
@@ -165,10 +166,17 @@ function appEnv(app) {
 }
 
 async function ensurePostgres() {
+  // A postgres made before a secret rotation still has the old password: recreate it, preview data is demo only.
+  if (state.postgres && state._sv !== PREVIEW_SECRET_VERSION) {
+    await removePostgres(state.postgres).catch(() => {})
+    delete state.postgres
+    delete state._db
+  }
   if (!state.postgres) {
     const created = await createPostgres(`pr-${pr}-db`, env.DOKPLOY_ENVIRONMENT_ID, db)
     state.postgres = created.postgresId
     state._db = created.appName
+    state._sv = PREVIEW_SECRET_VERSION
     await publish()
     await deployPostgres(state.postgres)
   }
