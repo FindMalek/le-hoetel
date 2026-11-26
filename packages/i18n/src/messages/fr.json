@@ -833,7 +833,14 @@
     "printSelected": "Imprimer la sélection ({count})",
     "selectAll": "Tout sélectionner",
     "clearSelection": "Effacer la sélection",
-    "removeSelected": "Retirer la sélection"
+    "removeSelected": "Retirer la sélection",
+    "willMake": "{count, plural, one {# code sera créé.} other {# codes seront créés.}}",
+    "spotsCut": "Seuls les {max} premiers sont créés. Générez le reste ensuite.",
+    "spotsRequired": "Saisissez d’abord au moins une chambre ou une table.",
+    "removeTitle": "{count, plural, one {Retirer # emplacement enregistré ?} other {Retirer # emplacements enregistrés ?}}",
+    "removeBody": "Ils quittent cette liste et la planche à découper. Les codes déjà imprimés continuent de fonctionner.",
+    "removeConfirm": "Retirer",
+    "removeCancel": "Annuler"
   },
   "qrKit": {
     "title": "Kit QR à imprimer",
@@ -858,7 +865,8 @@
     "sheetTitle": "Planche de codes QR",
     "sheetNote": "{count, plural, one {# code} other {# codes}}. Imprimez, puis découpez en suivant les repères.",
     "sheetEmpty": "Rien à imprimer. Enregistrez d’abord des chambres ou des tables.",
-    "sheetScan": "Scannez-moi"
+    "sheetScan": "Scannez-moi",
+    "noSpotNote": "Aucune chambre ni table choisie : une seule carte sans numéro sera imprimée. Pour une carte par emplacement, générez-les d’abord dans Codes QR."
   },
   "messages": {
     "title": "Messages",

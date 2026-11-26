@@ -49,7 +49,7 @@ export default async function QrKitPage({ searchParams }: Props) {
   const { hotel, piece, language, spots } = await read(searchParams)
   const t = await getTranslations("qrKit")
   const [codes, perk] = await Promise.all([
-    call((api) => api.hotel.qrCodes({ source: piece, spots: parseSpots(spots) })),
+    call((api) => api.hotel.qrCodes({ source: piece, spots: parseSpots(spots).spots })),
     // the public page hides a suspended hotel, which only the app admin can still open
     hotel.status === "suspended"
       ? null
@@ -61,7 +61,9 @@ export default async function QrKitPage({ searchParams }: Props) {
       size={`${size.width}mm ${size.height}mm`}
       paper={size.paper}
       title={t("title")}
-      note={piece === "table" ? t("foldHint") : undefined}
+      note={[piece === "table" && t("foldHint"), piece !== "desk" && !parseSpots(spots).spots.length && t("noSpotNote")]
+        .filter(Boolean)
+        .join(" ")}
       pages={codes.length}
       controls={
         <div className="grid gap-3 md:grid-cols-2">

@@ -195,8 +195,8 @@ test("staff save rooms and tables in bulk, once each, and only for their own hot
   const otherId = await app.createHotel("capture-spots-other", otherOwner)
   const other = (await app.joinHotel(otherOwner, otherId, "owner")).client
 
-  await client.hotel.spots.add({ source: "table", names: parseSpots("1-2") })
-  await client.hotel.spots.add({ source: "room", names: parseSpots("101-102") })
+  await client.hotel.spots.add({ source: "table", names: parseSpots("1-2").spots })
+  await client.hotel.spots.add({ source: "room", names: parseSpots("101-102").spots })
   await other.hotel.spots.add({ source: "room", names: ["101"] })
   await client.hotel.spots.add({ source: "room", names: ["102", "9"] })
   expect((await client.hotel.spots.list()).map((spot) => `${spot.source} ${spot.name}`)).toEqual([

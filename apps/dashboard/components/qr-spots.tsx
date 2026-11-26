@@ -6,6 +6,7 @@ import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
+import { ConfirmDialog } from "@ritorno/ui/components/confirm-dialog"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { Section } from "@ritorno/ui/components/section"
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
@@ -35,12 +36,14 @@ export function QrSpots() {
   const queryClient = useQueryClient()
   const { data: spots } = useSuspenseQuery(orpc.hotel.spots.list.queryOptions())
   const [picked, setPicked] = useState<ReadonlySet<string>>(new Set())
+  const [confirming, setConfirming] = useState(false)
   const chosen = spots.filter((spot) => picked.has(keyOf(spot)))
   const remove = useMutation(
     orpc.hotel.spots.remove.mutationOptions({
       onSuccess: (left) => {
         queryClient.setQueryData(orpc.hotel.spots.list.queryKey(), left)
         setPicked(new Set())
+        setConfirming(false)
       },
       onError: (error: Error) => toast.error(errorMessage(error)),
     }),
@@ -75,17 +78,23 @@ export function QrSpots() {
               {chosen.length === spots.length ? t("clearSelection") : t("selectAll")}
             </Button>
             {chosen.length ? (
-              <Button
-                variant="ghost"
-                className="min-h-touch"
-                loading={remove.isPending}
-                onClick={() => remove.mutate({ spots: chosen })}
-              >
+              <Button variant="ghost" className="min-h-touch" onClick={() => setConfirming(true)}>
                 <Trash2Icon data-icon="inline-start" />
                 {t("removeSelected")}
               </Button>
             ) : null}
           </div>
+          <ConfirmDialog
+            open={confirming}
+            onOpenChange={setConfirming}
+            title={t("removeTitle", { count: chosen.length })}
+            description={t("removeBody")}
+            confirmLabel={t("removeConfirm")}
+            cancelLabel={t("removeCancel")}
+            destructive
+            pending={remove.isPending}
+            onConfirm={() => remove.mutate({ spots: chosen })}
+          />
           <div className="flex max-h-96 flex-col gap-4 overflow-y-auto rounded-lg border bg-card p-4">
             {SPOT_SOURCES.map((source) => {
               const group = spots.filter((spot) => spot.source === source)
