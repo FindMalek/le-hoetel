@@ -157,6 +157,7 @@ function appEnv(app) {
       DATABASE_URL: `postgres://${db.user}:${db.password}@${state._db}:5432/${db.database}`,
       SEED: "demo",
       DEMO_PASSWORD: password,
+      DEMO_VIEWER_PASSWORD: previewSecret(env.DOKPLOY_TOKEN, pr, "viewer"),
       ADMIN_EMAIL: env.PREVIEW_ADMIN_EMAIL ?? "admin@ritorno.local",
       ADMIN_PASSWORD: password,
       BETTER_AUTH_SECRET: previewSecret(env.DOKPLOY_TOKEN, pr, "auth", 40),

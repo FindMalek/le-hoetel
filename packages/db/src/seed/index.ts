@@ -53,6 +53,8 @@ export interface SeedOptions extends SeedTarget {
   /** The demo accounts share one password; pass the auth library's hasher so they can sign in. */
   hashPassword: (password: string) => Promise<string>
   demoPassword?: string
+  /** The view only sales account's own password. Without it only a local seed creates that account. */
+  viewerPassword?: string
   /** Where the demo logos go. Without it the hotels show their initial. */
   storage?: Pick<Storage, "prefix" | "put"> | null
   /** Used by the links inside the message previews. */
@@ -78,7 +80,14 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
 
   const now = new Date()
   const scenario = buildScenario(now, opts)
-  const hotels = buildHotelScenario(now, await opts.hashPassword(opts.demoPassword || DEFAULT_DEMO_PASSWORD))
+  const local = !opts.deployEnv || opts.deployEnv === "local"
+  // Never `demoPassword`: that one also opens the super admin.
+  const viewerPassword = opts.viewerPassword || (local ? DEFAULT_DEMO_PASSWORD : null)
+  const hotels = buildHotelScenario(
+    now,
+    await opts.hashPassword(opts.demoPassword || DEFAULT_DEMO_PASSWORD),
+    viewerPassword ? await opts.hashPassword(viewerPassword) : null,
+  )
   const logoKeys = opts.storage ? await uploadDemoLogos(opts.storage) : new Map<string, string>()
   const offerRows = buildOfferScenario(now, hotels)
   const surveys = buildSurveyScenario(now, hotels)

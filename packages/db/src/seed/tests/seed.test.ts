@@ -1,11 +1,12 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { isDemoRecipient } from "@ritorno/common/demo"
+import { DEMO_VIEWER_EMAIL, isDemoRecipient } from "@ritorno/common/demo"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
-import { count, isNotNull, sql } from "drizzle-orm"
+import { count, eq, isNotNull, sql } from "drizzle-orm"
 import {
   captureSpots,
   consentEvents,
   guests,
+  member,
   messages,
   notes,
   offerRedemptions,
@@ -53,6 +54,16 @@ test("seeding twice leaves the first run's data alone", async () => {
   expect(await totals()).toEqual(first)
   // Two full seeds of some 40k rows: slower than the default 5s on a busy machine.
 }, 60_000)
+
+test("the sales viewer belongs to one demo hotel and is no platform admin", async () => {
+  const rows = await testDb.db
+    .select({ hotel: organization.slug, userRole: user.role })
+    .from(user)
+    .innerJoin(member, eq(member.userId, user.id))
+    .innerJoin(organization, eq(organization.id, member.organizationId))
+    .where(eq(user.email, DEMO_VIEWER_EMAIL))
+  expect(rows).toEqual([{ hotel: "sunset-bay", userRole: null }])
+})
 
 test("every seeded guest and account is unreachable", async () => {
   const people = await testDb.db.select({ phone: guests.phoneE164, email: guests.email }).from(guests)

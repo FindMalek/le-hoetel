@@ -5,6 +5,7 @@
   },
   "shell": {
     "skip": "Aller au contenu",
+    "demoViewOnly": "Démo en lecture seule",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher ou aller à…",
     "noResults": "Aucun résultat.",
@@ -240,7 +241,8 @@
     "groupSettings": "Réglages",
     "unhappyGuests": "Clients mécontents",
     "whatsappScans": "WhatsApp",
-    "activityLog": "Journal d'activité"
+    "activityLog": "Journal d'activité",
+    "billing": "Facturation"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -1608,7 +1610,11 @@
       "messages": "Messages envoyés",
       "messagesHint": "{delivered} délivrés, {failed} échoués",
       "lowBalance": "Crédit WhatsApp bas",
-      "lowBalanceHint": "Hôtels ouverts sous le seuil de crédit"
+      "lowBalanceHint": "Hôtels ouverts sous le seuil de crédit",
+      "consent": "Taux de consentement",
+      "consentHint": "{count, plural, one {# client a accepté} other {# clients ont accepté}} l'e-mail ou WhatsApp",
+      "activeHotels": "Hôtels actifs",
+      "activeHotelsHint": "Hôtels ouverts avec une visite client sur les 7 derniers jours"
     },
     "funnel": {
       "title": "Entonnoir du pilote",
@@ -1626,6 +1632,16 @@
       "lowBalance": "Crédit bas : {amount}",
       "none": "Tous les hôtels vont bien",
       "noneHint": "Rien à suivre pour le moment."
+    },
+    "success": {
+      "title": "Réussite du pilote",
+      "description": "Hôtels ouverts, du plus grand nombre de clients au plus petit. Un jour actif compte au moins une visite client.",
+      "guests": "Clients",
+      "newGuests": "{count, plural, one {# nouveau en 7 jours} other {# nouveaux en 7 jours}}",
+      "consent": "Taux de consentement",
+      "activeDays": "Jours actifs sur 7",
+      "none": "Aucun hôtel ouvert",
+      "noneHint": "Les hôtels suspendus ne sont pas comptés."
     }
   },
   "adminUsers": {
@@ -1758,6 +1774,12 @@
       },
       "whatsapp-scan": {
         "delete": "Scan WhatsApp supprimé"
+      },
+      "billing": {
+        "export": "A exporté des factures",
+        "invoice-create": "A créé une facture",
+        "invoice-status": "A changé le statut d'une facture",
+        "plan-update": "A modifié le nom ou le prix d'une offre"
       }
     },
     "loading": "Chargement des entrées",
@@ -2250,5 +2272,42 @@
     "failed": "Impossible de charger la suite.",
     "loadFailed": "Impossible de charger la liste.",
     "shown": "{shown} sur {total} affichés"
+  },
+  "adminBilling": {
+    "title": "Facturation",
+    "description": "Offres et factures, gérées à la main. Aucun paiement en ligne.",
+    "invoices": "Factures",
+    "plans": "Offres",
+    "hotelHint": "Une facture par mois. Encaissez en dehors de l'application, puis marquez-la payée.",
+    "planName": "Nom de l'offre",
+    "monthlyPrice": "Prix mensuel (TND)",
+    "monthlyPriceHint": "Laissez vide tant que le prix n'est pas décidé.",
+    "savePlan": "Enregistrer l'offre",
+    "planSaved": "Offre enregistrée.",
+    "month": "Mois",
+    "amount": "Montant de la facture (TND)",
+    "amountHint": "Laissez vide pour reprendre le prix de l'offre.",
+    "amountNoPrice": "L'offre n'a pas encore de prix, saisissez un montant.",
+    "amountError": "Saisissez un montant comme 120 ou 120,500.",
+    "note": "Note de facture (facultative)",
+    "noteHint": "Par exemple la référence du virement. Jamais de données de carte.",
+    "create": "Créer la facture",
+    "invoiceCreated": "Facture créée.",
+    "invoiceUpdated": "Facture mise à jour.",
+    "export": "Exporter en CSV",
+    "empty": "Aucune facture pour l'instant.",
+    "statuses": {
+      "issued": "Impayée",
+      "paid": "Payée",
+      "void": "Annulée"
+    },
+    "issuedOn": "Émise le {date}",
+    "paidOn": "Payée le {date}",
+    "markPaid": "Marquer payée",
+    "markUnpaid": "Marquer impayée",
+    "void": "Annuler la facture",
+    "voidTitle": "Annuler la facture {number} ?",
+    "voidConsequence": "Elle reste dans la liste et l'export comme annulée et ne peut plus être modifiée. Vous pourrez ensuite créer une autre facture pour ce mois.",
+    "cancel": "Retour"
   }
 }

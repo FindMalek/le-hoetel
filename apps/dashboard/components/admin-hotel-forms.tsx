@@ -8,7 +8,7 @@ import {
   type HotelPlan,
   type HotelStatus,
 } from "@ritorno/common/hotel"
-import { hotelAdminUpdateSchema } from "@ritorno/common/schemas"
+import { type BillingPlan, hotelAdminUpdateSchema } from "@ritorno/common/schemas"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -177,7 +177,9 @@ const toDateInput = (date: Date | null) => (date ? date.toISOString().slice(0, 1
 
 export function AdminPlanForm({
   hotel,
+  plans,
 }: {
+  plans: BillingPlan[]
   hotel: { id: string; displayName: string; plan: HotelPlan; status: HotelStatus; pilotEndsAt: Date | null }
 }) {
   const t = useTranslations("adminHotel")
@@ -226,7 +228,10 @@ export function AdminPlanForm({
           label={t("plan")}
           value={plan}
           onValueChange={setPlan}
-          options={HOTEL_PLANS.map((value) => ({ value, label: t(`plans.${value}`) }))}
+          options={HOTEL_PLANS.map((value) => ({
+            value,
+            label: plans.find((item) => item.plan === value)?.name ?? t(`plans.${value}`),
+          }))}
         />
         <AdminInput
           label={t("pilotEnd")}

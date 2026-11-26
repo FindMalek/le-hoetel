@@ -1,5 +1,6 @@
 import { ORPCError, os } from "@orpc/server"
 import { hotelRoles } from "@ritorno/auth/access"
+import { isDemoViewer } from "@ritorno/common/demo"
 import { logger } from "@ritorno/logger"
 import type { Context } from "./context"
 import { type ActiveHotel, resolveHotel } from "./lib/hotel"
@@ -22,15 +23,27 @@ const logErrors = o.middleware(async (options) => {
 
 export const publicProcedure = o.use(logErrors)
 
+/** POST procedures that only read, which the view only demo account needs to browse. */
+const DEMO_VIEWER_READS = new Set(["hotel.qrCodes", "campaigns.preview", "emails.preview", "offers.lookup"])
+
+/** Default deny for the demo viewer: only declared reads, and no export, so no copy of the data leaves on that phone. */
+function demoViewerMay(method: string | undefined, path: readonly string[]): boolean {
+  if (path.at(-1)?.startsWith("export")) return false
+  return method === "GET" || DEMO_VIEWER_READS.has(path.join("."))
+}
+
 /**
  * Sessions are cookies, so signed-in calls also need `x-csrf-token: orpc`, which the oRPC link sends and a
  * cross-site form can't. That covers the REST (OpenAPI) routes too, not just RPC.
  */
-const requireSession = o.middleware(async ({ context, next }) => {
+const requireSession = o.middleware(async ({ context, next, procedure, path }) => {
   if (!context.session) throw new ORPCError("UNAUTHORIZED", { message: "Please sign in." })
   // The header only protects cookies: an API key call carries none.
   if (!context.apiKey && context.headers.get("x-csrf-token") !== "orpc") {
     throw new ORPCError("FORBIDDEN", { message: "Missing the x-csrf-token header." })
+  }
+  if (isDemoViewer(context.session.user.email) && !demoViewerMay(procedure["~orpc"].route.method, path)) {
+    throw new ORPCError("FORBIDDEN", { message: "This demo account is view only." })
   }
   return next({ context: { session: context.session, user: context.session.user } })
 })

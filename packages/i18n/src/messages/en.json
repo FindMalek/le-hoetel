@@ -5,6 +5,7 @@
   },
   "shell": {
     "skip": "Skip to content",
+    "demoViewOnly": "View only demo: changes are off",
     "search": "Search",
     "searchPlaceholder": "Search or jump to…",
     "noResults": "Nothing found.",
@@ -240,7 +241,8 @@
     "groupSettings": "Settings",
     "unhappyGuests": "Unhappy guests",
     "whatsappScans": "WhatsApp",
-    "activityLog": "Activity log"
+    "activityLog": "Activity log",
+    "billing": "Billing"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -1608,7 +1610,11 @@
       "messages": "Messages sent",
       "messagesHint": "{delivered} delivered, {failed} failed",
       "lowBalance": "Low WhatsApp credit",
-      "lowBalanceHint": "Open hotels under the low balance line"
+      "lowBalanceHint": "Open hotels under the low balance line",
+      "consent": "Consent rate",
+      "consentHint": "{count, plural, one {# guest agreed} other {# guests agreed}} to email or WhatsApp",
+      "activeHotels": "Active hotels",
+      "activeHotelsHint": "Open hotels with a guest visit in the last 7 days"
     },
     "funnel": {
       "title": "Pilot funnel",
@@ -1626,6 +1632,16 @@
       "lowBalance": "Credit low: {amount}",
       "none": "Every hotel looks fine",
       "noneHint": "Nothing to follow up on right now."
+    },
+    "success": {
+      "title": "Pilot success",
+      "description": "Open hotels, most guests first. An active day is a day with at least one guest visit.",
+      "guests": "Guests",
+      "newGuests": "{count, plural, one {# new in 7 days} other {# new in 7 days}}",
+      "consent": "Consent rate",
+      "activeDays": "Active days, last 7",
+      "none": "No open hotel",
+      "noneHint": "Suspended hotels are left out."
     }
   },
   "adminUsers": {
@@ -1758,6 +1774,12 @@
       },
       "whatsapp-scan": {
         "delete": "Deleted a WhatsApp scan"
+      },
+      "billing": {
+        "export": "Exported invoices",
+        "invoice-create": "Created an invoice",
+        "invoice-status": "Changed an invoice's status",
+        "plan-update": "Updated a plan's name or price"
       }
     },
     "loading": "Loading entries",
@@ -2250,5 +2272,42 @@
     "failed": "Could not load more.",
     "loadFailed": "Could not load this list.",
     "shown": "{shown} of {total} shown"
+  },
+  "adminBilling": {
+    "title": "Billing",
+    "description": "Plans and invoices, handled by hand. Nothing is charged online.",
+    "invoices": "Invoices",
+    "plans": "Plans",
+    "hotelHint": "One invoice per month. Collect the money outside the app, then mark it paid.",
+    "planName": "Plan name",
+    "monthlyPrice": "Monthly price (TND)",
+    "monthlyPriceHint": "Leave empty while the price is not decided.",
+    "savePlan": "Save plan",
+    "planSaved": "Plan saved.",
+    "month": "Month",
+    "amount": "Invoice amount (TND)",
+    "amountHint": "Leave empty to use the plan price.",
+    "amountNoPrice": "The plan has no price yet, so enter an amount.",
+    "amountError": "Enter an amount like 120 or 120.500.",
+    "note": "Invoice note (optional)",
+    "noteHint": "For example the transfer reference. Never card details.",
+    "create": "Create invoice",
+    "invoiceCreated": "Invoice created.",
+    "invoiceUpdated": "Invoice updated.",
+    "export": "Export CSV",
+    "empty": "No invoice yet.",
+    "statuses": {
+      "issued": "Unpaid",
+      "paid": "Paid",
+      "void": "Void"
+    },
+    "issuedOn": "Issued on {date}",
+    "paidOn": "Paid on {date}",
+    "markPaid": "Mark paid",
+    "markUnpaid": "Mark unpaid",
+    "void": "Void invoice",
+    "voidTitle": "Void invoice {number}?",
+    "voidConsequence": "It stays in the list and the export as void, and cannot be changed again. You can then create another invoice for that month.",
+    "cancel": "Cancel"
   }
 }

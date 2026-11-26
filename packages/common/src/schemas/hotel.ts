@@ -100,7 +100,11 @@ export const hotelCreateSchema = z.object({
 
 export const adminHotelSchema = hotelSchema.extend({
   guestCount: z.number().int(),
+  /** Guests who currently agree to email or WhatsApp. */
   consentedCount: z.number().int(),
+  guestsLast7Days: z.number().int(),
+  /** Days out of the last 7, on the hotel's clock, with at least one guest visit. */
+  activeDays: z.number().int(),
   ownerCount: z.number().int(),
   lastGuestAt: z.date().nullable(),
   health: z.enum(HOTEL_HEALTHS),

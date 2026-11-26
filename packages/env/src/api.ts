@@ -12,8 +12,10 @@ const schema = z.object({
   GIT_SHA: optional,
   DATABASE_URL: z.string().min(1),
   SEED: z.enum(["none", "demo"]).default("demo"),
-  /** Password of every seeded demo account (fake, on @demo.ritorno.test). Defaults to the one in the docs. */
+  /** Password of the seeded demo accounts that can write (fake, on @demo.ritorno.test). Defaults to the one in the docs. */
   DEMO_PASSWORD: optional,
+  /** Password of the view only sales account only. A deployed env without it gets no such account. */
+  DEMO_VIEWER_PASSWORD: optional,
 
   /** Public origins: the api's own, and the two apps that proxy to it. */
   API_PUBLIC_URL: z.url().default("http://localhost:3001"),

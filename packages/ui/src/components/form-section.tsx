@@ -8,7 +8,7 @@ type FormSectionProps = Omit<React.ComponentProps<"section">, "title"> & {
 function FormSection({ title, description, className, children, ...props }: FormSectionProps) {
   return (
     <section
-      className={cn("grid gap-4 border-b py-6 first:pt-0 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10", className)}
+      className={cn("grid grid-cols-1 gap-4 border-b py-6 first:pt-0 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-10", className)}
       {...props}
     >
       <div className="flex flex-col gap-1">

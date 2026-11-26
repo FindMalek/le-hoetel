@@ -57,6 +57,7 @@ const env = {
   ADMIN_PASSWORD: secret(16),
   SEED: prod ? "none" : "demo",
   DEMO_PASSWORD: secret(16),
+  DEMO_VIEWER_PASSWORD: prod ? "" : secret(16),
   MESSAGING_LIVE: prod ? "true" : "false",
   ALLOW_PREVIEW_ORIGINS: prod ? "false" : "true",
   S3_PREFIX: prod ? "" : "staging/",

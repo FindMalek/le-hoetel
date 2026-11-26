@@ -43,7 +43,7 @@ The repo is public, so the PR comment and the job summary never hold a password.
 DOKPLOY_TOKEN=... pnpm preview:creds 123
 ```
 
-It prints the password shared by the demo owner and the super admin, and the postgres password to enter in WhoDB with the host from the comment.
+It prints the password shared by the demo owner and the super admin, the separate one of the [sales viewer](/docs/setup#sales-viewer), and the postgres password to enter in WhoDB with the host from the comment.
 
 Older comments printed the passwords. Each preview run edits its sticky comment, but GitHub keeps the edit history, so treat those values as leaked. Bumping `PREVIEW_SECRET_VERSION` rotates every derived secret: the next run of an open PR sets new passwords and recreates its postgres (demo data only). Bump it again whenever a derived value leaks.
 
