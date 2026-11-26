@@ -14,7 +14,7 @@ import {
 } from "@ritorno/notification"
 import { and, eq, inArray } from "drizzle-orm"
 import type { Context } from "../context"
-import { debit, refund } from "./balance"
+import { debit, refund, refundDebit } from "./balance"
 import { hotelGuest, recordConsent } from "./guests"
 
 type Ctx = Pick<Context, "db" | "config" | "now" | "notification">
@@ -209,7 +209,8 @@ export interface DeliveryUpdate {
 
 /**
  * A status webhook from a provider. Moves a message forward only: a late `sent` never undoes `delivered`, and
- * `failed` is final. Returns the rows it changed (hotel and guest, so the caller can act on a bounce).
+ * `failed` is final. A message that becomes `failed` gets its debit back in the same transaction, so a redelivery
+ * changes no row and refunds nothing. Returns the rows it changed (hotel and guest, so the caller can act on a bounce).
  */
 export async function applyDeliveryUpdate(db: Context["db"], update: DeliveryUpdate) {
   const from: MessageStatus[] =
@@ -223,11 +224,17 @@ export async function applyDeliveryUpdate(db: Context["db"], update: DeliveryUpd
     delivered: { deliveredAt: update.at },
     failed: { failedAt: update.at },
   }[update.status]
-  return db
-    .update(messages)
-    .set({ status: update.status, ...timestamps, ...(update.errorCode ? { errorCode: update.errorCode } : {}) })
-    .where(and(eq(messages.providerId, update.providerId), inArray(messages.status, from)))
-    .returning({ id: messages.id, hotelId: messages.hotelId, guestId: messages.guestId, channel: messages.channel })
+  return db.transaction(async (tx) => {
+    const rows = await tx
+      .update(messages)
+      .set({ status: update.status, ...timestamps, ...(update.errorCode ? { errorCode: update.errorCode } : {}) })
+      .where(and(eq(messages.providerId, update.providerId), inArray(messages.status, from)))
+      .returning({ id: messages.id, hotelId: messages.hotelId, guestId: messages.guestId, channel: messages.channel })
+    if (update.status === "failed") {
+      for (const row of rows) await refundDebit(tx, row.hotelId, row.id)
+    }
+    return rows
+  })
 }
 
 export interface ResendEvent {

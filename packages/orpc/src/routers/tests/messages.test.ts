@@ -2,7 +2,7 @@ import { afterAll, beforeAll, expect, test } from "bun:test"
 import { guestConsents, hotelSettings, messages } from "@ritorno/db"
 import type { SendEmailInput, SendWhatsAppInput } from "@ritorno/notification"
 import { and, eq, inArray } from "drizzle-orm"
-import { topUp } from "../../lib/balance"
+import { getBalance, topUp } from "../../lib/balance"
 import { applyDeliveryUpdate, applyKapsoEvent, applyResendEvent, sendToGuest } from "../../lib/messages"
 import { createTestApp, type TestApp } from "../../testing"
 
@@ -113,6 +113,21 @@ test("a status webhook only moves a message forward", async () => {
   expect(await applyDeliveryUpdate(app.services.db, { providerId: "wamid.1", status: "sent", at })).toHaveLength(0)
   const [after] = await app.services.db.select().from(messages).where(eq(messages.id, row!.id))
   expect(after).toMatchObject({ status: "delivered" })
+})
+
+test("a failed WhatsApp webhook gives the debit back once, redelivery included", async () => {
+  const { hotelId, guestId } = await hotelWithGuest("msg-failed-refund", { email: false, whatsapp: true })
+  await topUp(app.services.db, hotelId, 1000)
+  await sendToGuest(ctx(), { hotelId, guestId, channel: "whatsapp", template: "welcome", props: {} })
+  expect(await getBalance(app.services.db, hotelId)).toBeLessThan(1000)
+
+  const statuses = [{ status: "failed", errors: [{ code: 131042 }] }]
+  const payload = { message: { id: "wamid.sent", kapso: { direction: "outbound", statuses } } }
+  const deliver = () => applyKapsoEvent(app.services.db, "whatsapp.message.failed", payload)
+  await Promise.all([deliver(), deliver()])
+  await deliver()
+
+  expect(await getBalance(app.services.db, hotelId)).toBe(1000)
 })
 
 test("a bounce fails the message and a complaint withdraws email consent", async () => {
