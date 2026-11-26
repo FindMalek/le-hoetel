@@ -1,5 +1,6 @@
 import { ORPCError } from "@orpc/server"
 import { HOTEL_ROLES, hotelHealth, LOGO_MAX_BYTES, LOGO_TYPES } from "@ritorno/common/hotel"
+import { LOW_BALANCE_MILLIMES } from "@ritorno/common/pricing"
 import { captureUrl } from "@ritorno/common/qr"
 import {
   adminHotelDetailSchema,
@@ -16,9 +17,19 @@ import {
   qrCodeSchema,
   qrCodesInputSchema,
 } from "@ritorno/common/schemas"
-import { guestConsents, guests, hotelSettings, invitation, member, messages, organization, user } from "@ritorno/db"
+import {
+  guestConsents,
+  guests,
+  hotelBalance,
+  hotelSettings,
+  invitation,
+  member,
+  messages,
+  organization,
+  user,
+} from "@ritorno/db"
 import { hotelPublicPrefix } from "@ritorno/storage"
-import { and, asc, count, countDistinct, eq, gte, inArray, like, max, ne, sql } from "drizzle-orm"
+import { and, asc, count, countDistinct, eq, gte, inArray, like, lt, max, ne, sql } from "drizzle-orm"
 import { toString as qrSvg } from "qrcode"
 import { z } from "zod"
 import type { Context } from "../context"
@@ -331,7 +342,7 @@ export const adminHotelsRouter = {
       const now = context.now()
       const hotels = await withHealth(context, await selectHotels(context.db))
       const soon = new Date(now.getTime() + PILOT_ENDING_DAYS * DAY_MS)
-      const [[recent], [sent], [delivered], [failed]] = await Promise.all([
+      const [[recent], [sent], [delivered], [failed], balances] = await Promise.all([
         context.db
           .select({ n: count() })
           .from(guests)
@@ -342,7 +353,15 @@ export const adminHotelsRouter = {
           .from(messages)
           .where(inArray(messages.status, ["sent", "delivered"])),
         context.db.select({ n: count() }).from(messages).where(eq(messages.status, "failed")),
+        context.db
+          .select({ id: hotelBalance.hotelId, balanceMillimes: hotelBalance.balanceMillimes })
+          .from(hotelBalance)
+          .where(lt(hotelBalance.balanceMillimes, LOW_BALANCE_MILLIMES))
+          .orderBy(asc(hotelBalance.balanceMillimes)),
       ])
+      const open = new Map(
+        hotels.filter((hotel) => hotel.status !== "suspended").map((hotel) => [hotel.id, hotel.displayName]),
+      )
       const sum = (pick: (hotel: (typeof hotels)[number]) => number) =>
         hotels.reduce((total, hotel) => total + pick(hotel), 0)
       return {
@@ -363,6 +382,10 @@ export const adminHotelsRouter = {
           consented: sum((hotel) => hotel.consentedCount),
         },
         messages: { total: sent?.n ?? 0, delivered: delivered?.n ?? 0, failed: failed?.n ?? 0 },
+        lowBalance: balances.flatMap((row) => {
+          const displayName = open.get(row.id)
+          return displayName ? [{ ...row, displayName }] : []
+        }),
       }
     }),
 

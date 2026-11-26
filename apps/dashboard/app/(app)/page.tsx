@@ -1,11 +1,10 @@
 import { firstName } from "@ritorno/common/utils"
 import { nextEnv } from "@ritorno/env/next"
 import { isForbidden } from "@ritorno/orpc/errors"
-import { Badge } from "@ritorno/ui/components/badge"
 import { Button } from "@ritorno/ui/components/button"
 import { ChartCard } from "@ritorno/ui/components/chart-card"
 import { DataList } from "@ritorno/ui/components/data-list"
-import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
+import type { DataColumn } from "@ritorno/ui/components/data-table"
 import { EmptyState } from "@ritorno/ui/components/empty-state"
 import { Num } from "@ritorno/ui/components/num"
 import { PageState } from "@ritorno/ui/components/page-state"
@@ -14,9 +13,19 @@ import { StatCard, type StatDelta } from "@ritorno/ui/components/stat-card"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { formatDate } from "@ritorno/ui/lib/date"
 import { formatDelta, formatNumber } from "@ritorno/ui/lib/number"
-import { BuildingIcon, ChevronRightIcon, ExternalLinkIcon, QrCodeIcon, UserPlusIcon, UsersIcon } from "lucide-react"
+import {
+  BuildingIcon,
+  ChevronRightIcon,
+  ExternalLinkIcon,
+  PlusIcon,
+  QrCodeIcon,
+  UserPlusIcon,
+  UsersIcon,
+  WalletIcon,
+} from "lucide-react"
 import Link from "next/link"
 import { getLocale, getTranslations } from "next-intl/server"
+import { AdminAttention } from "@/components/admin-attention"
 import { CapturedChart } from "@/components/captured-chart"
 import { CopyLink } from "@/components/copy-link"
 import { FirstRunChecklist } from "@/components/first-run-checklist"
@@ -245,28 +254,15 @@ async function HotelHome({
 }
 
 async function PlatformHome({ name }: { name: string }) {
-  const t = await getTranslations("home")
-  const tHealth = await getTranslations("adminHotels.health")
-  const hotels = await call((api) => api.admin.hotels.list()).catch((error) => {
-    if (isForbidden(error)) return []
+  const [t, locale] = await Promise.all([getTranslations("home"), getLocale()])
+  const [hotels, overview] = await Promise.all([
+    call((api) => api.admin.hotels.list()),
+    call((api) => api.admin.hotels.overview()),
+  ]).catch((error) => {
+    if (isForbidden(error)) return [[], null] as const
     throw error
   })
-  const attention = hotels.filter((hotel) => hotel.health !== "healthy")
-  const columns: DataColumn<(typeof hotels)[number]>[] = [
-    {
-      id: "hotel",
-      header: t("hotelColumn"),
-      cell: (hotel) => <span className="font-medium">{hotel.displayName}</span>,
-    },
-    { id: "guests", header: t("guests"), cell: (hotel) => hotel.guestCount, align: "end" },
-    {
-      id: "health",
-      header: t("healthColumn"),
-      cell: (hotel) => (
-        <Badge variant={hotel.health === "healthy" ? "secondary" : "outline"}>{tHealth(hotel.health)}</Badge>
-      ),
-    },
-  ]
+  const count = (value: number) => formatNumber(value, locale)
   return (
     <>
       <PageHeader
@@ -280,31 +276,46 @@ async function PlatformHome({ name }: { name: string }) {
         }
       />
       <div className="flex flex-col gap-10 p-4 md:p-6">
-        <div className="grid gap-3 sm:grid-cols-3 md:gap-4">
-          <StatCard label={t("hotels")} value={hotels.length} icon={<BuildingIcon />} />
-          <StatCard
-            label={t("guests")}
-            value={hotels.reduce((sum, hotel) => sum + hotel.guestCount, 0)}
-            icon={<UsersIcon />}
-          />
-          <StatCard label={t("needAttention")} value={attention.length} hint={t("attentionHint")} />
-        </div>
-        <Section title={t("hotels")}>
-          <DataTable
-            caption={t("hotelsCaption")}
-            columns={columns}
-            rows={hotels}
-            getRowKey={(hotel) => hotel.id}
-            empty={
-              <EmptyState
-                decorated
-                icon={<BuildingIcon />}
-                title={t("noHotelsTitle")}
-                description={t("noHotelsBody")}
-              />
+        {hotels.length === 0 || !overview ? (
+          <PageState
+            kind="empty"
+            firstRun
+            icon={<BuildingIcon />}
+            title={t("noHotelsTitle")}
+            description={t("noHotelsBody")}
+            action={
+              <Button render={<Link href="/admin/hotels/new" />} nativeButton={false}>
+                <PlusIcon data-icon="inline-start" />
+                {t("newHotel")}
+              </Button>
             }
           />
-        </Section>
+        ) : (
+          <>
+            <div className="grid gap-3 sm:grid-cols-3 md:gap-4">
+              <StatCard
+                label={t("hotels")}
+                value={count(hotels.length)}
+                icon={<BuildingIcon />}
+                link={
+                  <Link href="/admin/overview" className="text-blue-700 underline-offset-4 hover:underline">
+                    {t("overviewLink")}
+                  </Link>
+                }
+              />
+              <StatCard label={t("guests")} value={count(overview.guests.total)} icon={<UsersIcon />} />
+              <StatCard
+                label={t("lowBalance")}
+                value={count(overview.lowBalance.length)}
+                icon={<WalletIcon />}
+                hint={t("lowBalanceHint")}
+              />
+            </div>
+            <Section title={t("needAttention")} description={t("attentionHint")}>
+              <AdminAttention hotels={hotels} lowBalance={overview.lowBalance} now={new Date()} />
+            </Section>
+          </>
+        )}
       </div>
     </>
   )

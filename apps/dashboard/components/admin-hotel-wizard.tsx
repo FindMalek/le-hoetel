@@ -90,7 +90,7 @@ export function AdminHotelWizard() {
     languages: [],
     owner: ["ownerEmail"],
   }
-  const shown = (field: keyof Errors) => (touched[field] ? errors[field] : undefined)
+  const shown = (field: keyof Errors) => (touched[field] || (field === "slug" && taken) ? errors[field] : undefined)
   const blur = (field: keyof Errors) => () => setTouched((current) => ({ ...current, [field]: true }))
   const stepValid = (current: Step) =>
     stepFields[current].every((field) => !errors[field]) && !(current === "basics" && checking)
@@ -176,10 +176,10 @@ export function AdminHotelWizard() {
 
         <section className="flex max-w-xl flex-col gap-5" aria-labelledby="wizard-step-title">
           <div className="flex flex-col gap-1">
-            <h2 id="wizard-step-title" className="font-heading font-semibold text-xl tracking-tight">
+            <h2 id="wizard-step-title" className="text-h3">
               {t(`step.${step}.title`)}
             </h2>
-            <p className="text-pretty text-muted-foreground text-sm">{t(`step.${step}.description`)}</p>
+            <p className="text-pretty text-muted-foreground">{t(`step.${step}.description`)}</p>
           </div>
 
           {step === "basics" && (
@@ -187,6 +187,7 @@ export function AdminHotelWizard() {
               <AdminInput
                 label={t("name")}
                 hint={t("nameHint")}
+                required
                 error={shown("name")}
                 value={values.name}
                 maxLength={80}
@@ -206,6 +207,7 @@ export function AdminHotelWizard() {
                 <AdminInput
                   label={t("slug")}
                   hint={slugHint}
+                  required
                   error={shown("slug")}
                   value={values.slug}
                   maxLength={60}
@@ -223,7 +225,7 @@ export function AdminHotelWizard() {
                   {checking ? (
                     <LoaderCircleIcon className="size-3.5 animate-spin" aria-hidden />
                   ) : SLUG.test(values.slug) && !taken && slugToCheck === values.slug ? (
-                    <CheckCircle2Icon className="size-3.5 text-primary" aria-hidden />
+                    <CheckCircle2Icon className="size-3.5 text-success" aria-hidden />
                   ) : null}
                   <span dir="ltr" className="truncate">
                     /h/{values.slug || "…"}
@@ -294,6 +296,7 @@ export function AdminHotelWizard() {
               <AdminInput
                 label={t("ownerEmail")}
                 hint={t("ownerHint")}
+                required
                 error={shown("ownerEmail")}
                 type="email"
                 inputMode="email"

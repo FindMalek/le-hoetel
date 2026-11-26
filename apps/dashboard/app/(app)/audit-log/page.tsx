@@ -1,16 +1,16 @@
 import { ADMIN_LIST_LIMIT } from "@ritorno/common/constants"
 import { Button } from "@ritorno/ui/components/button"
-import { type DataColumn, DataTable } from "@ritorno/ui/components/data-table"
-import { EmptyState } from "@ritorno/ui/components/empty-state"
-import { Input } from "@ritorno/ui/components/input"
-import { Label } from "@ritorno/ui/components/label"
-import { Select } from "@ritorno/ui/components/select"
-import { HistoryIcon } from "lucide-react"
+import { DataList } from "@ritorno/ui/components/data-list"
+import type { DataColumn } from "@ritorno/ui/components/data-table"
+import { PageState } from "@ritorno/ui/components/page-state"
+import { HistoryIcon, SearchXIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
+import { AdminAuditFilters } from "@/components/admin-audit-filters"
 import { LocalDate } from "@/components/local-date"
 import { PageHeader } from "@/components/page-header"
+import { AUDIT_ALL } from "@/lib/admin"
 import { call } from "@/lib/api"
 
 export const metadata: Metadata = { title: "Audit log" }
@@ -26,8 +26,11 @@ interface Params {
 
 const DAY_MS = 86_400_000
 
+const picked = (value: string | undefined): string | undefined => (value && value !== AUDIT_ALL ? value : undefined)
+
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<Params> }) {
-  const params = await searchParams
+  const raw = await searchParams
+  const params: Params = { ...raw, action: picked(raw.action), actor: picked(raw.actor), hotel: picked(raw.hotel) }
   const offset = Math.max(0, Number(params.offset) || 0)
   const from = params.from ? new Date(`${params.from}T00:00:00Z`) : undefined
   const to = params.to ? new Date(new Date(`${params.to}T00:00:00Z`).getTime() + DAY_MS) : undefined
@@ -50,12 +53,15 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   const filtered = Boolean(params.action || params.actor || params.hotel || params.from || params.to)
 
   const actionLabel = (action: string) =>
-    t.has(`actions.${action}` as never) ? t(`actions.${action}` as never) : action
+    t.has(`actions.${action}` as never) ? t(`actions.${action}` as never) : action.replace(/[._-]+/g, " ")
   const href = (next: number) => {
     const query = new URLSearchParams(
-      Object.entries({ ...params, offset: String(next) }).filter(([, value]) => value) as [string, string][],
+      Object.entries({ ...params, offset: next ? String(next) : undefined }).filter(([, value]) => value) as [
+        string,
+        string,
+      ][],
     )
-    return `/audit-log?${query}`
+    return `/audit-log${query.size ? `?${query}` : ""}`
   }
 
   type Entry = (typeof entries)[number]
@@ -68,6 +74,13 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
       <span className="text-muted-foreground">–</span>
     )
   const who = (entry: Entry) => entry.actorEmail ?? t("system")
+  /** Hotel targets show as the hotel. Other targets (a guest, an offer, a user) only by a short id: the log stores no names. */
+  const target = (entry: Entry) =>
+    entry.targetId && entry.targetId !== entry.hotelId ? (
+      <code className="text-caption text-muted-foreground" dir="ltr" title={entry.targetId}>
+        #{entry.targetId.slice(0, 8)}
+      </code>
+    ) : null
   const columns: DataColumn<Entry>[] = [
     {
       id: "action",
@@ -75,7 +88,17 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
       cell: (entry) => <span className="font-medium">{actionLabel(entry.action)}</span>,
     },
     { id: "who", header: t("columns.who"), cell: (entry) => <span dir="ltr">{who(entry)}</span> },
-    { id: "hotel", header: t("columns.hotel"), cell: hotelCell, showFrom: "lg" },
+    {
+      id: "target",
+      header: t("columns.target"),
+      cell: (entry) => (
+        <span className="flex flex-wrap items-center gap-x-2">
+          {entry.hotelName || !entry.targetId ? hotelCell(entry) : null}
+          {target(entry)}
+        </span>
+      ),
+      showFrom: "lg",
+    },
     {
       id: "ip",
       header: t("columns.ip"),
@@ -97,116 +120,68 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
-      <div className="flex flex-col gap-4 p-4 md:p-6">
-        <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="grid gap-1.5 lg:col-span-2">
-            <Label htmlFor="audit-action">{t("filters.action")}</Label>
-            <Select
-              id="audit-action"
-              name="action"
-              defaultValue={params.action ?? ""}
-              options={[
-                { value: "", label: t("filters.any") },
-                ...actions.map((action) => ({ value: action, label: actionLabel(action) })),
-              ]}
-            />
-          </div>
-          <div className="grid gap-1.5 lg:col-span-2">
-            <Label htmlFor="audit-actor">{t("filters.actor")}</Label>
-            <Select
-              id="audit-actor"
-              name="actor"
-              defaultValue={params.actor ?? ""}
-              options={[
-                { value: "", label: t("filters.any") },
-                ...users.map((user) => ({ value: user.id, label: user.email })),
-              ]}
-            />
-          </div>
-          <div className="grid gap-1.5 sm:col-span-2 lg:col-span-2">
-            <Label htmlFor="audit-hotel">{t("filters.hotel")}</Label>
-            <Select
-              id="audit-hotel"
-              name="hotel"
-              defaultValue={params.hotel ?? ""}
-              options={[
-                { value: "", label: t("filters.any") },
-                ...hotels.map((hotel) => ({ value: hotel.id, label: hotel.displayName })),
-              ]}
-            />
-          </div>
-          <div className="grid gap-1.5 lg:col-span-2">
-            <Label htmlFor="audit-from">{t("filters.from")}</Label>
-            <Input id="audit-from" name="from" type="date" dir="ltr" defaultValue={params.from ?? ""} />
-          </div>
-          <div className="grid gap-1.5 lg:col-span-2">
-            <Label htmlFor="audit-to">{t("filters.to")}</Label>
-            <Input id="audit-to" name="to" type="date" dir="ltr" defaultValue={params.to ?? ""} />
-          </div>
-          <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-2">
-            <Button type="submit" className="flex-1">
-              {t("filters.apply")}
-            </Button>
-            {filtered && (
-              <Button variant="outline" render={<Link href="/audit-log" />} nativeButton={false}>
-                {t("filters.reset")}
-              </Button>
-            )}
-          </div>
-        </form>
-
-        <DataTable
+      <div className="p-4 md:p-6">
+        <DataList
           caption={t("title")}
           rows={entries}
           columns={columns}
           getRowKey={(entry) => entry.id}
-          empty={
-            <EmptyState
-              icon={<HistoryIcon />}
-              title={filtered ? t("noMatch.title") : t("empty.title")}
-              description={filtered ? t("noMatch.description") : t("empty.description")}
+          linkComponent={Link}
+          filters={
+            <AdminAuditFilters
+              actions={actions.map((action) => ({ value: action, label: actionLabel(action) }))}
+              actors={users.map((user) => ({ value: user.id, label: user.email }))}
+              hotels={hotels.map((hotel) => ({ value: hotel.id, label: hotel.displayName }))}
+              values={params}
+              filtered={filtered}
             />
           }
+          empty={
+            filtered ? (
+              <PageState
+                kind="empty"
+                icon={<SearchXIcon />}
+                title={t("noMatch.title")}
+                description={t("noMatch.description")}
+                action={
+                  <Button variant="outline" render={<Link href="/audit-log" />} nativeButton={false}>
+                    {t("filters.reset")}
+                  </Button>
+                }
+              />
+            ) : (
+              <PageState
+                kind="empty"
+                icon={<HistoryIcon />}
+                title={t("empty.title")}
+                description={t("empty.description")}
+              />
+            )
+          }
           card={(entry) => (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               <p className="font-medium">{actionLabel(entry.action)}</p>
-              <p className="text-muted-foreground text-sm" dir="ltr">
+              <p className="truncate text-muted-foreground text-small" dir="ltr">
                 {who(entry)}
               </p>
-              <p className="flex items-center justify-between gap-3 text-sm">
-                {hotelCell(entry)}
-                <span className="text-muted-foreground text-xs">
+              <div className="flex items-center justify-between gap-3 text-small">
+                <span className="flex min-w-0 flex-wrap items-center gap-x-2">
+                  {entry.hotelName || !entry.targetId ? hotelCell(entry) : null}
+                  {target(entry)}
+                </span>
+                <span className="shrink-0 text-caption text-muted-foreground">
                   <LocalDate value={entry.createdAt} time />
                 </span>
-              </p>
+              </div>
             </div>
           )}
-          footer={
-            offset > 0 || hasMore ? (
-              <div className="flex items-center justify-between gap-3">
-                {offset > 0 ? (
-                  <Button
-                    variant="outline"
-                    render={<Link href={href(Math.max(0, offset - ADMIN_LIST_LIMIT)) as never} />}
-                    nativeButton={false}
-                  >
-                    {t("newer")}
-                  </Button>
-                ) : (
-                  <span />
-                )}
-                {hasMore && (
-                  <Button
-                    variant="outline"
-                    render={<Link href={href(offset + ADMIN_LIST_LIMIT) as never} />}
-                    nativeButton={false}
-                  >
-                    {t("older")}
-                  </Button>
-                )}
-              </div>
-            ) : null
-          }
+          pagination={{
+            previousLabel: t("newer"),
+            nextLabel: t("older"),
+            previous: offset > 0 ? { href: href(Math.max(0, offset - ADMIN_LIST_LIMIT)) } : undefined,
+            next: hasMore ? { href: href(offset + ADMIN_LIST_LIMIT) } : undefined,
+            status: entries.length ? t("range", { from: offset + 1, to: offset + entries.length }) : undefined,
+          }}
         />
       </div>
     </>

@@ -12,12 +12,20 @@ interface Shared {
   hint?: string
   error?: string | null
   className?: string
+  required?: boolean
 }
 
-export function AdminInput({ label, hint, error, className, ...props }: Shared & React.ComponentProps<"input">) {
+export function AdminInput({
+  label,
+  hint,
+  error,
+  className,
+  required,
+  ...props
+}: Shared & React.ComponentProps<"input">) {
   return (
-    <FormField label={label} hint={hint} error={error} className={className}>
-      {(aria) => <Input {...aria} {...props} />}
+    <FormField label={label} hint={hint} error={error} className={className} required={required}>
+      {(aria) => <Input {...aria} required={required} {...props} />}
     </FormField>
   )
 }

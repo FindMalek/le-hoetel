@@ -38,7 +38,7 @@
     "guests": "Guests",
     "hotels": "Hotels",
     "needAttention": "Need attention",
-    "attentionHint": "quiet or without an owner",
+    "attentionHint": "Unhealthy, pilot ending soon or low on credit",
     "latest": "Latest guests",
     "name": "Name",
     "phone": "Phone",
@@ -51,10 +51,7 @@
     "copy": "Copy link",
     "copied": "Link copied.",
     "open": "Open page",
-    "hotelColumn": "Hotel",
-    "healthColumn": "Health",
     "tableCaption": "Latest guests",
-    "hotelsCaption": "Hotels",
     "hotelsAction": "Manage hotels",
     "languages": {
       "en": "English",
@@ -122,7 +119,11 @@
       "trend": "New guests per day",
       "trendBody": "Every sign-up, from QR codes, staff and imports.",
       "trendEmpty": "No new guests this week yet."
-    }
+    },
+    "lowBalance": "Low WhatsApp credit",
+    "lowBalanceHint": "Hotels to top up",
+    "overviewLink": "Platform overview",
+    "newHotel": "New hotel"
   },
   "auth": {
     "brandTitle": "Know your guests. Welcome them back.",
@@ -638,10 +639,9 @@
       "hotel": "Hotel",
       "guests": "Guests",
       "health": "Health",
-      "consent": "Consent rate",
       "lastCapture": "Last capture",
       "pilotEnd": "Pilot ends",
-      "plan": "Plan"
+      "status": "Status"
     },
     "health": {
       "healthy": "Healthy",
@@ -665,11 +665,6 @@
       "active": "Active",
       "suspended": "Suspended"
     },
-    "plan": {
-      "starter": "Starter",
-      "growth": "Growth",
-      "pro": "Pro"
-    },
     "noCapture": "No capture yet",
     "noPilotEnd": "Not set",
     "pilotEnded": "Ended",
@@ -677,7 +672,8 @@
     "noMatch": {
       "title": "No hotel matches",
       "description": "Try another name or clear the filters."
-    }
+    },
+    "open": "Open"
   },
   "hotelSettings": {
     "title": "Hotel",
@@ -1312,7 +1308,7 @@
       "messages": "Messages",
       "lastCapture": "Last capture"
     },
-    "createdOn": "Created on",
+    "createdOn": "Created on {date}",
     "branding": "Branding",
     "brandingHint": "What guests see after scanning a QR code: the hotel's name, colors and language.",
     "displayName": "Display name",
@@ -1339,7 +1335,7 @@
     "peopleHint": "Who can sign in to this hotel, and invitations still waiting.",
     "noPeople": "Nobody yet. Invite the owner from the hotel's team page once you open it.",
     "invited": "Invited",
-    "inviteExpires": "Expires",
+    "inviteExpires": "Expires on {date}",
     "pilotPlan": "Pilot and plan",
     "pilotPlanHint": "Where the hotel is in the pilot and what it pays after.",
     "plan": "Plan",
@@ -1368,7 +1364,7 @@
     "deleteType": "Type {slug} to confirm",
     "cancel": "Cancel",
     "rename": "Name and slug",
-    "renameHint": "The slug is part of every QR code url. Changing it breaks the codes already printed.",
+    "renameHint": "The official name and the address of the guest page.",
     "renameSave": "Save name and slug",
     "slugTitle": "Change the slug of {hotel}?",
     "slugConsequence": "Every QR code printed with {old} stops working. Print new codes from the QR codes page right after.",
@@ -1433,7 +1429,26 @@
     "topUpAmountHint": "For example 50 or 12.500. Between 1 and 10 000.",
     "topUpNote": "Note (optional)",
     "topUp": "Add credit",
-    "topUpDone": "Credit added."
+    "topUpDone": "Credit added.",
+    "roles": {
+      "owner": "Owner",
+      "manager": "Manager",
+      "staff": "Staff"
+    },
+    "statusHints": {
+      "pilot": "Free pilot. The pilot end date shows when it stops.",
+      "active": "A paying hotel with full access.",
+      "suspended": "The team is locked out and nothing is sent. Data is kept."
+    },
+    "statusTitle": "Set {hotel} to {status}?",
+    "statusConsequence": {
+      "pilot": "The hotel goes back to the free pilot. The team keeps its access.",
+      "active": "The hotel becomes a paying hotel. The team keeps or gets back its access.",
+      "suspended": "The team can no longer sign in to this hotel and no message is sent to its guests. Data is kept and you can reactivate it later."
+    },
+    "statusConfirm": "Set to {status}",
+    "slugHint": "Lowercase letters, digits and dashes. It is part of every QR code link.",
+    "slugWarningTitle": "Printed QR codes will stop working"
   },
   "adminWizard": {
     "title": "New hotel",
@@ -1494,7 +1509,7 @@
   },
   "adminOverview": {
     "title": "Platform overview",
-    "description": "The pilot at a glance: hotels, guests captured, consent and messages.",
+    "description": "Every hotel at a glance: status, guests captured, messages and WhatsApp credit.",
     "empty": {
       "title": "No hotel on the platform yet",
       "description": "The numbers appear as soon as the first hotel is created and its guests start to sign up.",
@@ -1502,13 +1517,13 @@
     },
     "stats": {
       "hotels": "Hotels",
-      "hotelsHint": "{pilot} in pilot, {active} active",
+      "hotelsHint": "{pilot} in pilot, {active} active, {suspended} suspended",
       "guests": "Guests captured",
       "guestsHint": "{count} in the last 7 days",
-      "consent": "Consent rate",
-      "consentHint": "{count} guests said yes to at least one channel",
-      "messages": "Messages",
-      "messagesHint": "{delivered} delivered, {failed} failed"
+      "messages": "Messages sent",
+      "messagesHint": "{delivered} delivered, {failed} failed",
+      "lowBalance": "Low WhatsApp credit",
+      "lowBalanceHint": "Open hotels under the low balance line"
     },
     "funnel": {
       "title": "Pilot funnel",
@@ -1520,15 +1535,19 @@
     "attention": {
       "title": "Needs attention",
       "all": "All hotels",
-      "pilots": "Pilots ending in 14 days",
-      "suspended": "Suspended hotels"
+      "description": "Unhealthy hotels, pilots ending within 14 days and WhatsApp credit running low.",
+      "pilotEnds": "{days, plural, one {Pilot ends in # day} other {Pilot ends in # days}}",
+      "pilotEnded": "Pilot ended",
+      "lowBalance": "Credit low: {amount}",
+      "none": "Every hotel looks fine",
+      "noneHint": "Nothing to follow up on right now."
     }
   },
   "adminUsers": {
     "title": "Users",
     "description": "{count, plural, one {# account} other {# accounts}} on the platform.",
     "search": "Search by name or email",
-    "reset": "Clear search",
+    "reset": "Clear filters",
     "roleAdmin": "App admin",
     "roleUser": "Member",
     "noHotel": "No hotel",
@@ -1536,12 +1555,31 @@
       "user": "User",
       "role": "Role",
       "hotels": "Hotels",
-      "joined": "Joined"
+      "joined": "Joined",
+      "action": "Action"
     },
     "noMatch": {
       "title": "No user matches",
       "description": "Try another name or email."
-    }
+    },
+    "show": "Show",
+    "shows": {
+      "all": "All",
+      "admins": "Admins",
+      "banned": "Banned"
+    },
+    "bannedBadge": "Banned",
+    "you": "You",
+    "ban": "Ban",
+    "unban": "Lift ban",
+    "banned": "User banned.",
+    "unbanned": "Ban lifted.",
+    "banTitle": "Ban {name}?",
+    "banConsequence": "They are signed out everywhere and can't sign in again until you lift the ban. Their hotels and data are kept.",
+    "unbanTitle": "Lift the ban on {name}?",
+    "unbanConsequence": "They can sign in again with their usual password.",
+    "cancel": "Cancel",
+    "joinedOn": "Joined on {date}"
   },
   "adminAudit": {
     "title": "Audit log",
@@ -1551,10 +1589,10 @@
     "older": "Older",
     "columns": {
       "action": "Action",
-      "who": "Who",
-      "hotel": "Hotel",
+      "who": "Actor",
       "ip": "IP",
-      "when": "When"
+      "when": "When",
+      "target": "Target"
     },
     "filters": {
       "action": "Action",
@@ -1562,7 +1600,7 @@
       "hotel": "Hotel",
       "from": "From",
       "to": "To",
-      "any": "Any",
+      "any": "All",
       "apply": "Apply",
       "reset": "Clear"
     },
@@ -1576,7 +1614,10 @@
     },
     "actions": {
       "admin": {
-        "impersonate": "Signed in as a user"
+        "impersonate": "Signed in as a user",
+        "impersonate-stop": "Stopped signing in as a user",
+        "user-ban": "Banned a user",
+        "user-unban": "Lifted a user's ban"
       },
       "guest": {
         "consent": "Changed a guest's consent",
@@ -1592,7 +1633,14 @@
         "delete": "Deleted a hotel",
         "logo-remove": "Removed a logo",
         "logo-set": "Changed a logo",
-        "update": "Updated hotel branding"
+        "update": "Updated hotel branding",
+        "alerts": {
+          "link": "Linked manager alerts",
+          "unlink": "Unlinked manager alerts"
+        },
+        "balance": {
+          "top_up": "Added WhatsApp credit"
+        }
       },
       "offer": {
         "create": "Created an offer",
@@ -1606,8 +1654,21 @@
       },
       "profile": {
         "update": "Updated a profile"
+      },
+      "campaign": {
+        "cancel": "Cancelled a campaign",
+        "create": "Created a campaign",
+        "delete": "Deleted a campaign",
+        "schedule": "Scheduled a campaign"
+      },
+      "holiday": {
+        "update": "Updated holiday messages"
+      },
+      "note": {
+        "delete": "Deleted a note"
       }
-    }
+    },
+    "range": "Entries {from} to {to}"
   },
   "campaigns": {
     "title": "Campaigns",
