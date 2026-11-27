@@ -104,6 +104,10 @@ A hotel switches each holiday on or off and picks the channel (both, email, What
 
 In the dashboard campaign list, "failed" is a display state, not a campaign status: the campaign is `sent` but every message to it failed.
 
+A scheduled campaign that has not started can go "back to draft" (`POST /campaigns/{id}/unschedule`), then be edited and scheduled again. It cannot once it is sending: the job moves the campaign to `sending` in one conditional update before it sends anything, and "back to draft" only matches `scheduled`, so exactly one of the two wins and a reschedule can never send twice. The job re-reads each campaign at that point, so an edit or a new time made while it was working is respected.
+
+"Duplicate" (`POST /campaigns/{id}/duplicate`) copies the message, audience, channel and offer of any campaign into a new draft with no results. The copy is a separate campaign: sending it reaches guests who already got the original.
+
 ## Manager alerts
 
 Manager alerts go by email only. `notifyManager(context, hotelId, text, email?)` (`packages/orpc/src/lib/manager-alerts.ts`) emails the hotel reply-to, else the first owner, and returns false when there is neither. The email is the `alert` template in the hotel's language; the low score alert fills it with the hotel, the score, the comment and the guest's first name, never contact details. Like every provider it only logs outside live messaging. The **Send a test alert** button in **Hotel** settings calls `hotel.alerts.test`.

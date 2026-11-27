@@ -1919,7 +1919,9 @@
         "cancel": "Cancelled a campaign",
         "create": "Created a campaign",
         "delete": "Deleted a campaign",
-        "schedule": "Scheduled a campaign"
+        "duplicate": "Duplicated a campaign",
+        "schedule": "Scheduled a campaign",
+        "unschedule": "Moved a campaign back to draft"
       },
       "holiday": {
         "update": "Updated holiday messages"
@@ -2020,7 +2022,14 @@
         "sent": "Sent {date}.",
         "failed": "No message got through. Check the email and WhatsApp setup.",
         "cancelled": "Cancelled {date}."
-      }
+      },
+      "duplicate": "Duplicate",
+      "duplicated": "Copy saved as a draft",
+      "copyName": "{name} (copy)",
+      "changeTitle": "Change it",
+      "unschedule": "Back to draft",
+      "unscheduleHint": "Nothing has gone out yet. Move it back to draft to fix the message or pick another time.",
+      "unscheduled": "Back to draft. Nothing goes out until you schedule it again."
     },
     "form": {
       "newTitle": "New campaign",
