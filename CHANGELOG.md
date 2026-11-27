@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.6.0](https://github.com/FindMalek/ritorno/compare/v0.5.0...v0.6.0) (2026-11-27)
+
+
+### Features
+
+* **campaigns:** duplicate and unschedule campaigns ([#412](https://github.com/FindMalek/ritorno/issues/412)) ([a325f03](https://github.com/FindMalek/ritorno/commit/a325f03d49690e3f51763992a5855f0b694ff645))
+* **dashboard:** add guest contact actions ([#407](https://github.com/FindMalek/ritorno/issues/407)) ([3e4ab44](https://github.com/FindMalek/ritorno/commit/3e4ab44f508de54c9ab7b64ee9544c4b650bfef7))
+* **offers:** add per language text ([#417](https://github.com/FindMalek/ritorno/issues/417)) ([ffead5f](https://github.com/FindMalek/ritorno/commit/ffead5f5770cd5b17a552c9b0af37e7ff155c065))
+* **web:** add public roadmap page ([#425](https://github.com/FindMalek/ritorno/issues/425)) ([a71718c](https://github.com/FindMalek/ritorno/commit/a71718c7a9afff20f0ee9e99b76a6c8ef6d8c794))
+
+
+### Bug Fixes
+
+* **api:** raise shell read limit ([#424](https://github.com/FindMalek/ritorno/issues/424)) ([ea0c10f](https://github.com/FindMalek/ritorno/commit/ea0c10facaa4f3cc7c5604ba3f606903d3fe93d9))
+* **auth:** require invitation id ([#414](https://github.com/FindMalek/ritorno/issues/414)) ([53f652e](https://github.com/FindMalek/ritorno/commit/53f652e5b55772164b508fcd5d503160dc532214))
+* **campaigns:** count visits as stays ([#411](https://github.com/FindMalek/ritorno/issues/411)) ([eda5d67](https://github.com/FindMalek/ritorno/commit/eda5d6770af056b7f6e53c441d0e9ed0d2f15523))
+* **dashboard:** fix wording and display ([#418](https://github.com/FindMalek/ritorno/issues/418)) ([ad6b50c](https://github.com/FindMalek/ritorno/commit/ad6b50c18a57960ee2504a8ff4c6099b80c1c394))
+* **db:** drop fake inbox seed ([#416](https://github.com/FindMalek/ritorno/issues/416)) ([ed9ecc5](https://github.com/FindMalek/ritorno/commit/ed9ecc5ee6e33ab566930e66ae14813d3d9d44cf))
+* **guests:** name csv consent channels ([#413](https://github.com/FindMalek/ritorno/issues/413)) ([3467309](https://github.com/FindMalek/ritorno/commit/3467309e9b8daba1a1bdf4ba52e3eec601531d88))
+* **i18n:** correct role descriptions ([#422](https://github.com/FindMalek/ritorno/issues/422)) ([9073d07](https://github.com/FindMalek/ritorno/commit/9073d077a8f6aea39150e020b78ec5508a1cdb17))
+
 ## [0.5.0](https://github.com/FindMalek/ritorno/compare/v0.4.1...v0.5.0) (2026-11-27)
 
 
