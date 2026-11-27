@@ -94,7 +94,7 @@ export const NEXT: Plan[] = [
       },
       {
         en: "Offers redeemed per campaign, returning-guest numbers and scans per room or table",
-        fr: "Offres utilisées par campagne, chiffres de fidélité et scans par chambre ou table",
+        fr: "Offres utilisées par campagne, chiffres de retour des clients et scans par chambre ou table",
         ar: "العروض المستخدمة لكل حملة، وأرقام عودة النزلاء، وعدد المسحات لكل غرفة أو طاولة",
       },
     ],
@@ -156,6 +156,11 @@ export const RELEASES: Release[] = [
     ],
     fixed: [
       {
+        en: "Switching hotels no longer ends on an error page",
+        fr: "Changer d'hôtel ne mène plus à une page d'erreur",
+        ar: "لم يعد التبديل بين الفنادق ينتهي بصفحة خطأ",
+      },
+      {
         en: "CSV import asks for email and WhatsApp consent in separate columns and reads French headings and answers",
         fr: "L'import CSV lit l'accord e-mail et l'accord WhatsApp dans des colonnes séparées, avec des titres et réponses en français",
         ar: "يقرأ استيراد CSV موافقة البريد وموافقة واتساب من عمودين منفصلين، ويفهم العناوين والإجابات بالفرنسية",
@@ -189,11 +194,6 @@ export const RELEASES: Release[] = [
         en: "A short web address printed with each code, for cameras that fail",
         fr: "Une adresse courte imprimée avec chaque code, si l'appareil photo ne lit pas",
         ar: "عنوان ويب قصير مطبوع مع كل رمز في حال تعذّرت قراءته بالكاميرا",
-      },
-      {
-        en: "Guests can scan, write to the hotel on WhatsApp and get an automatic welcome reply",
-        fr: "Le client peut scanner, écrire à l'hôtel sur WhatsApp et recevoir une réponse de bienvenue automatique",
-        ar: "يمكن للنزيل مسح الرمز ومراسلة الفندق على واتساب وتلقي رد ترحيبي تلقائي",
       },
       {
         en: "Guest search by name or phone from the top bar",
@@ -260,24 +260,24 @@ export const RELEASES: Release[] = [
         ar: "يُحترم طلب الإيقاف (STOP) على واتساب حتى عندما لا يشارك واتساب رقم النزيل",
       },
       {
-        en: "Switching hotels, team lists and invited owners joining work as expected, and pages follow your role",
-        fr: "Le changement d'hôtel, la liste de l'équipe et l'arrivée des propriétaires invités fonctionnent, et les pages suivent votre rôle",
-        ar: "أصبح التبديل بين الفنادق وقائمة الفريق وانضمام المالكين المدعوين يعمل كما يجب، والصفحات تتبع صلاحياتكم",
+        en: "Team lists and invited owners joining work as expected, and pages follow your role",
+        fr: "La liste de l'équipe et l'arrivée des propriétaires invités fonctionnent, et les pages suivent votre rôle",
+        ar: "أصبحت قائمة الفريق وانضمام المالكين المدعوين يعملان كما يجب، والصفحات تتبع صلاحياتكم",
       },
     ],
   },
   {
     version: "0.4.1",
     summary: {
-      en: "A privacy fix for the product feedback form.",
-      fr: "Une correction de confidentialité pour le formulaire de retour sur le produit.",
-      ar: "إصلاح يخص الخصوصية في نموذج إرسال ملاحظاتكم حول المنتج.",
+      en: "A small privacy update.",
+      fr: "Une petite mise à jour de confidentialité.",
+      ar: "تحديث صغير يخص الخصوصية.",
     },
     fixed: [
       {
-        en: "Emails, phone numbers and links are removed from product feedback before it is filed",
-        fr: "Les e-mails, numéros et liens sont retirés de vos retours sur le produit avant leur enregistrement",
-        ar: "تُحذف عناوين البريد وأرقام الهاتف والروابط من ملاحظاتكم حول المنتج قبل تسجيلها",
+        en: "Better privacy for product feedback",
+        fr: "Une meilleure confidentialité pour vos retours sur le produit",
+        ar: "خصوصية أفضل لملاحظاتكم حول المنتج",
       },
     ],
   },
@@ -306,7 +306,7 @@ export const RELEASES: Release[] = [
     added: [
       {
         en: "A feedback inbox for low survey scores, with a status and a shared team note per case",
-        fr: "Une boîte des avis négatifs, avec un statut et une note d'équipe par cas",
+        fr: "Une boîte de réception des avis négatifs, avec un statut et une note d'équipe par cas",
         ar: "صندوق للتقييمات المنخفضة، مع حالة متابعة وملاحظة مشتركة للفريق لكل حالة",
       },
     ],
@@ -394,9 +394,9 @@ export const RELEASES: Release[] = [
         ar: "عروض برمز وQR يتحقق منها الموظفون",
       },
       {
-        en: "Welcome, birthday and holiday messages, and campaigns, by email and WhatsApp, each with unsubscribe or STOP",
-        fr: "Messages de bienvenue, d'anniversaire et de fêtes, et campagnes, par e-mail et WhatsApp, toujours avec désabonnement ou STOP",
-        ar: "رسائل ترحيب وأعياد ميلاد ومناسبات، وحملات، عبر البريد وواتساب، مع إمكانية إلغاء الاشتراك أو STOP دائمًا",
+        en: "Welcome, birthday and holiday messages, and campaigns, by email, each with unsubscribe. WhatsApp sending starts once Meta approves our message templates, with STOP to opt out",
+        fr: "Messages de bienvenue, d'anniversaire et de fêtes, et campagnes, par e-mail, toujours avec désabonnement. L'envoi sur WhatsApp commencera après la validation de nos modèles par Meta, avec STOP pour se désinscrire",
+        ar: "رسائل ترحيب وأعياد ميلاد ومناسبات، وحملات، عبر البريد الإلكتروني، مع إمكانية إلغاء الاشتراك دائمًا. يبدأ الإرسال عبر واتساب بعد اعتماد Meta لقوالب رسائلنا، مع إمكانية الإيقاف بكلمة STOP",
       },
       {
         en: "A short survey after the stay, an alert when a score is low, and a Google review invite for every guest who answers",
