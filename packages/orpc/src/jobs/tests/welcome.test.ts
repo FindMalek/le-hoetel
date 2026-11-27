@@ -127,6 +127,23 @@ test("the welcome carries the hotel's active welcome offer with the guest's own 
   expect(sent[0]?.email.html).not.toContain("Old news")
 })
 
+test("the welcome words the offer in the guest's language", async () => {
+  const { hotelId, guestId, client } = await hotel("welcome-offer-fr", { email: true, whatsapp: false })
+  await client.offers.create({
+    title: "Free mint tea",
+    translations: { fr: { title: "Thé à la menthe offert", text: "Au bar." } },
+    promoCode: "TEA10",
+    trigger: "welcome",
+  })
+  sent.length = 0
+
+  await welcome()(hotelId, guestId)
+
+  expect(sent[0]?.email.html).toContain("Thé à la menthe offert")
+  expect(sent[0]?.email.html).toContain("Au bar.")
+  expect(sent[0]?.email.html).not.toContain("Free mint tea")
+})
+
 test("a suspended hotel sends no welcome", async () => {
   const { hotelId, guestId } = await hotel("welcome-suspended", { email: true, whatsapp: false })
   await app.services.db

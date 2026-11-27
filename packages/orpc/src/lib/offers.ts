@@ -9,7 +9,7 @@ import {
   verifyOfferToken,
   verifySignUpToken,
 } from "@ritorno/common/offer-tokens"
-import { normalizeCode, offerState } from "@ritorno/common/offers"
+import { localizedOffer, normalizeCode, offerState } from "@ritorno/common/offers"
 import type { offerLookupSchema, signUpPerkSchema } from "@ritorno/common/schemas"
 import { type Db, guests, guestVisits, offerCodes, offerRedemptions, offers, user } from "@ritorno/db"
 import { and, count, desc, eq, gt, isNull, lte, or } from "drizzle-orm"
@@ -86,11 +86,12 @@ export async function offerPage(context: Ctx, token: string) {
     ? ("redeemed" as const)
     : offerState(offer, await redeemedCount(context.db, offer.id), context.now())
   const code = subject.code ?? (await guestCode(context.db, hotelId, offerId, guestId!))
-  const { title, text, validFrom, validUntil } = offer
+  const { title, text, translations, validFrom, validUntil } = offer
   return {
     hotel: await hotelBranding(context, hotelId),
     language,
-    offer: { title, text, validFrom, validUntil },
+    // every language travels: the page may be read in another one than the link's (`?lang`)
+    offer: { title, text, translations, validFrom, validUntil },
     state,
     code,
     qrSvg: await qrSvg(code),
@@ -121,7 +122,9 @@ async function openWelcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
 /** The perk a capture page shows. */
 export async function welcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
   const offer = await openWelcomeOffer(db, hotelId, now)
-  return offer ? { title: offer.title, text: offer.text, validUntil: offer.validUntil } : null
+  if (!offer) return null
+  const { title, text, translations, validUntil } = offer
+  return { title, text, translations, validUntil }
 }
 
 /**
@@ -145,10 +148,9 @@ export async function signUpPerk(
     await context.db.insert(offerCodes).values({ hotelId, offerId: offer.id, guestId, code }).onConflictDoNothing()
   }
   const token = signSignUpToken(context.config.tokenSecret, { hotelId, offerId: offer.id, code, language })
-  const { title, text, validFrom, validUntil } = offer
+  const { validFrom, validUntil } = offer
   return {
-    title,
-    text,
+    ...localizedOffer(offer, language),
     validFrom,
     validUntil,
     code,

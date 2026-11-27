@@ -82,12 +82,49 @@ test("the capture page shows only the open welcome offer's title and text", asyn
     promoCode: "WELCOME",
     trigger: "welcome",
   })
-  expect(await publicOffer()).toEqual({ title: "Welcome drink", text: "At the bar" })
+  expect(await publicOffer()).toEqual({ title: "Welcome drink", text: "At the bar", translations: {} })
 
   await hotel.client.offers.update({ id: offer.id, validUntil: new Date(Date.now() - 1000) })
   expect(await publicOffer()).toBeNull()
   await hotel.client.offers.update({ id: offer.id, validUntil: null, active: false })
   expect(await publicOffer()).toBeNull()
+})
+
+test("an offer reads in the guest's language, and a field left empty keeps the default words", async () => {
+  const hotel = await hotelAs("offers-languages")
+  const offer = await hotel.client.offers.create({
+    title: "Welcome drink",
+    text: "At the bar",
+    translations: { ar: { title: "مشروب الترحيب" } },
+    promoCode: "WELCOME",
+    trigger: "welcome",
+  })
+  const capture = (language: "ar" | "fr", phone: string) =>
+    app.anonymous.public
+      .capture({
+        slug: "offers-languages",
+        name: "Amel",
+        language,
+        source: "desk",
+        consents: { email: false, whatsapp: false },
+        phone,
+        claim: phone,
+      })
+      .then((result) => result.perk!)
+
+  const arabic = await capture("ar", "20 444 444")
+  expect(arabic).toMatchObject({ title: "مشروب الترحيب", text: "At the bar" })
+  expect(await capture("fr", "20 555 555")).toMatchObject({ title: "Welcome drink", text: "At the bar" })
+
+  // the pages and the printed cards pick the language themselves, so they get all of them
+  const translations = { ar: { title: "مشروب الترحيب", text: "" } }
+  expect((await app.anonymous.public.offer({ token: arabic.url.split("/o/")[1]! })).offer.translations).toEqual(
+    translations,
+  )
+  expect(await hotel.client.hotel.welcomeOffer()).toMatchObject({ translations })
+
+  // a change that doesn't mention translations keeps them
+  expect((await hotel.client.offers.update({ id: offer.id, title: "Drink" })).translations).toEqual(translations)
 })
 
 async function guestCodeFor(hotel: Awaited<ReturnType<typeof hotelAs>>, offerId: string, phone: string) {

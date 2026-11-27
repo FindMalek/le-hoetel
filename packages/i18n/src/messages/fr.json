@@ -957,7 +957,9 @@
     "stickerLarge": "Grands, 6 par A4",
     "printHintOffice": "Papier A4, échelle 100 %, sans marges. Découpez aux repères. Enregistrez en PDF pour télécharger.",
     "printHintShop": "Une pièce par page au format {size}, avec 3 mm de fond perdu et repères de coupe. Enregistrez en PDF et envoyez le fichier.",
-    "testFailed": "Impossible de créer le lien de test"
+    "testFailed": "Impossible de créer le lien de test",
+    "trilingual": "Les trois",
+    "trilingualHint": "Imprime l’anglais, le français et l’arabe ensemble, avec les titres de l’offre. Le texte complet est sur la page du code."
   },
   "qrKit": {
     "headlineRoom": "Bienvenue dans votre chambre",
@@ -1174,6 +1176,10 @@
       "when": {
         "title": "Quand elle est valable",
         "description": "Dates et nombre d'utilisations possibles."
+      },
+      "languages": {
+        "title": "Autres langues",
+        "description": "Les clients lisent l’offre dans leur langue. Un champ vide reprend le titre et le texte ci-dessus."
       }
     },
     "fieldTextHint": "Jusqu'à {max} caractères.",

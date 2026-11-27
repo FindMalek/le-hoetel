@@ -7,7 +7,22 @@ An offer is a simple perk, not points: a welcome drink, a birthday dessert, a sp
 
 ## What an offer has
 
-`offers`: title, text, validity window (`valid_from`, optional `valid_until`), a promo code that is unique inside the hotel, an optional audience (`welcome`, `birthday`, or none for handed out by staff), an optional `max_redemptions` and an `active` flag. Title and text are one language, the one the hotel writes in.
+`offers`: title, text, `translations`, validity window (`valid_from`, optional `valid_until`), a promo code that is unique inside the hotel, an optional audience (`welcome`, `birthday`, or none for handed out by staff), an optional `max_redemptions` and an `active` flag.
+
+## Languages
+
+`title` and `text` are the offer's default words. `translations` holds a title and text for any of `en`, `fr`, `ar`, written in **Other languages** on the offer form. `localizedOffer` (`@ritorno/common/offers`) picks the words field by field: a title or a text left empty for a language falls back to the default one. Offers made before translations existed have none and read as before.
+
+| Where | Language used |
+|---|---|
+| capture page and thank-you code | the page's language |
+| `/o` page | `?lang`, else the guest's (or the sign-up's) |
+| welcome, birthday, reminder, campaign and **Send** messages, email and WhatsApp | the guest's |
+| WhatsApp scan reply | the scanned code's |
+| offer and campaign previews | the one shown |
+| QR kit | the card's, or all three |
+
+The dashboard lists, the redeem screen and the guest history show the default words: they are for staff.
 
 Owners and managers create, change and delete offers in the dashboard (**Offers**, `/offers`, `offers.*`). Staff can read them. The form shows a preview of the page as the guest sees it, in the hotel's colors. Deleting an offer deletes its redemptions, so pausing (`active` off) is the way to stop one and keep the numbers.
 
@@ -19,7 +34,7 @@ The guest link is `/o/<token>` on the web app (`offerPageUrl` in `@ritorno/commo
 
 ## Welcome offer on the capture page
 
-`public.hotel` returns `welcomeOffer` (title and text only): the newest active `welcome` offer that can be redeemed now (inside its window and not used up). The capture page shows it as the perk instead of the generic one.
+`public.hotel` returns `welcomeOffer` (title, text and translations only): the newest active `welcome` offer that can be redeemed now (inside its window and not used up). The capture page shows it as the perk instead of the generic one.
 
 ### The code on the thank-you screen
 

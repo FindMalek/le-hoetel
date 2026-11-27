@@ -1,7 +1,7 @@
 import type { MessageChannel } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { offerPageUrl, signOfferToken } from "@ritorno/common/offer-tokens"
-import { type OfferTrigger, offerState } from "@ritorno/common/offers"
+import { localizedOffer, type OfferTrigger, offerState } from "@ritorno/common/offers"
 import { automationSends, type Db, guestConsents, offers } from "@ritorno/db"
 import type { EmailOffer } from "@ritorno/notification"
 import { type AnyColumn, and, desc, eq, type SQL, sql } from "drizzle-orm"
@@ -97,10 +97,11 @@ export async function perkFor(
 ): Promise<Perk | null> {
   if (offerState(offer, await redeemedCount(context.db, offer.id), context.now()) !== "ready") return null
   const token = signOfferToken(context.config.tokenSecret, { hotelId: offer.hotelId, offerId: offer.id, guestId })
+  const { title, text } = localizedOffer(offer, language)
   return {
     offer: {
-      title: offer.title,
-      description: offer.text || null,
+      title,
+      description: text || null,
       validUntil: offer.validUntil?.toISOString().slice(0, 10) ?? null,
       code: await guestCode(context.db, offer.hotelId, offer.id, guestId),
     },

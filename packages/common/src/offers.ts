@@ -1,3 +1,5 @@
+import type { HotelLanguage } from "./hotel"
+
 export const OFFER_TRIGGERS = ["welcome", "birthday", "manual"] as const
 export type OfferTrigger = (typeof OFFER_TRIGGERS)[number]
 
@@ -23,3 +25,19 @@ export const PROMO_CODE_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,23}$/
 
 /** What a scanner or a keyboard produced, made comparable: no spaces, upper case. */
 export const normalizeCode = (input: string): string => input.replace(/\s+/g, "").toUpperCase()
+
+export interface OfferWords {
+  title: string
+  text: string
+}
+
+export type OfferTranslations = Partial<Record<HotelLanguage, OfferWords>>
+
+/** The offer's words in one language. A field left empty there falls back to the default title or text. */
+export function localizedOffer(
+  offer: OfferWords & { translations: OfferTranslations },
+  language: HotelLanguage,
+): OfferWords {
+  const own = offer.translations[language]
+  return { title: own?.title || offer.title, text: own?.text || offer.text }
+}

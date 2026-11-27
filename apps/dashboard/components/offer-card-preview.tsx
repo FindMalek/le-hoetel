@@ -2,6 +2,7 @@
 
 import { brandStyle } from "@ritorno/common/color"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { localizedOffer, type OfferTranslations } from "@ritorno/common/offers"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { Tabs, TabsList, TabsTrigger } from "@ritorno/ui/components/tabs"
 import { useTranslations } from "next-intl"
@@ -36,12 +37,19 @@ export function OfferCardPreview({
   copies,
 }: {
   hotel: OfferPreviewHotel
-  offer: { title: string; text: string; validFrom: Date | null; validUntil: Date | null }
+  offer: {
+    title: string
+    text: string
+    translations: OfferTranslations
+    validFrom: Date | null
+    validUntil: Date | null
+  }
   copies: OfferPreviewCopies
 }) {
   const t = useTranslations("offers.preview")
   const [language, setLanguage] = useState<HotelLanguage>(hotel.language)
   const copy = copies[language]
+  const words = localizedOffer(offer, language)
   const day = new Intl.DateTimeFormat(language, { dateStyle: "long", timeZone: "Africa/Tunis" })
   const from = offer.validFrom ? day.format(offer.validFrom) : null
   const until = offer.validUntil ? day.format(offer.validUntil) : null
@@ -78,9 +86,9 @@ export function OfferCardPreview({
           )}
           <div className="flex flex-col gap-1.5">
             <p className="text-balance break-words font-heading font-semibold text-xl leading-tight tracking-tight">
-              {offer.title || t("titlePlaceholder")}
+              {words.title || t("titlePlaceholder")}
             </p>
-            {offer.text ? <p className="text-pretty break-words text-muted-foreground text-sm">{offer.text}</p> : null}
+            {words.text ? <p className="text-pretty break-words text-muted-foreground text-sm">{words.text}</p> : null}
           </div>
           <p className="rounded-lg bg-brand-accent px-3 py-2 text-brand-accent-foreground text-sm">{copy.ready}</p>
           <div className="mx-auto grid aspect-square w-36 place-items-center rounded-lg border-2 border-primary border-dashed">

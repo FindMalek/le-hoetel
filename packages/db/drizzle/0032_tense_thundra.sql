@@ -1,0 +1,1 @@
+ALTER TABLE "offers" ADD COLUMN "translations" jsonb DEFAULT '{}'::jsonb NOT NULL;

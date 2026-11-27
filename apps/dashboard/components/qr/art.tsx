@@ -31,7 +31,7 @@ export type KitWords = {
   sheetBenefit: string
 }
 
-export type CardText = {
+export type CardSide = {
   language: HotelLanguage
   words: KitWords
   headline: string
@@ -40,6 +40,15 @@ export type CardText = {
   /** The perk in one line, for stickers. */
   benefit: string | null
 }
+
+/** One piece's words: its main language, and on a trilingual one the others. The main one sets the direction. */
+export type CardText = CardSide & { also: CardSide[] }
+
+const sidesOf = (text: CardText): CardSide[] => [text, ...text.also]
+
+/** The attributes of words in one language of a trilingual piece. */
+const spoken = ({ language }: CardSide) => ({ lang: language, dir: getDirection(language) })
+const fontOf = ({ language }: CardSide) => (language === "ar" ? "font-arabic" : "font-sans")
 
 /** Past this length the perk text drops a size, so the longest offer (400 characters) still fits. */
 const LONG_PERK = 160
@@ -124,8 +133,79 @@ function Perk({ perk, className }: { perk: { title: string; text: string }; clas
   )
 }
 
+/** One box for the perk's title in every language. An offer without translations is said once. */
+function Perks({ sides, className }: { sides: CardSide[]; className?: string }) {
+  const titles = new Map(sides.flatMap((side) => (side.perk ? [[side.perk.title, side] as const] : [])))
+  return titles.size ? (
+    <div className={cn("w-full rounded-[3cqw] border border-brand-accent p-[2cqw]", className)}>
+      {[...titles].map(([title, side]) => (
+        <h2 key={title} {...spoken(side)} className={cn("break-words font-semibold leading-snug", fontOf(side))}>
+          {title}
+        </h2>
+      ))}
+    </div>
+  ) : null
+}
+
+/** Headlines, one under the other. Full offer texts do not fit three times: they are on the page behind the code. */
+function Headlines({ sides, className }: { sides: CardSide[]; className: string }) {
+  return (
+    <div className="w-full">
+      {sides.map((side, index) => {
+        const Tag = index ? "p" : "h1"
+        return (
+          <Tag
+            key={side.language}
+            {...spoken(side)}
+            className={cn("text-balance font-display leading-tight", className)}
+          >
+            {side.headline}
+          </Tag>
+        )
+      })}
+    </div>
+  )
+}
+
+function ScanLines({ sides, className }: { sides: CardSide[]; className: string }) {
+  return (
+    <div className="w-full">
+      {sides.map((side) => (
+        <p key={side.language} {...spoken(side)} className={cn("font-semibold leading-snug", fontOf(side), className)}>
+          {side.words.scan}
+        </p>
+      ))}
+    </div>
+  )
+}
+
+function TrilingualPortrait({ face }: { face: Face }) {
+  const sides = sidesOf(face)
+  return (
+    <div className="flex h-full flex-col text-center">
+      <Brand hotel={face.hotel} className="text-[4.5cqw]" />
+      <div
+        className={cn(
+          "flex min-h-0 flex-1 flex-col items-center gap-[2cqw] px-[7cqw] pt-[3cqw]",
+          face.code.location ? "pb-[12cqw]" : "pb-[5cqw]",
+        )}
+      >
+        <Headlines sides={sides} className="text-[5cqw]" />
+        <div className="flex min-h-[34cqw] w-full flex-1 flex-col items-center justify-center gap-[0.8cqw]">
+          <Code face={face} className="max-h-[52cqw] min-h-0 w-auto flex-1" />
+          <ShortUrl url={face.code.url} className="text-[3cqw]" />
+        </div>
+        <ScanLines sides={sides} className="text-[3cqw]" />
+        <Perks sides={sides} className="text-[3.2cqw]" />
+      </div>
+      <StaffLabel code={face.code} className="end-[7cqw] bottom-[2.5cqw] text-[4.5cqw]" />
+    </div>
+  )
+}
+
 /** Room card and front desk sign: the same portrait layout, scaled by the paper width. */
 function Portrait({ face }: { face: Face }) {
+  if (face.also.length) return <TrilingualPortrait face={face} />
   const long = (face.perk?.text.length ?? 0) > LONG_PERK
   return (
     <div className="flex h-full flex-col text-center">
@@ -162,28 +242,45 @@ function Portrait({ face }: { face: Face }) {
 
 /** One face of the table tent, A6 landscape, its band on the ridge of the folded sheet. */
 function TentFace({ face, className }: { face: Face; className?: string }) {
+  const sides = sidesOf(face)
+  const trilingual = face.also.length > 0
   const long = (face.perk?.text.length ?? 0) > LONG_PERK
   return (
     <div className={cn("relative flex h-1/2 flex-col", className)}>
       <Brand hotel={face.hotel} className="px-[5cqw] py-[2cqw] text-[3.5cqw] [&_img]:size-[8cqw]" />
       <div className="flex min-h-0 flex-1 items-center gap-[4cqw] px-[5cqw] py-[2.5cqw]">
         <div className="flex h-full min-w-0 flex-1 flex-col justify-center gap-[3cqw] pb-[5cqw] text-start">
-          <h1
-            dir="auto"
-            className={cn(
-              "text-balance font-display leading-tight",
-              long ? "text-[3.5cqw]" : face.perk ? "text-[5cqw]" : "text-[6.5cqw]",
-            )}
-          >
-            {face.headline}
-          </h1>
-          {face.perk ? <Perk perk={face.perk} className={long ? "text-[1.8cqw]" : "text-[2.6cqw]"} /> : null}
+          {trilingual ? (
+            <>
+              <Headlines sides={sides} className="text-[3.8cqw]" />
+              <Perks sides={sides} className="text-[2.4cqw]" />
+            </>
+          ) : (
+            <>
+              <h1
+                dir="auto"
+                className={cn(
+                  "text-balance font-display leading-tight",
+                  long ? "text-[3.5cqw]" : face.perk ? "text-[5cqw]" : "text-[6.5cqw]",
+                )}
+              >
+                {face.headline}
+              </h1>
+              {face.perk ? <Perk perk={face.perk} className={long ? "text-[1.8cqw]" : "text-[2.6cqw]"} /> : null}
+            </>
+          )}
         </div>
         <div className="flex w-[34cqw] shrink-0 flex-col items-center gap-[1cqw] text-center">
           <Code face={face} className="w-[31cqw] p-[2cqw]" />
           <ShortUrl url={face.code.url} className="text-[1.8cqw]" />
-          <p className="font-semibold text-[2.8cqw] leading-tight">{face.words.scan}</p>
-          <p className="text-[2cqw] text-muted-foreground leading-tight">{face.words.noApp}</p>
+          {trilingual ? (
+            <ScanLines sides={sides} className="text-[2cqw]" />
+          ) : (
+            <>
+              <p className="font-semibold text-[2.8cqw] leading-tight">{face.words.scan}</p>
+              <p className="text-[2cqw] text-muted-foreground leading-tight">{face.words.noApp}</p>
+            </>
+          )}
         </div>
       </div>
       <StaffLabel code={face.code} className="start-[5cqw] bottom-[2cqw] text-[3.2cqw]" />
@@ -230,7 +327,7 @@ export function CardArt({
 
 /** The drawing of one sticker, in its own units: the large one is the same drawing scaled up. */
 /** `safe` is how far words and shapes stay from the cut, in mm on the small sticker. */
-const STICKER = { width: TRIM.small.width, height: TRIM.small.height, code: 29, safe: 3 }
+const STICKER = { width: TRIM.small.width, height: TRIM.small.height, code: 29, trilingualCode: 24, safe: 3 }
 
 const RTL_LETTERS = /[\u0590-\u08FF]/
 
@@ -264,18 +361,19 @@ function Line({
 export function StickerArt({
   hotel,
   code,
-  language,
-  words,
-  benefit,
+  text,
   className,
   ...props
 }: {
   hotel: KitHotel
   code: KitCode
-  language: HotelLanguage
-  words: KitWords
-  benefit: string | null
+  text: CardText
 } & Omit<React.SVGProps<SVGSVGElement>, "viewBox">) {
+  const { language, words, benefit, also } = text
+  const trilingual = also.length > 0
+  // a smaller code leaves room for a line per language
+  const size = trilingual ? STICKER.trilingualCode : STICKER.code
+  const lines = new Map(sidesOf(text).map((side) => [side.benefit ?? side.words.sheetScan, side.language]))
   const label = staffLabel(code.source, code.location)
   const font = language === "ar" ? "font-arabic" : "font-sans"
   return (
@@ -308,28 +406,59 @@ export function StickerArt({
         svg={code.svg}
         hotel={hotel}
         label={words.alt}
-        x={(STICKER.width - STICKER.code) / 2}
+        x={(STICKER.width - size) / 2}
         y={8.4}
-        width={STICKER.code}
-        height={STICKER.code}
+        width={size}
+        height={size}
       />
-      {benefit ? (
-        <Line
-          text={benefit}
-          size={2.7}
-          room={STICKER.width - 2 * STICKER.safe}
-          y="39.9"
-          className={cn("fill-foreground font-semibold", font)}
-        />
-      ) : null}
-      <Line
-        text={words.sheetScan}
-        size={2.3}
-        room={STICKER.width - 2 * STICKER.safe}
-        y="42.5"
-        lang={language}
-        className={cn("fill-foreground", font)}
-      />
+      {trilingual ? (
+        <>
+          {[...lines].map(([line, spokenIn], index) => (
+            <Line
+              key={line}
+              text={line}
+              size={2.1}
+              room={STICKER.width - 2 * STICKER.safe}
+              y={35 + index * 2.5}
+              lang={spokenIn}
+              className={cn("fill-foreground font-semibold", spokenIn === "ar" ? "font-arabic" : "font-sans")}
+            />
+          ))}
+          {/* with the perk on the lines above, the way to scan still has to be said: once, in all three */}
+          {benefit ? (
+            <Line
+              text={sidesOf(text)
+                .map((side) => side.words.sheetScan)
+                .join(" · ")}
+              size={1.8}
+              room={STICKER.width - 2 * STICKER.safe}
+              y="42.7"
+              direction="ltr"
+              className="fill-foreground font-sans"
+            />
+          ) : null}
+        </>
+      ) : (
+        <>
+          {benefit ? (
+            <Line
+              text={benefit}
+              size={2.7}
+              room={STICKER.width - 2 * STICKER.safe}
+              y="39.9"
+              className={cn("fill-foreground font-semibold", font)}
+            />
+          ) : null}
+          <Line
+            text={words.sheetScan}
+            size={2.3}
+            room={STICKER.width - 2 * STICKER.safe}
+            y="42.5"
+            lang={language}
+            className={cn("fill-foreground", font)}
+          />
+        </>
+      )}
       <Line
         text={printedUrl(code.url)}
         size={2}
@@ -401,14 +530,7 @@ export function Sheet({
           }
         >
           {piece === "sticker" ? (
-            <StickerArt
-              hotel={hotel}
-              code={code}
-              language={text.language}
-              words={text.words}
-              benefit={text.benefit}
-              className="size-full"
-            />
+            <StickerArt hotel={hotel} code={code} text={text} className="size-full" />
           ) : (
             <CardArt piece={piece} hotel={hotel} code={code} bleed={layout.bleed} {...text} />
           )}

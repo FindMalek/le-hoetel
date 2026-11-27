@@ -1,5 +1,6 @@
 import { consentWording } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
+import { localizedOffer } from "@ritorno/common/offers"
 import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
 import { matchLocale } from "@ritorno/i18n"
 import { buttonVariants } from "@ritorno/ui/components/button"
@@ -45,6 +46,7 @@ export default async function CapturePage({ params, searchParams }: Props) {
     return `?${next}`
   }
 
+  const offer = hotel.welcomeOffer && localizedOffer(hotel.welcomeOffer, language)
   const perk = (
     <section className="flex items-start gap-3 rounded-card border border-brand-accent bg-brand-accent/15 p-3">
       <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-accent text-brand-accent-foreground">
@@ -52,10 +54,10 @@ export default async function CapturePage({ params, searchParams }: Props) {
       </span>
       <div className="grid text-start">
         <h2 className="font-semibold text-sm">
-          <bdi>{hotel.welcomeOffer?.title ?? t("perkTitle")}</bdi>
+          <bdi>{offer?.title ?? t("perkTitle")}</bdi>
         </h2>
         <p className="text-foreground/80 text-sm rtl:leading-6">
-          <bdi>{hotel.welcomeOffer?.text || t("perkBody", { hotel: hotel.displayName })}</bdi>
+          <bdi>{offer?.text || t("perkBody", { hotel: hotel.displayName })}</bdi>
         </p>
       </div>
     </section>

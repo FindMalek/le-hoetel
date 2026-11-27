@@ -14,5 +14,14 @@ export function proxy(request: NextRequest) {
   return localeProxy(request)
 }
 
-/** `/u/`, `/s/`, `/o/` and `/r/` carry a signed token with a dot in it, which the generic matcher would read as a file. */
-export const config = { matcher: ["/((?!api|_next|.*\\..*).*)", "/u/:path*", "/s/:path*", "/o/:path*", "/r/:path*"] }
+/** `/u/`, `/s/`, `/o/` and `/r/` carry a signed token with a dot in it, which the generic matcher would read as a file, with or without a language prefix. */
+export const config = {
+  matcher: [
+    "/((?!api|_next|.*\\..*).*)",
+    "/u/:path*",
+    "/s/:path*",
+    "/o/:path*",
+    "/r/:path*",
+    "/(fr|ar)/(u|s|o|r)/:path*",
+  ],
+}

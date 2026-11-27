@@ -84,6 +84,22 @@ test("one welcome per day in the code's language, with no guest and no consent c
   expect(replies).toHaveLength(2)
 })
 
+test("the scan reply words the welcome offer in the code's language", async () => {
+  const { client } = await hotel("scan-offer")
+  await client.offers.create({
+    title: "Welcome drink",
+    translations: { ar: { title: "مشروب الترحيب" } },
+    promoCode: "WELCOME",
+    trigger: "welcome",
+  })
+  const { context, replies } = provider()
+
+  await handleWhatsAppScan(context, message("21620000008", code("scan-offer", "12", "ar")))
+
+  expect(replies[0]!.text).toContain("مشروب الترحيب")
+  expect(replies[0]!.text).not.toContain("Welcome drink")
+})
+
 test("edited or foreign codes and suspended hotels get no reply and store nothing", async () => {
   const { hotelId } = await hotel("scan-closed")
   const { context, replies } = provider()

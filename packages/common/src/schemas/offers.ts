@@ -8,7 +8,14 @@ import { cursorSchema } from "./cursor"
 export const OFFER_TITLE_MAX = 80
 export const OFFER_TEXT_MAX = 400
 
+const words = z.object({
+  title: z.string().trim().max(OFFER_TITLE_MAX).default(""),
+  text: z.string().trim().max(OFFER_TEXT_MAX).default(""),
+})
+export const offerTranslationsSchema = z.object({ en: words.optional(), fr: words.optional(), ar: words.optional() })
+
 const fields = {
+  translations: offerTranslationsSchema,
   title: z.string().trim().min(1).max(OFFER_TITLE_MAX),
   text: z.string().trim().max(OFFER_TEXT_MAX),
   promoCode: z.string().trim().toUpperCase().regex(PROMO_CODE_PATTERN, "3 to 24 letters, numbers or dashes"),
@@ -26,6 +33,7 @@ export const offerCreateSchema = z
   .object({
     ...fields,
     text: fields.text.default(""),
+    translations: fields.translations.default({}),
     trigger: fields.trigger.default(null),
     validFrom: fields.validFrom.optional(),
     validUntil: fields.validUntil.default(null),
@@ -39,6 +47,7 @@ export const offerUpdateSchema = z
     id: z.uuid(),
     title: fields.title.optional(),
     text: fields.text.optional(),
+    translations: fields.translations.optional(),
     promoCode: fields.promoCode.optional(),
     trigger: fields.trigger.optional(),
     validFrom: fields.validFrom.optional(),
@@ -52,6 +61,7 @@ export const offerSchema = z.object({
   id: z.string(),
   title: z.string(),
   text: z.string(),
+  translations: offerTranslationsSchema,
   promoCode: z.string(),
   trigger: z.enum(OFFER_TRIGGERS).nullable(),
   validFrom: z.date(),
@@ -75,6 +85,7 @@ export const offerPageSchema = z.object({
   offer: z.object({
     title: z.string(),
     text: z.string(),
+    translations: offerTranslationsSchema,
     validFrom: z.date(),
     validUntil: z.date().nullable(),
   }),
@@ -83,8 +94,12 @@ export const offerPageSchema = z.object({
   qrSvg: z.string(),
 })
 
-/** The perk shown on the public capture page: the hotel's active welcome offer, title and text only. */
-export const welcomeOfferSchema = z.object({ title: z.string(), text: z.string() })
+/** The perk shown on the public capture page and printed cards: the hotel's active welcome offer, its words only. */
+export const welcomeOfferSchema = z.object({
+  title: z.string(),
+  text: z.string(),
+  translations: offerTranslationsSchema,
+})
 
 /** The welcome offer with the code to show, right after a public sign-up. */
 export const signUpPerkSchema = z.object({

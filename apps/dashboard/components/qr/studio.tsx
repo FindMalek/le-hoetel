@@ -2,6 +2,7 @@
 
 import { brandStyle } from "@ritorno/common/color"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { localizedOffer } from "@ritorno/common/offers"
 import { type PrintWarning, printWarnings } from "@ritorno/common/qr"
 import { CAPTURE_SOURCES, type CaptureSource, type Spot, type SpotSource } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
@@ -40,6 +41,7 @@ import { logoSrc } from "@/lib/admin"
 import { downloadArt, type ImageFormat } from "@/lib/qr-download"
 import {
   CardArt,
+  type CardSide,
   type CardText,
   type KitCode,
   type KitHotel,
@@ -220,15 +222,7 @@ function SaveImages({
     // oxlint-disable-next-line shadcn/no-inline-styles
     <div ref={root} aria-hidden style={brandStyle(hotel)} className="absolute size-0 overflow-hidden font-sans">
       {codes.map((code) => (
-        <StickerArt
-          key={code.url}
-          data-art
-          hotel={hotel}
-          code={code}
-          language={text.language}
-          words={text.words}
-          benefit={text.benefit}
-        />
+        <StickerArt key={code.url} data-art hotel={hotel} code={code} text={text} />
       ))}
     </div>
   )
@@ -293,14 +287,7 @@ function PiecePicker({
                 style={{ aspectRatio: thumbRatio(item) }}
               >
                 {item === "sticker" ? (
-                  <StickerArt
-                    hotel={hotel}
-                    code={sample}
-                    language={text.language}
-                    words={text.words}
-                    benefit={text.benefit}
-                    className="size-full"
-                  />
+                  <StickerArt hotel={hotel} code={sample} text={text} className="size-full" />
                 ) : (
                   <CardArt piece={item} hotel={hotel} code={sample} {...text} />
                 )}
@@ -424,7 +411,10 @@ export function QrStudio({
 
   const [piece, setPiece] = useState<Piece>(() => (spots.some((spot) => spot.source === "room") ? "room" : "desk"))
   const [selection, setSelection] = useState<Selection>(EVERY_SPOT)
-  const [language, setLanguage] = useState<HotelLanguage>(hotel.defaultLanguage)
+  const [choice, setChoice] = useState<HotelLanguage | "all">(hotel.defaultLanguage)
+  const trilingual = choice === "all"
+  // a trilingual piece starts with the hotel's language
+  const language = trilingual ? hotel.defaultLanguage : choice
   const [headlines, setHeadlines] = useState<Record<string, string>>({})
   const [showPerk, setShowPerk] = useState(true)
   const [paper, setPaper] = useState<Paper>("office")
@@ -454,17 +444,28 @@ export function QrStudio({
     accentColor: hotel.accentColor,
   }
   const cardWords = words[language]
-  const headlineKey = piece === "sticker" ? null : `${piece}:${language}`
+  const headlineKey = piece === "sticker" || trilingual ? null : `${piece}:${language}`
   const custom = headlineKey ? (headlines[headlineKey] ?? "") : ""
+  const offerIn = (item: HotelLanguage) => offer && localizedOffer(offer, item)
+  const sideOf = (item: HotelLanguage): CardSide => {
+    const itemWords = words[item]
+    const own = offerIn(item)
+    return {
+      language: item,
+      words: itemWords,
+      headline: itemWords.headlines[piece === "sticker" ? "desk" : piece],
+      perk: showPerk ? { title: own?.title ?? itemWords.perkTitle, text: own?.text || itemWords.perkBody } : null,
+      benefit: showPerk ? (own?.title ?? itemWords.sheetBenefit) : null,
+    }
+  }
+  const main = sideOf(language)
   const text: CardText = {
-    language,
-    words: cardWords,
-    headline: custom.trim() || cardWords.headlines[piece === "sticker" ? "desk" : piece],
-    perk: showPerk ? { title: offer?.title ?? cardWords.perkTitle, text: offer?.text || cardWords.perkBody } : null,
-    benefit: showPerk ? (offer?.title ?? cardWords.sheetBenefit) : null,
+    ...main,
+    headline: custom.trim() || main.headline,
+    also: trilingual ? HOTEL_LANGUAGES.filter((item) => item !== language).map(sideOf) : [],
   }
   const drawing: Drawing = { piece, layout, hotel: brand, text }
-  const fileName = `${hotel.slug}-${piece}-${language}${paper === "shop" ? "-print-shop" : ""}`
+  const fileName = `${hotel.slug}-${piece}-${trilingual ? "trilingual" : language}${paper === "shop" ? "-print-shop" : ""}`
   const ratio = layout.page.width / layout.page.height
   const expires = offer?.validUntil
     ? new Intl.DateTimeFormat(locale, {
@@ -663,10 +664,14 @@ export function QrStudio({
             <SegmentedControl
               label={t("language")}
               block
-              value={language}
-              onValueChange={setLanguage}
-              options={HOTEL_LANGUAGES.map((item) => ({ value: item, label: LOCALE_NAMES[item] }))}
+              value={choice}
+              onValueChange={setChoice}
+              options={[
+                ...HOTEL_LANGUAGES.map((item) => ({ value: item, label: LOCALE_NAMES[item] })),
+                { value: "all" as const, label: t("trilingual") },
+              ]}
             />
+            {trilingual ? <p className="text-muted-foreground text-sm">{t("trilingualHint")}</p> : null}
           </div>
           {headlineKey ? (
             <FormField id="headline" label={t("headline")}>
@@ -687,7 +692,9 @@ export function QrStudio({
             <span className="flex flex-col">
               <span className="font-medium text-sm">{t("showPerk")}</span>
               <span className="text-muted-foreground text-sm">
-                <bdi>{offer?.title ?? (piece === "sticker" ? cardWords.sheetBenefit : cardWords.perkTitle)}</bdi>
+                <bdi>
+                  {offerIn(language)?.title ?? (piece === "sticker" ? cardWords.sheetBenefit : cardWords.perkTitle)}
+                </bdi>
               </span>
             </span>
             <Switch checked={showPerk} onCheckedChange={setShowPerk} />
