@@ -1,7 +1,9 @@
 import { hotelRoles } from "@ritorno/auth/access"
 import { CONSENT_CHANNELS, type ConsentChannel, type ConsentSource, consentWording } from "@ritorno/common/consent"
 import { contactChannels } from "@ritorno/common/contact"
+import { HOLIDAYS } from "@ritorno/common/holidays"
 import { isSameLocalDay } from "@ritorno/common/hotel-time"
+import { HOTEL_EMAIL_KEYS } from "@ritorno/common/message"
 import { isWhatsappCapable } from "@ritorno/common/phone"
 import type { GuestActivity } from "@ritorno/common/schemas"
 import { LOCALE_NAMES } from "@ritorno/i18n"
@@ -22,7 +24,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 import { ContactButtons } from "@/components/contact-buttons"
 import { GiveOffer } from "@/components/give-offer"
 import { GuestActions } from "@/components/guest-actions"
@@ -58,10 +60,11 @@ function Rows({ children }: { children: React.ReactNode }) {
 
 export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
   const { id } = await params
-  const [t, tGuests, tMessages, { role }] = await Promise.all([
+  const [t, tGuests, tMessages, locale, { role }] = await Promise.all([
     getTranslations("guests.detail"),
     getTranslations("guests"),
     getTranslations("messages"),
+    getLocale(),
     call((api) => api.hotel.mine()),
   ])
   const guest = await call((api) => api.guests.get({ id })).catch((error) => {
@@ -85,6 +88,14 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
     source === "unsubscribe_link" || source === "stop_reply" || source === "guest_request"
       ? t(`sources.${source}`)
       : tGuests(`source.${source}`)
+  const messageName = ({ templateKey, campaignName, holiday }: (typeof sent)[number]) => {
+    if (campaignName) return `${tMessages("templates.message")} · ${campaignName}`
+    if (holiday) return `${tMessages("templates.holiday")} · ${HOLIDAYS[holiday].text[locale].name}`
+    // A "message" that is neither is an offer a staff member gave to this guest.
+    const key = HOTEL_EMAIL_KEYS.find((option) => option === templateKey)
+    if (!key) return templateKey
+    return tMessages(`templates.${key === "message" ? "gift" : key}`)
+  }
   const canGrant = (channel: ConsentChannel) =>
     channel === "email" ? !!guest.email : channel === "whatsapp" ? isWhatsappCapable(guest.phoneE164) : true
 
@@ -310,8 +321,8 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
                     <li key={message.id} className="flex min-h-14 items-center justify-between gap-3 px-4 py-2 text-sm">
                       <div className="flex min-w-0 flex-col">
                         <span className="truncate font-medium">{tMessages(`channels.${message.channel}`)}</span>
-                        <span className="truncate text-muted-foreground text-xs">
-                          {message.templateKey} · <GuestDate value={message.createdAt} time />
+                        <span className="text-muted-foreground text-xs">
+                          <bdi>{messageName(message)}</bdi> · <GuestDate value={message.createdAt} time />
                         </span>
                       </div>
                       <StatusBadge tone={MESSAGE_STATUS_TONE[message.status] ?? "neutral"}>

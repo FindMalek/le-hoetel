@@ -64,11 +64,6 @@
     "open": "Ouvrir la page",
     "tableCaption": "Derniers clients",
     "hotelsAction": "Gérer les hôtels",
-    "languages": {
-      "en": "Anglais",
-      "fr": "Français",
-      "ar": "Arabe"
-    },
     "noHotelsTitle": "Pas encore d'hôtel",
     "noHotelsBody": "Créez le premier hôtel et invitez son propriétaire. Il verra ses clients ici.",
     "noAccessTitle": "Vous ne faites pas encore partie d'un hôtel",
@@ -218,7 +213,7 @@
   },
   "hero": {},
   "nav": {
-    "redeem": "Utiliser",
+    "redeem": "Valider",
     "offers": "Offres",
     "hotelNav": "Hôtel",
     "emails": "E-mails",
@@ -250,7 +245,8 @@
     "unhappyGuests": "Clients mécontents",
     "whatsappScans": "WhatsApp",
     "activityLog": "Journal d'activité",
-    "billing": "Facturation"
+    "billing": "Facturation",
+    "inboxTab": "Alertes"
   },
   "hotel": {
     "switch": "Changer d'hôtel",
@@ -322,7 +318,6 @@
       "nameRequired": "Saisissez le nom du client.",
       "phoneInvalid": "Saisissez un numéro valide, par exemple 20 123 456.",
       "emailInvalid": "Saisissez un e-mail valide, par exemple nom@exemple.com.",
-      "done": "Terminé",
       "view": "Voir le client",
       "error": "Le client n'a pas pu être enregistré. Vérifiez les informations et réessayez.",
       "known": "Ce numéro est déjà enregistré",
@@ -351,7 +346,8 @@
       "stayHint": "Sert à programmer l'enquête et à recontacter les anciens clients.",
       "consentStay": "Le client accepte que nous gardions les détails de son séjour",
       "stayOrder": "Le départ ne peut pas précéder l'arrivée.",
-      "stayNeedsConsent": "Cochez l'accord sur le séjour ou effacez les dates."
+      "stayNeedsConsent": "Cochez l'accord sur le séjour ou effacez les dates.",
+      "back": "Retour aux clients"
     },
     "import": {
       "title": "Importer des clients",
@@ -1004,7 +1000,9 @@
       "birthday": "Offre d’anniversaire",
       "survey": "Questionnaire de séjour",
       "reminder": "Rappel d’offre",
-      "message": "Campagne"
+      "message": "Campagne",
+      "holiday": "Vœux de fête",
+      "gift": "Offre"
     },
     "filters": {
       "channel": "Canal",
@@ -1205,7 +1203,7 @@
     "validBetween": "Valable du {from} au {until}"
   },
   "redeem": {
-    "title": "Utilisation",
+    "title": "Valider",
     "description": "Scannez le QR du client ou saisissez le code. Un geste le marque comme utilisé.",
     "scan": "Scanner le QR code",
     "stopScan": "Arrêter la caméra",
@@ -2003,7 +2001,8 @@
       "failed": "Échecs",
       "skipped": "Ignorés",
       "audience": "Audience aujourd'hui",
-      "skippedHint": "Ignorés ou en attente"
+      "skippedHint": "Ignorés ou en attente",
+      "planned": "Audience prévue"
     },
     "detail": {
       "title": "Campagne",
@@ -2360,7 +2359,8 @@
       "messagesEmpty": "Rien d'envoyé. Lancez une campagne vers les clients qui ont dit oui.",
       "failed": "Messages en échec",
       "failedHint": "Ouvrez le client pour vérifier le numéro ou l'e-mail.",
-      "failedNone": "Aucun échec sur la période."
+      "failedNone": "Aucun échec sur la période.",
+      "unconfirmedHint": "<n>{count}</n> sans accusé de réception"
     },
     "results": {
       "title": "Résultats",
