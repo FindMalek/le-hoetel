@@ -1,6 +1,5 @@
 "use client"
 
-// i18n-used: campaigns
 import {
   CAMPAIGN_BODY_MAX,
   CAMPAIGN_CHANNELS,
@@ -14,6 +13,8 @@ import {
 } from "@ritorno/common/campaigns"
 import { GUEST_SOURCES } from "@ritorno/common/consent"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+// i18n-used: campaigns
+import { localizedOffer } from "@ritorno/common/offers"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
@@ -214,7 +215,8 @@ export function CampaignForm({
 
   const text = content[editing] ?? { subject: "", body: "" }
   const setText = (patch: Partial<typeof text>) => setContent({ ...content, [editing]: { ...text, ...patch } })
-  const offerTitle = offers.find((offer) => offer.id === offerId)?.title ?? null
+  const offer = offers.find((item) => item.id === offerId)
+  const offerTitle = offer ? localizedOffer(offer, editing).title : null
   const index = STEPS.indexOf(step)
   const num = (value: number) => <Num value={value} locale={locale} className="tabular-nums" />
   const guests = (value: number) => t.rich("guests", { count: value, n: () => num(value) })

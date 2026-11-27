@@ -1,7 +1,9 @@
 "use client"
 
-import { PROMO_CODE_PATTERN } from "@ritorno/common/offers"
+import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import { type OfferTranslations, PROMO_CODE_PATTERN } from "@ritorno/common/offers"
 import { type Hotel, OFFER_TEXT_MAX, OFFER_TITLE_MAX, type Offer } from "@ritorno/common/schemas"
+import { getDirection, LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -12,6 +14,7 @@ import { Input } from "@ritorno/ui/components/input"
 import { Select } from "@ritorno/ui/components/select"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { Switch } from "@ritorno/ui/components/switch"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ritorno/ui/components/tabs"
 import { Textarea } from "@ritorno/ui/components/textarea"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
@@ -33,6 +36,7 @@ const endOfDay = (value: string) => new Date(`${value}T23:59:59`)
 interface Values extends Record<string, unknown> {
   title: string
   text: string
+  translations: OfferTranslations
   promoCode: string
   trigger: string
   validFrom: string
@@ -44,6 +48,7 @@ interface Values extends Record<string, unknown> {
 const initialOf = (offer: Offer | null): Values => ({
   title: offer?.title ?? "",
   text: offer?.text ?? "",
+  translations: offer?.translations ?? {},
   promoCode: offer?.promoCode ?? "",
   trigger: offer?.trigger ?? "",
   validFrom: dayInput(offer?.validFrom ?? new Date()),
@@ -51,6 +56,16 @@ const initialOf = (offer: Offer | null): Values => ({
   maxRedemptions: offer?.maxRedemptions == null ? "" : String(offer.maxRedemptions),
   active: offer?.active ?? true,
 })
+
+/** Only the languages somebody wrote something in are stored. */
+const written = (translations: OfferTranslations): OfferTranslations =>
+  Object.fromEntries(
+    HOTEL_LANGUAGES.flatMap((language) => {
+      const title = translations[language]?.title.trim() ?? ""
+      const text = translations[language]?.text.trim() ?? ""
+      return title || text ? [[language, { title, text }]] : []
+    }),
+  )
 
 export function OfferForm({
   offer,
@@ -100,6 +115,7 @@ export function OfferForm({
     const input = {
       title: values.title.trim(),
       text: values.text.trim(),
+      translations: written(values.translations),
       promoCode: values.promoCode.trim(),
       trigger: (values.trigger || null) as Offer["trigger"],
       validFrom: startOfDay(values.validFrom),
@@ -119,6 +135,12 @@ export function OfferForm({
     onBlur: () => form.blur(key),
   })
 
+  const translate = (language: HotelLanguage, field: "title" | "text", value: string) =>
+    form.set("translations", {
+      ...values.translations,
+      [language]: { title: "", text: "", ...values.translations[language], [field]: value },
+    })
+
   const preview = (
     <OfferCardPreview
       hotel={{
@@ -131,6 +153,7 @@ export function OfferForm({
       offer={{
         title: values.title.trim(),
         text: values.text.trim(),
+        translations: written(values.translations),
         validFrom: values.validFrom ? startOfDay(values.validFrom) : null,
         validUntil: values.validUntil ? endOfDay(values.validUntil) : null,
       }}
@@ -179,6 +202,48 @@ export function OfferForm({
               />
             )}
           </FormField>
+        </FormSection>
+
+        <FormSection title={t("sections.languages.title")} description={t("sections.languages.description")}>
+          <Tabs defaultValue={hotel.defaultLanguage}>
+            <TabsList>
+              {HOTEL_LANGUAGES.map((language) => (
+                <TabsTrigger key={language} value={language} className="min-h-touch">
+                  {LOCALE_NAMES[language]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {HOTEL_LANGUAGES.map((language) => (
+              <TabsContent key={language} value={language} className="flex flex-col gap-4 pt-2">
+                <FormField id={`title-${language}`} label={t("fieldTitle")} optional={` (${t("optional")})`}>
+                  {(aria) => (
+                    <Input
+                      {...aria}
+                      lang={language}
+                      dir={getDirection(language)}
+                      value={values.translations[language]?.title ?? ""}
+                      onChange={(event) => translate(language, "title", event.target.value)}
+                      maxLength={OFFER_TITLE_MAX}
+                      autoComplete="off"
+                    />
+                  )}
+                </FormField>
+                <FormField id={`text-${language}`} label={t("fieldText")} optional={` (${t("optional")})`}>
+                  {(aria) => (
+                    <Textarea
+                      {...aria}
+                      lang={language}
+                      dir={getDirection(language)}
+                      value={values.translations[language]?.text ?? ""}
+                      onChange={(event) => translate(language, "text", event.target.value)}
+                      rows={3}
+                      maxLength={OFFER_TEXT_MAX}
+                    />
+                  )}
+                </FormField>
+              </TabsContent>
+            ))}
+          </Tabs>
         </FormSection>
 
         <FormSection title={t("sections.who.title")} description={t("sections.who.description")}>

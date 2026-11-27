@@ -1,9 +1,10 @@
-import { OFFER_TRIGGERS } from "@ritorno/common/offers"
+import { OFFER_TRIGGERS, type OfferTranslations } from "@ritorno/common/offers"
 import {
   boolean,
   foreignKey,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -27,6 +28,8 @@ export const offers = pgTable(
       .references(() => organization.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     text: text("text").notNull().default(""),
+    /** Title and text per language. `title` and `text` above are what any language without its own gets. */
+    translations: jsonb("translations").$type<OfferTranslations>().notNull().default({}),
     promoCode: text("promo_code").notNull(),
     /** Who gets it automatically; null means the staff hands it out. */
     trigger: offerTrigger("trigger"),

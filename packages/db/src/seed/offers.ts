@@ -1,3 +1,4 @@
+import type { OfferTranslations } from "@ritorno/common/offers"
 import type { offerCodes, offerRedemptions, offers } from "../schema"
 import type { HotelScenario } from "./hotels"
 import { DAY, dice, earlier, HOUR } from "./random"
@@ -18,6 +19,7 @@ interface OfferDef {
   key: string
   title: string
   text: string
+  translations?: OfferTranslations
   promoCode: string
   trigger: NewOffer["trigger"]
   startedDaysAgo: number
@@ -35,6 +37,16 @@ const DEFS: OfferDef[] = [
     key: "welcome",
     title: "Welcome drink",
     text: "A fresh juice or a mint tea at the bar, on us. Show the QR to the bartender.",
+    translations: {
+      fr: {
+        title: "Boisson de bienvenue",
+        text: "Un jus frais ou un thé à la menthe au bar, offert. Montrez le QR au barman.",
+      },
+      ar: {
+        title: "مشروب الترحيب",
+        text: "عصير طازج أو شاي بالنعناع في المقهى، على حسابنا. أروا رمز QR للنادل.",
+      },
+    },
     promoCode: "WELCOME",
     trigger: "welcome",
     startedDaysAgo: 185,
@@ -139,6 +151,7 @@ export function buildOfferScenario(now: Date, hotels: HotelScenario, seed = 2026
         hotelId,
         title: def.title,
         text: def.text,
+        translations: def.translations ?? {},
         promoCode: def.promoCode,
         trigger: def.trigger,
         validFrom: start,

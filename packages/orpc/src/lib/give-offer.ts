@@ -1,7 +1,7 @@
 import { ORPCError } from "@orpc/server"
 import type { MessageChannel } from "@ritorno/common/consent"
 import { offerPageUrl, signOfferToken } from "@ritorno/common/offer-tokens"
-import { offerState } from "@ritorno/common/offers"
+import { localizedOffer, offerState } from "@ritorno/common/offers"
 import { isWhatsappCapable } from "@ritorno/common/phone"
 import type { GivenOffer } from "@ritorno/common/schemas"
 import { guests, offerCodes, offerRedemptions, offers } from "@ritorno/db"
@@ -81,6 +81,7 @@ export async function sendOffer(
   const token = signOfferToken(context.config.tokenSecret, gift)
   const url = offerPageUrl(context.config.webUrl, token, guest.language)
   const copy = COPY[guest.language].gift
+  const words = localizedOffer(offer, guest.language)
   const { subject, title } = copy
   const props =
     channel === "email"
@@ -89,8 +90,8 @@ export async function sendOffer(
           title,
           body: copy.body,
           offer: {
-            title: offer.title,
-            description: offer.text || null,
+            title: words.title,
+            description: words.text || null,
             validUntil: offer.validUntil?.toISOString().slice(0, 10) ?? null,
             code,
           },
@@ -98,6 +99,6 @@ export async function sendOffer(
           ctaLabel: copy.cta,
         }
       : // One WhatsApp variable, so the code and the link travel inside the approved `guest_message` text.
-        { subject, title, body: fill(copy.whatsapp, { offer: offer.title, code, url }, guest.language === "ar") }
+        { subject, title, body: fill(copy.whatsapp, { offer: words.title, code, url }, guest.language === "ar") }
   return sendToGuest(context, { ...gift, channel, template: "message", props })
 }

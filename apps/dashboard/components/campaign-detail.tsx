@@ -1,8 +1,9 @@
 "use client"
 
-// i18n-used: campaigns
 import { CAMPAIGN_NAME_MAX } from "@ritorno/common/campaigns"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+// i18n-used: campaigns
+import { localizedOffer } from "@ritorno/common/offers"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
@@ -51,7 +52,6 @@ export function CampaignDetail({
   const [counted, setCounted] = useState(false)
   const [countFailed, setCountFailed] = useState(false)
   const { data: offers } = useQuery(orpc.offers.list.queryOptions())
-  const offerTitle = offers?.find((offer) => offer.id === campaign.offerId)?.title ?? null
   const languages = HOTEL_LANGUAGES.filter((language) => campaign.content[language])
   const [language, setLanguage] = useState<HotelLanguage>(
     languages.find((value) => value === locale) ??
@@ -125,6 +125,8 @@ export function CampaignDetail({
   const isDraft = campaign.status === "draft"
   const running = campaign.status === "scheduled" || campaign.status === "sending"
   const canDelete = isDraft || campaign.status === "cancelled"
+  const offer = offers?.find((item) => item.id === campaign.offerId)
+  const offerTitle = offer ? localizedOffer(offer, language).title : null
   const text = campaign.content[language] ?? campaign.content[languages[0] ?? "fr"] ?? { subject: "", body: "" }
   const channel = t(`channel.${campaign.channel}`)
   const num = (value: number) => <Num value={value} locale={locale} className="tabular-nums" />

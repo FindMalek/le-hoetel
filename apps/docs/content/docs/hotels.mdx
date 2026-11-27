@@ -99,7 +99,7 @@ Every printed piece and download opens `<web url>/q/<code>` and shows that addre
 | Stickers, large | rooms and tables | 78.75 x 91 mm | 6 per sheet (2 x 3) |
 
 2. **Which spots**, from the saved list: all, a range (`From` and `To`, numbers in number order, an empty end is open) or ticked ones. With no saved spot the piece prints one code without a number.
-3. **Wording**: the language on the paper (`en`, `fr`, `ar`, default the hotel's guest language), the headline (empty keeps the default) and whether the welcome gift is shown. Stickers have no headline, and the gift is their one line benefit (the offer's title, else a default line).
+3. **Wording**: the language on the paper (`en`, `fr`, `ar` or all three, default the hotel's guest language), the headline (empty keeps the default) and whether the welcome gift is shown. Stickers have no headline, and the gift is their one line benefit (the offer's title, else a default line).
 
 **Where it prints.** Next to the preview:
 
@@ -112,7 +112,7 @@ The geometry is in `components/qr/layout.ts`. Cards have a band of the hotel's c
 
 **PNG images** and **SVG images** save the sticker art (hotel name, code with logo, benefit, "scan me", short address, staff label) of the selected spots, one file, or a zip when there are several. The logo is inside the file. Fonts are the viewing device's.
 
-Cards carry the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed as the hotel typed it, in one language. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
+Cards carry the hotel logo, display name and two colors from `hotel_settings`, no Ritorno mark, and the perk the capture page shows: the active welcome offer's title and text, else the default welcome gift line. The offer is printed in the card's language, else in its default words ([offer languages](/docs/offers#languages)). **All three** puts the headline, the scan line and the offer's title in the hotel's language first, then the two others. It has no custom headline and no offer text (the page behind the code has it), and a title with no translation is printed once. Text on a brand color is black or white, whichever reads better, and the QR is always black on white.
 
 The page warns before printing when there is no welcome offer, when it ends within 30 days (`OFFER_SOON_DAYS`), and when there is no logo. The link to fix it shows only to roles that can (staff just read the warning).
 

@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto"
+import { localizedOffer } from "@ritorno/common/offers"
 import { captureUrl } from "@ritorno/common/qr"
 import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
 import { readScanCode, scanNotice, scanWelcome, WHATSAPP_SCAN_RETENTION_DAYS } from "@ritorno/common/whatsapp-scan"
@@ -120,10 +121,11 @@ export async function handleWhatsAppScan(context: Ctx, payload: KapsoPayload): P
     : []
   const page = new URL(captureUrl(context.config.webUrl, spot.slug, spot.source, spot.location))
   page.searchParams.set("lang", spot.language)
+  const offer = await welcomeOffer(context.db, hotel.id, now)
   const reply = scanWelcome({
     language: spot.language,
     hotelName: hotel.name,
-    offer: await welcomeOffer(context.db, hotel.id, now),
+    offer: offer && localizedOffer(offer, spot.language),
     registerUrl: guest ? null : page.toString(),
     numberHidden: !phoneE164,
   })

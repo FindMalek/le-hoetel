@@ -1,3 +1,4 @@
+import { localizedOffer } from "@ritorno/common/offers"
 import { DEFAULT_LOCALE } from "@ritorno/i18n"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { CheckIcon, ClockIcon, GiftIcon, LinkIcon } from "lucide-react"
@@ -35,6 +36,7 @@ export default async function Page({ params, searchParams }: PageProps<"/o/[toke
   const language = guestLanguage(lang, page.language)
   const t = await getTranslations({ locale: language, namespace: "offer" })
   const day = new Intl.DateTimeFormat(language, DAY_FORMAT)
+  const words = localizedOffer(page.offer, language)
   const validity = page.offer.validUntil
     ? t("validBetween", { from: day.format(page.offer.validFrom), until: day.format(page.offer.validUntil) })
     : t("validFrom", { from: day.format(page.offer.validFrom) })
@@ -43,7 +45,7 @@ export default async function Page({ params, searchParams }: PageProps<"/o/[toke
     const icon = page.state === "redeemed" ? <CheckIcon /> : page.state === "notStarted" ? <ClockIcon /> : <GiftIcon />
     return (
       <GuestShell hotel={page.hotel} language={language}>
-        <GuestState icon={icon} title={page.offer.title} body={t(`state.${page.state}`)}>
+        <GuestState icon={icon} title={words.title} body={t(`state.${page.state}`)}>
           <p className="text-caption text-muted-foreground">{validity}</p>
         </GuestState>
       </GuestShell>
@@ -56,11 +58,11 @@ export default async function Page({ params, searchParams }: PageProps<"/o/[toke
         <div className="grid justify-items-start gap-3">
           <StatusBadge tone="success">{t("state.ready")}</StatusBadge>
           <h2 className="text-balance font-semibold text-h3 tracking-tight">
-            <bdi>{page.offer.title}</bdi>
+            <bdi>{words.title}</bdi>
           </h2>
-          {page.offer.text ? (
+          {words.text ? (
             <p className="text-pretty text-muted-foreground">
-              <bdi>{page.offer.text}</bdi>
+              <bdi>{words.text}</bdi>
             </p>
           ) : null}
         </div>
