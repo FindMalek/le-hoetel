@@ -2249,8 +2249,8 @@
     },
     "roleHelp": {
       "owner": "Everything, including the team and the hotel settings.",
-      "manager": "Guests, offers and QR codes. Can invite staff.",
-      "staff": "Redeem offers at the desk and see guests."
+      "manager": "Team, guests, offers, campaigns, QR codes and hotel settings. Can export and delete guest data.",
+      "staff": "See, add and edit guests. See offers and redeem them at the desk."
     },
     "sendInvite": "Send invitation",
     "loading": "Loading the team...",

@@ -2249,8 +2249,8 @@
     },
     "roleHelp": {
       "owner": "Tout, y compris l'équipe et les réglages de l'hôtel.",
-      "manager": "Clients, offres et QR codes. Peut inviter du personnel.",
-      "staff": "Valide les offres à la réception et voit les clients."
+      "manager": "Équipe, clients, offres, campagnes, QR codes et réglages de l'hôtel. Peut exporter et supprimer les données clients.",
+      "staff": "Voit, ajoute et modifie les clients. Voit les offres et les valide à la réception."
     },
     "sendInvite": "Envoyer l'invitation",
     "loading": "Chargement de l'équipe...",
