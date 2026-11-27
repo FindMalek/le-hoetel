@@ -1,18 +1,22 @@
-import { Button } from "@ritorno/ui/components/button"
 import { Num } from "@ritorno/ui/components/num"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { formatDate } from "@ritorno/ui/lib/date"
 import { formatNumber } from "@ritorno/ui/lib/number"
-import { CheckCircle2Icon, ChevronRightIcon, InboxIcon, PhoneIcon } from "lucide-react"
+import { CheckCircle2Icon, ChevronRightIcon, InboxIcon } from "lucide-react"
 import Link from "next/link"
 import { getLocale, getTranslations } from "next-intl/server"
 import type { ReactNode } from "react"
+import { ContactButtons } from "@/components/contact-buttons"
+import { MarkContactedButton } from "@/components/mark-contacted-button"
 
 type Alert = {
   id: string
   guestId: string
   name: string
   phoneE164: string
+  email: string | null
+  whatsapp: boolean
+  updatedAt: Date
   nps: number
   comment: string | null
   createdAt: Date
@@ -21,14 +25,16 @@ type Alert = {
 type HomeAttentionProps = {
   alerts: { open: number; items: Alert[] }
   unread: number
+  /** Whether this viewer may change a case. */
+  canMark: boolean
   /** The hotel's timezone, so a date never shifts by a day near midnight. */
   timeZone: string
 }
 
-const ROW = "flex flex-col gap-3 p-4 md:flex-row md:items-center md:gap-4 md:px-5"
+const ROW = "flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:gap-4 md:px-5"
 
-/** What needs a person today: unhappy guests to call first, then unread notifications. A calm line when nothing does. */
-export async function HomeAttention({ alerts, unread, timeZone }: HomeAttentionProps) {
+/** What needs a person today: unhappy guests to contact first, then unread notifications. A calm line when nothing does. */
+export async function HomeAttention({ alerts, unread, canMark, timeZone }: HomeAttentionProps) {
   const [t, locale] = await Promise.all([getTranslations("home.attention"), getLocale()])
   const n = (chunks: ReactNode) => <bdi dir="ltr">{chunks}</bdi>
   const more = alerts.open - alerts.items.length
@@ -70,15 +76,16 @@ export async function HomeAttention({ alerts, unread, timeZone }: HomeAttentionP
               </p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            className="max-md:w-full"
-            render={<a href={`tel:${alert.phoneE164}`} aria-label={t("callGuest", { name: alert.name })} />}
-            nativeButton={false}
-          >
-            <PhoneIcon data-icon="inline-start" />
-            {t("call")}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 *:max-lg:grow">
+            <ContactButtons
+              name={alert.name}
+              phoneE164={alert.phoneE164}
+              email={alert.email}
+              whatsapp={alert.whatsapp}
+              callVariant="outline"
+            />
+            {canMark ? <MarkContactedButton caseId={alert.id} updatedAt={alert.updatedAt} name={alert.name} /> : null}
+          </div>
         </li>
       ))}
       {more > 0 ? (

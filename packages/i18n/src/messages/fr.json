@@ -113,8 +113,6 @@
       "clearBody": "Aucun client mécontent n'attend votre appel et votre boîte est lue.",
       "noComment": "Aucun commentaire.",
       "answered": "Répondu le",
-      "call": "Appeler",
-      "callGuest": "Appeler {name}",
       "more": "{count, plural, one {<n>{shown}</n> autre client mécontent} other {<n>{shown}</n> autres clients mécontents}} en attente.",
       "unread": "{count, plural, one {<n>{shown}</n> notification non lue} other {<n>{shown}</n> notifications non lues}}"
     },
@@ -2326,9 +2324,6 @@
     "noMatchBody": "Choisissez un autre statut pour voir les autres clients.",
     "noHotelTitle": "Pas encore d'hôtel",
     "noHotelBody": "Choisissez ou créez un hôtel pour voir ses clients mécontents.",
-    "call": "Appeler",
-    "callGuest": "Appeler {name}",
-    "email": "E-mail",
     "profile": "Fiche client",
     "answer": "Réponse à l'enquête",
     "followUp": "Suivi",
@@ -2406,5 +2401,17 @@
     "voidTitle": "Annuler la facture {number} ?",
     "voidConsequence": "Elle reste dans la liste et l'export comme annulée et ne peut plus être modifiée. Vous pourrez ensuite créer une autre facture pour ce mois.",
     "cancel": "Retour"
+  },
+  "contact": {
+    "call": "Appeler",
+    "callName": "Appeler {name}",
+    "whatsapp": "WhatsApp",
+    "whatsappName": "Écrire à {name} sur WhatsApp",
+    "email": "E-mail",
+    "emailName": "Envoyer un e-mail à {name}",
+    "markContacted": "Marquer contacté",
+    "markContactedName": "Marquer {name} comme contacté",
+    "marked": "Marqué comme contacté.",
+    "more": "Plus d’actions"
   }
 }

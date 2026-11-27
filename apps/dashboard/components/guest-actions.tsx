@@ -7,10 +7,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@ritorno/ui/components/dropdown-menu"
 import { useMutation } from "@tanstack/react-query"
-import { DownloadIcon, Trash2Icon } from "lucide-react"
+import { DownloadIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
@@ -41,15 +42,19 @@ export function GuestActions({
   name,
   canExport,
   canDelete,
+  menu,
   onDeleted,
 }: {
   id: string
   name: string
   canExport: boolean
   canDelete: boolean
+  /** One "more" button holding both, where they must not sit next to everyday actions. */
+  menu?: boolean
   onDeleted?: () => void
 }) {
   const t = useTranslations("guests.detail")
+  const tContact = useTranslations("contact")
   const router = useRouter()
   const [confirming, setConfirming] = useState(false)
   const exporter = useGuestExport()
@@ -66,41 +71,61 @@ export function GuestActions({
     },
     onError: () => toast.error(t("error")),
   })
+  const exportItems = (
+    <>
+      <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "csv" })}>{t("exportCsv")}</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "json" })}>{t("exportJson")}</DropdownMenuItem>
+    </>
+  )
   return (
     <>
-      {canExport && (
+      {menu && (canExport || canDelete) && (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={<Button variant="outline" size="icon" aria-label={tContact("more")} loading={exporter.isPending} />}
+          >
+            <MoreHorizontalIcon />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-auto min-w-48">
+            {canExport && exportItems}
+            {canExport && canDelete && <DropdownMenuSeparator />}
+            {canDelete && (
+              <DropdownMenuItem variant="destructive" onClick={() => setConfirming(true)}>
+                <Trash2Icon />
+                {t("delete")}
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      {!menu && canExport && (
         <DropdownMenu>
           <DropdownMenuTrigger render={<Button variant="outline" loading={exporter.isPending} />}>
             <DownloadIcon data-icon="inline-start" />
             {t("export")}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "csv" })}>{t("exportCsv")}</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => exporter.mutate({ id, format: "json" })}>
-              {t("exportJson")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
+          <DropdownMenuContent align="end">{exportItems}</DropdownMenuContent>
         </DropdownMenu>
       )}
+      {!menu && canDelete && (
+        <Button variant="outline" className="text-destructive" onClick={() => setConfirming(true)}>
+          <Trash2Icon data-icon="inline-start" />
+          {t("delete")}
+        </Button>
+      )}
       {canDelete && (
-        <>
-          <Button variant="outline" className="text-destructive" onClick={() => setConfirming(true)}>
-            <Trash2Icon data-icon="inline-start" />
-            {t("delete")}
-          </Button>
-          <ConfirmDialog
-            open={confirming}
-            onOpenChange={setConfirming}
-            destructive
-            pending={remove.isPending}
-            title={t("deleteTitle")}
-            description={t("deleteBody", { name })}
-            confirmLabel={t("deleteConfirm")}
-            cancelLabel={t("cancel")}
-            typedConfirmation={{ label: t("deleteType", { name }), expected: name }}
-            onConfirm={() => remove.mutate()}
-          />
-        </>
+        <ConfirmDialog
+          open={confirming}
+          onOpenChange={setConfirming}
+          destructive
+          pending={remove.isPending}
+          title={t("deleteTitle")}
+          description={t("deleteBody", { name })}
+          confirmLabel={t("deleteConfirm")}
+          cancelLabel={t("cancel")}
+          typedConfirmation={{ label: t("deleteType", { name }), expected: name }}
+          onConfirm={() => remove.mutate()}
+        />
       )}
     </>
   )

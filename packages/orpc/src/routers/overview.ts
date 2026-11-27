@@ -1,4 +1,5 @@
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
+import { contactChannels } from "@ritorno/common/contact"
 import { CAPTURE_SOURCES } from "@ritorno/common/schemas"
 import {
   auditLog,
@@ -13,6 +14,7 @@ import {
 } from "@ritorno/db"
 import { and, avg, count, countDistinct, desc, eq, exists, gte, inArray, lt, sql } from "drizzle-orm"
 import { z } from "zod"
+import { withConsents } from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
 
 const period = z.object({ today: z.number(), week: z.number() })
@@ -39,6 +41,11 @@ export const overviewSchema = z.object({
         guestId: z.string(),
         name: z.string(),
         phoneE164: z.string(),
+        /** Null unless the guest agreed to email. */
+        email: z.string().nullable(),
+        whatsapp: z.boolean(),
+        /** For `feedbackCases.update`, to mark the case contacted from the home page. */
+        updatedAt: z.date(),
         nps: z.number(),
         comment: z.string().nullable(),
         createdAt: z.date(),
@@ -161,9 +168,8 @@ export const overviewRouter = {
       const alertRows = context.db
         .select({
           id: feedbackCases.id,
-          guestId: guests.id,
-          name: guests.name,
-          phoneE164: guests.phoneE164,
+          guest: guests,
+          updatedAt: feedbackCases.updatedAt,
           nps: surveyResponses.nps,
           comment: surveyResponses.comment,
           createdAt: feedbackCases.createdAt,
@@ -181,6 +187,16 @@ export const overviewRouter = {
           .innerJoin(guests, and(eq(guests.id, surveyResponses.guestId), eq(guests.hotelId, hotelId)))
           .where(openCase),
       ])
+
+      const alertGuests = await withConsents(
+        context.db,
+        hotelId,
+        alertItems.map((row) => row.guest),
+      )
+      const alerts = alertItems.map(({ guest: { id: guestId }, ...row }) => {
+        const guest = alertGuests.find((item) => item.id === guestId)!
+        return { ...row, guestId, name: guest.name, phoneE164: guest.phoneE164, ...contactChannels(guest) }
+      })
 
       const zero = { today: 0, week: 0 }
       const none = { current: 0, previous: 0 }
@@ -203,7 +219,7 @@ export const overviewRouter = {
             responses: lastSurvey?.responses ?? 0,
           },
         },
-        alerts: { open: openCount?.n ?? 0, items: alertItems },
+        alerts: { open: openCount?.n ?? 0, items: alerts },
         checklist: {
           logo: !!settings?.logoKey,
           colors: !!settings?.primaryColor,

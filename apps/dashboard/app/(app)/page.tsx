@@ -1,3 +1,4 @@
+import { hotelRoles } from "@ritorno/auth/access"
 import { firstName } from "@ritorno/common/utils"
 import { nextEnv } from "@ritorno/env/next"
 import { isForbidden } from "@ritorno/orpc/errors"
@@ -134,7 +135,12 @@ async function HotelHome({
         <GuestFinder />
 
         <Section title={t("attention.title")}>
-          <HomeAttention alerts={overview.alerts} unread={inbox.unread} timeZone={hotel.timezone} />
+          <HomeAttention
+            alerts={overview.alerts}
+            unread={inbox.unread}
+            canMark={!!role && hotelRoles[role].authorize({ guest: ["update"] }).success}
+            timeZone={hotel.timezone}
+          />
         </Section>
 
         {manager && <FirstRunChecklist state={overview.checklist} />}
