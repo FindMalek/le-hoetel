@@ -6,6 +6,7 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "e2e": "playwright test",
+    "guide:shots": "playwright test -c guide.config.ts",
     "install:browser": "playwright install chromium"
   },
   "dependencies": {
