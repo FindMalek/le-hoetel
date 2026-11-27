@@ -112,3 +112,29 @@ test("an email can only sign up once", async () => {
   expect((await post("/sign-up/email", body)).status).toBe(200)
   expect((await post("/sign-up/email", body)).status).toBeGreaterThanOrEqual(400)
 })
+
+test("a password reset ends the sessions opened with the old password", async () => {
+  let token = ""
+  const withReset = createAuth({
+    db: testDb.db,
+    secret: "test-secret-test-secret-test-secret!",
+    dashboardUrl: ORIGIN,
+    trustedOrigins: [ORIGIN],
+    secureCookies: false,
+    sendResetPassword: async (_user, url) => {
+      token = new URL(url).pathname.split("/").pop()!
+    },
+  })
+  const email = "taken-first@ritorno.test"
+  await withReset.api.signUpEmail({ body: { email, password: PASSWORD, name: "first" } })
+  const signIn = await withReset.api.signInEmail({ body: { email, password: PASSWORD }, asResponse: true })
+  const headers = new Headers({ cookie: cookieOf(signIn) })
+  expect(await withReset.api.getSession({ headers })).not.toBeNull()
+
+  await withReset.api.requestPasswordReset({ body: { email } })
+  await Bun.sleep(50)
+  await withReset.api.resetPassword({ body: { token, newPassword: "a different long password" } })
+
+  // past the short lived cookie cache, which would still answer for a few minutes
+  expect(await withReset.api.getSession({ headers, query: { disableCookieCache: true } })).toBeNull()
+})

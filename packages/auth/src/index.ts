@@ -117,6 +117,8 @@ export function createAuth(config: AuthConfig) {
     emailAndPassword: {
       enabled: true,
       minPasswordLength: 10,
+      // someone may have registered an invited address first: a reset has to lock them out
+      revokeSessionsOnPasswordReset: true,
       sendResetPassword: sendResetPassword
         ? async ({ user, url }) => void quiet(sendResetPassword(user, url))
         : undefined,
