@@ -18,7 +18,7 @@ The app admin (user role `admin`) sees every hotel: a call can name any hotel wi
 The dashboard only mirrors these (`apps/dashboard/lib/viewer.ts`), the api is what refuses:
 
 - the menu, command palette and phone tabs list the hotel pages the role on the hotel on screen can open. Staff do not see Import, Campaigns, Holidays, Hotel, Guest data, Activity log or Usage
-- the api caps calls per user and procedure: 600 a minute for signed-in reads (`GET`), 120 for writes and exports (`packages/orpc/src/lib/rate-limit.ts`). Reads need the room because one view or hotel switch renders the shell several times (link prefetch, refresh)
+- the api caps calls per user and procedure at 120 a minute, and at 600 for the calls the dashboard shell repeats (`hotel.get`, `hotel.mine`, `me.get`, `inbox.list`) (`packages/orpc/src/lib/rate-limit.ts`). Those need the room because one view or hotel switch renders the shell several times (link prefetch, refresh)
 - with no hotel on screen, only Home, Inbox and Account stay (plus the platform pages for the app admin)
 - a staff member typing a campaign address gets "not for your role"
 - the platform pages (`/admin/*`, `/users`, `/audit-log`) are a 404 for everyone but the app admin (`requireAdmin`)

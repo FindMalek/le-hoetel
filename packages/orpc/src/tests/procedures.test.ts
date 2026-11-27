@@ -38,15 +38,15 @@ test("a failed insert is logged as its error class and code, without the guest's
   expect(logged).not.toContain("Amel")
 })
 
-test("a signed-in read outlasts the default cap that still stops a write", async () => {
+test("the shell reads outlast the default cap that still stops a guest data read", async () => {
   const account = await app.signUp("busy@hotel.test")
   const owner = await app.joinHotel(account, await app.createHotel("busy-hotel", account), "owner")
   const over = Array.from({ length: RATE_LIMITS.default.limit + 1 })
 
   for (const _ of over) await owner.client.hotel.get()
 
-  const write = async () => {
-    for (const _ of over) await owner.client.hotel.qrCodes({ source: "room", spots: [] })
+  const guestReads = async () => {
+    for (const _ of over) await owner.client.guests.list({})
   }
-  await expect(write()).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS" })
+  await expect(guestReads()).rejects.toMatchObject({ code: "TOO_MANY_REQUESTS" })
 })

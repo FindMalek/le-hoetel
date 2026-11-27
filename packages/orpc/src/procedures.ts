@@ -9,16 +9,17 @@ import { enforceRateLimit, RATE_LIMITS, type RateLimitRule } from "./lib/rate-li
 
 export const o = os.$context<Context>()
 
-/** Exports are GETs too, but each one copies the data out: they keep the default. */
-function ruleFor(session: Context["session"], method: string | undefined, path: readonly string[]): RateLimitRule {
-  const read = session && method === "GET" && !path.at(-1)?.startsWith("export")
-  return read ? RATE_LIMITS.read : RATE_LIMITS.default
+/** What the dashboard shell asks for on every render, which one hotel switch repeats many times. Guest data reads stay at the default. */
+const SHELL_READS = new Set(["hotel.get", "hotel.mine", "me.get", "inbox.list"])
+
+function ruleFor(session: Context["session"], route: string): RateLimitRule {
+  return session && SHELL_READS.has(route) ? RATE_LIMITS.read : RATE_LIMITS.default
 }
 
 /** Unexpected errors are logged with the procedure path (a database error as its class and code only); ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
 const logErrors = o.middleware(async (options) => {
   const route = options.path.join(".")
-  const rule = ruleFor(options.context.session, options.procedure["~orpc"].route.method, options.path)
+  const rule = ruleFor(options.context.session, route)
   await enforceRateLimit(options.context, route, rule)
   try {
     return await options.next()
