@@ -95,11 +95,12 @@ export function CaptureForm(props: {
   perk: ReactNode
   whatsapp: ReactNode
   copy: CaptureCopy
+  preview?: boolean
 }) {
   const { copy } = props
   const [status, setStatus] = useState<Status>("idle")
   const [name, setName] = useState("")
-  const phone = usePhoneNumber({ detect: true })
+  const phone = usePhoneNumber()
   const [email, setEmail] = useState("")
   const [emailConsent, setEmailConsent] = useState(false)
   const [optionalOpen, setOptionalOpen] = useState(false)
@@ -126,6 +127,7 @@ export function CaptureForm(props: {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (props.preview) return
     setTried(true)
     if (nameBad) {
       nameRef.current?.focus()
@@ -142,13 +144,14 @@ export function CaptureForm(props: {
     }
     const data = new FormData(event.currentTarget)
     setStatus("sending")
-    data.set("phone", await phone.settle())
     // The action rejects when the request itself is lost (offline, dropped wifi).
     const result = await captureAction("idle", data).catch(() => "failed" as const)
     setStatus(result)
     if (!result.startsWith("invalid:")) return
     const field = result.slice("invalid:".length)
     if (field === "email" || field === "birthday") setOptionalOpen(true)
+    // the departure field shows its own error as an alert, there is no single control to focus
+    if (field === "stayCheckOut") return
     const target = field === "name" ? nameRef : field === "email" ? emailRef : field === "birthday" ? null : phoneRef
     setTimeout(() => (target ? target.current : document.getElementById("capture-birthday"))?.focus(), 0)
   }
@@ -226,10 +229,7 @@ export function CaptureForm(props: {
                 phone.setValue(next)
                 clearRejected()
               }}
-              onBlur={() => {
-                setTouched((current) => ({ ...current, phone: true }))
-                void phone.settle()
-              }}
+              onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
               locale={props.language}
               copy={copy.countryPicker}
               enterKeyHint="done"
@@ -261,7 +261,7 @@ export function CaptureForm(props: {
           </div>
         </fieldset>
 
-        <DepartureField copy={copy.departure} className={CONTROL} />
+        <DepartureField copy={copy.departure} className={CONTROL} rejected={rejected === "stayCheckOut"} />
 
         <fieldset className="grid gap-3">
           <legend className="font-medium text-sm">{copy.consentTitle}</legend>
@@ -335,7 +335,7 @@ export function CaptureForm(props: {
               {error}
             </p>
           ) : null}
-          <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
+          <Button type="submit" size="lg" loading={status === "sending"} disabled={props.preview} className="w-full">
             {status === "sending" ? copy.sending : copy.submit}
           </Button>
           <p className="text-center text-muted-foreground text-xs rtl:text-[0.8125rem]">{copy.submitHint}</p>

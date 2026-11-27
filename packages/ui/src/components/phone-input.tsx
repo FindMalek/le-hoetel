@@ -1,6 +1,6 @@
 "use client"
 
-import { countryFromLocales, dialCodeOf, type PhoneValue, readPhone, toInternational } from "@ritorno/common/dial"
+import { dialCodeOf, type PhoneValue, readPhone, toInternational } from "@ritorno/common/dial"
 import type { CountryPickerProps } from "@ritorno/ui/components/country-picker"
 import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon } from "lucide-react"
@@ -9,29 +9,11 @@ import * as React from "react"
 // read through `tPicker` by the callers, which the key check cannot follow. i18n-used: countryPicker.
 type CountryPickerCopy = { label: string; search: string; empty: string; close: string }
 
-// libphonenumber is only fetched once a phone field with a guessed country is used
-const loadParser = () => import("@ritorno/common/phone")
-
-/** State of a phone field. `detect` preselects the country of the browser, for forms people fill about themselves. */
-function usePhoneNumber({ detect }: { detect: boolean }) {
+/** State of a phone field. */
+function usePhoneNumber() {
+  // never preselected from the browser: a local number under a foreign code can be a real stranger's number
   const [value, setValue] = React.useState<PhoneValue>({ country: "TN", national: "" })
-  React.useEffect(() => {
-    if (!detect) return
-    const country = countryFromLocales(navigator.languages)
-    if (country) setValue((current) => (current.national ? current : { ...current, country, detected: country }))
-  }, [detect])
-
-  /** Call on blur and before sending: moves a guessed country to Tunisia when the number only works there. */
-  async function settle(): Promise<string> {
-    if (!value.detected) return toInternational(value)
-    // offline the number goes as it is and the api answers
-    const module = await loadParser().catch(() => null)
-    if (!module) return toInternational(value)
-    setValue((current) => module.settleCountry(current))
-    return toInternational(module.settleCountry(value))
-  }
-
-  return { value, setValue, number: toInternational(value), settle }
+  return { value, setValue, number: toInternational(value) }
 }
 
 type PhoneInputProps = Omit<React.ComponentProps<"input">, "value" | "onChange" | "type"> & {
@@ -50,6 +32,8 @@ function PhoneInput({ className, value, onValueChange, locale, copy, ...props }:
   const [open, setOpen] = React.useState(false)
   const [Picker, setPicker] = React.useState<React.ComponentType<CountryPickerProps> | null>(null)
 
+  const countryName = new Intl.DisplayNames([locale], { type: "region" }).of(value.country)
+
   function openPicker() {
     setOpen(true)
     // offline the list stays closed, typing `+` and the code still switches the country
@@ -63,7 +47,6 @@ function PhoneInput({ className, value, onValueChange, locale, copy, ...props }:
     <div
       ref={box}
       data-slot="phone-input"
-      onFocus={() => value.detected && void loadParser().catch(() => {})}
       dir="ltr"
       className={cn(
         "flex h-11 w-full min-w-0 items-center rounded-lg border border-input transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-surface has-[input[aria-invalid=true]]:border-destructive",
@@ -74,11 +57,13 @@ function PhoneInput({ className, value, onValueChange, locale, copy, ...props }:
         type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={`${copy.label}: ${value.country} +${dialCodeOf(value.country)}`}
+        aria-label={`${copy.label}: ${value.country} +${dialCodeOf(value.country)}, ${countryName}`}
+        // server and browser can word a country name differently
+        suppressHydrationWarning
         disabled={props.disabled}
         onPointerEnter={() => void loadPicker().catch(() => {})}
         onClick={openPicker}
-        className="flex h-full min-w-11 shrink-0 items-center gap-1 rounded-s-lg border-e border-input ps-3 pe-2 text-base tabular-nums outline-none focus-visible:bg-muted disabled:opacity-50 md:text-sm"
+        className="flex h-full min-h-11 min-w-11 shrink-0 items-center gap-1 rounded-s-lg border-e border-input ps-3 pe-2 text-base tabular-nums outline-none focus-visible:bg-muted disabled:opacity-50 md:text-sm"
       >
         {value.country} +{dialCodeOf(value.country)}
         <ChevronDownIcon aria-hidden className="size-4 text-muted-foreground" />

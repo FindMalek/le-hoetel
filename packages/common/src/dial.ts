@@ -18,8 +18,6 @@ export const toLatinDigits = (text: string): string =>
 export interface PhoneValue {
   country: string
   national: string
-  /** The browser's region, kept while the guest has not chosen a country themselves. */
-  detected?: string
 }
 
 /**
@@ -58,16 +56,6 @@ export function toInternational({ country, national }: PhoneValue): string {
 export function isPhoneComplete(number: string): boolean {
   const digits = number.replace(/\D/g, "").length
   return digits >= 7 && digits <= 17
-}
-
-/** The region of the first browser language that names one (`fr-BE`). A bare `fr` or `ar` says nothing. */
-export function countryFromLocales(locales: readonly string[]): string | null {
-  for (const locale of locales) {
-    const region = locale.split("-").find((part, index) => index > 0 && /^[A-Za-z]{2}$/.test(part))
-    const country = region?.toUpperCase()
-    if (country && DIAL_COUNTRIES.some((item) => item.country === country)) return country
-  }
-  return null
 }
 
 const fold = (text: string) => text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase()

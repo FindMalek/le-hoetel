@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
-import { hotelSettings, invitation } from "@ritorno/db"
+import { hotelSettings, invitation, shortLinks } from "@ritorno/db"
 import { eq } from "drizzle-orm"
 import { createTestApp, type TestApp } from "../../testing"
 
@@ -219,4 +219,19 @@ test("only the app admin renames a hotel or changes its slug, and a taken slug i
   expect(
     await admin.client.admin.hotels.update({ id: hotelId, name: "Dar Renamed", slug: "rename-after" }),
   ).toMatchObject({ name: "Dar Renamed", slug: "rename-after" })
+})
+
+test("trying the guest page gives a preview link and makes no printed code", async () => {
+  const owner = await app.signUp("try-owner@ritorno.test")
+  const hotelId = await app.createHotel("try-hotel", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  const link = await client.hotel.testLink({ source: "room", location: "12", language: "ar" })
+  expect(new URL(link.url).pathname).toBe("/h/try-hotel")
+  expect(Object.fromEntries(new URL(link.url).searchParams)).toEqual({
+    src: "room",
+    loc: "12",
+    lang: "ar",
+    preview: "1",
+  })
+  expect(await app.services.db.select().from(shortLinks).where(eq(shortLinks.hotelId, hotelId))).toHaveLength(0)
 })

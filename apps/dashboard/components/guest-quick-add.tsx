@@ -33,8 +33,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const locale = useLocale()
   const phoneBox = useRef<HTMLDivElement>(null)
   const [name, setName] = useState("")
-  // staff type the guest's number, so their own browser's country says nothing
-  const phone = usePhoneNumber({ detect: false })
+  const phone = usePhoneNumber()
   const [picked, setPicked] = useState<HotelLanguage | null>(null)
   const [email, setEmail] = useState("")
   const [whatsapp, setWhatsapp] = useState(false)
@@ -69,7 +68,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
         toast.success(guest.merged ? t("merged") : t("added"))
         setLast(guest)
         setName("")
-        phone.setValue((current) => ({ ...current, national: "" }))
+        phone.setValue({ country: "TN", national: "" })
         setEmail("")
         setWhatsapp(false)
         setEmailConsent(false)

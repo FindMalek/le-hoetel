@@ -49,6 +49,7 @@ catalog:
   cmdk: 1.1.1
   drizzle-kit: 0.31.11
   drizzle-orm: 0.45.4
+  fflate: 0.8.2
   fumadocs-core: 16.19.7
   fumadocs-mdx: 15.6.4
   fumadocs-ui: 16.19.7

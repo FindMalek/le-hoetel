@@ -114,6 +114,9 @@ catalogs:
     drizzle-orm:
       specifier: 0.45.4
       version: 0.45.4
+    fflate:
+      specifier: 0.8.2
+      version: 0.8.2
     fumadocs-core:
       specifier: 16.19.7
       version: 16.19.7
@@ -311,6 +314,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.108.3(@types/react@19.3.0)(react@19.3.1)
+      fflate:
+        specifier: 'catalog:'
+        version: 0.8.2
       lucide-react:
         specifier: 'catalog:'
         version: 1.77.0(@types/react@19.3.0)(react@19.3.1)
@@ -4688,6 +4694,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fflate@0.8.2:
+    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
 
   figures@6.1.0:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
@@ -9698,6 +9707,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fflate@0.8.2: {}
 
   figures@6.1.0:
     dependencies:
