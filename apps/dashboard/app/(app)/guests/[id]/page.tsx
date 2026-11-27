@@ -1,5 +1,6 @@
 import { hotelRoles } from "@ritorno/auth/access"
 import { CONSENT_CHANNELS, type ConsentChannel, type ConsentSource, consentWording } from "@ritorno/common/consent"
+import { contactChannels } from "@ritorno/common/contact"
 import { isSameLocalDay } from "@ritorno/common/hotel-time"
 import { isWhatsappCapable } from "@ritorno/common/phone"
 import type { GuestActivity } from "@ritorno/common/schemas"
@@ -22,6 +23,7 @@ import {
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
+import { ContactButtons } from "@/components/contact-buttons"
 import { GiveOffer } from "@/components/give-offer"
 import { GuestActions } from "@/components/guest-actions"
 import { ConsentChange } from "@/components/guest-consent-controls"
@@ -127,15 +129,25 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
           </span>
         }
         action={
-          allowed("update") ? (
-            <Button variant="outline" render={<Link href={`/guests/${guest.id}/edit`} />} nativeButton={false}>
-              <PencilIcon data-icon="inline-start" />
-              {t("edit")}
-            </Button>
-          ) : null
-        }
-        secondaryActions={
-          <GuestActions id={guest.id} name={guest.name} canExport={allowed("export")} canDelete={allowed("delete")} />
+          <>
+            <ContactButtons name={guest.name} phoneE164={guest.phoneE164} {...contactChannels(guest)} />
+            {/* One unit, so "more" never wraps onto a line of its own. */}
+            <div className="flex gap-2 *:first:max-md:grow">
+              {allowed("update") && (
+                <Button variant="outline" render={<Link href={`/guests/${guest.id}/edit`} />} nativeButton={false}>
+                  <PencilIcon data-icon="inline-start" />
+                  {t("edit")}
+                </Button>
+              )}
+              <GuestActions
+                menu
+                id={guest.id}
+                name={guest.name}
+                canExport={allowed("export")}
+                canDelete={allowed("delete")}
+              />
+            </div>
+          </>
         }
       />
       <div className="flex flex-col gap-8 p-4 md:p-6">

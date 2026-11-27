@@ -113,8 +113,6 @@
       "clearBody": "No unhappy guest is waiting for a call and your inbox is read.",
       "noComment": "No comment left.",
       "answered": "Answered",
-      "call": "Call",
-      "callGuest": "Call {name}",
       "more": "{count, plural, one {<n>{shown}</n> more unhappy guest} other {<n>{shown}</n> more unhappy guests}} waiting too.",
       "unread": "{count, plural, one {<n>{shown}</n> unread notification} other {<n>{shown}</n> unread notifications}}"
     },
@@ -2386,9 +2384,6 @@
     "noMatchBody": "Pick another status to see the other guests.",
     "noHotelTitle": "No hotel yet",
     "noHotelBody": "Pick or create a hotel to see its unhappy guests.",
-    "call": "Call",
-    "callGuest": "Call {name}",
-    "email": "Email",
     "profile": "Guest profile",
     "answer": "Survey answer",
     "followUp": "Follow-up",
@@ -2466,5 +2461,17 @@
     "voidTitle": "Void invoice {number}?",
     "voidConsequence": "It stays in the list and the export as void, and cannot be changed again. You can then create another invoice for that month.",
     "cancel": "Cancel"
+  },
+  "contact": {
+    "call": "Call",
+    "callName": "Call {name}",
+    "whatsapp": "WhatsApp",
+    "whatsappName": "Message {name} on WhatsApp",
+    "email": "Email",
+    "emailName": "Email {name}",
+    "markContacted": "Mark contacted",
+    "markContactedName": "Mark {name} as contacted",
+    "marked": "Marked as contacted.",
+    "more": "More actions"
   }
 }

@@ -140,3 +140,31 @@ test("deleting a guest, one or all, erases the notes and drops the case from the
   await all.manager.guests.removeAll({ confirmCount: 1 })
   expect((await stored(all.id))?.notes).toBeNull()
 })
+
+test("a case and its home alert offer only the channels the guest agreed to", async () => {
+  const { manager, staff, guestId, id } = await unhappy("cases-channels")
+  await manager.guests.update({ id: guestId, email: "amel@ritorno.test" })
+  const consent = (channel: "email" | "whatsapp", granted: boolean) =>
+    manager.guests.setConsent({ guestId, channel, granted, source: "staff" })
+  await consent("whatsapp", true)
+
+  const agreed = { email: null, whatsapp: true }
+  expect((await staff.feedbackCases.get({ id })).guest).toMatchObject(agreed)
+  expect((await staff.overview.get()).alerts.items).toMatchObject([agreed])
+
+  await consent("whatsapp", false)
+  await consent("email", true)
+
+  const changed = { email: "amel@ritorno.test", whatsapp: false }
+  expect((await staff.feedbackCases.get({ id })).guest).toMatchObject(changed)
+  expect((await staff.overview.get()).alerts.items).toMatchObject([changed])
+})
+
+test("a home alert carries what is needed to mark it contacted", async () => {
+  const { staff } = await unhappy("cases-from-home")
+  const [alert] = (await staff.overview.get()).alerts.items
+
+  await staff.feedbackCases.update({ id: alert!.id, updatedAt: alert!.updatedAt, status: "contacted" })
+
+  expect((await staff.overview.get()).alerts.open).toBe(0)
+})

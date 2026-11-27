@@ -51,13 +51,24 @@ A failed alert never fails the guest's answer. One case per response.
 Unhappy guests are the second half of the dashboard Inbox: `/feedback`, also in the sidebar as "Unhappy guests". The alert email and the home page link straight to `/feedback/<case id>`.
 
 - The list shows the guest, score, comment, status and date, newest first, filtered by status (`new`, `contacted`, `resolved`) with a count on each.
-- A case shows the survey answer, call, email and guest profile buttons, the status and one shared staff note (2000 characters), with who saved it last.
+- A case shows the survey answer, the [contact buttons](#contact-by-hand) and a guest profile button, the status and one shared staff note (2000 characters), with who saved it last.
+- Each unhappy guest on the home page has the same contact buttons and "Mark contacted", which moves the case to `contacted` and off the home page. Calling or writing does not change the status by itself.
 - A save sends the `updatedAt` it read. If a colleague saved in between, `feedbackCases.update` answers `CONFLICT`, and the page says so and reloads the case.
 - The alert link opens the case in the active hotel only. For another hotel the page says to switch hotel and open the link again.
 - The list loads more as you scroll (`feedbackCases.list` takes `cursor`).
 - Every hotel role (owner, manager, staff) can read and update cases: it needs `guest: read` and `guest: update`.
 - API: `feedbackCases.list`, `feedbackCases.get`, `feedbackCases.update`, all scoped by the active hotel. Each update writes a `feedback-case.update` audit entry with the status, never the note text.
 - A deleted guest's case leaves the inbox and its note is erased. The survey answer stays, anonymous.
+
+## Contact by hand
+
+The guest page, the case page and the home alerts open the staff member's own dialer (`tel:`), WhatsApp (`wa.me`) or mail app (`mailto:`). Nothing is sent or logged by Ritorno, and no text is prefilled.
+
+- Call is always there: a phone call is not a message.
+- WhatsApp shows only when the guest agreed to WhatsApp and the number can take it.
+- Email shows only when the guest has an address and agreed to email.
+
+The rule is `contactChannels` in `@ritorno/common/contact`. A withdrawal (STOP, unsubscribe, staff) hides the button. On the guest page, export and delete sit under the "more" button.
 
 ## Share on Google
 

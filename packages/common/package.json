@@ -13,6 +13,7 @@
     "./hotel": "./src/hotel.ts",
     "./color": "./src/color.ts",
     "./consent": "./src/consent.ts",
+    "./contact": "./src/contact.ts",
     "./feedback-case": "./src/feedback-case.ts",
     "./phone": "./src/phone.ts",
     "./dial": "./src/dial.ts",

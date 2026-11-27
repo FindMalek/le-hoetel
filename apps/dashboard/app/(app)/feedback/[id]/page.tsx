@@ -10,11 +10,12 @@ import {
 import { Button } from "@ritorno/ui/components/button"
 import { Section } from "@ritorno/ui/components/section"
 import { formatDate } from "@ritorno/ui/lib/date"
-import { MailIcon, PhoneIcon, UserRoundIcon } from "lucide-react"
+import { UserRoundIcon } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
+import { ContactButtons } from "@/components/contact-buttons"
 import { CaseStatusBadge, ScoreBadge } from "@/components/feedback-case-badges"
 import { FeedbackCaseForm } from "@/components/feedback-case-form"
 import { GiveOffer } from "@/components/give-offer"
@@ -68,22 +69,13 @@ export default async function FeedbackCasePage({ params }: PageProps<"/feedback/
         title={item.name}
         description={<Phone value={item.guest.phoneE164} />}
         action={
-          <Button
-            render={<a href={`tel:${item.guest.phoneE164}`} aria-label={t("callGuest", { name: item.name })} />}
-            nativeButton={false}
-          >
-            <PhoneIcon data-icon="inline-start" />
-            {t("call")}
-          </Button>
-        }
-        secondaryActions={
           <>
-            {item.guest.email ? (
-              <Button variant="outline" render={<a href={`mailto:${item.guest.email}`} />} nativeButton={false}>
-                <MailIcon data-icon="inline-start" />
-                {t("email")}
-              </Button>
-            ) : null}
+            <ContactButtons
+              name={item.name}
+              phoneE164={item.guest.phoneE164}
+              email={item.guest.email}
+              whatsapp={item.guest.whatsapp}
+            />
             <Button variant="outline" render={<Link href={`/guests/${item.guest.id}`} />} nativeButton={false}>
               <UserRoundIcon data-icon="inline-start" />
               {t("profile")}

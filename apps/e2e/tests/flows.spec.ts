@@ -209,11 +209,12 @@ test("a CSV import adds guests and records consent only where the file says yes"
 test("one guest, then every guest, can be exported and deleted", async () => {
   const count = async () => (await db`select count(*)::int as n from guests where hotel_id = ${hotel.id}`)[0]?.n
   await open(owner, `${URLS.dashboard}/guests/${await guestId("Karim Jlassi")}`)
-  await owner.getByRole("button", { name: "Export" }).click()
+  await owner.getByRole("button", { name: "More actions" }).click()
   const one = await downloaded(owner, () => owner.getByRole("menuitem", { name: "As CSV" }).click())
   expect(one).toContain("Karim Jlassi")
   expect(one).not.toContain("Salma")
-  await owner.getByRole("button", { name: "Delete", exact: true }).click()
+  await owner.getByRole("button", { name: "More actions" }).click()
+  await owner.getByRole("menuitem", { name: "Delete" }).click()
   await owner.getByLabel("Type Karim Jlassi to confirm").fill("Karim Jlassi")
   await owner.getByRole("button", { name: "Delete permanently" }).click()
   await expect.poll(count).toBe(2)

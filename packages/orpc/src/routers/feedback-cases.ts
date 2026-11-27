@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server"
+import { contactChannels } from "@ritorno/common/contact"
 import { FEEDBACK_CASE_STATUSES, FEEDBACK_NOTES_MAX } from "@ritorno/common/feedback-case"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { cursorSchema } from "@ritorno/common/schemas"
@@ -8,6 +9,7 @@ import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
 import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
+import { withConsents } from "../lib/guests"
 import { can, hotelProcedure } from "../procedures"
 
 const status = z.enum(FEEDBACK_CASE_STATUSES)
@@ -32,7 +34,10 @@ const caseDetail = caseRow.extend({
   guest: z.object({
     id: z.string(),
     phoneE164: z.string(),
+    /** Null unless the guest agreed to email. */
     email: z.string().nullable(),
+    /** True when staff may write to the guest on WhatsApp. */
+    whatsapp: z.boolean(),
     language: z.enum(HOTEL_LANGUAGES),
   }),
 })
@@ -65,7 +70,7 @@ async function loadCase(db: Context["db"], hotelId: string, id: string) {
       ratingRooms: surveyResponses.ratingRooms,
       ratingCleanliness: surveyResponses.ratingCleanliness,
       ratingService: surveyResponses.ratingService,
-      guest: { id: guests.id, phoneE164: guests.phoneE164, email: guests.email, language: guests.language },
+      guest: guests,
     })
     .from(feedbackCases)
     .innerJoin(surveyResponses, on.response)
@@ -73,7 +78,9 @@ async function loadCase(db: Context["db"], hotelId: string, id: string) {
     .leftJoin(user, eq(user.id, feedbackCases.handledBy))
     .where(and(eq(feedbackCases.id, id), eq(feedbackCases.hotelId, hotelId)))
   if (!row) throw notFound()
-  return row
+  const [guest] = await withConsents(db, hotelId, [row.guest])
+  const { id: guestId, phoneE164, language } = guest!
+  return { ...row, guest: { id: guestId, phoneE164, language, ...contactChannels(guest!) } }
 }
 
 /** The feedback inbox of unhappy guests. Not `feedback`, which is the product feedback widget. */
