@@ -5,14 +5,22 @@ import { logger } from "@ritorno/logger"
 import type { Context } from "./context"
 import { type ActiveHotel, resolveHotel } from "./lib/hotel"
 import { activeMembership } from "./lib/org"
-import { enforceRateLimit, RATE_LIMITS } from "./lib/rate-limit"
+import { enforceRateLimit, RATE_LIMITS, type RateLimitRule } from "./lib/rate-limit"
 
 export const o = os.$context<Context>()
+
+/** What the dashboard shell asks for on every render, which one hotel switch repeats many times. Guest data reads stay at the default. */
+const SHELL_READS = new Set(["hotel.get", "hotel.mine", "me.get", "inbox.list"])
+
+function ruleFor(session: Context["session"], route: string): RateLimitRule {
+  return session && SHELL_READS.has(route) ? RATE_LIMITS.read : RATE_LIMITS.default
+}
 
 /** Unexpected errors are logged with the procedure path (a database error as its class and code only); ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
 const logErrors = o.middleware(async (options) => {
   const route = options.path.join(".")
-  await enforceRateLimit(options.context, route, RATE_LIMITS.default)
+  const rule = ruleFor(options.context.session, route)
+  await enforceRateLimit(options.context, route, rule)
   try {
     return await options.next()
   } catch (error) {
