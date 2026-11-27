@@ -26,6 +26,7 @@
     "email:export": "turbo export -F email",
     "dev:worker": "node scripts/with-env.mjs bun --watch apps/api/src/worker.ts",
     "test:e2e": "pnpm --filter e2e run e2e",
+    "guide:shots": "pnpm --filter e2e run guide:shots",
     "dev:secrets": "infisical run --env=dev -- pnpm dev",
     "env:check": "node scripts/env-check.mjs",
     "secrets:pull": "node .github/scripts/secrets-pull.mjs",

@@ -15,6 +15,7 @@ description: Every command in the root package.json.
 | `pnpm check-types` | typescript across the repo |
 | `pnpm test` | tests in every package, against postgres (`pnpm db:up` first) |
 | `pnpm test:e2e` | playwright tests of web, dashboard and api on the demo seed |
+| `pnpm guide:shots` | retake the [staff guide](/docs/guide) screenshots, see below |
 | `pnpm db:up` / `db:down` | local postgres |
 | `pnpm db:generate` | write a migration from the schema |
 | `pnpm db:migrate` | apply migrations |
@@ -23,3 +24,9 @@ description: Every command in the root package.json.
 | `pnpm ui:add <component>` | add a shadcn component to `packages/ui` |
 
 Run a single app with turbo, for example `pnpm turbo dev -F docs`.
+
+## Guide screenshots
+
+`pnpm guide:shots` rebuilds every image in `apps/docs/assets/guide`. It needs Postgres (`pnpm db:up`, or point `DATABASE_URL` at yours) and chromium (`pnpm --filter e2e install:browser`). It recreates the database `ritorno_guide`, seeds the demo, builds web and dashboard, serves them with the api on ports 4292 to 4294 with log only providers, and shoots them in English. `GUIDE_REUSE=1` shoots against servers already running on those ports.
+
+The shots and their numbered callouts are in `apps/e2e/guide/staff.shots.ts`. The numbers follow the order of the callouts there, and the lists in `content/docs/guide` follow the same order, so change both together. When a page changes, rerun and commit the images that moved.
