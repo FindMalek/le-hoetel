@@ -112,7 +112,8 @@ test("a welcome offer reaches a new guest and is redeemed once at the desk", asy
   // The welcome message comes from the job queue, polled below: it can take longer than the default test cap.
   test.slow()
   await open(owner, `${URLS.dashboard}/offers/new`)
-  await owner.getByLabel("Title").fill("Welcome mint tea")
+  // `#title`: the translation fields carry the same label
+  await owner.locator("#title").fill("Welcome mint tea")
   await owner.getByLabel("Promo code").fill("TEA")
   await owner.getByLabel("Given automatically to").click()
   await owner.getByRole("option", { name: "New guests" }).click()
