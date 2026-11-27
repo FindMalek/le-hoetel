@@ -21,6 +21,7 @@ import {
   ScanLineIcon,
   UploadIcon,
   UserCogIcon,
+  UserPlusIcon,
   UsersIcon,
   UsersRoundIcon,
   WalletIcon,
@@ -48,6 +49,24 @@ export interface NavGroup {
   label: NavLabel
   items: NavItem[]
 }
+
+export interface QuickAction {
+  href: Route
+  label: "addGuest" | "redeemCode" | "newCampaign" | "newOffer"
+  icon: typeof HomeIcon
+  hotel: HotelPermission
+}
+
+// i18n-used: shell.actions
+const QUICK_ACTIONS: QuickAction[] = [
+  { href: "/guests/new", label: "addGuest", icon: UserPlusIcon, hotel: { guest: ["create"] } },
+  { href: "/redeem", label: "redeemCode", icon: ScanLineIcon, hotel: { offer: ["redeem"] } },
+  { href: "/campaigns/new", label: "newCampaign", icon: MegaphoneIcon, hotel: { campaign: ["create"] } },
+  { href: "/offers/new", label: "newOffer", icon: GiftIcon, hotel: { offer: ["create"] } },
+]
+
+export const quickActions = ({ role }: Viewer): QuickAction[] =>
+  QUICK_ACTIONS.filter((action) => allows(role, action.hotel))
 
 /** Display order. The platform group leads for the app admin, since that is their daily work. */
 const GROUP_LABELS: Record<NavGroupKey, NavLabel> = {

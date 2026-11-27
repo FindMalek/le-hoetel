@@ -9,6 +9,16 @@
     "search": "بحث",
     "searchPlaceholder": "ابحث أو انتقل إلى…",
     "noResults": "لا توجد نتائج.",
+    "searchGuestsPlaceholder": "اسم أو هاتف ضيف، أو صفحة…",
+    "searching": "جارٍ البحث…",
+    "searchError": "تعذر البحث. حاول مرة أخرى.",
+    "quickActions": "إجراءات",
+    "actions": {
+      "addGuest": "إضافة ضيف",
+      "redeemCode": "استخدام رمز",
+      "newCampaign": "حملة جديدة",
+      "newOffer": "عرض جديد"
+    },
     "goTo": "الانتقال إلى",
     "language": "اللغة",
     "account": "الحساب",
