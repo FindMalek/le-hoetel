@@ -69,6 +69,14 @@ export const previewUrl = (webUrl: string, slug: string, source: CaptureSource, 
 export const qrFileName = (source: CaptureSource, location: string | null, ext: string): string =>
   `qr-${source}${location ? `-${location.replace(/[^\p{L}\p{M}\p{N}-]+/gu, "_")}` : ""}.${ext}`
 
+/** `name`, or `name-2`, `name-3` when taken: spots `1.5` and `1 5` make the same file name. */
+export function freeFileName(name: string, taken: Record<string, unknown>): string {
+  const dot = name.lastIndexOf(".")
+  let free = name
+  for (let n = 2; Object.hasOwn(taken, free); n++) free = `${name.slice(0, dot)}-${n}${name.slice(dot)}`
+  return free
+}
+
 /** The page a QR code opens. The spot is optional: a front desk code often has none. */
 export function captureUrl(webUrl: string, slug: string, source: CaptureSource, location?: string | null): string {
   const query = new URLSearchParams({ src: source })

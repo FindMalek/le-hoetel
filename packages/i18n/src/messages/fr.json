@@ -852,10 +852,10 @@
     "pieceTable": "Chevalet de table",
     "pieceDesk": "Affiche de réception",
     "pieceSticker": "Autocollants",
-    "paperRoom": "A6",
-    "paperTable": "A5 plié",
-    "paperDesk": "A5",
-    "paperSticker": "Planche A4 de 20",
+    "paperRoom": "4 par A4",
+    "paperTable": "2 par A4, pliés",
+    "paperDesk": "2 par A4",
+    "paperSticker": "20 ou 6 par A4",
     "stepSpots": "Quels emplacements ?",
     "deskOnly": "Un seul code pour la réception, sans numéro de chambre ou de table.",
     "selectionLabel": "Emplacements à imprimer",
@@ -882,7 +882,6 @@
     "nothingTitle": "Rien de sélectionné",
     "nothing": "Cochez un emplacement ou élargissez la plage.",
     "print": "{count, plural, =0 {Imprimer ou PDF} one {Imprimer ou PDF (# page)} other {Imprimer ou PDF (# pages)}}",
-    "printHint": "Dans la fenêtre d’impression : sans marges, échelle 100 %. Choisissez Enregistrer au format PDF pour télécharger.",
     "saveImages": "Images {format}",
     "saveFailed": "Impossible d’enregistrer les images. Réessayez.",
     "openPage": "Voir la page client",
@@ -922,7 +921,16 @@
     "colSpot": "Emplacement",
     "colGuests": "Clients",
     "noSpot": "Tout l'hôtel",
-    "beforePrint": "Avant d’imprimer"
+    "beforePrint": "Avant d’imprimer",
+    "paperLabel": "Où imprimer",
+    "paperOffice": "Mon imprimante (A4)",
+    "paperShop": "Imprimeur",
+    "stickerSize": "Taille des autocollants",
+    "stickerSmall": "Petits, 20 par A4",
+    "stickerLarge": "Grands, 6 par A4",
+    "printHintOffice": "Papier A4, échelle 100 %, sans marges. Découpez aux repères. Enregistrez en PDF pour télécharger.",
+    "printHintShop": "Une pièce par page au format {size}, avec 3 mm de fond perdu et repères de coupe. Enregistrez en PDF et envoyez le fichier.",
+    "testFailed": "Impossible de créer le lien de test"
   },
   "qrKit": {
     "headlineRoom": "Bienvenue dans votre chambre",
@@ -933,7 +941,8 @@
     "perkTitle": "Cadeau de bienvenue",
     "perkBody": "Un petit cadeau de {hotel} vous attend à la réception.",
     "alt": "Code QR d’inscription",
-    "sheetScan": "Scannez-moi"
+    "sheetScan": "Scannez-moi",
+    "sheetBenefit": "Un cadeau de bienvenue vous attend"
   },
   "messages": {
     "title": "Messages",

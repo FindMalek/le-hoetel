@@ -1,4 +1,4 @@
-import { qrFileName } from "@ritorno/common/qr"
+import { freeFileName, qrFileName } from "@ritorno/common/qr"
 import type { CaptureSource } from "@ritorno/common/schemas"
 import { zipSync } from "fflate"
 
@@ -6,7 +6,17 @@ export type ImageFormat = "png" | "svg"
 
 /** Wide enough for a 9 cm print at 300 dpi. */
 const PNG_WIDTH = 1080
-const PAINT = ["fill", "stroke", "font-family", "font-weight"] as const
+const COLORS = ["fill", "stroke"] as const
+const FONTS = ["font-family", "font-weight"] as const
+
+/** The theme can compute to `oklch()` or `lab()`, which design tools and older viewers cannot read. */
+function hexOf(canvas: CanvasRenderingContext2D, color: string): string {
+  if (color === "none") return color
+  canvas.fillStyle = color
+  canvas.fillRect(0, 0, 1, 1)
+  const [red, green, blue] = canvas.getImageData(0, 0, 1, 1).data
+  return `#${[red!, green!, blue!].map((part) => part.toString(16).padStart(2, "0")).join("")}`
+}
 
 const dataUrl = (blob: Blob) =>
   new Promise<string>((resolve, reject) => {
@@ -20,9 +30,11 @@ const dataUrl = (blob: Blob) =>
 async function standalone(art: SVGSVGElement): Promise<{ svg: string; height: number }> {
   const copy = art.cloneNode(true) as SVGSVGElement
   const from = art.querySelectorAll("text, rect, path")
+  const canvas = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!
   copy.querySelectorAll("text, rect, path").forEach((node, index) => {
     const style = getComputedStyle(from[index]!)
-    for (const name of PAINT) node.setAttribute(name, style.getPropertyValue(name))
+    for (const name of COLORS) node.setAttribute(name, hexOf(canvas, style.getPropertyValue(name)))
+    for (const name of FONTS) node.setAttribute(name, style.getPropertyValue(name))
   })
   for (const node of copy.querySelectorAll("*")) node.removeAttribute("class")
   for (const image of copy.querySelectorAll("image")) {
@@ -73,7 +85,7 @@ export async function downloadArt(
     const blob = format === "png" ? await png(drawn) : new Blob([drawn.svg], { type: "image/svg+xml" })
     const name = qrFileName(source, location, format)
     if (art.length === 1) return save(name, blob)
-    files[name] = new Uint8Array(await blob.arrayBuffer())
+    files[freeFileName(name, files)] = new Uint8Array(await blob.arrayBuffer())
   }
   // images are already compressed: store them
   save(zipName, new Blob([new Uint8Array(zipSync(files, { level: 0 }))], { type: "application/zip" }))
