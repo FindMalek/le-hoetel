@@ -158,7 +158,7 @@ export const campaignsRouter = {
       tags: ["campaigns"],
     })
     .input(previewSchema)
-    .output(z.object({ guests: z.number(), email: z.number(), whatsapp: z.number() }))
+    .output(z.object({ guests: z.number(), email: z.number(), whatsapp: z.number(), undated: z.number() }))
     .handler(async ({ context, input }) =>
       countRecipients(context.db, {
         hotelId: context.hotel.hotelId,

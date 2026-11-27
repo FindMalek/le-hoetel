@@ -32,14 +32,24 @@ import { LanguageChoice } from "@/components/language-choice"
 import { download } from "@/lib/download"
 import { useRefreshLists } from "@/lib/use-refresh-lists"
 
-const FIELDS = ["name", "phone", "email", "birthday", "language", "consent"] as const
+const FIELDS = [
+  "name",
+  "phone",
+  "email",
+  "birthday",
+  "language",
+  "consent",
+  "stayCheckIn",
+  "stayCheckOut",
+  "stayConsent",
+] as const
 type ImportField = (typeof FIELDS)[number]
 type Mapping = Record<ImportField, number>
 type Step = "upload" | "map" | "review" | "done"
 
 const REQUIRED: ImportField[] = ["name", "phone"]
 const STEPS = ["upload", "map", "review"] as const
-const PROBLEM_FIELDS = ["name", "phone", "email", "birthday", "language"] as const
+const PROBLEM_FIELDS = ["name", "phone", "email", "birthday", "language", "stayCheckIn", "stayCheckOut"] as const
 const PREVIEW_FIELDS = ["name", "phone", "email", "language", "consent"] as const
 
 const GUESSES: Record<ImportField, string[]> = {
@@ -49,6 +59,9 @@ const GUESSES: Record<ImportField, string[]> = {
   birthday: ["birth", "naissance", "anniv", "ميلاد"],
   language: ["lang", "langue", "لغة"],
   consent: ["consent", "opt", "accord"],
+  stayCheckIn: ["arriv", "check-in", "check_in", "checkin", "وصول"],
+  stayCheckOut: ["depart", "départ", "check-out", "check_out", "checkout", "مغادرة"],
+  stayConsent: ["stay_consent", "stay consent", "consent_profile", "accord séjour", "الإقامة"],
 }
 
 const sample = (rows: string[][], column: number): string[] =>
@@ -67,7 +80,9 @@ function guessMapping(headers: string[], rows: string[][]): Mapping {
     if (index >= 0) taken.add(index)
     return index
   }
-  const mapping = Object.fromEntries(FIELDS.map((field) => [field, find(field)])) as Mapping
+  // The stay consent column first: its header also says "consent", which must not read as marketing consent.
+  const order: ImportField[] = ["stayConsent", ...FIELDS.filter((field) => field !== "stayConsent")]
+  const mapping = Object.fromEntries(order.map((field) => [field, find(field)])) as Mapping
   const byContent = (field: "phone" | "email", looksRight: (cell: string) => boolean) => {
     if (mapping[field] >= 0) return
     const index = headers.findIndex((_, at) => {
@@ -105,7 +120,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
 
   const headers = table?.[0] ?? []
   const body = useMemo(() => table?.slice(1) ?? [], [table])
-  const consentMapped = mapping ? mapping.consent >= 0 : false
+  const consentMapped = mapping ? mapping.consent >= 0 || mapping.stayConsent >= 0 : false
   const ready = mapping !== null && REQUIRED.every((field) => mapping[field] >= 0)
 
   const rows = useMemo<GuestImportRow[]>(() => {
@@ -120,6 +135,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
     const problems: { line: number; field: (typeof PROBLEM_FIELDS)[number] | "row" }[] = []
     let valid = 0
     let consenting = 0
+    let datesDropped = 0
     for (const row of rows) {
       const parsed = guestCreateSchema.safeParse(
         guestFromImportRow(row, { defaultLanguage: language, confirmConsent: true }),
@@ -127,11 +143,12 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
       if (parsed.success) {
         valid++
         if (parsed.data.consents.email || parsed.data.consents.whatsapp) consenting++
+        if (!parsed.data.consents.profile && (row.stayCheckIn?.trim() || row.stayCheckOut?.trim())) datesDropped++
       } else {
         problems.push({ line: row.line, field: problemOf(parsed.error.issues[0]?.path.join(".") ?? "") })
       }
     }
-    return { valid, consenting, problems }
+    return { valid, consenting, datesDropped, problems }
   }, [rows, language])
 
   const refreshLists = useRefreshLists()
@@ -189,9 +206,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
 
   function downloadSample() {
     const csv = toCsv([
-      ["name", "phone", "email", "language", "consent"],
-      ["Amel Ben Salah", "+216 20 123 456", "amel@example.com", "fr", "yes"],
-      ["John Miller", "+44 7700 900123", "", "en", "no"],
+      ["name", "phone", "email", "language", "consent", "arrival", "departure", "stay_consent"],
+      ["Amel Ben Salah", "+216 20 123 456", "amel@example.com", "fr", "yes", "2026-08-01", "2026-08-08", "yes"],
+      ["John Miller", "+44 7700 900123", "", "en", "no", "", "", "no"],
     ])
     download("guests-sample.csv", csv, "text/csv;charset=utf-8")
   }
@@ -420,6 +437,11 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               <p className="text-muted-foreground text-sm">{t("previewMore", { count: rows.length - 5 })}</p>
             )}
           </div>
+
+          {/* Dates need both the row's yes and the confirmation. */}
+          {(review.datesDropped > 0 || (!confirm && rows.some((row) => row.stayCheckIn || row.stayCheckOut))) && (
+            <InlineAlert tone="warning" title={t("datesDropped")} />
+          )}
 
           <div className="flex flex-col gap-3 rounded-lg border p-4">
             <h2 className="font-heading font-semibold">{t("consentTitle")}</h2>

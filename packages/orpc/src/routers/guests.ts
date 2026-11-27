@@ -22,6 +22,8 @@ import {
   guestUpsertResultSchema,
   guestVisitResultSchema,
   hotelGuestsExportSchema,
+  isStayOrdered,
+  STAY_ORDER_MESSAGE,
 } from "@ritorno/common/schemas"
 import {
   consentEvents,
@@ -359,6 +361,10 @@ export const guestsRouter = {
       }
       if (patch.email === null && current.consents.email) {
         throw new ORPCError("BAD_REQUEST", { message: "Withdraw the email consent before removing the email." })
+      }
+      const touchesStay = patch.stayCheckIn !== undefined || patch.stayCheckOut !== undefined
+      if (touchesStay && !isStayOrdered({ ...current, ...patch })) {
+        throw new ORPCError("BAD_REQUEST", { message: STAY_ORDER_MESSAGE })
       }
       if (phone && phone !== current.phoneE164) {
         const { whatsappWithdrawn } = await updateWithNewPhone(

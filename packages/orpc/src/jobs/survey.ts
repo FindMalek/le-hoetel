@@ -6,11 +6,17 @@ import {
   signSurveyToken,
   surveyPageUrl,
 } from "@ritorno/common/survey"
-import { guests, hotelSettings, surveyInvites } from "@ritorno/db"
+import { guestConsents, guests, hotelSettings, surveyInvites } from "@ritorno/db"
 import { defineJob } from "@ritorno/jobs"
-import { and, eq, isNotNull, isNull, ne, notInArray, or, sql } from "drizzle-orm"
+import { and, asc, eq, exists, inArray, isNotNull, isNull, ne, notInArray, or, sql } from "drizzle-orm"
 import { z } from "zod"
-import { claimAndSend, consentedChannels, type SendPacing } from "../lib/automations"
+import {
+  BULK_JOB_EXPIRE_SECONDS,
+  claimAndSend,
+  consentedChannels,
+  SEND_PACING,
+  type SendPacing,
+} from "../lib/automations"
 import { surveyExpiry } from "../lib/surveys"
 import type { JobServices } from "./welcome"
 
@@ -23,18 +29,20 @@ const dueAt = sql`coalesce(
 )`
 
 /**
- * Runs every hour. A guest is due 24 hours after check-out, or 8 days after being captured when no check-out is
+ * Runs every minute and takes one batch of guests per hotel, longest due first. A guest is due 24 hours after check-out, or 8 days after being captured when no check-out is
  * known (never for a csv import or a restaurant table, which say nothing about a stay),
  * outside the hotel's quiet hours, and only for 14 days, so a fresh deploy never surveys old guests. One invite per
  * guest (unique) and one claim per channel keep it to one message each however often this runs, and a crash
- * between the invite and the send is picked up by the next run.
+ * between the invite and the send is picked up by the next run. Guests with no message consent are left out of the
+ * query, so they never fill a batch.
  */
 export const surveyJob = (services: JobServices, pacing?: SendPacing) =>
   defineJob({
     name: SURVEY_JOB,
     description: "Send the post-stay survey 24 hours after check-out",
     payload: z.object({}),
-    cron: "20 * * * *",
+    cron: "* * * * *",
+    expireInSeconds: BULK_JOB_EXPIRE_SECONDS,
     scheduleData: {},
     handler: async (_payload, { now }) => {
       const at = now()
@@ -62,8 +70,23 @@ export const surveyJob = (services: JobServices, pacing?: SendPacing) =>
               or(notInArray(guests.source, ["csv", "qr_table"]), isNotNull(guests.stayCheckOut)),
               sql`${dueAt} <= ${at.toISOString()}::timestamptz`,
               sql`${dueAt} > ${new Date(at.getTime() - SURVEY_INVITE_DAYS * 864e5).toISOString()}::timestamptz`,
+              exists(
+                services.db
+                  .select({ one: sql`1` })
+                  .from(guestConsents)
+                  .where(
+                    and(
+                      eq(guestConsents.guestId, guests.id),
+                      eq(guestConsents.hotelId, hotelId),
+                      eq(guestConsents.granted, true),
+                      inArray(guestConsents.channel, ["email", "whatsapp"]),
+                    ),
+                  ),
+              ),
             ),
           )
+          .orderBy(asc(dueAt), guests.id)
+          .limit((pacing ?? SEND_PACING).batchSize)
         for (const guest of due) {
           const channels = await consentedChannels(services.db, hotelId, guest.id)
           if (!channels.length) continue

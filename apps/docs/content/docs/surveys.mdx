@@ -13,7 +13,7 @@ One short survey per guest after the stay: six questions at most, one minute on 
 
 ## When it is sent
 
-The `survey-invites` job runs every hour (pg-boss, jobs module). A guest is due 24 hours after check-out (counted from noon hotel time). With no check-out date it is 8 days after the guest was captured, longer than a week's stay (a stay over a week with no date can still be asked early). A guest from a restaurant table code or a csv import is only surveyed once they have a check-out date. Only guests due in the last 14 days are picked up, so a new deploy never surveys old guests.
+The `survey-invites` job runs every minute (pg-boss, jobs module) and takes at most one batch (20 guests) per hotel, longest due first, so a large import is worked through gradually. A guest is due 24 hours after check-out (counted from noon hotel time). With no check-out date it is 8 days after the guest was captured, longer than a week's stay (a stay over a week with no date can still be asked early). A guest from a restaurant table code or a csv import is only surveyed once they have a check-out date. Staff type it in quick add or guest edit, or it comes with the import, so an imported departure in the last 14 days is surveyed. Only guests due in the last 14 days are picked up, so a new deploy never surveys old guests.
 
 Where the check-out date comes from:
 
@@ -21,7 +21,7 @@ Where the check-out date comes from:
 - Staff, on the guest's edit page, once the guest has the `profile` consent.
 
 - Sent through `sendToGuest` on the channels the guest agreed to: the `survey` email and the `guest_survey` WhatsApp template (see `whatsapp-templates`).
-- Never in quiet hours, 21:00 to 08:00 hotel time. The next hourly run sends it.
+- Never in quiet hours, 21:00 to 08:00 hotel time. The first run after quiet hours sends it.
 - Once per guest: `survey_invites` has one row per guest and `automation_sends` one claim per channel. A crash between the invite and the send is picked up by the next run.
 
 ## Data

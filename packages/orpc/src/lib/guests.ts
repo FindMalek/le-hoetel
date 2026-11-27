@@ -7,7 +7,13 @@ import {
   type GuestSource,
 } from "@ritorno/common/consent"
 import { isSameLocalDay, localTime } from "@ritorno/common/hotel-time"
-import { GUEST_MERGE_FIELDS, type Guest, type GuestUpsertResult, type guestCreateSchema } from "@ritorno/common/schemas"
+import {
+  GUEST_MERGE_FIELDS,
+  type Guest,
+  type GuestUpsertResult,
+  type guestCreateSchema,
+  isStayOrdered,
+} from "@ritorno/common/schemas"
 import {
   consentEvents,
   type Db,
@@ -160,6 +166,26 @@ function rescannedCheckOut(
   return !typed || ahead || beforeArrival ? current.stayCheckOut : typed
 }
 
+type Stay = { stayCheckIn?: string | null; stayCheckOut?: string | null }
+
+/**
+ * Staff dates win, but a stored date that would put arrival after departure belongs to an older stay and goes.
+ * A csv row older than the stored stay (its check-out, else its arrival) changes nothing: an old list must not rewind
+ * the last stay.
+ */
+function mergedStay(current: typeof guests.$inferSelect, typed: Stay, fromCsv: boolean) {
+  const kept = { stayCheckIn: current.stayCheckIn, stayCheckOut: current.stayCheckOut }
+  const latest = typed.stayCheckOut ?? typed.stayCheckIn
+  const stored = current.stayCheckOut ?? current.stayCheckIn
+  if (fromCsv && latest && stored && latest < stored) return kept
+  const merged = {
+    stayCheckIn: typed.stayCheckIn ?? current.stayCheckIn,
+    stayCheckOut: typed.stayCheckOut ?? current.stayCheckOut,
+  }
+  if (isStayOrdered(merged)) return merged
+  return { stayCheckIn: typed.stayCheckIn ?? null, stayCheckOut: typed.stayCheckOut ?? null }
+}
+
 type MergeReport = Pick<GuestUpsertResult, "changed" | "kept">
 
 function compareMerge(
@@ -176,7 +202,7 @@ function compareMerge(
 /**
  * One phone is one guest per hotel. A new phone creates the guest. A known phone merges into the existing guest:
  * name, email, birthday, country and city only fill gaps, language and stay details take the latest value (but see
- * `rescannedCheckOut` for a public rescan), and consent answers go through `recordConsent`. A merge only adds consent, never withdraws it or clears extras:
+ * `rescannedCheckOut` for a public rescan and `mergedStay` for staff and csv), and consent answers go through `recordConsent`. A merge only adds consent, never withdraws it or clears extras:
  * anyone who knows a phone can rescan the public QR form. Withdrawal is unsubscribe, STOP or `setConsent`.
  * A csv row never re-grants a channel the guest withdrew (a "no" after an earlier "yes"): an old list must not
  * override an unsubscribe, only the guest can opt in again. `consentKept` reports such a row.
@@ -189,7 +215,8 @@ export async function upsertGuest(
   at: Date,
   staffUserId?: string,
 ): Promise<{ id: string; merged: boolean; consentKept: boolean; visitRecorded: boolean } & MergeReport> {
-  const { consents, phone, ...fields } = input
+  const { consents, phone, ...typed } = input
+  let fields = typed
   const [created] = await tx
     .insert(guests)
     .values({ ...fields, phoneE164: phone, hotelId })
@@ -204,6 +231,10 @@ export async function upsertGuest(
       .where(and(eq(guests.hotelId, hotelId), eq(guests.phoneE164, phone)))
       .for("update")
     id = existing!.id
+    // A withdrawn stay consent stays withdrawn for an old list, so its dates must not come back either.
+    if (fields.source === "csv" && (await withdrawnChannels(tx, hotelId, id)).has("profile")) {
+      fields = { ...fields, stayCheckIn: undefined, stayCheckOut: undefined }
+    }
     const merged = {
       name: existing!.name || fields.name,
       email: existing!.email ?? fields.email,
@@ -211,10 +242,16 @@ export async function upsertGuest(
       country: existing!.country ?? fields.country,
       city: existing!.city ?? fields.city,
       language: fields.language,
-      stayCheckIn: fields.stayCheckIn ?? existing!.stayCheckIn,
-      stayCheckOut: staffUserId
-        ? (fields.stayCheckOut ?? existing!.stayCheckOut)
-        : rescannedCheckOut(existing!, fields.stayCheckOut, localTime(at, await timezoneOf(tx, hotelId)).date),
+      ...(staffUserId
+        ? mergedStay(existing!, fields, fields.source === "csv")
+        : {
+            stayCheckIn: fields.stayCheckIn ?? existing!.stayCheckIn,
+            stayCheckOut: rescannedCheckOut(
+              existing!,
+              fields.stayCheckOut,
+              localTime(at, await timezoneOf(tx, hotelId)).date,
+            ),
+          }),
       nextDestination: fields.nextDestination ?? existing!.nextDestination,
     }
     await tx.update(guests).set(merged).where(hotelGuest(hotelId, id))
@@ -222,18 +259,8 @@ export async function upsertGuest(
   }
   const visitRecorded =
     fields.source !== "csv" && !!(await recordVisit(tx, { hotelId, guestId: id, source: fields.source, at }))
-  const current = created
-    ? {}
-    : Object.fromEntries(
-        (
-          await tx
-            .select({ channel: guestConsents.channel, granted: guestConsents.granted })
-            .from(guestConsents)
-            .where(and(eq(guestConsents.hotelId, hotelId), eq(guestConsents.guestId, id)))
-        ).map((row) => [row.channel, row.granted]),
-      )
-  const withdrawn =
-    fields.source === "csv" ? await withdrawnChannels(tx, hotelId, id, current) : new Set<ConsentChannel>()
+  const current = created ? {} : await consentsOf(tx, hotelId, id)
+  const withdrawn = fields.source === "csv" ? await withdrawnChannels(tx, hotelId, id) : new Set<ConsentChannel>()
   let consentKept = false
   for (const channel of CONSENT_CHANNELS) {
     const granted = consents[channel]
@@ -248,12 +275,17 @@ export async function upsertGuest(
   return { id, merged: !created, consentKept, visitRecorded, ...report }
 }
 
-async function withdrawnChannels(
-  tx: Tx,
-  hotelId: string,
-  guestId: string,
-  current: Partial<Record<ConsentChannel, boolean>>,
-): Promise<Set<ConsentChannel>> {
+async function consentsOf(tx: Tx, hotelId: string, guestId: string): Promise<Partial<Record<ConsentChannel, boolean>>> {
+  const rows = await tx
+    .select({ channel: guestConsents.channel, granted: guestConsents.granted })
+    .from(guestConsents)
+    .where(and(eq(guestConsents.hotelId, hotelId), eq(guestConsents.guestId, guestId)))
+  return Object.fromEntries(rows.map((row) => [row.channel, row.granted]))
+}
+
+/** Channels the guest said yes to once and no to since. */
+async function withdrawnChannels(tx: Tx, hotelId: string, guestId: string): Promise<Set<ConsentChannel>> {
+  const current = await consentsOf(tx, hotelId, guestId)
   const off = CONSENT_CHANNELS.filter((channel) => current[channel] === false)
   if (!off.length) return new Set()
   const everGranted = await tx

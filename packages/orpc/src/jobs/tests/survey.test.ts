@@ -41,9 +41,10 @@ async function guestCaptured(slug: string, source: "staff" | "qr_table" = "staff
   return { hotelId, guestId: guest.id }
 }
 
-const runAt = (at: string) => {
+const runAt = (at: string, batchSize?: number) => {
   const services = { ...app.services, notification: notification as unknown as typeof app.services.notification }
-  const job = createMessageJobs(services).find((candidate) => candidate.name === SURVEY_JOB)!
+  const pacing = batchSize ? { batchSize, pauseMs: 0 } : {}
+  const job = createMessageJobs(services, pacing).find((candidate) => candidate.name === SURVEY_JOB)!
   return job.run({}, { db: app.services.db, now: () => new Date(at), jobId: "t" })
 }
 
@@ -156,4 +157,29 @@ test("Share on Google is offered after any score, hidden without a link, and a c
   expect(first?.reviewLinkClickedAt).not.toBeNull()
   expect(second?.reviewLinkClickedAt).toEqual(first!.reviewLinkClickedAt!)
   expect(app.anonymous.public.survey.review({ token })).rejects.toThrow()
+})
+
+test("one run surveys only a batch per hotel, and a guest without consent takes no place in it", async () => {
+  const owner = await app.signUp("survey-batch@ritorno.test")
+  const hotelId = await app.createHotel("survey-batch", owner)
+  const { client } = await app.joinHotel(owner, hotelId, "owner")
+  for (const [n, email] of [false, true, true].entries()) {
+    const guest = await client.guests.create({
+      name: "Amel",
+      phone: `+2162044400${n}`,
+      language: "fr",
+      email: `batch-${n}@example.test`,
+      source: "staff",
+      consents: { email, whatsapp: false, profile: false },
+    })
+    // the one without consent has been due the longest
+    const createdAt = new Date(CAPTURED.getTime() + n * 60_000)
+    await app.services.db.update(guests).set({ createdAt }).where(eq(guests.id, guest.id))
+  }
+  const mine = () => sent.filter((message) => message.to.startsWith("batch-")).map((message) => message.to)
+
+  await runAt("2026-06-18T10:00:00Z", 1)
+  expect(mine()).toEqual(["batch-1@example.test"])
+  await runAt("2026-06-18T10:01:00Z", 1)
+  expect(mine()).toEqual(["batch-1@example.test", "batch-2@example.test"])
 })

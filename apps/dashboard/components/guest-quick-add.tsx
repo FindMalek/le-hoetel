@@ -4,7 +4,7 @@ import { consentWording } from "@ritorno/common/consent"
 import { invalidField } from "@ritorno/common/field-errors"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { parsePhone } from "@ritorno/common/phone"
-import { type GuestUpsertResult, guestCreateSchema } from "@ritorno/common/schemas"
+import { type GuestUpsertResult, guestCreateSchema, isStayOrdered } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
 import { Checkbox } from "@ritorno/ui/components/checkbox"
@@ -38,6 +38,9 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const [email, setEmail] = useState("")
   const [whatsapp, setWhatsapp] = useState(false)
   const [emailConsent, setEmailConsent] = useState(false)
+  const [arrival, setArrival] = useState("")
+  const [departure, setDeparture] = useState("")
+  const [stayConsent, setStayConsent] = useState(false)
   const [touched, setTouched] = useState<Touched>({})
   const [last, setLast] = useState<GuestUpsertResult | null>(null)
 
@@ -45,6 +48,7 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
   const parsed = parsePhone(number)
   const canWhatsapp = parsed?.whatsappCapable ?? true
   const hasEmail = email.trim() !== ""
+  const hasStay = arrival !== "" || departure !== ""
 
   const lookup = useDebounced(parsed?.e164 ?? "")
   const found = useQuery({ ...orpc.guests.find.queryOptions({ input: { q: lookup } }), enabled: lookup !== "" })
@@ -57,6 +61,11 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
     phone: parsed ? null : t("phoneInvalid"),
     email: !hasEmail || guestCreateSchema.shape.email.safeParse(email.trim()).success ? null : t("emailInvalid"),
   }
+  const stayProblems = {
+    order: isStayOrdered({ stayCheckIn: arrival, stayCheckOut: departure }) ? null : t("stayOrder"),
+    consent: hasStay && !stayConsent ? t("stayNeedsConsent") : null,
+  }
+  const [stayShown, setStayShown] = useState(false)
   const touch = (field: keyof Touched) => setTouched((current) => ({ ...current, [field]: true }))
   const shown = (field: keyof Touched) => (touched[field] ? problems[field] : null)
 
@@ -72,6 +81,10 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
         setEmail("")
         setWhatsapp(false)
         setEmailConsent(false)
+        setArrival("")
+        setDeparture("")
+        setStayConsent(false)
+        setStayShown(false)
         setTouched({})
         setPicked(null)
         phoneBox.current?.querySelector("input")?.focus()
@@ -88,8 +101,9 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (problems.name || problems.phone || problems.email) {
+    if (problems.name || problems.phone || problems.email || stayProblems.order || stayProblems.consent) {
       setTouched({ name: true, phone: true, email: true })
+      setStayShown(true)
       return
     }
     add.mutate({
@@ -98,7 +112,8 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
       language,
       email: hasEmail ? email.trim() : null,
       source: "staff",
-      consents: { whatsapp: whatsapp && canWhatsapp, email: emailConsent && hasEmail, profile: false },
+      ...(stayConsent ? { stayCheckIn: arrival || null, stayCheckOut: departure || null } : {}),
+      consents: { whatsapp: whatsapp && canWhatsapp, email: emailConsent && hasEmail, profile: stayConsent },
     })
   }
 
@@ -177,6 +192,44 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
             />
           )}
         </FormField>
+        <FieldSet>
+          <FieldLegend variant="label">{t("stayTitle")}</FieldLegend>
+          <FieldDescription>{t("stayHint")}</FieldDescription>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField id="quick-arrival" label={t("arrival")}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  type="date"
+                  dir="ltr"
+                  value={arrival}
+                  onChange={(event) => setArrival(event.target.value)}
+                />
+              )}
+            </FormField>
+            <FormField id="quick-departure" label={t("departure")} error={stayShown ? stayProblems.order : null}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  type="date"
+                  dir="ltr"
+                  min={arrival || undefined}
+                  value={departure}
+                  onChange={(event) => setDeparture(event.target.value)}
+                />
+              )}
+            </FormField>
+          </div>
+          <ConsentBox
+            id="quick-stay-consent"
+            checked={stayConsent}
+            disabled={false}
+            onCheckedChange={setStayConsent}
+            title={t("consentStay")}
+            wording={consentWording("profile", language, hotelName)}
+          />
+          {stayShown && stayProblems.consent ? <InlineAlert tone="error" title={stayProblems.consent} /> : null}
+        </FieldSet>
         <FieldSet>
           <FieldLegend variant="label">{t("consentTitle")}</FieldLegend>
           <FieldDescription>{t("consentHint")}</FieldDescription>

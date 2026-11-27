@@ -49,6 +49,10 @@ const extras = {
   nextDestination: text(120),
 }
 
+export const STAY_ORDER_MESSAGE = "Departure can't be before arrival."
+export const isStayOrdered = (stay: { stayCheckIn?: string | null; stayCheckOut?: string | null }) =>
+  !stay.stayCheckIn || !stay.stayCheckOut || stay.stayCheckIn <= stay.stayCheckOut
+
 export const guestRecognitionSchema = z.object({
   id: z.uuid(),
   name: z.string(),
@@ -117,6 +121,7 @@ export const guestCreateSchema = z
     path: ["consents", "profile"],
     message: "Country, city and stay details need the guest's consent.",
   })
+  .refine(isStayOrdered, { path: ["stayCheckOut"], message: STAY_ORDER_MESSAGE })
 
 /** No defaults: a patch only touches the fields it carries. Consent changes go through `guests.setConsent`. */
 export const guestUpdateSchema = z.object({
@@ -226,12 +231,16 @@ export const guestImportRowSchema = z.object({
   birthday: cell(20),
   language: cell(20),
   consent: cell(20),
+  stayCheckIn: cell(20),
+  stayCheckOut: cell(20),
+  /** The guest agreed we keep their stay dates: its own column, never read from the marketing `consent`. */
+  stayConsent: cell(20),
 })
 
 export const guestImportInputSchema = z.object({
   rows: z.array(guestImportRowSchema).min(1).max(GUEST_IMPORT_MAX_ROWS),
   defaultLanguage: z.enum(HOTEL_LANGUAGES),
-  /** The hotel says it holds the consent of every guest whose consent cell is true. Without it nobody gets consent. */
+  /** The hotel says it holds the consent of every guest whose consent cells are true. Without it nobody gets consent. */
   confirmConsent: z.boolean(),
 })
 
@@ -259,11 +268,14 @@ const isoDay = (value: string | null) => {
  * The input `guestCreateSchema` checks for one csv row. Consent is only granted by an explicit yes in the consent
  * cell and only when the hotel confirmed it holds it: a blank or unclear cell is no consent. It covers each
  * channel the row can use, WhatsApp for a number that takes it and email when there is an address.
+ * Stay dates are read the same way from their own consent cell: without that yes they are dropped.
  */
 export function guestFromImportRow(row: GuestImportRow, options: Omit<z.infer<typeof guestImportInputSchema>, "rows">) {
   const email = blank(row.email)
   const phone = row.phone ?? ""
-  const yes = options.confirmConsent && EXPLICIT_YES.has((row.consent ?? "").trim().toLowerCase())
+  const said = (value?: string) => options.confirmConsent && EXPLICIT_YES.has((value ?? "").trim().toLowerCase())
+  const yes = said(row.consent)
+  const stay = said(row.stayConsent)
   const parsed = parsePhone(phone)
   return {
     name: row.name ?? "",
@@ -272,7 +284,8 @@ export function guestFromImportRow(row: GuestImportRow, options: Omit<z.infer<ty
     birthday: isoDay(blank(row.birthday)),
     language: blank(row.language)?.toLowerCase() ?? options.defaultLanguage,
     source: "csv",
-    consents: { email: yes && !!email, whatsapp: yes && !!parsed?.whatsappCapable, profile: false },
+    ...(stay ? { stayCheckIn: isoDay(blank(row.stayCheckIn)), stayCheckOut: isoDay(blank(row.stayCheckOut)) } : {}),
+    consents: { email: yes && !!email, whatsapp: yes && !!parsed?.whatsappCapable, profile: stay },
   }
 }
 
