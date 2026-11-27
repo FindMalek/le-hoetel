@@ -12,6 +12,7 @@ import {
   guestCreateSchema,
   guestExportSchema,
   guestFromImportRow,
+  guestImportCheckSchema,
   guestImportInputSchema,
   guestImportResultSchema,
   guestListInputSchema,
@@ -304,6 +305,25 @@ export const guestsRouter = {
       } = await context.db.transaction((tx) => upsertGuest(tx, hotelId, input, context.now(), context.user.id))
       await enqueueWelcome(context, hotelId, id, input.consents)
       return { ...(await loadGuest(context.db, hotelId, id)), ...outcome }
+    }),
+
+  importCheck: hotelProcedure
+    .use(can({ guest: ["import"] }))
+    .route({
+      method: "POST",
+      path: "/guests/import/check",
+      summary: "Which of these numbers are already guests of the hotel",
+      tags: ["guests"],
+    })
+    .input(guestImportCheckSchema)
+    .output(z.object({ known: z.array(z.string()) }))
+    .handler(async ({ context, input }) => {
+      if (!input.phones.length) return { known: [] }
+      const rows = await context.db
+        .select({ phone: guests.phoneE164 })
+        .from(guests)
+        .where(and(eq(guests.hotelId, context.hotel.hotelId), inArray(guests.phoneE164, input.phones)))
+      return { known: rows.map((row) => row.phone) }
     }),
 
   import: hotelProcedure

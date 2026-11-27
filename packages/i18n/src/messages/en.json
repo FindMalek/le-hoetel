@@ -369,14 +369,15 @@
         "email": "Email",
         "birthday": "Birthday",
         "language": "Language",
-        "consent": "Consent (true or false)",
+        "emailConsent": "Email consent (yes or no)",
+        "whatsappConsent": "WhatsApp consent (yes or no)",
         "stayCheckIn": "Arrival date",
         "stayCheckOut": "Departure date",
-        "stayConsent": "Stay details consent (true or false)"
+        "stayConsent": "Stay details consent (yes or no)"
       },
       "defaultLanguage": "Language when the file does not say",
-      "confirm": "I confirm our hotel holds the consent of every guest marked true",
-      "confirmHint": "Consent is only recorded when a consent column says true, yes, oui or 1, and only if you confirm. Messages and stay dates each have their own column. A recent departure date can send that guest the stay survey.",
+      "confirm": "I confirm our hotel holds the consent of every guest marked yes, for each channel",
+      "confirmHint": "Consent is only recorded when its column says yes, oui, true or 1, and only if you confirm. Email, WhatsApp and stay dates each have their own column. A recent departure date can send that guest the stay survey.",
       "needColumns": "Choose the name and phone columns to continue.",
       "submit": "Import {count, plural, one {# guest} other {# guests}}",
       "consentKept": "{count, plural, one {# guest had opted out earlier, so their consent stayed withdrawn.} other {# guests had opted out earlier, so their consent stayed withdrawn.}}",
@@ -400,7 +401,6 @@
       "optional": "Optional",
       "continue": "Continue",
       "back": "Back",
-      "ready": "ready to import",
       "skipped": "will be skipped",
       "problemsTitle": "Rows with a problem",
       "line": "Line {line}",
@@ -416,7 +416,7 @@
         "stayCheckOut": "The departure date is not a real date or is before arrival"
       },
       "consentTitle": "Consent",
-      "consentFound": "{count, plural, one {# guest is marked as consenting in your file.} other {# guests are marked as consenting in your file.}}",
+      "consentFound": "Marked as consenting in your file: {email} for email, {whatsapp} for WhatsApp.",
       "noConsentColumn": "Your file has no consent column, so everyone is added without marketing consent. You can ask them later.",
       "unconfirmed": "Without your confirmation, everyone is added without marketing consent.",
       "doneTitle": "Import finished",
@@ -429,7 +429,20 @@
         "failed": "skipped",
         "kept": "opted out before, consent kept withdrawn"
       },
-      "datesDropped": "Stay dates are only saved where the stay consent column says true and you confirm it. Other dates are left out, the guest is still added."
+      "datesDropped": "Stay dates are only saved where the stay consent column says yes and you confirm it. Other dates are left out, the guest is still added.",
+      "unmatchedConsent": "We did not match the column “{column}” to a consent. Check what a yes in it means: choose it under email, WhatsApp or stay consent only if yes means the guest agreed to that.",
+      "newGuests": "new",
+      "mergedGuests": "already here",
+      "checkFailed": "We could not check which guests are already here. Importing still merges them by phone.",
+      "statusColumn": "Guest",
+      "rowStatus": {
+        "new": "New",
+        "merged": "Will merge",
+        "skipped": "Skipped"
+      },
+      "channelEmail": "email",
+      "consentFor": "Consent: {channels}",
+      "consentNone": "No message consent"
     },
     "detail": {
       "contact": "Contact",

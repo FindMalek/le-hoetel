@@ -230,10 +230,11 @@ export const guestImportRowSchema = z.object({
   email: cell(200),
   birthday: cell(20),
   language: cell(20),
-  consent: cell(20),
+  emailConsent: cell(20),
+  whatsappConsent: cell(20),
   stayCheckIn: cell(20),
   stayCheckOut: cell(20),
-  /** The guest agreed we keep their stay dates: its own column, never read from the marketing `consent`. */
+  /** The guest agreed we keep their stay dates: its own column, never read from a marketing consent. */
   stayConsent: cell(20),
 })
 
@@ -252,10 +253,13 @@ export const guestImportResultSchema = z.object({
   errors: z.array(z.object({ line: z.number(), message: z.string() })),
 })
 
+/** The numbers of a file, already normalised, to tell new guests from known ones before importing. */
+export const guestImportCheckSchema = z.object({ phones: z.array(z.string().max(20)).max(GUEST_IMPORT_MAX_ROWS) })
+
 export type GuestImportRow = z.infer<typeof guestImportRowSchema>
 export type GuestImportResult = z.infer<typeof guestImportResultSchema>
 
-const EXPLICIT_YES = new Set(["true", "yes", "oui", "1", "y", "نعم"])
+const EXPLICIT_YES = new Set(["true", "vrai", "yes", "oui", "1", "y", "نعم"])
 const blank = (value?: string) => value?.trim() || null
 
 /** `31/12/1990` (what spreadsheets export) becomes `1990-12-31`, anything else is left for the schema to judge. */
@@ -265,16 +269,14 @@ const isoDay = (value: string | null) => {
 }
 
 /**
- * The input `guestCreateSchema` checks for one csv row. Consent is only granted by an explicit yes in the consent
- * cell and only when the hotel confirmed it holds it: a blank or unclear cell is no consent. It covers each
- * channel the row can use, WhatsApp for a number that takes it and email when there is an address.
- * Stay dates are read the same way from their own consent cell: without that yes they are dropped.
+ * The input `guestCreateSchema` checks for one csv row. Each channel is only granted by an explicit yes in its own
+ * consent cell and only when the hotel confirmed it holds it: a blank or unclear cell is no consent. WhatsApp also
+ * needs a number that takes it and email an address. Stay dates are read the same way from their own consent cell: without that yes they are dropped.
  */
 export function guestFromImportRow(row: GuestImportRow, options: Omit<z.infer<typeof guestImportInputSchema>, "rows">) {
   const email = blank(row.email)
   const phone = row.phone ?? ""
   const said = (value?: string) => options.confirmConsent && EXPLICIT_YES.has((value ?? "").trim().toLowerCase())
-  const yes = said(row.consent)
   const stay = said(row.stayConsent)
   const parsed = parsePhone(phone)
   return {
@@ -285,7 +287,11 @@ export function guestFromImportRow(row: GuestImportRow, options: Omit<z.infer<ty
     language: blank(row.language)?.toLowerCase() ?? options.defaultLanguage,
     source: "csv",
     ...(stay ? { stayCheckIn: isoDay(blank(row.stayCheckIn)), stayCheckOut: isoDay(blank(row.stayCheckOut)) } : {}),
-    consents: { email: yes && !!email, whatsapp: yes && !!parsed?.whatsappCapable, profile: stay },
+    consents: {
+      email: said(row.emailConsent) && !!email,
+      whatsapp: said(row.whatsappConsent) && !!parsed?.whatsappCapable,
+      profile: stay,
+    },
   }
 }
 

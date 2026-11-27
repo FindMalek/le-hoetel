@@ -149,7 +149,8 @@ test("last stay takes the later of check-out and visit, and counts guests with n
     name: "Amel",
     phone: `+2162081000${line}`,
     email: `last-stay-${line}@example.test`,
-    consent: "yes",
+    emailConsent: "yes",
+    whatsappConsent: "yes",
     stayCheckOut,
     stayConsent: "yes",
   })

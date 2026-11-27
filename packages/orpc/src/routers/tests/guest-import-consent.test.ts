@@ -30,7 +30,7 @@ test("import after unsubscribe keeps consent withdrawn and logs no new opt-in", 
   await app.anonymous.public.unsubscribe.all({ token })
 
   const result = await client.guests.import({
-    rows: [{ line: 2, name: "Amel", phone: "20 444 444", consent: "yes" }],
+    rows: [{ line: 2, name: "Amel", phone: "20 444 444", emailConsent: "yes", whatsappConsent: "yes" }],
     defaultLanguage: "fr",
     confirmConsent: true,
   })
@@ -50,7 +50,7 @@ test("imported stay dates need their own consent, never rewind and never come ba
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   const importRow = (row: { stayCheckIn: string; stayCheckOut?: string; stayConsent?: string }) =>
     client.guests.import({
-      rows: [{ line: 2, name: "Amel", phone: "20 455 455", consent: "yes", ...row }],
+      rows: [{ line: 2, name: "Amel", phone: "20 455 455", emailConsent: "yes", whatsappConsent: "yes", ...row }],
       defaultLanguage: "fr",
       confirmConsent: true,
     })
@@ -75,4 +75,27 @@ test("imported stay dates need their own consent, never rewind and never come ba
   await client.guests.setConsent({ guestId: id, channel: "profile", granted: false, source: "guest_request" })
   await importRow({ stayCheckIn: "2026-09-01", stayCheckOut: "2026-09-08", stayConsent: "yes" })
   expect(await stored()).toMatchObject({ stayCheckIn: null, stayCheckOut: null, consents: { profile: false } })
+})
+
+test("the import check names only this hotel's known numbers", async () => {
+  const hotel = async (slug: string) => {
+    const owner = await app.signUp(`${slug}@ritorno.test`)
+    const hotelId = await app.createHotel(slug, owner)
+    return (await app.joinHotel(owner, hotelId, "owner")).client
+  }
+  const mine = await hotel("import-check")
+  const theirs = await hotel("import-check-other")
+  const guest = (phone: string) => ({
+    name: "Amel",
+    phone,
+    language: "fr" as const,
+    source: "staff" as const,
+    consents: { email: false, whatsapp: false, profile: false },
+  })
+  await mine.guests.create(guest("+21620466466"))
+  await theirs.guests.create(guest("+21620477477"))
+
+  expect(await mine.guests.importCheck({ phones: ["+21620466466", "+21620477477"] })).toEqual({
+    known: ["+21620466466"],
+  })
 })

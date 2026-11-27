@@ -1,8 +1,15 @@
 "use client"
 
 import { parseCsv, toCsv } from "@ritorno/common/csv"
+import {
+  guessImportColumns,
+  IMPORT_FIELDS,
+  type ImportField,
+  type ImportMapping,
+  sampleCells,
+} from "@ritorno/common/guest-import"
 import type { HotelLanguage } from "@ritorno/common/hotel"
-import { parsePhone } from "@ritorno/common/phone"
+import { formatPhone } from "@ritorno/common/phone"
 import {
   GUEST_IMPORT_MAX_BYTES,
   GUEST_IMPORT_MAX_ROWS,
@@ -23,7 +30,7 @@ import { Select } from "@ritorno/ui/components/select"
 import { StatusBadge } from "@ritorno/ui/components/status-badge"
 import { StickyFormActions } from "@ritorno/ui/components/sticky-form-actions"
 import { cn } from "@ritorno/ui/lib/utils"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, DownloadIcon, FileSpreadsheetIcon, UploadIcon } from "lucide-react"
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
@@ -32,72 +39,25 @@ import { LanguageChoice } from "@/components/language-choice"
 import { download } from "@/lib/download"
 import { useRefreshLists } from "@/lib/use-refresh-lists"
 
-const FIELDS = [
-  "name",
-  "phone",
-  "email",
-  "birthday",
-  "language",
-  "consent",
-  "stayCheckIn",
-  "stayCheckOut",
-  "stayConsent",
-] as const
-type ImportField = (typeof FIELDS)[number]
-type Mapping = Record<ImportField, number>
 type Step = "upload" | "map" | "review" | "done"
 
 const REQUIRED: ImportField[] = ["name", "phone"]
+const CONSENT_IMPORT_FIELDS: ImportField[] = ["emailConsent", "whatsappConsent", "stayConsent"]
 const STEPS = ["upload", "map", "review"] as const
 const PROBLEM_FIELDS = ["name", "phone", "email", "birthday", "language", "stayCheckIn", "stayCheckOut"] as const
-const PREVIEW_FIELDS = ["name", "phone", "email", "language", "consent"] as const
+const PREVIEW_ROWS = 5
 
-const GUESSES: Record<ImportField, string[]> = {
-  name: ["name", "nom", "full", "client", "guest", "اسم"],
-  phone: ["phone", "tel", "mobile", "gsm", "whatsapp", "هاتف"],
-  email: ["mail", "courriel", "بريد"],
-  birthday: ["birth", "naissance", "anniv", "ميلاد"],
-  language: ["lang", "langue", "لغة"],
-  consent: ["consent", "opt", "accord"],
-  stayCheckIn: ["arriv", "check-in", "check_in", "checkin", "وصول"],
-  stayCheckOut: ["depart", "départ", "check-out", "check_out", "checkout", "مغادرة"],
-  stayConsent: ["stay_consent", "stay consent", "consent_profile", "accord séjour", "الإقامة"],
+type Status = "new" | "merged" | "skipped"
+interface PreviewRow {
+  line: number
+  name: string
+  phone: string
+  email: string
+  emailConsent: boolean
+  whatsappConsent: boolean
+  status: Status | null
 }
-
-const sample = (rows: string[][], column: number): string[] =>
-  rows
-    .map((row) => (row[column] ?? "").trim())
-    .filter(Boolean)
-    .slice(0, 5)
-
-/** Header words first, then what the cells look like (numbers that parse as phones, cells with an @), for files without clear headers. */
-function guessMapping(headers: string[], rows: string[][]): Mapping {
-  const taken = new Set<number>()
-  const find = (field: ImportField) => {
-    const index = headers.findIndex(
-      (header, at) => !taken.has(at) && GUESSES[field].some((word) => header.toLowerCase().includes(word)),
-    )
-    if (index >= 0) taken.add(index)
-    return index
-  }
-  // The stay consent column first: its header also says "consent", which must not read as marketing consent.
-  const order: ImportField[] = ["stayConsent", ...FIELDS.filter((field) => field !== "stayConsent")]
-  const mapping = Object.fromEntries(order.map((field) => [field, find(field)])) as Mapping
-  const byContent = (field: "phone" | "email", looksRight: (cell: string) => boolean) => {
-    if (mapping[field] >= 0) return
-    const index = headers.findIndex((_, at) => {
-      const cells = sample(rows, at)
-      return !taken.has(at) && cells.length > 0 && cells.filter(looksRight).length / cells.length >= 0.6
-    })
-    if (index >= 0) {
-      taken.add(index)
-      mapping[field] = index
-    }
-  }
-  byContent("phone", (cell) => parsePhone(cell) !== null)
-  byContent("email", (cell) => cell.includes("@"))
-  return mapping
-}
+const STATUS_TONE = { new: "success", merged: "info", skipped: "warning" } as const
 
 const problemOf = (message: string): (typeof PROBLEM_FIELDS)[number] | "row" => {
   const head = message.split(":")[0]?.split(".")[0] ?? ""
@@ -111,8 +71,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
   const [error, setError] = useState<string | null>(null)
   const [fileName, setFileName] = useState("")
   const [table, setTable] = useState<string[][] | null>(null)
-  const [mapping, setMapping] = useState<Mapping | null>(null)
-  const [detected, setDetected] = useState<Mapping | null>(null)
+  const [mapping, setMapping] = useState<ImportMapping | null>(null)
+  const [detected, setDetected] = useState<ImportMapping | null>(null)
+  const [unmatched, setUnmatched] = useState<number[]>([])
   const [language, setLanguage] = useState(defaultLanguage)
   const [confirm, setConfirm] = useState(false)
   const [result, setResult] = useState<GuestImportResult | null>(null)
@@ -120,36 +81,80 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
 
   const headers = table?.[0] ?? []
   const body = useMemo(() => table?.slice(1) ?? [], [table])
-  const consentMapped = mapping ? mapping.consent >= 0 || mapping.stayConsent >= 0 : false
+  const consentMapped = mapping
+    ? mapping.emailConsent >= 0 || mapping.whatsappConsent >= 0 || mapping.stayConsent >= 0
+    : false
   const ready = mapping !== null && REQUIRED.every((field) => mapping[field] >= 0)
 
   const rows = useMemo<GuestImportRow[]>(() => {
     if (!mapping) return []
     return body.map((row, index) => ({
       line: index + 2,
-      ...Object.fromEntries(FIELDS.map((field) => [field, mapping[field] >= 0 ? row[mapping[field]] : undefined])),
+      ...Object.fromEntries(
+        IMPORT_FIELDS.map((field) => [field, mapping[field] >= 0 ? row[mapping[field]] : undefined]),
+      ),
     }))
   }, [body, mapping])
 
   const review = useMemo(() => {
     const problems: { line: number; field: (typeof PROBLEM_FIELDS)[number] | "row" }[] = []
-    let valid = 0
-    let consenting = 0
-    let datesDropped = 0
-    for (const row of rows) {
+    const phones: string[] = []
+    const checked = rows.map((row) => {
       const parsed = guestCreateSchema.safeParse(
         guestFromImportRow(row, { defaultLanguage: language, confirmConsent: true }),
       )
-      if (parsed.success) {
-        valid++
-        if (parsed.data.consents.email || parsed.data.consents.whatsapp) consenting++
-        if (!parsed.data.consents.profile && (row.stayCheckIn?.trim() || row.stayCheckOut?.trim())) datesDropped++
-      } else {
-        problems.push({ line: row.line, field: problemOf(parsed.error.issues[0]?.path.join(".") ?? "") })
-      }
+      if (parsed.success) phones.push(parsed.data.phone)
+      else problems.push({ line: row.line, field: problemOf(parsed.error.issues[0]?.path.join(".") ?? "") })
+      return { row, guest: parsed.success ? parsed.data : null }
+    })
+    const guests = checked.flatMap(({ guest }) => (guest ? [guest] : []))
+    return {
+      checked,
+      phones: [...new Set(phones)],
+      valid: guests.length,
+      emails: guests.filter((guest) => guest.consents.email).length,
+      whatsapps: guests.filter((guest) => guest.consents.whatsapp).length,
+      datesDropped: checked.filter(
+        ({ row, guest }) => guest && !guest.consents.profile && (row.stayCheckIn?.trim() || row.stayCheckOut?.trim()),
+      ).length,
+      problems,
     }
-    return { valid, consenting, datesDropped, problems }
   }, [rows, language])
+
+  const existing = useQuery(
+    orpc.guests.importCheck.queryOptions({
+      input: { phones: review.phones },
+      enabled: step === "review" && review.phones.length > 0,
+      // a number added or deleted since the last look changes the answer
+      gcTime: 0,
+    }),
+  )
+  const preview = useMemo(() => {
+    const known = existing.data ? new Set(existing.data.known) : null
+    const seen = new Set<string>()
+    let created = 0
+    let merged = 0
+    const list = review.checked.map(({ row, guest }): PreviewRow => {
+      let status: Status | null = guest ? null : "skipped"
+      if (guest && known) {
+        // a number repeated in the file merges into its first row
+        status = known.has(guest.phone) || seen.has(guest.phone) ? "merged" : "new"
+        seen.add(guest.phone)
+        if (status === "new") created++
+        else merged++
+      }
+      return {
+        line: row.line,
+        name: row.name?.trim() || "–",
+        phone: guest ? formatPhone(guest.phone) : row.phone?.trim() || "–",
+        email: row.email?.trim() ?? "",
+        emailConsent: guest?.consents.email ?? false,
+        whatsappConsent: guest?.consents.whatsapp ?? false,
+        status,
+      }
+    })
+    return { rows: list.slice(0, PREVIEW_ROWS), created: known ? created : null, merged: known ? merged : null }
+  }, [review, existing.data])
 
   const refreshLists = useRefreshLists()
   const send = useMutation(
@@ -180,11 +185,12 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
     const parsed = parseCsv(await file.text()).filter((row) => row.some((cell) => cell.trim() !== ""))
     if (parsed.length < 2) return setError(t("empty"))
     if (parsed.length - 1 > GUEST_IMPORT_MAX_ROWS) return setError(t("tooMany", { rows: GUEST_IMPORT_MAX_ROWS }))
-    const guessed = guessMapping(parsed[0] ?? [], parsed.slice(1))
+    const guess = guessImportColumns(parsed[0] ?? [], parsed.slice(1))
     setTable(parsed)
     setFileName(file.name)
-    setMapping(guessed)
-    setDetected(guessed)
+    setMapping(guess.mapping)
+    setDetected(guess.mapping)
+    setUnmatched(guess.unmatchedConsent)
     setConfirm(false)
     setStep("map")
   }
@@ -206,12 +212,29 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
 
   function downloadSample() {
     const csv = toCsv([
-      ["name", "phone", "email", "language", "consent", "arrival", "departure", "stay_consent"],
-      ["Amel Ben Salah", "+216 20 123 456", "amel@example.com", "fr", "yes", "2026-08-01", "2026-08-08", "yes"],
-      ["John Miller", "+44 7700 900123", "", "en", "no", "", "", "no"],
+      [
+        "name",
+        "phone",
+        "email",
+        "language",
+        "email_consent",
+        "whatsapp_consent",
+        "arrival",
+        "departure",
+        "stay_consent",
+      ],
+      ["Amel Ben Salah", "+216 20 123 456", "amel@example.com", "fr", "yes", "yes", "2026-08-01", "2026-08-08", "yes"],
+      ["John Miller", "+44 7700 900123", "", "en", "no", "no", "", "", "no"],
     ])
     download("guests-sample.csv", csv, "text/csv;charset=utf-8")
   }
+
+  const channels = (row: PreviewRow) => {
+    const list = [row.emailConsent && t("channelEmail"), row.whatsappConsent && "WhatsApp"].filter(Boolean)
+    return list.length ? t("consentFor", { channels: list.join(" + ") }) : t("consentNone")
+  }
+  const statusBadge = (row: PreviewRow) =>
+    row.status ? <StatusBadge tone={STATUS_TONE[row.status]}>{t(`rowStatus.${row.status}`)}</StatusBadge> : null
 
   const current = step === "done" ? STEPS.length : STEPS.indexOf(step)
 
@@ -302,8 +325,8 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
             <p className="text-muted-foreground text-sm">{t("mapHint")}</p>
           </div>
           <div className="flex flex-col gap-5">
-            {FIELDS.map((field) => {
-              const examples = mapping[field] >= 0 ? sample(body, mapping[field]).slice(0, 3) : []
+            {IMPORT_FIELDS.map((field) => {
+              const examples = mapping[field] >= 0 ? sampleCells(body, mapping[field]).slice(0, 3) : []
               const auto = detected !== null && detected[field] >= 0 && detected[field] === mapping[field]
               return (
                 <FormField
@@ -333,7 +356,11 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
                     <Select
                       {...aria}
                       value={String(mapping[field])}
-                      onValueChange={(value) => setMapping({ ...mapping, [field]: Number(value) })}
+                      onValueChange={(value) => {
+                        setMapping({ ...mapping, [field]: Number(value) })
+                        // the confirmation was for the columns as they were
+                        if (CONSENT_IMPORT_FIELDS.includes(field)) setConfirm(false)
+                      }}
                       options={[
                         { value: "-1", label: t("none") },
                         ...headers.map((header, index) => ({ value: String(index), label: header })),
@@ -344,6 +371,14 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               )
             })}
           </div>
+          {unmatched
+            .filter((index) => mapping.emailConsent !== index && mapping.whatsappConsent !== index)
+            .filter((index) => mapping.stayConsent !== index)
+            .map((index) => (
+              <InlineAlert key={index} tone="warning">
+                {t("unmatchedConsent", { column: headers[index] ?? "" })}
+              </InlineAlert>
+            ))}
           <LanguageChoice
             name="import-language"
             value={language}
@@ -366,16 +401,23 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
 
       {step === "review" && mapping && (
         <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-              <span className="font-heading font-semibold text-3xl tabular-nums">{review.valid}</span>
-              <span className="text-muted-foreground text-sm">{t("ready")}</span>
-            </div>
-            <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-              <span className="font-heading font-semibold text-3xl tabular-nums">{review.problems.length}</span>
-              <span className="text-muted-foreground text-sm">{t("skipped")}</span>
-            </div>
+          <div className="grid grid-cols-3 gap-3">
+            {(
+              [
+                ["new", t("newGuests"), preview.created],
+                ["merged", t("mergedGuests"), preview.merged],
+                ["skipped", t("skipped"), review.problems.length],
+              ] as const
+            ).map(([key, label, value]) => (
+              <div key={key} className="flex flex-col gap-1 rounded-lg border bg-card p-3 sm:p-4">
+                <span className="font-heading font-semibold text-3xl tabular-nums">
+                  {value === null ? "…" : <Num value={value} locale={locale} />}
+                </span>
+                <span className="text-muted-foreground text-sm">{label}</span>
+              </div>
+            ))}
           </div>
+          {existing.isError && <InlineAlert tone="warning">{t("checkFailed")}</InlineAlert>}
 
           {review.problems.length > 0 && (
             <div className="flex flex-col gap-2">
@@ -410,31 +452,52 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
             <h2 className="font-heading font-semibold">{t("previewTitle")}</h2>
             <DataTable
               caption={t("previewTitle")}
-              columns={PREVIEW_FIELDS.map((field) => ({
-                id: field,
-                header: t(`field.${field}`),
-                showFrom: field === "email" || field === "consent" ? ("lg" as const) : undefined,
-                cell: (row: GuestImportRow) => (
-                  <span dir={field === "name" ? "auto" : "ltr"} className="block truncate">
-                    {row[field] || "–"}
-                  </span>
-                ),
-              }))}
-              rows={rows.slice(0, 5)}
+              columns={[
+                {
+                  id: "name",
+                  header: t("field.name"),
+                  cell: (row: PreviewRow) => (
+                    <span dir="auto" className="block truncate">
+                      {row.name}
+                    </span>
+                  ),
+                },
+                {
+                  id: "phone",
+                  header: t("field.phone"),
+                  cell: (row: PreviewRow) => (
+                    <span dir="ltr" className="block whitespace-nowrap">
+                      {row.phone}
+                    </span>
+                  ),
+                },
+                {
+                  id: "consent",
+                  header: t("consentTitle"),
+                  showFrom: "lg" as const,
+                  cell: (row: PreviewRow) => channels(row),
+                },
+                { id: "status", header: t("statusColumn"), cell: (row: PreviewRow) => statusBadge(row) },
+              ]}
+              rows={preview.rows}
               getRowKey={(row) => String(row.line)}
               card={(row) => (
                 <div className="flex min-w-0 flex-col gap-1 text-sm">
-                  <span dir="auto" className="truncate font-medium">
-                    {row.name || "–"}
-                  </span>
+                  <div className="flex items-center justify-between gap-3">
+                    <span dir="auto" className="truncate font-medium">
+                      {row.name}
+                    </span>
+                    {statusBadge(row)}
+                  </div>
                   <span dir="ltr" className="truncate text-start text-muted-foreground">
-                    {[row.phone || "–", row.email, row.language, row.consent].filter(Boolean).join(" · ")}
+                    {[row.phone, row.email].filter(Boolean).join(" · ")}
                   </span>
+                  <span className="text-muted-foreground">{channels(row)}</span>
                 </div>
               )}
             />
-            {rows.length > 5 && (
-              <p className="text-muted-foreground text-sm">{t("previewMore", { count: rows.length - 5 })}</p>
+            {rows.length > PREVIEW_ROWS && (
+              <p className="text-muted-foreground text-sm">{t("previewMore", { count: rows.length - PREVIEW_ROWS })}</p>
             )}
           </div>
 
@@ -447,7 +510,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
             <h2 className="font-heading font-semibold">{t("consentTitle")}</h2>
             {consentMapped ? (
               <>
-                <p className="text-muted-foreground text-sm">{t("consentFound", { count: review.consenting })}</p>
+                <p className="text-muted-foreground text-sm">
+                  {t("consentFound", { email: review.emails, whatsapp: review.whatsapps })}
+                </p>
                 <Label htmlFor="import-confirm" className="items-start gap-3 font-normal">
                   <Checkbox id="import-confirm" className="mt-0.5" checked={confirm} onCheckedChange={setConfirm} />
                   <span className="grid gap-1">
@@ -455,7 +520,9 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
                     <span className="text-muted-foreground text-sm">{t("confirmHint")}</span>
                   </span>
                 </Label>
-                {!confirm && review.consenting > 0 && <InlineAlert tone="info">{t("unconfirmed")}</InlineAlert>}
+                {!confirm && review.emails + review.whatsapps > 0 && (
+                  <InlineAlert tone="info">{t("unconfirmed")}</InlineAlert>
+                )}
               </>
             ) : (
               <p className="text-muted-foreground text-sm">{t("noConsentColumn")}</p>

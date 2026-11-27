@@ -118,6 +118,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     "consentHistory",
     "activity",
     "import",
+    "importCheck",
     "messages",
     "find",
     "markVisit",
@@ -147,6 +148,7 @@ test("every guest procedure needs a session, and a new one must be added to the 
     markVisit: () => app.anonymous.guests.markVisit({ id: crypto.randomUUID() }),
     undoVisit: () => app.anonymous.guests.undoVisit({ id: crypto.randomUUID(), visitId: crypto.randomUUID() }),
     consentHistory: () => app.anonymous.guests.consentHistory({ id: crypto.randomUUID() }),
+    importCheck: () => app.anonymous.guests.importCheck({ phones: [] }),
     import: () =>
       app.anonymous.guests.import({
         rows: [{ line: 2, name: "X", phone: "20111111" }],

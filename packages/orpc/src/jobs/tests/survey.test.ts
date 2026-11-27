@@ -84,8 +84,22 @@ test("an imported guest is surveyed only after a real check-out inside the surve
   const { client } = await app.joinHotel(owner, hotelId, "owner")
   await client.guests.import({
     rows: [
-      { line: 2, name: "No stay", phone: "20 777 777", email: "nostay@example.test", consent: "yes" },
-      { line: 3, name: "Stayed", phone: "20 888 888", email: "stayed@example.test", consent: "yes" },
+      {
+        line: 2,
+        name: "No stay",
+        phone: "20 777 777",
+        email: "nostay@example.test",
+        emailConsent: "yes",
+        whatsappConsent: "yes",
+      },
+      {
+        line: 3,
+        name: "Stayed",
+        phone: "20 888 888",
+        email: "stayed@example.test",
+        emailConsent: "yes",
+        whatsappConsent: "yes",
+      },
     ],
     defaultLanguage: "fr",
     confirmConsent: true,
