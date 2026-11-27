@@ -27,6 +27,9 @@ export interface AuthConfig {
   sendInvitation?: (invite: { email: string; inviter: string; role: string; url: string }) => Promise<unknown>
 }
 
+/** How long an invitation link works. */
+export const INVITATION_TTL_SECONDS = 48 * 60 * 60
+
 async function hasPendingInvitation(db: Db, email: string): Promise<boolean> {
   const [row] = await db
     .select({ id: schema.invitation.id })
@@ -127,6 +130,7 @@ export function createAuth(config: AuthConfig) {
       organization({
         ac,
         roles: hotelRoles,
+        invitationExpiresIn: INVITATION_TTL_SECONDS,
         // A hotel is onboarded by the app admin (admin.hotels.create), never self-served.
         allowUserToCreateOrganization: (user) => user.role === "admin",
         // Deleting a hotel or changing its slug (printed on QR codes) or name only goes through the admin procedures.

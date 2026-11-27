@@ -1666,7 +1666,19 @@
     },
     "statusConfirm": "Passer en {status}",
     "slugHint": "Minuscules, chiffres et tirets. C’est l’adresse de la page des clients.",
-    "slugWarningTitle": "Les liens avec l’ancien identifiant ne fonctionneront plus"
+    "slugWarningTitle": "Les liens avec l’ancien identifiant ne fonctionneront plus",
+    "resend": "Renvoyer",
+    "revoke": "Révoquer",
+    "keep": "Garder",
+    "revokeTitle": "Révoquer l'invitation de {email} ?",
+    "revokeBody": "Le lien ne marche plus tout de suite.",
+    "revoked": "Invitation révoquée.",
+    "inviteSent": "Invitation envoyée à {email}.",
+    "inviteNotSent": "Aucun e-mail n'est parti. Copiez le lien et envoyez-le vous-même.",
+    "ownerEmail": "E-mail du propriétaire",
+    "ownerEmailHint": "Un lien leur est envoyé pour rejoindre cet hôtel comme propriétaire.",
+    "ownerEmailError": "Saisissez un e-mail valide.",
+    "inviteOwner": "Inviter un propriétaire"
   },
   "adminWizard": {
     "title": "Nouvel hôtel",
@@ -1872,7 +1884,10 @@
         },
         "balance": {
           "top_up": "A ajouté du crédit WhatsApp"
-        }
+        },
+        "invitation-create": "Invitation envoyée",
+        "invitation-resend": "Invitation renvoyée",
+        "invitation-revoke": "Invitation révoquée"
       },
       "offer": {
         "create": "Offre créée",
@@ -2236,7 +2251,9 @@
     "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard.",
     "notMember": "Vous n'êtes pas membre de {hotel}",
     "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici.",
-    "notMemberAction": "Ouvrir la page d'administration"
+    "notMemberAction": "Ouvrir la page d'administration",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié."
   },
   "usage": {
     "title": "Consommation WhatsApp",

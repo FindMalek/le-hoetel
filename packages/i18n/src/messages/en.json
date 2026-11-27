@@ -1666,7 +1666,19 @@
     },
     "statusConfirm": "Set to {status}",
     "slugHint": "Lowercase letters, digits and dashes. It is the address of the guest page.",
-    "slugWarningTitle": "Links with the old slug will stop working"
+    "slugWarningTitle": "Links with the old slug will stop working",
+    "resend": "Send again",
+    "revoke": "Revoke",
+    "keep": "Keep",
+    "revokeTitle": "Revoke the invitation for {email}?",
+    "revokeBody": "The link stops working right away.",
+    "revoked": "Invitation revoked.",
+    "inviteSent": "Invitation sent to {email}.",
+    "inviteNotSent": "No email was sent. Copy the link and send it yourself.",
+    "ownerEmail": "Owner email",
+    "ownerEmailHint": "They get a link to join this hotel as an owner.",
+    "ownerEmailError": "Enter a valid email.",
+    "inviteOwner": "Invite owner"
   },
   "adminWizard": {
     "title": "New hotel",
@@ -1872,7 +1884,10 @@
         },
         "balance": {
           "top_up": "Added WhatsApp credit"
-        }
+        },
+        "invitation-create": "Sent an invitation",
+        "invitation-resend": "Sent an invitation again",
+        "invitation-revoke": "Revoked an invitation"
       },
       "offer": {
         "create": "Created an offer",
@@ -2236,7 +2251,9 @@
     "revokeBody": "The link stops working right away. You can invite them again later.",
     "notMember": "You are not a member of {hotel}",
     "notMemberHint": "Only its members can invite or change people here.",
-    "notMemberAction": "Open the admin page"
+    "notMemberAction": "Open the admin page",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied."
   },
   "usage": {
     "title": "WhatsApp usage",
