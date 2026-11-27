@@ -1,14 +1,15 @@
 "use client"
 
+import { isPhoneComplete } from "@ritorno/common/dial"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
 import { Button } from "@ritorno/ui/components/button"
 import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
-import { PhoneInput } from "@ritorno/ui/components/phone-input"
+import { type CountryPickerCopy, PhoneInput, usePhoneNumber } from "@ritorno/ui/components/phone-input"
 import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
-import { captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
+import { type CaptureState, captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
 import { ConsentToggle } from "./consent-toggle"
 import { type DepartureCopy, DepartureField } from "./departure-field"
 
@@ -17,13 +18,16 @@ export interface CaptureCopy {
   nameError: string
   phone: string
   phoneError: string
-  dialCode: string
+  countryPicker: CountryPickerCopy
   language: string
   departure: DepartureCopy
   optionalTitle: string
   optionalHint: string
   birthday: string
   email: string
+  emailError: string
+  birthdayError: string
+  whatsappError: string
   consentTitle: string
   consentHint: string
   whatsappTitle: string
@@ -42,13 +46,11 @@ export interface CaptureCopy {
   emailWording: string
 }
 
-type Status = "idle" | "sending" | "done" | "invalid" | "tooMany" | "failed"
+type Status = CaptureState | "sending"
 
 const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
 /** Guest inputs are 48 px and stay 16 px on every width, so iOS never zooms. */
 const CONTROL = "h-12 rounded-input bg-background text-base md:text-base"
-
-const nationalDigits = (national: string) => national.replace(/\D/g, "").replace(/^0+/, "")
 
 function FieldError({ id, children }: { id: string; children?: ReactNode }) {
   return (
@@ -98,8 +100,7 @@ export function CaptureForm(props: {
   const { copy } = props
   const [status, setStatus] = useState<Status>("idle")
   const [name, setName] = useState("")
-  const [dialCode, setDialCode] = useState("+216")
-  const [national, setNational] = useState("")
+  const phone = usePhoneNumber()
   const [email, setEmail] = useState("")
   const [emailConsent, setEmailConsent] = useState(false)
   const [optionalOpen, setOptionalOpen] = useState(false)
@@ -109,12 +110,19 @@ export function CaptureForm(props: {
   const phoneRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
 
-  const digits = nationalDigits(national)
+  const rejected = status.startsWith("invalid:") ? status.slice("invalid:".length) : null
   const nameBad = name.trim().length < 2
-  const phoneBad = digits.length < 6 || digits.length > 12
+  const phoneBad = !isPhoneComplete(phone.number)
   const emailMissing = emailConsent && !email.trim()
-  const showName = (touched.name || tried) && nameBad
-  const showPhone = (touched.phone || tried) && phoneBad
+  const nameError = ((touched.name || tried) && nameBad) || rejected === "name" ? copy.nameError : null
+  const phoneError =
+    rejected === "consents.whatsapp"
+      ? copy.whatsappError
+      : ((touched.phone || tried) && phoneBad) || rejected === "phone"
+        ? copy.phoneError
+        : null
+  /** A server error leaves with the first edit of the form. */
+  const clearRejected = () => rejected && setStatus("idle")
   const firstName = name.trim().split(/\s+/)[0] ?? ""
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -139,6 +147,13 @@ export function CaptureForm(props: {
     // The action rejects when the request itself is lost (offline, dropped wifi).
     const result = await captureAction("idle", data).catch(() => "failed" as const)
     setStatus(result)
+    if (!result.startsWith("invalid:")) return
+    const field = result.slice("invalid:".length)
+    if (field === "email" || field === "birthday") setOptionalOpen(true)
+    // the departure field shows its own error as an alert, there is no single control to focus
+    if (field === "stayCheckOut") return
+    const target = field === "name" ? nameRef : field === "email" ? emailRef : field === "birthday" ? null : phoneRef
+    setTimeout(() => (target ? target.current : document.getElementById("capture-birthday"))?.focus(), 0)
   }
 
   const error = {
@@ -148,7 +163,7 @@ export function CaptureForm(props: {
     idle: null,
     sending: null,
     done: null,
-  }[status]
+  }[rejected ? "idle" : (status as Exclude<Status, `invalid:${string}`>)]
 
   return (
     <>
@@ -168,12 +183,18 @@ export function CaptureForm(props: {
           {props.whatsapp}
         </div>
       ) : null}
-      <form onSubmit={submit} noValidate hidden={status === "done"} className="flex flex-col gap-6">
+      <form
+        onSubmit={submit}
+        onChange={clearRejected}
+        noValidate
+        hidden={status === "done"}
+        className="flex flex-col gap-6"
+      >
         {props.perk}
         <input type="hidden" name="slug" value={props.slug} />
         <input type="hidden" name="source" value={props.source} />
         <input type="hidden" name="location" value={props.location} />
-        <input type="hidden" name="phone" value={`${dialCode}${digits}`} />
+        <input type="hidden" name="phone" value={phone.number} />
         <div aria-hidden className="sr-only">
           <label>
             Website
@@ -181,7 +202,7 @@ export function CaptureForm(props: {
           </label>
         </div>
 
-        <FormField id="capture-name" label={copy.name} error={showName ? copy.nameError : null}>
+        <FormField id="capture-name" label={copy.name} error={nameError}>
           {(aria) => (
             <Input
               {...aria}
@@ -198,17 +219,19 @@ export function CaptureForm(props: {
           )}
         </FormField>
 
-        <FormField id="capture-phone" label={copy.phone} error={showPhone ? copy.phoneError : null}>
+        <FormField id="capture-phone" label={copy.phone} error={phoneError}>
           {(aria) => (
             <PhoneInput
               {...aria}
               ref={phoneRef}
-              value={national}
-              onValueChange={setNational}
+              value={phone.value}
+              onValueChange={(next) => {
+                phone.setValue(next)
+                clearRejected()
+              }}
               onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
-              dialCode={dialCode}
-              onDialCodeChange={setDialCode}
-              dialCodeLabel={copy.dialCode}
+              locale={props.language}
+              copy={copy.countryPicker}
               enterKeyHint="done"
               className={CONTROL}
             />
@@ -238,7 +261,7 @@ export function CaptureForm(props: {
           </div>
         </fieldset>
 
-        <DepartureField copy={copy.departure} className={CONTROL} />
+        <DepartureField copy={copy.departure} className={CONTROL} rejected={rejected === "stayCheckOut"} />
 
         <fieldset className="grid gap-3">
           <legend className="font-medium text-sm">{copy.consentTitle}</legend>
@@ -273,10 +296,14 @@ export function CaptureForm(props: {
             />
           </summary>
           <div className="grid gap-6 border-t p-4">
-            <FormField id="capture-birthday" label={copy.birthday}>
+            <FormField
+              id="capture-birthday"
+              label={copy.birthday}
+              error={rejected === "birthday" ? copy.birthdayError : null}
+            >
               {(aria) => <Input {...aria} type="date" name="birthday" autoComplete="bday" className={CONTROL} />}
             </FormField>
-            <FormField id="capture-email" label={copy.email}>
+            <FormField id="capture-email" label={copy.email} error={rejected === "email" ? copy.emailError : null}>
               {(aria) => (
                 <Input
                   {...aria}
@@ -289,8 +316,8 @@ export function CaptureForm(props: {
                   enterKeyHint="done"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  aria-invalid={tried && emailMissing}
-                  aria-describedby="capture-email-needed"
+                  aria-invalid={(tried && emailMissing) || rejected === "email"}
+                  aria-describedby={rejected === "email" ? aria["aria-describedby"] : "capture-email-needed"}
                   className={CONTROL}
                 />
               )}

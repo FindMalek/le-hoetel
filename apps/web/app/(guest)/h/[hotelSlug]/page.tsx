@@ -26,7 +26,10 @@ export default async function CapturePage({ params, searchParams }: Props) {
   const location = (query.loc ?? "").slice(0, 40)
   // the hotel's own try-out from the QR page: it shows everything and sends nothing
   const preview = query.preview === "1"
-  const t = await getTranslations({ locale: language, namespace: "capture" })
+  const [t, tPicker] = await Promise.all([
+    getTranslations({ locale: language, namespace: "capture" }),
+    getTranslations({ locale: language, namespace: "countryPicker" }),
+  ])
   const whatsappUrl = preview
     ? null
     : await getWhatsAppLink({ slug: hotel.slug, source, language, location: location || null })
@@ -90,7 +93,12 @@ export default async function CapturePage({ params, searchParams }: Props) {
           nameError: t("nameError"),
           phone: t("phone"),
           phoneError: t("phoneError"),
-          dialCode: t("dialCode"),
+          countryPicker: {
+            label: tPicker("label"),
+            search: tPicker("search"),
+            empty: tPicker("empty"),
+            close: tPicker("close"),
+          },
           language: t("language"),
           departure: {
             title: t("departure"),
@@ -109,6 +117,9 @@ export default async function CapturePage({ params, searchParams }: Props) {
           optionalHint: t("optionalHint"),
           birthday: t("birthday"),
           email: t("email"),
+          emailError: t("emailError"),
+          birthdayError: t("birthdayError"),
+          whatsappError: t("whatsappError"),
           consentTitle: t("consentTitle"),
           consentHint: t("consentHint"),
           whatsappTitle: t("whatsappTitle"),

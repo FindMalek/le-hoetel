@@ -1,5 +1,6 @@
 import { ORPCError } from "@orpc/server"
 import { type ConsentChannel, MESSAGE_CHANNELS } from "@ritorno/common/consent"
+import { phoneSearchDigits } from "@ritorno/common/dial"
 import { guestsToCsv } from "@ritorno/common/guest-export"
 import { UNDO_WINDOW_MS } from "@ritorno/common/hotel-time"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
@@ -111,7 +112,7 @@ export const guestsRouter = {
             ),
         )
       const consent = input.consent
-      const digits = input.q?.replace(/\D/g, "") ?? ""
+      const digits = phoneSearchDigits(input.q ?? "")
       const visits = sql<number>`(select count(*)::int from guest_visits v where v.guest_id = "guests"."id" and v.hotel_id = ${hotelId})`
       const where = and(
         eq(guests.hotelId, hotelId),
@@ -160,7 +161,7 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       const q = `%${escapeLike(input.q)}%`
-      const digits = input.q.replace(/\D/g, "")
+      const digits = phoneSearchDigits(input.q)
       const rows = await context.db
         .select()
         .from(guests)

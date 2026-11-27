@@ -1,10 +1,12 @@
 "use client"
 
+import { isPhoneComplete } from "@ritorno/common/dial"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
-import { PhoneInput } from "@ritorno/ui/components/phone-input"
+import { type CountryPickerCopy, PhoneInput, usePhoneNumber } from "@ritorno/ui/components/phone-input"
 import { CheckIcon, CircleAlertIcon, LoaderCircleIcon } from "lucide-react"
 import { type FormEvent, useState, useTransition } from "react"
 import { requestDemo } from "@/app/actions"
+import type { CaptureResult } from "@/lib/capture"
 
 export interface DemoCopy {
   name: string
@@ -13,7 +15,7 @@ export interface DemoCopy {
   hotelError: string
   phone: string
   phoneError: string
-  dialCode: string
+  countryPicker: CountryPickerCopy
   city: string
   cityError: string
   language: string
@@ -38,23 +40,26 @@ function FieldError({ id, children }: { id: string; children?: string | null }) 
   )
 }
 
-export function DemoForm({ language, copy }: { language: HotelLanguage; copy: DemoCopy }) {
+export function DemoForm({ language, locale, copy }: { language: HotelLanguage; locale: string; copy: DemoCopy }) {
   const [values, setValues] = useState({ name: "", hotel: "", city: "" })
-  const [dialCode, setDialCode] = useState("+216")
-  const [national, setNational] = useState("")
+  const phone = usePhoneNumber()
   const [tried, setTried] = useState(false)
-  const [result, setResult] = useState<"idle" | "done" | "invalid" | "tooMany">("idle")
+  const [result, setResult] = useState<CaptureResult | "idle">("idle")
   const [pending, start] = useTransition()
 
-  const digits = national.replace(/\D/g, "").replace(/^0+/, "")
+  const rejected = result.startsWith("invalid:") ? result.slice("invalid:".length) : null
   const bad = {
     name: values.name.trim().length < 2,
     hotel: values.hotel.trim().length < 2,
-    phone: digits.length < 6 || digits.length > 12,
+    phone: !isPhoneComplete(phone.number),
     city: values.city.trim().length < 2,
   }
+  const wrong = (key: keyof typeof bad) => (tried && bad[key]) || rejected === key
   const set = (key: keyof typeof values) => (event: { target: { value: string } }) =>
     setValues((current) => ({ ...current, [key]: event.target.value }))
+
+  /** A server error leaves with the first edit of the form. */
+  const clearRejected = () => rejected && setResult("idle")
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -66,7 +71,11 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
       return
     }
     const data = new FormData(form)
-    start(async () => setResult(await requestDemo(data)))
+    start(async () => {
+      const next = await requestDemo(data)
+      setResult(next)
+      if (next.startsWith("invalid:")) form.querySelector<HTMLElement>(`#demo-${next.slice(8)}`)?.focus()
+    })
   }
 
   if (result === "done") {
@@ -87,8 +96,13 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
   }
 
   return (
-    <form onSubmit={submit} noValidate className="grid gap-5 rounded-card border bg-card p-5 shadow-md md:p-8">
-      <input type="hidden" name="phone" value={`${dialCode}${digits}`} />
+    <form
+      onSubmit={submit}
+      onChange={clearRejected}
+      noValidate
+      className="grid gap-5 rounded-card border bg-card p-5 shadow-md md:p-8"
+    >
+      <input type="hidden" name="phone" value={phone.number} />
       <div aria-hidden className="sr-only">
         <label>
           Website
@@ -107,11 +121,11 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           autoComplete="name"
           enterKeyHint="next"
           maxLength={100}
-          aria-invalid={tried && bad.name}
+          aria-invalid={wrong("name")}
           aria-describedby="demo-name-error"
           className={CONTROL}
         />
-        <FieldError id="demo-name-error">{tried && bad.name ? copy.nameError : null}</FieldError>
+        <FieldError id="demo-name-error">{wrong("name") ? copy.nameError : null}</FieldError>
       </div>
       <div className="grid gap-2">
         <label htmlFor="demo-hotel" className="font-medium text-sm">
@@ -125,11 +139,11 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           autoComplete="organization"
           enterKeyHint="next"
           maxLength={120}
-          aria-invalid={tried && bad.hotel}
+          aria-invalid={wrong("hotel")}
           aria-describedby="demo-hotel-error"
           className={CONTROL}
         />
-        <FieldError id="demo-hotel-error">{tried && bad.hotel ? copy.hotelError : null}</FieldError>
+        <FieldError id="demo-hotel-error">{wrong("hotel") ? copy.hotelError : null}</FieldError>
       </div>
       <div className="grid gap-2">
         <label htmlFor="demo-phone" className="font-medium text-sm">
@@ -137,17 +151,19 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
         </label>
         <PhoneInput
           id="demo-phone"
-          value={national}
-          onValueChange={setNational}
-          dialCode={dialCode}
-          onDialCodeChange={setDialCode}
-          dialCodeLabel={copy.dialCode}
+          value={phone.value}
+          onValueChange={(next) => {
+            phone.setValue(next)
+            clearRejected()
+          }}
+          locale={locale}
+          copy={copy.countryPicker}
           enterKeyHint="next"
-          aria-invalid={tried && bad.phone}
+          aria-invalid={wrong("phone")}
           aria-describedby="demo-phone-error"
           className="h-12 rounded-input bg-background"
         />
-        <FieldError id="demo-phone-error">{tried && bad.phone ? copy.phoneError : null}</FieldError>
+        <FieldError id="demo-phone-error">{wrong("phone") ? copy.phoneError : null}</FieldError>
       </div>
       <div className="grid gap-2">
         <label htmlFor="demo-city" className="font-medium text-sm">
@@ -161,11 +177,11 @@ export function DemoForm({ language, copy }: { language: HotelLanguage; copy: De
           autoComplete="address-level2"
           enterKeyHint="done"
           maxLength={80}
-          aria-invalid={tried && bad.city}
+          aria-invalid={wrong("city")}
           aria-describedby="demo-city-error"
           className={CONTROL}
         />
-        <FieldError id="demo-city-error">{tried && bad.city ? copy.cityError : null}</FieldError>
+        <FieldError id="demo-city-error">{wrong("city") ? copy.cityError : null}</FieldError>
       </div>
       <fieldset className="grid gap-2">
         <legend className="mb-2 font-medium text-sm">{copy.language}</legend>
