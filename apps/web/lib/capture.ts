@@ -14,7 +14,7 @@ export const getWhatsAppLink = (input: Parameters<typeof api.public.whatsappLink
 /** `invalid:phone` names the field the api refused, the form shows the error there. */
 export type CaptureResult = "done" | "invalid" | `invalid:${string}` | "tooMany"
 
-const FORM_FIELDS = ["name", "hotel", "phone", "city", "email", "birthday", "consents.whatsapp"]
+const FORM_FIELDS = ["name", "hotel", "phone", "city", "email", "birthday", "stayCheckOut", "consents.whatsapp"]
 
 function invalid(error: unknown): "invalid" | `invalid:${string}` {
   const field = invalidField(error)

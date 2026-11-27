@@ -28,7 +28,16 @@ function dayAfter(nights: number) {
 }
 
 /** Optional "when do you leave?". Nothing is stored unless the guest also switches the consent on. */
-export function DepartureField({ copy, className }: { copy: DepartureCopy; className?: string }) {
+export function DepartureField({
+  copy,
+  className,
+  rejected,
+}: {
+  copy: DepartureCopy
+  className?: string
+  /** The api refused the date. */
+  rejected?: boolean
+}) {
   const [choice, setChoice] = useState<number | "date" | null>(null)
   const [picked, setPicked] = useState("")
   const toggle = (next: number | "date") => setChoice((current) => (current === next ? null : next))
@@ -68,12 +77,12 @@ export function DepartureField({ copy, className }: { copy: DepartureCopy; class
             onChange={(event) => setPicked(event.target.value)}
             className={className}
           />
-          {outOfRange ? (
-            <p role="alert" className="text-destructive text-sm">
-              {copy.dateError}
-            </p>
-          ) : null}
         </>
+      ) : null}
+      {outOfRange || rejected ? (
+        <p role="alert" className="text-destructive text-sm">
+          {copy.dateError}
+        </p>
       ) : null}
       <input type="hidden" name="stayCheckOut" value={value} />
       {value ? <ConsentToggle name="stayConsent" title={copy.keep} wording={copy.wording} /> : null}

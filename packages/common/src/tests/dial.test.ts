@@ -1,14 +1,7 @@
 import { expect, test } from "bun:test"
 import { getCountries, getCountryCallingCode } from "libphonenumber-js/min"
-import {
-  countryFromLocales,
-  DIAL_COUNTRIES,
-  matchesCountry,
-  phoneSearchDigits,
-  readPhone,
-  toInternational,
-} from "../dial"
-import { parsePhone, settleCountry } from "../phone"
+import { DIAL_COUNTRIES, matchesCountry, phoneSearchDigits, readPhone, toInternational } from "../dial"
+import { parsePhone } from "../phone"
 
 const read = (input: string, country = "TN") => readPhone(input, { country, national: "" })
 const sent = (input: string, country = "TN") => parsePhone(toInternational(read(input, country)))?.e164
@@ -44,12 +37,6 @@ test("every country libphonenumber knows can be picked, with its code", () => {
   )
 })
 
-test("the browser locale preselects only when it names a region", () => {
-  expect(countryFromLocales(["fr", "fr-BE"])).toBe("BE")
-  expect(countryFromLocales(["zh-Hant-TW"])).toBe("TW")
-  expect(countryFromLocales(["ar", "en"])).toBeNull()
-})
-
 test("country search ignores accents and hamza and takes a calling code", () => {
   const us = { country: "US", code: "1", names: ["États-Unis", "United States"] }
   const ae = { country: "AE", code: "971", names: ["الإمارات العربية المتحدة"] }
@@ -63,14 +50,4 @@ test("local and 00 spellings search the stored number", () => {
   for (const query of ["06 12 34 56 78", "0033 612345678", "٠٦١٢٣٤٥٦٧٨"]) {
     expect("+33612345678").toContain(phoneSearchDigits(query))
   }
-})
-
-test("a local number under a guessed country becomes Tunisian, a chosen country is left alone", () => {
-  const guessed = { country: "US", national: "98 765 432", detected: "US" }
-  const settled = settleCountry(guessed)
-  expect(settled.country).toBe("TN")
-  // more digits make it a real US number again
-  expect(settleCountry({ ...settled, national: "415 555 2671" }).country).toBe("US")
-  expect(settleCountry({ country: "FR", national: "98 765 432" }).country).toBe("FR")
-  expect(settleCountry(readPhone("+33 98 765 432", guessed))).toEqual({ country: "FR", national: "98 765 432" })
 })

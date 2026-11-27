@@ -2,6 +2,7 @@ import { consentWording } from "@ritorno/common/consent"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { CAPTURE_SOURCES, type CaptureSource } from "@ritorno/common/schemas"
 import { buttonVariants } from "@ritorno/ui/components/button"
+import { InlineAlert } from "@ritorno/ui/components/inline-alert"
 import { cn } from "@ritorno/ui/lib/utils"
 import { GiftIcon, MessageCircleIcon } from "lucide-react"
 import type { Metadata } from "next"
@@ -23,14 +24,19 @@ export default async function CapturePage({ params, searchParams }: Props) {
   const language = guestLanguage(query.lang, hotel.defaultLanguage)
   const source = (query.src && query.src in CAPTURE_SOURCES ? query.src : "desk") as CaptureSource
   const location = (query.loc ?? "").slice(0, 40)
+  // the hotel's own try-out from the QR page: it shows everything and sends nothing
+  const preview = query.preview === "1"
   const [t, tPicker] = await Promise.all([
     getTranslations({ locale: language, namespace: "capture" }),
     getTranslations({ locale: language, namespace: "countryPicker" }),
   ])
-  const whatsappUrl = await getWhatsAppLink({ slug: hotel.slug, source, language, location: location || null })
+  const whatsappUrl = preview
+    ? null
+    : await getWhatsAppLink({ slug: hotel.slug, source, language, location: location || null })
   const switchTo = (to: HotelLanguage) => {
     const next = new URLSearchParams({ src: source, lang: to })
     if (location) next.set("loc", location)
+    if (preview) next.set("preview", "1")
     return `?${next}`
   }
 
@@ -69,7 +75,13 @@ export default async function CapturePage({ params, searchParams }: Props) {
 
   return (
     <GuestShell hotel={hotel} language={language} line={t("welcome")} languageHref={switchTo}>
+      {preview ? (
+        <InlineAlert tone="info" title={t("previewTitle")} className="mb-6">
+          {t("previewBody")}
+        </InlineAlert>
+      ) : null}
       <CaptureForm
+        preview={preview}
         slug={hotel.slug}
         source={source}
         location={location}

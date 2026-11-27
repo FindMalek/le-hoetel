@@ -42,7 +42,7 @@ function FieldError({ id, children }: { id: string; children?: string | null }) 
 
 export function DemoForm({ language, locale, copy }: { language: HotelLanguage; locale: string; copy: DemoCopy }) {
   const [values, setValues] = useState({ name: "", hotel: "", city: "" })
-  const phone = usePhoneNumber({ detect: true })
+  const phone = usePhoneNumber()
   const [tried, setTried] = useState(false)
   const [result, setResult] = useState<CaptureResult | "idle">("idle")
   const [pending, start] = useTransition()
@@ -72,7 +72,6 @@ export function DemoForm({ language, locale, copy }: { language: HotelLanguage; 
     }
     const data = new FormData(form)
     start(async () => {
-      data.set("phone", await phone.settle())
       const next = await requestDemo(data)
       setResult(next)
       if (next.startsWith("invalid:")) form.querySelector<HTMLElement>(`#demo-${next.slice(8)}`)?.focus()
@@ -159,7 +158,6 @@ export function DemoForm({ language, locale, copy }: { language: HotelLanguage; 
           }}
           locale={locale}
           copy={copy.countryPicker}
-          onBlur={() => void phone.settle()}
           enterKeyHint="next"
           aria-invalid={wrong("phone")}
           aria-describedby="demo-phone-error"
