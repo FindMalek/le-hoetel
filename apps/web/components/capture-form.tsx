@@ -1,6 +1,7 @@
 "use client"
 
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import type { SignUpPerk } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
 import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
@@ -11,6 +12,7 @@ import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "rea
 import { captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
 import { ConsentToggle } from "./consent-toggle"
 import { type DepartureCopy, DepartureField } from "./departure-field"
+import { SignUpPerkCard, type SignUpPerkCopy } from "./sign-up-perk"
 
 export interface CaptureCopy {
   name: string
@@ -35,6 +37,7 @@ export interface CaptureCopy {
   thanksTitle: string
   thanksBody: string
   thanksPerk: string
+  signUpPerk: SignUpPerkCopy
   errorInvalid: string
   errorTooMany: string
   errorFailed: string
@@ -97,6 +100,8 @@ export function CaptureForm(props: {
 }) {
   const { copy } = props
   const [status, setStatus] = useState<Status>("idle")
+  const [signUpPerk, setSignUpPerk] = useState<SignUpPerk | null>(null)
+  const claim = useRef("")
   const [name, setName] = useState("")
   const [dialCode, setDialCode] = useState("+216")
   const [national, setNational] = useState("")
@@ -135,10 +140,14 @@ export function CaptureForm(props: {
       return
     }
     const data = new FormData(event.currentTarget)
+    // `randomUUID` needs https, and a phone testing a local build has none.
+    claim.current ||= Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(36)).join("-")
+    data.set("claim", claim.current)
     setStatus("sending")
     // The action rejects when the request itself is lost (offline, dropped wifi).
-    const result = await captureAction("idle", data).catch(() => "failed" as const)
-    setStatus(result)
+    const result = await captureAction(data).catch(() => ({ status: "failed" as const, perk: null }))
+    setSignUpPerk(result.perk)
+    setStatus(result.status)
   }
 
   const error = {
@@ -161,10 +170,14 @@ export function CaptureForm(props: {
             </h2>
             <p className="text-muted-foreground">{copy.thanksBody}</p>
           </div>
-          <div className="grid w-full gap-3">
-            {props.perk}
-            <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
-          </div>
+          {signUpPerk ? (
+            <SignUpPerkCard perk={signUpPerk} language={props.language} copy={copy.signUpPerk} />
+          ) : (
+            <div className="grid w-full gap-3">
+              {props.perk}
+              <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
+            </div>
+          )}
           {props.whatsapp}
         </div>
       ) : null}

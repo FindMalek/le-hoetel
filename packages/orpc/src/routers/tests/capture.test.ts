@@ -62,7 +62,7 @@ test("a departure date in the past or too far ahead is refused", async () => {
 
   await expect(send(inDays(-3))).rejects.toThrow()
   await expect(send(inDays(120))).rejects.toThrow()
-  await expect(send(inDays(90))).resolves.toEqual({ ok: true })
+  await expect(send(inDays(90))).resolves.toEqual({ ok: true, perk: null })
 })
 
 test("a rescan never moves a check-out still ahead, nor puts one before the arrival", async () => {
@@ -175,7 +175,7 @@ test("bots are dropped silently and counted without their data: honeypot, a link
   const info = spyOn(logger, "info")
 
   for (const patch of [{ website: "https://spam.test" }, { name: "see www.spam.test" }]) {
-    expect(await bot.public.capture({ slug: "capture-bots", ...scan, ...patch })).toEqual({ ok: true })
+    expect(await bot.public.capture({ slug: "capture-bots", ...scan, ...patch })).toEqual({ ok: true, perk: null })
   }
 
   expect(info.mock.calls).toEqual([
@@ -200,7 +200,7 @@ test("guests behind one hotel ip can all join, and another hotel on that ip is n
   expect(RATE_LIMITS.captureIp.limit).toBeGreaterThanOrEqual(50)
   expect((await client.guests.list({})).total).toBe(RATE_LIMITS.captureIp.limit)
   await expect(wifi.public.capture({ slug: "capture-wifi", ...scan })).rejects.toThrow("Too many requests")
-  await expect(wifi.public.capture({ slug: "capture-next-door", ...scan })).resolves.toEqual({ ok: true })
+  await expect(wifi.public.capture({ slug: "capture-next-door", ...scan })).resolves.toEqual({ ok: true, perk: null })
 })
 
 test("a survey answer is not blocked by sign-ups from the same ip", async () => {

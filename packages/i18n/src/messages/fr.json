@@ -661,6 +661,10 @@
     "sending": "Envoi…",
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
     "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
+    "perkShow": "Présentez ce code à la réception.",
+    "perkOpen": "Ouvrir la page de mon code",
+    "perkSave": "Gardez-le : ouvrez la page de votre code et enregistrez le lien, ou faites une capture d’écran.",
+    "perkReturning": "Déjà inscrit ? Utilisez le code déjà reçu, ou demandez à la réception.",
     "whatsappButton": "Continuer sur WhatsApp",
     "whatsappHint": "Cela ouvre une discussion avec le numéro de Ritorno, qui envoie un seul accueil automatique pour {hotel}. L'équipe de l'hôtel voit votre numéro et peut vous écrire, mais pas ce que vous écrivez : pour une demande, adressez-vous à la réception. Cela ne vous inscrit à aucun message.",
     "departure": "Quand partez-vous ?",
@@ -1176,7 +1180,7 @@
       "inactive": "L’offre est en pause dans Offres. Rien à valider pour l’instant.",
       "exhausted": "Toutes les utilisations de ce code sont épuisées.",
       "wrongHotel": "Demandez au client le code envoyé par cet hôtel.",
-      "unknown": "Vérifiez le code avec le client et réessayez."
+      "unknown": "Vérifiez le code et réessayez. Un client déjà inscrit garde son premier code."
     },
     "viewGuest": "Voir le client",
     "undo": "Annuler, touché par erreur",

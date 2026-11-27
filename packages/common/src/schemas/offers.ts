@@ -84,6 +84,18 @@ export const offerPageSchema = z.object({
 /** The perk shown on the public capture page: the hotel's active welcome offer, title and text only. */
 export const welcomeOfferSchema = z.object({ title: z.string(), text: z.string() })
 
+/** The welcome offer with the code to show, right after a public sign-up. */
+export const signUpPerkSchema = z.object({
+  title: z.string(),
+  text: z.string(),
+  validFrom: z.date(),
+  validUntil: z.date().nullable(),
+  code: z.string(),
+  qrSvg: z.string(),
+  url: z.string(),
+})
+export type SignUpPerk = z.infer<typeof signUpPerkSchema>
+
 export const OFFER_CODE_MAX = 64
 export const offerCodeInputSchema = z.object({ code: z.string().trim().min(1).max(OFFER_CODE_MAX) })
 

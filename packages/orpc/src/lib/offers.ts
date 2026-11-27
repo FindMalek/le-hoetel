@@ -1,8 +1,16 @@
 import { ORPCError } from "@orpc/server"
+import type { HotelLanguage } from "@ritorno/common/hotel"
 import { UNDO_WINDOW_MS } from "@ritorno/common/hotel-time"
-import { newGuestCode, verifyOfferToken } from "@ritorno/common/offer-tokens"
+import {
+  newGuestCode,
+  offerPageUrl,
+  signSignUpToken,
+  signUpCode,
+  verifyOfferToken,
+  verifySignUpToken,
+} from "@ritorno/common/offer-tokens"
 import { normalizeCode, offerState } from "@ritorno/common/offers"
-import type { offerLookupSchema } from "@ritorno/common/schemas"
+import type { offerLookupSchema, signUpPerkSchema } from "@ritorno/common/schemas"
 import { type Db, guests, guestVisits, offerCodes, offerRedemptions, offers, user } from "@ritorno/db"
 import { and, count, desc, eq, gt, isNull, lte, or } from "drizzle-orm"
 import type { z } from "zod"
@@ -32,28 +40,56 @@ export async function guestCode(db: Db | Tx, hotelId: string, offerId: string, g
   throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Could not make a code." })
 }
 
-/** The page behind `/o/<token>`: the hotel's look, the offer and the guest's code as a QR. Nothing about the guest. */
+/** What a `/o/<token>` link points at: a guest's own link from a message, or the code shown after a sign-up. */
+async function linkSubject(context: Ctx, token: string) {
+  const mine = verifyOfferToken(context.config.tokenSecret, token)
+  if (mine) {
+    const [guest] = await context.db
+      .select({ language: guests.language })
+      .from(guests)
+      .where(hotelGuest(mine.hotelId, mine.guestId))
+    return guest ? { ...mine, language: guest.language, code: null } : null
+  }
+  const signUp = verifySignUpToken(context.config.tokenSecret, token)
+  if (!signUp) return null
+  const [holder] = await context.db
+    .select({ guestId: offerCodes.guestId })
+    .from(offerCodes)
+    .where(
+      and(
+        eq(offerCodes.code, signUp.code),
+        eq(offerCodes.offerId, signUp.offerId),
+        eq(offerCodes.hotelId, signUp.hotelId),
+      ),
+    )
+  // A code nobody holds reads like a fresh one: telling them apart would say whether the phone was already known.
+  return { ...signUp, guestId: holder?.guestId ?? null }
+}
+
+/** The page behind `/o/<token>`: the hotel's look, the offer and the code as a QR. Nothing about the guest. */
 export async function offerPage(context: Ctx, token: string) {
-  const subject = verifyOfferToken(context.config.tokenSecret, token)
+  const subject = await linkSubject(context, token)
   if (!subject) throw invalid()
-  const [row] = await context.db
-    .select({ offer: offers, language: guests.language })
+  const { hotelId, offerId, guestId, language } = subject
+  const [offer] = await context.db
+    .select()
     .from(offers)
-    .innerJoin(guests, hotelGuest(subject.hotelId, subject.guestId))
-    .where(and(eq(offers.id, subject.offerId), eq(offers.hotelId, subject.hotelId)))
-  if (!row) throw invalid()
-  const [redemption] = await context.db
-    .select({ id: offerRedemptions.id })
-    .from(offerRedemptions)
-    .where(and(eq(offerRedemptions.offerId, subject.offerId), eq(offerRedemptions.guestId, subject.guestId)))
+    .where(and(eq(offers.id, offerId), eq(offers.hotelId, hotelId)))
+  if (!offer) throw invalid()
+  const [redemption] = guestId
+    ? await context.db
+        .select({ id: offerRedemptions.id })
+        .from(offerRedemptions)
+        .where(and(eq(offerRedemptions.offerId, offerId), eq(offerRedemptions.guestId, guestId)))
+    : []
   const state = redemption
     ? ("redeemed" as const)
-    : offerState(row.offer, await redeemedCount(context.db, row.offer.id), context.now())
-  const code = await guestCode(context.db, subject.hotelId, subject.offerId, subject.guestId)
-  const { title, text, validFrom, validUntil } = row.offer
+    : offerState(offer, await redeemedCount(context.db, offer.id), context.now())
+  const code = subject.code ?? (await guestCode(context.db, hotelId, offerId, guestId!))
+  const { title, text, validFrom, validUntil } = offer
   return {
-    hotel: await hotelBranding(context, subject.hotelId),
-    language: row.language,
+    hotel: await hotelBranding(context, hotelId),
+    language,
     offer: { title, text, validFrom, validUntil },
     state,
     code,
@@ -61,10 +97,10 @@ export async function offerPage(context: Ctx, token: string) {
   }
 }
 
-/** The perk a capture page shows: the newest active welcome offer that is open right now. */
-export async function welcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
-  const [row] = await db
-    .select({ title: offers.title, text: offers.text, validUntil: offers.validUntil })
+/** The newest welcome offer that can be redeemed right now: what the capture page promises and gives. */
+async function openWelcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
+  const candidates = await db
+    .select()
     .from(offers)
     .where(
       and(
@@ -76,8 +112,49 @@ export async function welcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
       ),
     )
     .orderBy(desc(offers.createdAt))
-    .limit(1)
-  return row ?? null
+  for (const offer of candidates) {
+    if (offerState(offer, await redeemedCount(db, offer.id), now) === "ready") return offer
+  }
+  return null
+}
+
+/** The perk a capture page shows. */
+export async function welcomeOffer(db: Db | Tx, hotelId: string, now: Date) {
+  const offer = await openWelcomeOffer(db, hotelId, now)
+  return offer ? { title: offer.title, text: offer.text, validUntil: offer.validUntil } : null
+}
+
+/**
+ * The code on the thank-you screen of a public sign-up. It needs no consent: showing it is not a message.
+ *
+ * The form takes any phone, so the answer is built the same way whoever the phone belongs to. The code is derived from
+ * this sign-up and only becomes the guest's when they hold none for the offer. A guest who already has one keeps it,
+ * and the code shown redeems nothing: a stranger typing their number never learns or gets theirs. `claim` is the
+ * browser's own random value, so the retry of a lost answer shows the code that was stored. Null `guestId` (a bot)
+ * stores nothing.
+ */
+export async function signUpPerk(
+  context: Ctx,
+  signUp: { hotelId: string; guestId: string | null; phone: string; claim: string; language: HotelLanguage },
+): Promise<z.infer<typeof signUpPerkSchema> | null> {
+  const { hotelId, guestId, phone, claim, language } = signUp
+  const offer = await openWelcomeOffer(context.db, hotelId, context.now())
+  if (!offer) return null
+  const code = signUpCode(context.config.tokenSecret, [hotelId, offer.id, phone, claim])
+  if (guestId) {
+    await context.db.insert(offerCodes).values({ hotelId, offerId: offer.id, guestId, code }).onConflictDoNothing()
+  }
+  const token = signSignUpToken(context.config.tokenSecret, { hotelId, offerId: offer.id, code, language })
+  const { title, text, validFrom, validUntil } = offer
+  return {
+    title,
+    text,
+    validFrom,
+    validUntil,
+    code,
+    qrSvg: await qrSvg(code),
+    url: offerPageUrl(context.config.webUrl, token, language),
+  }
 }
 
 type Lookup = z.infer<typeof offerLookupSchema>
