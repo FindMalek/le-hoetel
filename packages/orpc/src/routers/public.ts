@@ -289,7 +289,10 @@ export const publicRouter = {
         consents: { ...input.consents, profile: !!stayCheckOut },
       })
       if (!guest.success) {
-        throw new ORPCError("BAD_REQUEST", { message: guest.error.issues[0]?.message ?? "Check your details." })
+        throw new ORPCError("BAD_REQUEST", {
+          message: guest.error.issues[0]?.message ?? "Check your details.",
+          data: { issues: guest.error.issues },
+        })
       }
       const { id } = await context.db.transaction((tx) => upsertGuest(tx, hotel.id, guest.data, context.now()))
       // Before the welcome message is queued, so the message carries the code the guest was just shown.

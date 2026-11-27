@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test"
-import { URLS } from "../env"
+import postgres from "postgres"
+import { e2eDatabaseUrl, URLS } from "../env"
 import { expectLocaleLayout, LOCALES, webUrl } from "../fixtures"
 
 for (const locale of LOCALES) {
@@ -37,6 +38,23 @@ test("a guest signs up from the QR page and sees the welcome at once", async ({ 
   await page.locator("#capture-phone").fill("98 765 432")
   await page.getByRole("button", { name: "Join" }).click()
   await expect(page.getByRole("status").getByRole("heading", { name: "You are in, Amira" })).toBeVisible()
+})
+
+test.describe("on a German phone", () => {
+  test.use({ locale: "de-DE" })
+
+  test("a local number is stored as Tunisian", async ({ page }) => {
+    await page.goto(`${URLS.web}/h/dar-zitouna?lang=en`)
+    await page.getByLabel("Your name").fill("Locale Check")
+    await page.locator("#capture-phone").fill("20 765 421")
+    await page.getByRole("button", { name: "Join" }).click()
+    await expect(page.getByRole("heading", { name: "You are in, Locale" })).toBeVisible()
+
+    const sql = postgres(e2eDatabaseUrl(), { max: 1 })
+    const rows = await sql`select phone_e164 from guests where name = 'Locale Check'`
+    await sql.end()
+    expect(rows.map((row) => row.phone_e164)).toEqual(["+21620765421"])
+  })
 })
 
 test("a sign-up that does not reach the server never says joined and can be retried", async ({ page, context }) => {

@@ -1,4 +1,5 @@
 import "server-only"
+import { invalidField } from "@ritorno/common/field-errors"
 import type { CaptureInput, LeadInput, SignUpPerk } from "@ritorno/common/schemas"
 import { guestApi as api } from "./api"
 
@@ -10,7 +11,15 @@ export const getWhatsAppLink = (input: Parameters<typeof api.public.whatsappLink
     .then((link) => link.url)
     .catch(() => null)
 
-export type CaptureResult = "done" | "invalid" | "tooMany"
+/** `invalid:phone` names the field the api refused, the form shows the error there. */
+export type CaptureResult = "done" | "invalid" | `invalid:${string}` | "tooMany"
+
+const FORM_FIELDS = ["name", "hotel", "phone", "city", "email", "birthday", "stayCheckOut", "consents.whatsapp"]
+
+function invalid(error: unknown): "invalid" | `invalid:${string}` {
+  const field = invalidField(error)
+  return field && FORM_FIELDS.includes(field) ? `invalid:${field}` : "invalid"
+}
 
 export type CaptureState = { status: CaptureResult | "failed"; perk: SignUpPerk | null }
 
@@ -22,7 +31,7 @@ export async function submitCapture(input: CaptureInput): Promise<CaptureState> 
   } catch (error) {
     const { code } = error as { code?: string }
     if (code === "TOO_MANY_REQUESTS") return { status: "tooMany", perk: null }
-    return { status: code === "BAD_REQUEST" ? "invalid" : "failed", perk: null }
+    return { status: code === "BAD_REQUEST" ? invalid(error) : "failed", perk: null }
   }
 }
 
@@ -31,6 +40,6 @@ export async function submitLead(input: LeadInput): Promise<CaptureResult> {
     await api.leads.request(input)
     return "done"
   } catch (error) {
-    return (error as { code?: string }).code === "TOO_MANY_REQUESTS" ? "tooMany" : "invalid"
+    return (error as { code?: string }).code === "TOO_MANY_REQUESTS" ? "tooMany" : invalid(error)
   }
 }
