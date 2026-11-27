@@ -22,6 +22,7 @@ import { getLocale, getTranslations } from "next-intl/server"
 import { InvoiceForm } from "@/components/admin-billing-forms"
 import { AdminCaptureLink } from "@/components/admin-capture-link"
 import { AdminBrandingForm, AdminDangerZone, AdminPlanForm, AdminRename } from "@/components/admin-hotel-forms"
+import { AdminOwnerInvite } from "@/components/admin-invitations"
 import { InvoiceExport, InvoiceList } from "@/components/admin-invoices"
 import { AdminTopUp } from "@/components/admin-top-up"
 import { HotelAvatar } from "@/components/hotel-avatar"
@@ -155,7 +156,8 @@ export default async function AdminHotelPage({ params }: { params: Promise<{ id:
           </FormSection>
 
           <FormSection title={t("people")} description={t("peopleHint")}>
-            <HotelPeople hotel={hotel} />
+            <HotelPeople hotel={hotel} manage />
+            <AdminOwnerInvite hotelId={hotel.id} />
           </FormSection>
 
           <FormSection title={t("capture")} description={t("captureHint")}>

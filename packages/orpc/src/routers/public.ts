@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import { ORPCError } from "@orpc/server"
 import { MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
@@ -8,6 +9,7 @@ import {
   offerPageSchema,
   publicHotelSchema,
   shortLinkSchema,
+  signUpPerkSchema,
   statusSchema,
 } from "@ritorno/common/schemas"
 import { surveyAnswerSchema } from "@ritorno/common/survey"
@@ -20,7 +22,7 @@ import type { Context } from "../context"
 import { enqueuePublicWelcome } from "../jobs"
 import { repoInfo } from "../lib/github"
 import { upsertGuest } from "../lib/guests"
-import { offerPage, welcomeOffer } from "../lib/offers"
+import { offerPage, signUpPerk, welcomeOffer } from "../lib/offers"
 import { enforceKey, enforceRateLimit, RATE_LIMITS } from "../lib/rate-limit"
 import { findShortLink } from "../lib/short-links"
 import { reviewClick, submitSurvey, surveyPage } from "../lib/surveys"
@@ -259,14 +261,17 @@ export const publicRouter = {
       tags: ["public"],
     })
     .input(captureInputSchema)
-    .output(z.object({ ok: z.literal(true) }))
+    .output(z.object({ ok: z.literal(true), perk: signUpPerkSchema.nullable() }))
     .handler(async ({ context, input }) => {
       const hotel = await findPublicHotel(context.db, input.slug)
       await enforceRateLimit(context, `capture.ip:${hotel.id}`, RATE_LIMITS.captureIp)
+      const claim = input.claim || randomUUID()
+      const perkFor = (guestId: string | null, phone: string) =>
+        signUpPerk(context, { hotelId: hotel.id, guestId, phone, claim, language: input.language })
       const reason = botReason(input)
       if (reason) {
         logger.info("capture discarded", { hotelId: hotel.id, reason })
-        return { ok: true as const }
+        return { ok: true as const, perk: await perkFor(null, input.phone) }
       }
       await enforceKey(context.rateLimiter, `public.capture:hotel:${hotel.id}`, RATE_LIMITS.captureHotel)
       // The toggle grants the whole `profile` channel (country, city, stay dates, next destination). This form only
@@ -290,7 +295,9 @@ export const publicRouter = {
         })
       }
       const { id } = await context.db.transaction((tx) => upsertGuest(tx, hotel.id, guest.data, context.now()))
+      // Before the welcome message is queued, so the message carries the code the guest was just shown.
+      const perk = await perkFor(id, guest.data.phone)
       await enqueuePublicWelcome(context, hotel.id, id, guest.data.consents)
-      return { ok: true as const }
+      return { ok: true as const, perk }
     }),
 }

@@ -19,7 +19,23 @@ The guest link is `/o/<token>` on the web app (`offerPageUrl` in `@ritorno/commo
 
 ## Welcome offer on the capture page
 
-`public.hotel` returns `welcomeOffer` (title and text only): the newest active `welcome` offer that is inside its window. The capture page shows it as the perk instead of the generic one. It has no code: the guest gets the link in the welcome message once they have signed up.
+`public.hotel` returns `welcomeOffer` (title and text only): the newest active `welcome` offer that can be redeemed now (inside its window and not used up). The capture page shows it as the perk instead of the generic one.
+
+### The code on the thank-you screen
+
+`public.capture` answers with `perk`: the offer, a code, its QR and a link to reopen it. The thank-you screen shows the same card as `/o`. It needs no consent, because showing a code on the guest's own screen is not a message: nothing is sent and the consent log is untouched. `perk` is null when the hotel has no open welcome offer, and the screen then shows the plain thank-you.
+
+The public form takes any phone, so the answer is built the same way for a new and a known one (`signUpPerk` in `lib/offers.ts`):
+
+- The code is derived (HMAC with the server secret) from the hotel, the offer, the phone and `claim`, a random value the browser makes for this visit of the form.
+- It is stored as the guest's code only when they hold none for the offer: a new guest, or one added by staff or CSV. A welcome message sent afterwards carries the same code.
+- A guest who already holds a code keeps it. The screen shows a code that redeems nothing (the desk reads "code not found"), so someone typing another person's number never gets or learns anything about their code. The thank-you tells everyone who signed up before to use their first code or ask the desk.
+- A retry of a lost answer sends the same `claim`, so it shows the stored code.
+- The link is a signed `/o/<token>` that names the code, never the guest, and a code nobody holds reads like a fresh one.
+
+Limits against farming: one code per phone and offer, one redemption per code, the capture rate limits ([data rules](/docs/data-rules#the-qr-capture-page)) and the offer's `max_redemptions`. Phones are not verified, so a determined person at the desk can sign up a made-up number for a second drink: set `max_redemptions` on an offer where that matters. Someone who signs up another person's number before that person ever has a code gets the code for it; the owner of the number then needs the desk.
+
+The WhatsApp welcome template still has no offer link: adding it needs Meta approval again.
 
 ## Redemptions
 
@@ -42,6 +58,14 @@ A code can be a guest's code (`AB3D-EF7H`) or the offer's promo code. A promo co
 | `unknown` | no such code |
 
 `offers.redeem` locks the offer row while it counts, then inserts, so two phones scanning the same code at once give one redemption and one "already redeemed". The unique `(offer_id, guest_id)` is the backstop. Each redemption writes an `offer.redeem` audit row (offer id, no guest data). A guest's code also counts their visit for the day and the result links to the guest. A wrong tap can be taken back for 10 minutes with `offers.undoRedeem`: the redemption and the visit it counted are removed and `offer.unredeem` is audited. Owners, managers and staff can redeem. `offers.redemptionStats` gives the counts (today in the hotel's timezone, last 7 days, total) and `offers.redemptions` lists every redemption of the hotel, newest first, which the screen loads as you scroll.
+
+## Staff hand out an offer
+
+**Give offer** on the guest page and on an unhappy guest's case lists the offers that can be redeemed now, whatever their audience. Picking one makes the guest's code (`offers.give`) or shows the one they already hold, with its QR. It redeems like any other code, once per guest. A used, expired or paused offer is not given again: a guest who holds a code sees why instead. Showing the code needs no consent.
+
+**Send** buttons appear only for channels the guest agreed to and can be reached on. `offers.send` goes through `sendToGuest`, so consent is checked again and the message is logged, with the unsubscribe link or STOP line. It uses the `message` template: email carries the offer card and a link to `/o`, WhatsApp the approved `guest_message` with the offer, code and link in its text. The same offer is sent to a guest at most once per 5 minutes and channel.
+
+Owners, managers and staff can give and send, the demo viewer cannot. A new code writes `offer.give` and each send `offer.send` in the audit log.
 
 ## Demo data
 

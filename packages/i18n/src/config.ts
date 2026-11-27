@@ -49,8 +49,8 @@ export function localizedPath(locale: Locale, pathname: string): string {
   return bare === "/" ? `/${locale}` : `/${locale}${bare}`
 }
 
-/** `Accept-Language` to the best supported locale: `fr-CA,fr;q=0.9,en;q=0.8` is `fr`. */
-export function negotiateLocale(acceptLanguage: string | null | undefined): Locale {
+/** The best supported locale of `Accept-Language`, `null` when it names none. */
+export function matchLocale(acceptLanguage: string | null | undefined): Locale | null {
   const wanted = (acceptLanguage ?? "")
     .split(",")
     .map((part) => {
@@ -58,8 +58,12 @@ export function negotiateLocale(acceptLanguage: string | null | undefined): Loca
       return { language: tag.split("-")[0]?.toLowerCase(), weight: q ? Number(q) : 1 }
     })
     .sort((a, b) => b.weight - a.weight)
-  return wanted.map((entry) => entry.language).find(isLocale) ?? DEFAULT_LOCALE
+  return wanted.map((entry) => entry.language).find(isLocale) ?? null
 }
+
+/** `Accept-Language` to the best supported locale: `fr-CA,fr;q=0.9,en;q=0.8` is `fr`. */
+export const negotiateLocale = (acceptLanguage: string | null | undefined): Locale =>
+  matchLocale(acceptLanguage) ?? DEFAULT_LOCALE
 
 /** Every language of one page for `<link rel="alternate" hreflang>` and the sitemap, plus `x-default`. */
 export function alternateUrls(origin: string, pathname: string): Record<string, string> {

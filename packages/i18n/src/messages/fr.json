@@ -646,12 +646,11 @@
     "perkBody": "Un petit cadeau de {hotel} vous attend à la réception.",
     "name": "Votre nom",
     "phone": "Numéro de téléphone",
-    "language": "Langue de nos messages",
     "birthday": "Date de naissance",
     "email": "E-mail",
     "consentTitle": "Restons en contact",
     "consentHint": "Facultatif et désactivé par défaut. Chaque message contient un lien pour arrêter.",
-    "emailNeeded": "Ajoutez votre e-mail ci-dessus pour recevoir les offres par e-mail.",
+    "emailNeeded": "Ajoutez votre e-mail pour recevoir les offres par e-mail.",
     "submit": "Rejoindre",
     "thanksTitle": "C'est fait, {name}",
     "thanksBody": "Bienvenue à {hotel}. Bon séjour.",
@@ -664,12 +663,16 @@
     "birthdayError": "Vérifiez votre date d'anniversaire.",
     "whatsappError": "Ce numéro ne peut pas recevoir WhatsApp. Utilisez un mobile ou désactivez WhatsApp.",
     "optionalTitle": "Un peu plus sur vous",
-    "optionalHint": "Facultatif : date de naissance et e-mail.",
+    "optionalHint": "Facultatif : date de naissance.",
     "whatsappTitle": "WhatsApp",
     "emailTitle": "E-mail",
     "sending": "Envoi…",
     "submitHint": "Aucun message n'est envoyé si vous n'en activez pas un.",
     "thanksPerk": "Montrez cet écran à la réception pour le recevoir.",
+    "perkShow": "Présentez ce code à la réception.",
+    "perkOpen": "Ouvrir la page de mon code",
+    "perkSave": "Gardez-le : ouvrez la page de votre code et enregistrez le lien, ou faites une capture d’écran.",
+    "perkReturning": "Déjà inscrit ? Utilisez le code déjà reçu, ou demandez à la réception.",
     "whatsappButton": "Continuer sur WhatsApp",
     "whatsappHint": "Cela ouvre une discussion avec le numéro de Ritorno, qui envoie un seul accueil automatique pour {hotel}. L'équipe de l'hôtel voit votre numéro et peut vous écrire, mais pas ce que vous écrivez : pour une demande, adressez-vous à la réception. Cela ne vous inscrit à aucun message.",
     "departure": "Quand partez-vous ?",
@@ -1038,6 +1041,39 @@
       "ar": "العربية"
     }
   },
+  "giveOffer": {
+    "button": "Offrir une offre",
+    "title": "Offrir une offre",
+    "pickHint": "Choisissez ce que <name></name> reçoit.",
+    "showHint": "Le client peut scanner ou photographier ce code.",
+    "qrAlt": "QR code {code}",
+    "close": "Fermer",
+    "loading": "Chargement des offres",
+    "loadError": "Les offres n’ont pas chargé. Fermez et réessayez.",
+    "none": "Aucune offre ne peut être donnée pour le moment. Créez-en une dans Offres.",
+    "another": "Choisir une autre offre",
+    "noChannel": "Ce client n’a accepté aucun canal d’envoi possible. Montrez-lui le code.",
+    "justSent": "Déjà envoyé à l’instant. Attendez quelques minutes pour renvoyer.",
+    "send": {
+      "email": "Envoyer par e-mail",
+      "whatsapp": "Envoyer par WhatsApp"
+    },
+    "sent": {
+      "queued": "Message en file d’attente",
+      "sent": "Offre envoyée",
+      "delivered": "Offre remise",
+      "failed": "L’envoi a échoué. Montrez le code au client.",
+      "skipped_no_consent": "Non envoyé : pas de consentement pour ce canal.",
+      "skipped_no_balance": "Non envoyé : solde WhatsApp insuffisant."
+    },
+    "state": {
+      "redeemed": "Ce client a déjà utilisé cette offre.",
+      "inactive": "Cette offre est en pause.",
+      "notStarted": "Cette offre n’a pas encore commencé.",
+      "expired": "Cette offre a expiré.",
+      "exhausted": "Cette offre est entièrement utilisée."
+    }
+  },
   "offers": {
     "title": "Offres",
     "description": "Les avantages offerts à vos clients. Chacun a un code et un QR à présenter à la réception.",
@@ -1185,7 +1221,7 @@
       "inactive": "L’offre est en pause dans Offres. Rien à valider pour l’instant.",
       "exhausted": "Toutes les utilisations de ce code sont épuisées.",
       "wrongHotel": "Demandez au client le code envoyé par cet hôtel.",
-      "unknown": "Vérifiez le code avec le client et réessayez."
+      "unknown": "Vérifiez le code et réessayez. Un client déjà inscrit garde son premier code."
     },
     "viewGuest": "Voir le client",
     "undo": "Annuler, touché par erreur",
@@ -1627,7 +1663,19 @@
     },
     "statusConfirm": "Passer en {status}",
     "slugHint": "Minuscules, chiffres et tirets. C’est l’adresse de la page des clients.",
-    "slugWarningTitle": "Les liens avec l’ancien identifiant ne fonctionneront plus"
+    "slugWarningTitle": "Les liens avec l’ancien identifiant ne fonctionneront plus",
+    "resend": "Renvoyer",
+    "revoke": "Révoquer",
+    "keep": "Garder",
+    "revokeTitle": "Révoquer l'invitation de {email} ?",
+    "revokeBody": "Le lien ne marche plus tout de suite.",
+    "revoked": "Invitation révoquée.",
+    "inviteSent": "Invitation envoyée à {email}.",
+    "inviteNotSent": "Aucun e-mail n'est parti. Copiez le lien et envoyez-le vous-même.",
+    "ownerEmail": "E-mail du propriétaire",
+    "ownerEmailHint": "Un lien leur est envoyé pour rejoindre cet hôtel comme propriétaire.",
+    "ownerEmailError": "Saisissez un e-mail valide.",
+    "inviteOwner": "Inviter un propriétaire"
   },
   "adminWizard": {
     "title": "Nouvel hôtel",
@@ -1833,13 +1881,18 @@
         },
         "balance": {
           "top_up": "A ajouté du crédit WhatsApp"
-        }
+        },
+        "invitation-create": "Invitation envoyée",
+        "invitation-resend": "Invitation renvoyée",
+        "invitation-revoke": "Invitation révoquée"
       },
       "offer": {
         "create": "Offre créée",
         "delete": "Offre supprimée",
         "redeem": "Offre utilisée",
         "update": "Offre modifiée",
+        "give": "A offert une offre",
+        "send": "A envoyé une offre",
         "unredeem": "A annulé l'utilisation d'une offre"
       },
       "privacy": {
@@ -2195,7 +2248,9 @@
     "revokeBody": "Le lien ne marche plus tout de suite. Vous pourrez l'inviter à nouveau plus tard.",
     "notMember": "Vous n'êtes pas membre de {hotel}",
     "notMemberHint": "Seuls ses membres peuvent inviter ou modifier des personnes ici.",
-    "notMemberAction": "Ouvrir la page d'administration"
+    "notMemberAction": "Ouvrir la page d'administration",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié."
   },
   "usage": {
     "title": "Consommation WhatsApp",

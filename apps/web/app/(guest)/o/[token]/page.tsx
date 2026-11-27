@@ -6,6 +6,7 @@ import { connection } from "next/server"
 import { getLocale, getTranslations } from "next-intl/server"
 import { GuestShell, guestLanguage } from "@/components/guest-shell"
 import { GuestState } from "@/components/guest-state"
+import { OfferCodeCard } from "@/components/offer-code-card"
 import { getOfferPage } from "@/lib/api"
 
 export const metadata: Metadata = {
@@ -63,20 +64,7 @@ export default async function Page({ params, searchParams }: PageProps<"/o/[toke
             </p>
           ) : null}
         </div>
-        <div className="grid justify-items-center gap-4 rounded-card border p-5">
-          {/* biome-ignore lint/performance/noImgElement: an inline svg made by the api for this code */}
-          <img
-            src={`data:image/svg+xml;utf8,${encodeURIComponent(page.qrSvg)}`}
-            alt={t("qrAlt", { code: page.code })}
-            className="aspect-square w-full max-w-60"
-          />
-          <p className="grid gap-1 text-center">
-            <span className="text-muted-foreground text-small">{t("code")}</span>
-            <bdi dir="ltr" className="font-mono font-semibold text-2xl tracking-widest">
-              {page.code}
-            </bdi>
-          </p>
-        </div>
+        <OfferCodeCard code={page.code} qrSvg={page.qrSvg} label={t("code")} qrAlt={t("qrAlt", { code: page.code })} />
         <div className="grid gap-1 text-center">
           <p>{t("show")}</p>
           <p className="text-caption text-muted-foreground">{validity}</p>
