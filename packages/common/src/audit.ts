@@ -23,6 +23,7 @@ export const AUDIT_ACTIONS = [
   "guest.export",
   "guest.export-all",
   "guest.import",
+  "guest.phone-change",
   "holiday.update",
   "hotel.admin-update",
   "hotel.alerts.link",

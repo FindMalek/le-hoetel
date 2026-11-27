@@ -2,7 +2,7 @@ import { ORPCError } from "@orpc/server"
 import { MESSAGE_CHANNELS, type MessageChannel } from "@ritorno/common/consent"
 import { isStopKeyword, stopConfirmation, verifyUnsubscribeToken } from "@ritorno/common/unsubscribe"
 import { type Db, guestConsents, guests, hotelSettings, messages, organization } from "@ritorno/db"
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, gt, inArray, isNull, or } from "drizzle-orm"
 import type { Context } from "../context"
 import { hotelGuest, recordConsent } from "./guests"
 import { hotelBranding } from "./hotel"
@@ -107,6 +107,9 @@ export async function applyStopReply(
   })
 }
 
+/** An older message went to the guest's old number, so it says nothing about who holds the current one. */
+const sentToCurrentNumber = or(isNull(guests.phoneChangedAt), gt(messages.createdAt, guests.phoneChangedAt))
+
 /** The number we sent this WhatsApp message to: all that is left to match a sender who hides theirs. */
 async function recipientOf(db: Db, providerId: string | undefined): Promise<string | undefined> {
   if (!providerId) return undefined
@@ -114,7 +117,7 @@ async function recipientOf(db: Db, providerId: string | undefined): Promise<stri
     .select({ phoneE164: guests.phoneE164 })
     .from(messages)
     .innerJoin(guests, and(eq(guests.id, messages.guestId), eq(guests.hotelId, messages.hotelId)))
-    .where(and(eq(messages.providerId, providerId), eq(messages.channel, "whatsapp")))
+    .where(and(eq(messages.providerId, providerId), eq(messages.channel, "whatsapp"), sentToCurrentNumber))
   return row?.phoneE164
 }
 
@@ -145,6 +148,7 @@ export async function handleInboundWhatsApp(context: InboundCtx, payload: KapsoP
         eq(guests.phoneE164, phoneE164),
         eq(messages.channel, "whatsapp"),
         inArray(messages.status, ["sent", "delivered"]),
+        sentToCurrentNumber,
       ),
     )
     .orderBy(desc(messages.createdAt))

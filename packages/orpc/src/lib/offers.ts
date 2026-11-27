@@ -153,7 +153,7 @@ export async function lookupCode(context: Pick<Context, "db" | "now">, hotelId: 
   return typeof found === "string" ? empty(found) : describe(context.db, found, context.now())
 }
 
-const isUniqueViolation = (error: unknown): boolean =>
+export const isUniqueViolation = (error: unknown): boolean =>
   [error, (error as { cause?: unknown } | null)?.cause].some((e) => (e as { code?: string } | null)?.code === "23505")
 
 /**

@@ -138,3 +138,41 @@ test("an inbound STOP unsubscribes the hotel that wrote last, confirms once in t
     await handleInboundWhatsApp(context, { message: { from: "21699000000", type: "text", text: { body: "STOP" } } }),
   ).toBe(false)
 })
+
+const sent = (to: { hotelId: string; guest: { id: string } }, providerId: string) =>
+  app.services.db.insert(messages).values({
+    hotelId: to.hotelId,
+    guestId: to.guest.id,
+    channel: "whatsapp",
+    templateKey: "welcome",
+    language: "fr",
+    status: "delivered",
+    providerId,
+  })
+
+const silent = () => ({
+  ...app.services,
+  notification: { replyWhatsApp: async () => null } as unknown as typeof app.services.notification,
+})
+
+test("a STOP ignores a message sent before the guest took that number", async () => {
+  const other = await hotelWithGuest("moved-other", "+21620777777")
+  const moved = await hotelWithGuest("moved-here", "+21620888888")
+  await sent(other, "wamid.other")
+  await sent(moved, "wamid.old-number")
+  await moved.client.guests.update({ id: moved.guest.id, phone: "+21620777777" })
+
+  await handleInboundWhatsApp(silent(), { message: { from: "21620777777", type: "text", text: { body: "STOP" } } })
+  expect((await other.client.guests.get({ id: other.guest.id })).consents.whatsapp).toBe(false)
+})
+
+test("a hidden-number STOP replying to a message sent to the old number leaves the new one alone", async () => {
+  const hotel = await hotelWithGuest("moved-reply", "+21620999999")
+  await sent(hotel, "wamid.before-change")
+  await hotel.client.guests.update({ id: hotel.guest.id, phone: "+21621111111" })
+  await hotel.client.guests.setConsent({ guestId: hotel.guest.id, channel: "whatsapp", granted: true, source: "staff" })
+
+  const stop = { type: "text", text: { body: "STOP" }, context: { id: "wamid.before-change" } }
+  expect(await handleInboundWhatsApp(silent(), { message: stop })).toBe(false)
+  expect((await hotel.client.guests.get({ id: hotel.guest.id })).consents.whatsapp).toBe(true)
+})
