@@ -369,14 +369,15 @@
         "email": "E-mail",
         "birthday": "Date de naissance",
         "language": "Langue",
-        "consent": "Consentement (true ou false)",
+        "emailConsent": "Accord e-mail (oui ou non)",
+        "whatsappConsent": "Accord WhatsApp (oui ou non)",
         "stayCheckIn": "Date d'arrivée",
         "stayCheckOut": "Date de départ",
-        "stayConsent": "Accord sur le séjour (true ou false)"
+        "stayConsent": "Accord sur le séjour (oui ou non)"
       },
       "defaultLanguage": "Langue quand le fichier ne l'indique pas",
-      "confirm": "Je confirme que notre hôtel détient le consentement de chaque client marqué true",
-      "confirmHint": "Un accord n'est enregistré que si une colonne d'accord dit true, yes, oui ou 1, et seulement si vous confirmez. Les messages et les dates de séjour ont chacun leur colonne. Une date de départ récente peut envoyer l'enquête de séjour à ce client.",
+      "confirm": "Je confirme que notre hôtel détient l'accord de chaque client marqué oui, pour chaque canal",
+      "confirmHint": "Un accord n'est enregistré que si sa colonne dit oui, yes, true ou 1, et seulement si vous confirmez. L'e-mail, WhatsApp et les dates de séjour ont chacun leur colonne. Une date de départ récente peut envoyer l'enquête de séjour à ce client.",
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
       "consentKept": "{count, plural, one {# client avait retiré son consentement : il reste retiré.} other {# clients avaient retiré leur consentement : il reste retiré.}}",
@@ -400,7 +401,6 @@
       "optional": "Facultatif",
       "continue": "Continuer",
       "back": "Retour",
-      "ready": "prêts à importer",
       "skipped": "seront ignorés",
       "problemsTitle": "Lignes avec un problème",
       "line": "Ligne {line}",
@@ -416,7 +416,7 @@
         "stayCheckOut": "La date de départ n'est pas valide ou précède l'arrivée"
       },
       "consentTitle": "Consentement",
-      "consentFound": "{count, plural, one {# client est marqué comme consentant dans votre fichier.} other {# clients sont marqués comme consentants dans votre fichier.}}",
+      "consentFound": "Marqués d'accord dans votre fichier : {email} pour l'e-mail, {whatsapp} pour WhatsApp.",
       "noConsentColumn": "Votre fichier n'a pas de colonne de consentement : tout le monde est ajouté sans consentement marketing. Vous pourrez le demander plus tard.",
       "unconfirmed": "Sans votre confirmation, tout le monde est ajouté sans consentement marketing.",
       "doneTitle": "Import terminé",
@@ -429,7 +429,20 @@
         "failed": "ignorés",
         "kept": "désinscrits avant, accord laissé retiré"
       },
-      "datesDropped": "Les dates de séjour ne sont enregistrées que si la colonne d'accord sur le séjour dit oui et que vous le confirmez. Les autres dates sont ignorées, le client est quand même ajouté."
+      "datesDropped": "Les dates de séjour ne sont enregistrées que si la colonne d'accord sur le séjour dit oui et que vous le confirmez. Les autres dates sont ignorées, le client est quand même ajouté.",
+      "unnamedConsent": "La colonne « {column} » ne dit pas quel canal elle couvre. Choisissez-la pour l'e-mail ou WhatsApp seulement si les clients ont accepté ce canal.",
+      "newGuests": "nouveaux",
+      "mergedGuests": "déjà là",
+      "checkFailed": "Impossible de vérifier quels clients sont déjà là. L'import les fusionne quand même par téléphone.",
+      "statusColumn": "Client",
+      "rowStatus": {
+        "new": "Nouveau",
+        "merged": "Fusionné",
+        "skipped": "Ignoré"
+      },
+      "channelEmail": "e-mail",
+      "consentFor": "Accord : {channels}",
+      "consentNone": "Aucun accord de message"
     },
     "detail": {
       "contact": "Contact",

@@ -226,11 +226,18 @@ test("import: rows fail one by one, a phone merges, consent needs an explicit ye
   ).rejects.toMatchObject({ code: "FORBIDDEN" })
 
   const rows = [
-    { line: 2, name: "Yes", phone: "20 111 111", email: "yes@example.test", consent: "oui" },
-    { line: 3, name: "Blank", phone: "+216 20 222 222", consent: "" },
+    {
+      line: 2,
+      name: "Yes",
+      phone: "20 111 111",
+      email: "yes@example.test",
+      emailConsent: "oui",
+      whatsappConsent: "oui",
+    },
+    { line: 3, name: "Blank", phone: "+216 20 222 222", emailConsent: "", whatsappConsent: "" },
     { line: 4, name: "No phone", phone: "abc" },
     { line: 5, name: "Yes again", phone: "20111111", birthday: "31/12/1990" },
-    { line: 6, name: "Landline", phone: "71 000 000", consent: "true" },
+    { line: 6, name: "Landline", phone: "71 000 000", emailConsent: "true", whatsappConsent: "true" },
   ]
   const confirmed = await client.guests.import({ rows, defaultLanguage: "ar", confirmConsent: true })
   expect(confirmed).toMatchObject({ created: 3, merged: 1 })
@@ -244,7 +251,7 @@ test("import: rows fail one by one, a phone merges, consent needs an explicit ye
   expect(by("Landline").consents.whatsapp).toBe(false)
 
   await client.guests.import({
-    rows: [{ line: 2, name: "Other", phone: "20 333 333", consent: "true" }],
+    rows: [{ line: 2, name: "Other", phone: "20 333 333", emailConsent: "true", whatsappConsent: "true" }],
     defaultLanguage: "fr",
     confirmConsent: false,
   })

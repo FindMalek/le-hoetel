@@ -98,7 +98,16 @@ test("adding a guest with consent queues the welcome job, without consent or by 
     consents: { email: false, whatsapp: true, profile: false },
   })
   await client.guests.import({
-    rows: [{ line: 2, name: "Old list", phone: "20 666 666", email: "old@example.test", consent: "yes" }],
+    rows: [
+      {
+        line: 2,
+        name: "Old list",
+        phone: "20 666 666",
+        email: "old@example.test",
+        emailConsent: "yes",
+        whatsappConsent: "yes",
+      },
+    ],
     defaultLanguage: "fr",
     confirmConsent: true,
   })

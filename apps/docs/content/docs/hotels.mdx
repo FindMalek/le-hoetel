@@ -147,9 +147,13 @@ The test message is email only until WhatsApp templates are approved. Done steps
 
 `/guests/new` is the front desk form: name and phone, optional email, and two consent checkboxes the staff tick only for what the guest said (source `staff`), each showing the exact wording in the guest's language. It is built for a phone: one column, 44px targets, and it stays ready for the next guest after each save.
 
-`/guests/import` (owners and managers, the `guest.import` permission) takes a CSV of up to 1000 rows or 1 MB. Commas and semicolons both work. The hotel matches its columns to name, phone, email, birthday, language and consent, then `guests.import` checks every row on its own: a bad row never blocks the others and comes back in a downloadable error report. A phone that already exists merges into that guest with the same `upsertGuest` rules as every other source, and a CSV "no" never withdraws an existing "yes". Source is always `csv`.
+`/guests/import` (owners and managers, the `guest.import` permission) takes a CSV of up to 1000 rows or 1 MB. Commas and semicolons both work. The hotel matches its columns to name, phone, email, birthday, language, email consent, WhatsApp consent, stay dates and stay consent, then `guests.import` checks every row on its own: a bad row never blocks the others and comes back in a downloadable error report. A phone that already exists merges into that guest with the same `upsertGuest` rules as every other source, and a CSV "no" never withdraws an existing "yes". Source is always `csv`.
 
-Consent from a CSV is deliberately strict: it is only granted when the consent cell is an explicit yes (`true`, `yes`, `oui`, `1`) **and** the hotel ticked the confirmation that it holds that consent. It covers WhatsApp (for numbers that can take it) and email (when there is an address), is logged like any other consent event with source `csv`, and the import itself is written to the audit log with counts only.
+Consent from a CSV is deliberately strict, with one column per channel. Email is only granted when the email consent cell is an explicit yes (`true`, `vrai`, `yes`, `oui`, `y`, `1`, `نعم`), the row has an address **and** the hotel ticked the confirmation that it holds that consent. WhatsApp reads its own column the same way, for numbers that can take it. It is logged like any other consent event with source `csv`, and the import itself is written to the audit log with counts only.
+
+Headers are matched in English, French and Arabic, ignoring case, accents, `_` and `-` (`packages/common/src/guest-import.ts`): `Accepte WhatsApp`, `Consentement e-mail`, `email_consent`, `Accord séjour`. A consent header that names no channel (`consent`, `accord`) is not matched: the hotel is told and picks it by hand, for one channel or both. Opt-out and refusal columns are never matched.
+
+The review step shows how many rows are new and how many merge into a guest already there (`guests.importCheck`, same hotel only; a number repeated in the file merges into its first row), with phones as they will be stored, formatted.
 
 ## Isolation is tested
 
