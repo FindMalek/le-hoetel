@@ -5,14 +5,21 @@ import { logger } from "@ritorno/logger"
 import type { Context } from "./context"
 import { type ActiveHotel, resolveHotel } from "./lib/hotel"
 import { activeMembership } from "./lib/org"
-import { enforceRateLimit, RATE_LIMITS } from "./lib/rate-limit"
+import { enforceRateLimit, RATE_LIMITS, type RateLimitRule } from "./lib/rate-limit"
 
 export const o = os.$context<Context>()
+
+/** Exports are GETs too, but each one copies the data out: they keep the default. */
+function ruleFor(session: Context["session"], method: string | undefined, path: readonly string[]): RateLimitRule {
+  const read = session && method === "GET" && !path.at(-1)?.startsWith("export")
+  return read ? RATE_LIMITS.read : RATE_LIMITS.default
+}
 
 /** Unexpected errors are logged with the procedure path (a database error as its class and code only); ORPCErrors are answers, not failures. Every call is rate limited per route and caller first. */
 const logErrors = o.middleware(async (options) => {
   const route = options.path.join(".")
-  await enforceRateLimit(options.context, route, RATE_LIMITS.default)
+  const rule = ruleFor(options.context.session, options.procedure["~orpc"].route.method, options.path)
+  await enforceRateLimit(options.context, route, rule)
   try {
     return await options.next()
   } catch (error) {

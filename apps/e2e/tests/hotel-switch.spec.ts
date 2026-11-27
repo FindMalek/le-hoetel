@@ -6,7 +6,7 @@ import { e2eDatabaseUrl, URLS } from "../env"
 /** The demo seeds nobody with two hotels, so these memberships are added here and taken back after. */
 const MEMBERS = [
   { id: "e2e-switch-owner", hotel: "demo-hotel-sunset-bay", email: demoOwnerEmail("riad-dattier") },
-  // Users no other spec leans on: the api caps calls per user and minute, and the sweeps spend them.
+  // Users no other spec leans on: these memberships move which hotel they can land in.
   { id: "e2e-switch-tabs", hotel: "demo-hotel-sunset-bay", email: demoOwnerEmail("villa-mimosa") },
   { id: "e2e-switch-admin", hotel: "demo-hotel-dar-zitouna", email: DEMO_SUPER_ADMIN_EMAIL },
 ]
