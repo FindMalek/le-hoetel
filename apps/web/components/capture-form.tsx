@@ -1,7 +1,8 @@
 "use client"
 
 import { isPhoneComplete } from "@ritorno/common/dial"
-import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
+import type { HotelLanguage } from "@ritorno/common/hotel"
+import type { SignUpPerk } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
 import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
@@ -9,9 +10,11 @@ import { type CountryPickerCopy, PhoneInput, usePhoneNumber } from "@ritorno/ui/
 import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
-import { type CaptureState, captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
+import { captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
+import type { CaptureResult } from "@/lib/capture"
 import { ConsentToggle } from "./consent-toggle"
 import { type DepartureCopy, DepartureField } from "./departure-field"
+import { SignUpPerkCard, type SignUpPerkCopy } from "./sign-up-perk"
 
 export interface CaptureCopy {
   name: string
@@ -19,7 +22,6 @@ export interface CaptureCopy {
   phone: string
   phoneError: string
   countryPicker: CountryPickerCopy
-  language: string
   departure: DepartureCopy
   optionalTitle: string
   optionalHint: string
@@ -39,6 +41,7 @@ export interface CaptureCopy {
   thanksTitle: string
   thanksBody: string
   thanksPerk: string
+  signUpPerk: SignUpPerkCopy
   errorInvalid: string
   errorTooMany: string
   errorFailed: string
@@ -46,20 +49,10 @@ export interface CaptureCopy {
   emailWording: string
 }
 
-type Status = CaptureState | "sending"
+type Status = CaptureResult | "failed" | "idle" | "sending"
 
-const LANGUAGE_NAMES: Record<HotelLanguage, string> = { en: "English", fr: "Français", ar: "العربية" }
 /** Guest inputs are 48 px and stay 16 px on every width, so iOS never zooms. */
 const CONTROL = "h-12 rounded-input bg-background text-base md:text-base"
-
-function FieldError({ id, children }: { id: string; children?: ReactNode }) {
-  return (
-    <p id={id} role="alert" className="flex items-center gap-1.5 text-destructive text-sm" hidden={!children}>
-      {children ? <CircleAlertIcon aria-hidden className="size-4 shrink-0" /> : null}
-      {children}
-    </p>
-  )
-}
 
 function Check() {
   const [drawn, setDrawn] = useState(false)
@@ -99,6 +92,8 @@ export function CaptureForm(props: {
 }) {
   const { copy } = props
   const [status, setStatus] = useState<Status>("idle")
+  const [signUpPerk, setSignUpPerk] = useState<SignUpPerk | null>(null)
+  const claim = useRef("")
   const [name, setName] = useState("")
   const phone = usePhoneNumber()
   const [email, setEmail] = useState("")
@@ -114,6 +109,7 @@ export function CaptureForm(props: {
   const nameBad = name.trim().length < 2
   const phoneBad = !isPhoneComplete(phone.number)
   const emailMissing = emailConsent && !email.trim()
+  const emailError = tried && emailMissing ? copy.emailNeeded : rejected === "email" ? copy.emailError : null
   const nameError = ((touched.name || tried) && nameBad) || rejected === "name" ? copy.nameError : null
   const phoneError =
     rejected === "consents.whatsapp"
@@ -138,18 +134,21 @@ export function CaptureForm(props: {
       return
     }
     if (emailMissing) {
-      setOptionalOpen(true)
-      setTimeout(() => emailRef.current?.focus(), 0)
+      emailRef.current?.focus()
       return
     }
     const data = new FormData(event.currentTarget)
+    // `randomUUID` needs https, and a phone testing a local build has none.
+    claim.current ||= Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(36)).join("-")
+    data.set("claim", claim.current)
     setStatus("sending")
     // The action rejects when the request itself is lost (offline, dropped wifi).
-    const result = await captureAction("idle", data).catch(() => "failed" as const)
+    const { status: result, perk } = await captureAction(data).catch(() => ({ status: "failed" as const, perk: null }))
+    setSignUpPerk(perk)
     setStatus(result)
     if (!result.startsWith("invalid:")) return
     const field = result.slice("invalid:".length)
-    if (field === "email" || field === "birthday") setOptionalOpen(true)
+    if (field === "birthday") setOptionalOpen(true)
     // the departure field shows its own error as an alert, there is no single control to focus
     if (field === "stayCheckOut") return
     const target = field === "name" ? nameRef : field === "email" ? emailRef : field === "birthday" ? null : phoneRef
@@ -176,16 +175,28 @@ export function CaptureForm(props: {
             </h2>
             <p className="text-muted-foreground">{copy.thanksBody}</p>
           </div>
-          <div className="grid w-full gap-3">
-            {props.perk}
-            <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
-          </div>
+          {signUpPerk ? (
+            <SignUpPerkCard perk={signUpPerk} language={props.language} copy={copy.signUpPerk} />
+          ) : (
+            <div className="grid w-full gap-3">
+              {props.perk}
+              <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
+            </div>
+          )}
           {props.whatsapp}
         </div>
       ) : null}
       <form
         onSubmit={submit}
         onChange={clearRejected}
+        // a phone keyboard's "done" must not join a guest who has not reached the consent toggles yet
+        onKeyDown={(event) => {
+          const field = event.target
+          if (event.key !== "Enter" || !(field instanceof HTMLInputElement)) return
+          event.preventDefault()
+          if (field === nameRef.current) phoneRef.current?.focus()
+          else field.blur()
+        }}
         noValidate
         hidden={status === "done"}
         className="flex flex-col gap-6"
@@ -195,6 +206,7 @@ export function CaptureForm(props: {
         <input type="hidden" name="source" value={props.source} />
         <input type="hidden" name="location" value={props.location} />
         <input type="hidden" name="phone" value={phone.number} />
+        <input type="hidden" name="language" value={props.language} />
         <div aria-hidden className="sr-only">
           <label>
             Website
@@ -238,29 +250,6 @@ export function CaptureForm(props: {
           )}
         </FormField>
 
-        <fieldset className="grid gap-2">
-          <legend className="mb-2 font-medium text-sm">{copy.language}</legend>
-          <div className="grid grid-cols-3 gap-2">
-            {HOTEL_LANGUAGES.map((language) => (
-              <label key={language} className="cursor-pointer">
-                <input
-                  type="radio"
-                  name="language"
-                  value={language}
-                  defaultChecked={language === props.language}
-                  className="peer sr-only"
-                />
-                <span
-                  lang={language}
-                  className="flex h-11 items-center justify-center rounded-full border bg-background font-medium text-sm transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface"
-                >
-                  {LANGUAGE_NAMES[language]}
-                </span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
         <DepartureField copy={copy.departure} className={CONTROL} rejected={rejected === "stayCheckOut"} />
 
         <fieldset className="grid gap-3">
@@ -272,12 +261,27 @@ export function CaptureForm(props: {
             title={copy.emailTitle}
             wording={copy.emailWording}
             checked={emailConsent}
-            onChange={(event) => {
-              setEmailConsent(event.target.checked)
-              if (event.target.checked && !email.trim()) setOptionalOpen(true)
-            }}
+            onChange={(event) => setEmailConsent(event.target.checked)}
           />
-          <FieldError id="capture-email-needed">{tried && emailMissing ? copy.emailNeeded : null}</FieldError>
+          {emailConsent ? (
+            <FormField id="capture-email" label={copy.email} error={emailError}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  ref={emailRef}
+                  type="email"
+                  name="email"
+                  maxLength={200}
+                  autoComplete="email"
+                  inputMode="email"
+                  enterKeyHint="done"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className={CONTROL}
+                />
+              )}
+            </FormField>
+          ) : null}
         </fieldset>
 
         <details
@@ -303,32 +307,11 @@ export function CaptureForm(props: {
             >
               {(aria) => <Input {...aria} type="date" name="birthday" autoComplete="bday" className={CONTROL} />}
             </FormField>
-            <FormField id="capture-email" label={copy.email} error={rejected === "email" ? copy.emailError : null}>
-              {(aria) => (
-                <Input
-                  {...aria}
-                  ref={emailRef}
-                  type="email"
-                  name="email"
-                  maxLength={200}
-                  autoComplete="email"
-                  inputMode="email"
-                  enterKeyHint="done"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  aria-invalid={(tried && emailMissing) || rejected === "email"}
-                  aria-describedby={rejected === "email" ? aria["aria-describedby"] : "capture-email-needed"}
-                  className={CONTROL}
-                />
-              )}
-            </FormField>
           </div>
         </details>
 
-        <div
-          aria-live="polite"
-          className="sticky bottom-0 z-10 -mx-5 grid sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none gap-2 border-t bg-background/95 px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm"
-        >
+        {/* never sticky: it would cover the consent toggles and let a guest join without seeing them */}
+        <div aria-live="polite" className="grid gap-2">
           {error ? (
             <p role="alert" className="flex items-center gap-1.5 text-destructive text-sm">
               <CircleAlertIcon aria-hidden className="size-4 shrink-0" />

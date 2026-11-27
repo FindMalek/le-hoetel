@@ -661,12 +661,11 @@
     "perkBody": "A small gift from {hotel} is waiting for you at the front desk.",
     "name": "Your name",
     "phone": "Phone number",
-    "language": "Language for our messages",
     "birthday": "Birthday",
     "email": "Email",
     "consentTitle": "Stay in touch",
     "consentHint": "Optional and off by default. Every message has a link to stop.",
-    "emailNeeded": "Add your email above to get offers by email.",
+    "emailNeeded": "Add your email to get offers by email.",
     "submit": "Join",
     "thanksTitle": "You are in, {name}",
     "thanksBody": "Welcome to {hotel}. Enjoy your stay.",
@@ -679,12 +678,16 @@
     "birthdayError": "Check your birthday.",
     "whatsappError": "This number cannot receive WhatsApp. Use a mobile number or switch WhatsApp off.",
     "optionalTitle": "More about you",
-    "optionalHint": "Optional: birthday and email.",
+    "optionalHint": "Optional: birthday.",
     "whatsappTitle": "WhatsApp",
     "emailTitle": "Email",
     "sending": "Sending…",
     "submitHint": "No message is sent unless you switch one on.",
     "thanksPerk": "Show this screen at the front desk to get it.",
+    "perkShow": "Show this code at the front desk.",
+    "perkOpen": "Open my code page",
+    "perkSave": "Keep it: open your code page and save the link, or take a screenshot.",
+    "perkReturning": "Signed up before? Use the code you already got, or ask at the front desk.",
     "whatsappButton": "Continue on WhatsApp",
     "whatsappHint": "This opens a chat with Ritorno's number, which sends one automatic welcome for {hotel}. The hotel team sees your number and may write to you, but not what you write: for requests, ask the front desk. It does not sign you up for messages.",
     "departure": "When do you leave?",
@@ -1053,6 +1056,39 @@
       "ar": "العربية"
     }
   },
+  "giveOffer": {
+    "button": "Give offer",
+    "title": "Give an offer",
+    "pickHint": "Pick what <name></name> gets.",
+    "showHint": "Let the guest scan or photograph this code.",
+    "qrAlt": "QR code {code}",
+    "close": "Close",
+    "loading": "Loading offers",
+    "loadError": "Offers did not load. Close and try again.",
+    "none": "No offer can be given right now. Create one in Offers.",
+    "another": "Choose another offer",
+    "noChannel": "This guest has agreed to no channel we can send on. Show them the code.",
+    "justSent": "Already sent a moment ago. Wait a few minutes to send it again.",
+    "send": {
+      "email": "Send by email",
+      "whatsapp": "Send by WhatsApp"
+    },
+    "sent": {
+      "queued": "Message queued",
+      "sent": "Offer sent",
+      "delivered": "Offer delivered",
+      "failed": "The message failed. Show the guest the code.",
+      "skipped_no_consent": "Not sent: no consent for this channel.",
+      "skipped_no_balance": "Not sent: the WhatsApp balance is too low."
+    },
+    "state": {
+      "redeemed": "This guest already used this offer.",
+      "inactive": "This offer is paused.",
+      "notStarted": "This offer has not started yet.",
+      "expired": "This offer has expired.",
+      "exhausted": "Every redemption of this offer is used up."
+    }
+  },
   "offers": {
     "title": "Offers",
     "description": "Perks you give guests. Each one has a code, and a QR guests show at the desk.",
@@ -1200,7 +1236,7 @@
       "inactive": "The offer is paused in Offers. Nothing to redeem for now.",
       "exhausted": "Every redemption of this code is used up.",
       "wrongHotel": "Ask the guest for the code this hotel sent them.",
-      "unknown": "Check the code with the guest and try again."
+      "unknown": "Check the code and try again. A guest who signed up before keeps their first code."
     },
     "viewGuest": "View guest",
     "undo": "Undo, tapped by mistake",
@@ -1642,7 +1678,19 @@
     },
     "statusConfirm": "Set to {status}",
     "slugHint": "Lowercase letters, digits and dashes. It is the address of the guest page.",
-    "slugWarningTitle": "Links with the old slug will stop working"
+    "slugWarningTitle": "Links with the old slug will stop working",
+    "resend": "Send again",
+    "revoke": "Revoke",
+    "keep": "Keep",
+    "revokeTitle": "Revoke the invitation for {email}?",
+    "revokeBody": "The link stops working right away.",
+    "revoked": "Invitation revoked.",
+    "inviteSent": "Invitation sent to {email}.",
+    "inviteNotSent": "No email was sent. Copy the link and send it yourself.",
+    "ownerEmail": "Owner email",
+    "ownerEmailHint": "They get a link to join this hotel as an owner.",
+    "ownerEmailError": "Enter a valid email.",
+    "inviteOwner": "Invite owner"
   },
   "adminWizard": {
     "title": "New hotel",
@@ -1848,13 +1896,18 @@
         },
         "balance": {
           "top_up": "Added WhatsApp credit"
-        }
+        },
+        "invitation-create": "Sent an invitation",
+        "invitation-resend": "Sent an invitation again",
+        "invitation-revoke": "Revoked an invitation"
       },
       "offer": {
         "create": "Created an offer",
         "delete": "Deleted an offer",
         "redeem": "Redeemed an offer",
         "update": "Updated an offer",
+        "give": "Gave an offer",
+        "send": "Sent an offer",
         "unredeem": "Undid a redemption"
       },
       "privacy": {
@@ -2211,7 +2264,9 @@
     "revokeBody": "The link stops working right away. You can invite them again later.",
     "notMember": "You are not a member of {hotel}",
     "notMemberHint": "Only its members can invite or change people here.",
-    "notMemberAction": "Open the admin page"
+    "notMemberAction": "Open the admin page",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied."
   },
   "usage": {
     "title": "WhatsApp usage",

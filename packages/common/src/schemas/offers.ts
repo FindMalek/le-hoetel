@@ -1,5 +1,7 @@
 import { z } from "zod"
+import { MESSAGE_CHANNELS } from "../consent"
 import { HOTEL_LANGUAGES } from "../hotel"
+import { MESSAGE_STATUSES } from "../message"
 import { OFFER_TRIGGERS, PROMO_CODE_PATTERN } from "../offers"
 import { cursorSchema } from "./cursor"
 
@@ -84,6 +86,18 @@ export const offerPageSchema = z.object({
 /** The perk shown on the public capture page: the hotel's active welcome offer, title and text only. */
 export const welcomeOfferSchema = z.object({ title: z.string(), text: z.string() })
 
+/** The welcome offer with the code to show, right after a public sign-up. */
+export const signUpPerkSchema = z.object({
+  title: z.string(),
+  text: z.string(),
+  validFrom: z.date(),
+  validUntil: z.date().nullable(),
+  code: z.string(),
+  qrSvg: z.string(),
+  url: z.string(),
+})
+export type SignUpPerk = z.infer<typeof signUpPerkSchema>
+
 export const OFFER_CODE_MAX = 64
 export const offerCodeInputSchema = z.object({ code: z.string().trim().min(1).max(OFFER_CODE_MAX) })
 
@@ -143,3 +157,18 @@ export const redemptionListSchema = z.object({
   ),
   nextCursor: z.string().nullable(),
 })
+
+export const offerGiveInputSchema = z.object({ guestId: z.uuid(), offerId: z.uuid() })
+export const offerSendInputSchema = offerGiveInputSchema.extend({ channel: z.enum(MESSAGE_CHANNELS) })
+
+/** The code staff show a guest after handing out an offer, and the channels it may also be sent on. */
+export const givenOfferSchema = z.object({
+  title: z.string(),
+  code: z.string(),
+  qrSvg: z.string(),
+  state: offerPageSchema.shape.state,
+  channels: z.array(z.enum(MESSAGE_CHANNELS)),
+})
+export type GivenOffer = z.infer<typeof givenOfferSchema>
+
+export const offerSendSchema = z.object({ status: z.enum(MESSAGE_STATUSES) })

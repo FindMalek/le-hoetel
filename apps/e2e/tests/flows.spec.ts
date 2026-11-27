@@ -122,9 +122,8 @@ test("a welcome offer reaches a new guest and is redeemed once at the desk", asy
   await open(visitor, `${URLS.web}/h/${hotel.slug}?lang=en&src=room`)
   await visitor.getByLabel("Your name").fill(GUEST)
   await visitor.locator("#capture-phone").fill("98 111 222")
-  await visitor.getByText("More about you").click()
-  await visitor.locator("#capture-email").fill(`nour-${run}@example.com`)
   await visitor.locator("input[name=emailConsent]").check({ force: true })
+  await visitor.locator("#capture-email").fill(`nour-${run}@example.com`)
   await visitor.getByRole("button", { name: "Join" }).click()
   await expect(visitor.getByRole("heading", { name: "You are in, Nour" })).toBeVisible()
 

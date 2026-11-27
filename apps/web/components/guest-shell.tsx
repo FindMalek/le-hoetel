@@ -27,19 +27,24 @@ const initials = (name: string) =>
     .join("")
     .toUpperCase()
 
-function HotelMark({ hotel }: { hotel: GuestHotel }) {
+function HotelMark({ hotel, compact }: { hotel: GuestHotel; compact?: boolean }) {
   return (
-    <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl border bg-background shadow-xs">
+    <div
+      className={cn(
+        "flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border bg-background shadow-xs",
+        compact ? "size-12" : "size-16",
+      )}
+    >
       {hotel.logoUrl ? (
         // biome-ignore lint/performance/noImgElement: the logo is a hotel upload served by the api, not a static asset
         <img
           src={hotel.logoUrl}
           alt=""
-          width={64}
-          height={64}
+          width={compact ? 48 : 64}
+          height={compact ? 48 : 64}
           decoding="async"
           fetchPriority="high"
-          className="size-full object-contain p-2"
+          className={cn("size-full object-contain", compact ? "p-1.5" : "p-2")}
         />
       ) : (
         <span
@@ -62,12 +67,15 @@ export async function GuestShell({
   language,
   line,
   languageHref = (to) => `?lang=${to}`,
+  compact,
   children,
 }: {
   hotel: GuestHotel | null
   language: HotelLanguage
   line?: string
   languageHref?: ((to: HotelLanguage) => string) | null
+  /** A one row header, for pages where the form has to start high on a phone. */
+  compact?: boolean
   children: React.ReactNode
 }) {
   const t = await getTranslations({ locale: language, namespace: "guest" })
@@ -80,7 +88,13 @@ export async function GuestShell({
       className="flex min-h-dvh flex-col bg-background md:bg-surface md:px-6 md:py-12"
     >
       <div className="mx-auto flex w-full flex-1 flex-col md:max-w-lg md:flex-none md:overflow-hidden md:rounded-panel md:border md:bg-background">
-        <header className={cn("relative px-5 pt-4", hotel ? "border-b bg-primary/6 pb-7" : "pb-2")}>
+        <header
+          className={cn(
+            "relative px-5",
+            compact ? "pt-3" : "pt-4",
+            hotel ? cn("border-b bg-primary/6", compact ? "pb-4" : "pb-7") : "pb-2",
+          )}
+        >
           {hotel ? <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-primary" /> : null}
           {languageHref ? (
             <nav aria-label={t("languageLabel")} className="flex justify-end">
@@ -101,14 +115,20 @@ export async function GuestShell({
             </nav>
           ) : null}
           {hotel ? (
-            <div className="mt-4 flex flex-col items-center gap-3 text-center">
-              <HotelMark hotel={hotel} />
-              <h1 className="text-balance font-semibold text-h2 tracking-tight">{hotel.displayName}</h1>
-              {line ? <p className="max-w-xs text-balance text-muted-foreground">{line}</p> : null}
+            <div className={cn("flex gap-3", compact ? "mt-3 items-center" : "mt-4 flex-col items-center text-center")}>
+              <HotelMark hotel={hotel} compact={compact} />
+              <div className={compact ? "grid min-w-0 text-start" : "contents"}>
+                <h1 className={cn("text-balance font-semibold tracking-tight", compact ? "text-h3" : "text-h2")}>
+                  {hotel.displayName}
+                </h1>
+                {line ? (
+                  <p className={cn("text-muted-foreground", compact ? "text-sm" : "max-w-xs text-balance")}>{line}</p>
+                ) : null}
+              </div>
             </div>
           ) : null}
         </header>
-        <main className="flex w-full flex-1 flex-col px-5 pt-6 pb-2">{children}</main>
+        <main className={cn("flex w-full flex-1 flex-col px-5 pb-2", compact ? "pt-4" : "pt-6")}>{children}</main>
         <footer className="flex flex-wrap items-center justify-center gap-x-6 px-5 py-4 text-caption text-muted-foreground">
           <a href={localizedPath(language, "/privacy")} className="flex min-h-11 items-center underline">
             {t("privacy")}

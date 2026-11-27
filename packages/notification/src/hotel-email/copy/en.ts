@@ -54,6 +54,13 @@ export const en = {
     body: "A quick reminder from {hotel}: your offer is still yours, and we would love to welcome you back.",
     cta: "Use my offer",
   },
+  gift: {
+    subject: "A gift from {hotel}",
+    title: "A gift for you, {name}",
+    body: "Show the code below at the front desk to enjoy it.",
+    cta: "See my offer",
+    whatsapp: "{offer} is yours. Show the code {code} at the front desk. Your code page: {url}",
+  },
   message: { cta: "Learn more" },
 }
 
