@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test"
 import {
   captureUrl,
+  freeFileName,
   newShortCode,
   normalizeShortCode,
   parseSpots,
@@ -65,4 +66,10 @@ test("warns before printing: no offer, an offer ending soon, no logo", () => {
   expect(printWarnings(hotel, { validUntil: new Date("2026-01-20T00:00:00Z") }, now)).toEqual(["offerExpires"])
   expect(printWarnings(hotel, { validUntil: new Date("2026-06-01T00:00:00Z") }, now)).toEqual([])
   expect(printWarnings({ logoKey: null }, { validUntil: null }, now)).toEqual(["noLogo"])
+})
+
+test("two spots with the same file name both stay in a zip", () => {
+  const first = qrFileName("room", "1.5", "png")
+  expect(qrFileName("room", "1 5", "png")).toBe(first)
+  expect(freeFileName(first, { [first]: true })).toBe("qr-room-1_5-2.png")
 })

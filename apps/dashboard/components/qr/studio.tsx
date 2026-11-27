@@ -45,10 +45,10 @@ import {
   type KitHotel,
   type KitWords,
   type Piece,
-  STICKERS_PER_PAGE,
+  Sheet,
   StickerArt,
-  StickerSheet,
 } from "./art"
+import { type Layout, layoutFor, type Paper, type StickerSize, TRIM } from "./layout"
 import { chosenSpots, EVERY_SPOT, type Selection, SpotPicker } from "./spot-picker"
 
 // i18n-used: qrCodes.pieceRoom
@@ -60,11 +60,11 @@ import { chosenSpots, EVERY_SPOT, type Selection, SpotPicker } from "./spot-pick
 // i18n-used: qrCodes.paperDesk
 // i18n-used: qrCodes.paperSticker
 const PIECES = {
-  room: { label: "pieceRoom", paper: "paperRoom", page: "105mm 148mm", spots: ["room"] },
-  table: { label: "pieceTable", paper: "paperTable", page: "148mm 210mm", spots: ["table"] },
-  desk: { label: "pieceDesk", paper: "paperDesk", page: "148mm 210mm", spots: [] },
-  sticker: { label: "pieceSticker", paper: "paperSticker", page: "A4", spots: ["room", "table"] },
-} as const satisfies Record<Piece, { label: string; paper: string; page: string; spots: readonly SpotSource[] }>
+  room: { label: "pieceRoom", paper: "paperRoom", spots: ["room"] },
+  table: { label: "pieceTable", paper: "paperTable", spots: ["table"] },
+  desk: { label: "pieceDesk", paper: "paperDesk", spots: [] },
+  sticker: { label: "pieceSticker", paper: "paperSticker", spots: ["room", "table"] },
+} as const satisfies Record<Piece, { label: string; paper: string; spots: readonly SpotSource[] }>
 const PIECE_KEYS = Object.keys(PIECES) as Piece[]
 
 /** The most names `hotel.qrCodes` takes in one call. */
@@ -137,15 +137,7 @@ async function settled(root: ParentNode) {
   )
 }
 
-type Drawing = { piece: Piece; hotel: KitHotel; text: CardText }
-
-function Sheet({ piece, hotel, text, codes, className }: Drawing & { codes: KitCode[]; className?: string }) {
-  return piece === "sticker" ? (
-    <StickerSheet hotel={hotel} codes={codes} language={text.language} words={text.words} className={className} />
-  ) : (
-    <CardArt piece={piece} hotel={hotel} code={codes[0]!} className={className} {...text} />
-  )
-}
+type Drawing = { piece: Piece; layout: Layout; hotel: KitHotel; text: CardText }
 
 /** Only on paper: every page of the selection, straight under `body` so nothing of the dashboard prints. */
 function PrintPages({
@@ -176,7 +168,7 @@ function PrintPages({
     <div ref={root} data-print-root className="hidden print:block">
       {/* the paper size depends on the piece, so it cannot live in the theme css */}
       {/* oxlint-disable-next-line shadcn/no-inline-styles */}
-      <style>{`@page { size: ${PIECES[drawing.piece].page}; margin: 0 }
+      <style>{`@page { size: ${drawing.layout.page.width}mm ${drawing.layout.page.height}mm; margin: 0 }
 @media print { body { padding: 0 !important; min-height: 0 !important } body > :not([data-print-root]) { display: none !important } }`}</style>
       {pages.map((codes) => (
         <Sheet
@@ -235,7 +227,7 @@ function SaveImages({
           code={code}
           language={text.language}
           words={text.words}
-          className="text-foreground"
+          benefit={text.benefit}
         />
       ))}
     </div>
@@ -257,6 +249,11 @@ function Step({ number, title, children }: { number: number; title: string; chil
       {children}
     </section>
   )
+}
+
+const thumbRatio = (piece: Piece) => {
+  const { width, height } = TRIM[piece === "sticker" ? "small" : piece]
+  return `${width} / ${height}`
 }
 
 function PiecePicker({
@@ -290,16 +287,19 @@ function PiecePicker({
           {/* a thumbnail is the art itself, drawn small */}
           <span aria-hidden className="flex h-20 w-full sm:h-32 items-center justify-center rounded-lg bg-surface">
             {sample ? (
-              <span className={cn("block shadow-xs", item === "room" ? "w-10 sm:w-16" : "w-12 sm:w-20")}>
+              <span
+                className={cn("block overflow-hidden shadow-xs", item === "room" ? "w-10 sm:w-16" : "w-12 sm:w-20")}
+                // oxlint-disable-next-line shadcn/no-inline-styles
+                style={{ aspectRatio: thumbRatio(item) }}
+              >
                 {item === "sticker" ? (
                   <StickerArt
                     hotel={hotel}
                     code={sample}
                     language={text.language}
                     words={text.words}
-                    // oxlint-disable-next-line shadcn/no-inline-styles
-                    style={brandStyle(hotel)}
-                    className="block w-full bg-white text-foreground"
+                    benefit={text.benefit}
+                    className="size-full"
                   />
                 ) : (
                   <CardArt piece={item} hotel={hotel} code={sample} {...text} />
@@ -330,6 +330,19 @@ function TestPage({ target, language }: { target: Target; language: HotelLanguag
   const url = link.data?.url
   return (
     <>
+      {link.isError ? (
+        <InlineAlert
+          tone="error"
+          title={t("testFailed")}
+          className="col-span-full"
+          action={
+            <Button size="sm" variant="outline" loading={link.isFetching} onClick={() => link.refetch()}>
+              <RotateCwIcon data-icon="inline-start" />
+              {t("retry")}
+            </Button>
+          }
+        />
+      ) : null}
       <a
         href={url}
         target="_blank"
@@ -395,7 +408,14 @@ function Stats() {
   )
 }
 
-export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) {
+export function QrStudio({
+  words,
+  fixable,
+}: {
+  words: Record<HotelLanguage, KitWords>
+  /** The warnings this role can do something about: the others get no link to a page that would refuse. */
+  fixable: readonly PrintWarning[]
+}) {
   const t = useTranslations("qrCodes")
   const locale = useLocale()
   const { data: hotel } = useSuspenseQuery(orpc.hotel.get.queryOptions())
@@ -407,6 +427,8 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
   const [language, setLanguage] = useState<HotelLanguage>(hotel.defaultLanguage)
   const [headlines, setHeadlines] = useState<Record<string, string>>({})
   const [showPerk, setShowPerk] = useState(true)
+  const [paper, setPaper] = useState<Paper>("office")
+  const [stickers, setStickers] = useState<StickerSize>("small")
   const [page, setPage] = useState(0)
   const [asked, setAsked] = useState(false)
   const [saving, setSaving] = useState<ImageFormat | null>(null)
@@ -417,7 +439,11 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
   const targets = targetsOf(piece, saved, selection)
   const { codes, pending, failed, retry } = useCodes(piece, saved)
   const printed = targets.flatMap((target) => codes.get(keyOf(target.source, target.location)) ?? [])
-  const pages = chunks(printed, piece === "sticker" ? STICKERS_PER_PAGE : 1)
+  const layout = layoutFor(piece, paper, stickers)
+  const perPage = layout.columns * layout.rows
+  // the one desk sign fills its sheet with copies, so no half page goes to waste
+  const placed = piece === "desk" ? printed.flatMap((code) => Array<KitCode>(perPage).fill(code)) : printed
+  const pages = chunks(placed, perPage)
   const shown = Math.min(page, Math.max(pages.length - 1, 0))
   const ready = !pending && !failed && printed.length > 0
 
@@ -435,9 +461,11 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
     words: cardWords,
     headline: custom.trim() || cardWords.headlines[piece === "sticker" ? "desk" : piece],
     perk: showPerk ? { title: offer?.title ?? cardWords.perkTitle, text: offer?.text || cardWords.perkBody } : null,
+    benefit: showPerk ? (offer?.title ?? cardWords.sheetBenefit) : null,
   }
-  const drawing: Drawing = { piece, hotel: brand, text }
-  const fileName = `${hotel.slug}-${piece}-${language}`
+  const drawing: Drawing = { piece, layout, hotel: brand, text }
+  const fileName = `${hotel.slug}-${piece}-${language}${paper === "shop" ? "-print-shop" : ""}`
+  const ratio = layout.page.width / layout.page.height
   const expires = offer?.validUntil
     ? new Intl.DateTimeFormat(locale, {
         dateStyle: "medium",
@@ -481,16 +509,46 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
                 {warnings.map((warning) => (
                   <li key={warning}>
                     {t(`warn_${warning}`, { date: expires })}{" "}
-                    <Link
-                      href={WARNING_LINKS[warning]}
-                      className="font-medium text-foreground underline coarse:inline-flex coarse:min-h-touch coarse:items-center"
-                    >
-                      {warning === "noLogo" ? t("fixLogo") : t("fixOffer")}
-                    </Link>
+                    {fixable.includes(warning) ? (
+                      <Link
+                        href={WARNING_LINKS[warning]}
+                        className="font-medium text-foreground underline coarse:inline-flex coarse:min-h-touch coarse:items-center"
+                      >
+                        {warning === "noLogo" ? t("fixLogo") : t("fixOffer")}
+                      </Link>
+                    ) : null}
                   </li>
                 ))}
               </ul>
             </InlineAlert>
+          ) : null}
+          <SegmentedControl
+            label={t("paperLabel")}
+            block
+            value={paper}
+            onValueChange={(next) => {
+              setPaper(next)
+              setPage(0)
+            }}
+            options={[
+              { value: "office", label: t("paperOffice") },
+              { value: "shop", label: t("paperShop") },
+            ]}
+          />
+          {piece === "sticker" ? (
+            <SegmentedControl
+              label={t("stickerSize")}
+              block
+              value={stickers}
+              onValueChange={(next) => {
+                setStickers(next)
+                setPage(0)
+              }}
+              options={[
+                { value: "small", label: t("stickerSmall") },
+                { value: "large", label: t("stickerLarge") },
+              ]}
+            />
           ) : null}
           <div className="flex flex-col items-center gap-3 rounded-card bg-surface p-4 md:p-6">
             <div className="flex w-full items-center justify-between gap-2">
@@ -540,18 +598,29 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
                 <Skeleton className="aspect-[105/148] w-full" />
               </div>
             ) : pages[shown] ? (
-              <div data-preview className={cn("w-full shadow-md", piece === "room" ? "max-w-72" : "max-w-xs")}>
+              <div
+                data-preview
+                // short enough to be seen whole above the consent card and the page chrome
+                className="w-full max-w-(--preview-width) shadow-md"
+                style={
+                  {
+                    "--preview-width": `clamp(14rem, calc((100dvh - var(--consent-banner-height, 0px) - 24rem) * ${ratio}), ${ratio > 1 ? "36rem" : "24rem"})`,
+                  } as React.CSSProperties
+                }
+              >
                 <Sheet {...drawing} codes={pages[shown]} />
               </div>
             ) : (
               <EmptyState icon={<QrCodeIcon />} title={t("nothingTitle")} description={t("nothing")} />
             )}
-            {piece === "table" ? <p className="text-muted-foreground text-sm">{t("foldHint")}</p> : null}
+            {piece === "table" ? <p className="text-center text-muted-foreground text-sm">{t("foldHint")}</p> : null}
           </div>
-          <div className="hidden flex-col gap-1 lg:flex">
-            {printButton}
-            <p className="text-center text-muted-foreground text-caption">{t("printHint")}</p>
-          </div>
+          <div className="hidden flex-col gap-1 lg:flex">{printButton}</div>
+          <p className="text-center text-muted-foreground text-sm">
+            {paper === "office"
+              ? t("printHintOffice")
+              : t("printHintShop", { size: `${layout.cell.width} x ${layout.cell.height} mm` })}
+          </p>
           <div className="grid grid-cols-2 gap-2 xl:grid-cols-4">
             {targets[0] ? <TestPage target={targets[0]} language={language} /> : null}
             {(["png", "svg"] as const).map((format) => (
@@ -600,31 +669,29 @@ export function QrStudio({ words }: { words: Record<HotelLanguage, KitWords> }) 
             />
           </div>
           {headlineKey ? (
-            <>
-              <FormField id="headline" label={t("headline")}>
-                {(aria) => (
-                  <Input
-                    {...aria}
-                    dir="auto"
-                    maxLength={MAX_HEADLINE}
-                    value={custom}
-                    placeholder={cardWords.headlines[piece === "sticker" ? "desk" : piece]}
-                    onChange={(event) => setHeadlines({ ...headlines, [headlineKey]: event.target.value })}
-                  />
-                )}
-              </FormField>
-              {/* biome-ignore lint/a11y/noLabelWithoutControl: the switch inside is the control */}
-              <label className="flex min-h-touch cursor-pointer items-center justify-between gap-3">
-                <span className="flex flex-col">
-                  <span className="font-medium text-sm">{t("showPerk")}</span>
-                  <span className="text-muted-foreground text-sm">
-                    <bdi>{offer?.title ?? cardWords.perkTitle}</bdi>
-                  </span>
-                </span>
-                <Switch checked={showPerk} onCheckedChange={setShowPerk} />
-              </label>
-            </>
+            <FormField id="headline" label={t("headline")}>
+              {(aria) => (
+                <Input
+                  {...aria}
+                  dir="auto"
+                  maxLength={MAX_HEADLINE}
+                  value={custom}
+                  placeholder={cardWords.headlines[piece === "sticker" ? "desk" : piece]}
+                  onChange={(event) => setHeadlines({ ...headlines, [headlineKey]: event.target.value })}
+                />
+              )}
+            </FormField>
           ) : null}
+          {/* biome-ignore lint/a11y/noLabelWithoutControl: the switch inside is the control */}
+          <label className="flex min-h-touch cursor-pointer items-center justify-between gap-3">
+            <span className="flex flex-col">
+              <span className="font-medium text-sm">{t("showPerk")}</span>
+              <span className="text-muted-foreground text-sm">
+                <bdi>{offer?.title ?? (piece === "sticker" ? cardWords.sheetBenefit : cardWords.perkTitle)}</bdi>
+              </span>
+            </span>
+            <Switch checked={showPerk} onCheckedChange={setShowPerk} />
+          </label>
         </Step>
 
         <StickyFormActions className="lg:hidden">{printButton}</StickyFormActions>
