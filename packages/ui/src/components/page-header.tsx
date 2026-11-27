@@ -15,13 +15,14 @@ function PageHeader({ title, description, action, secondaryActions, breadcrumb, 
   return (
     <header className={cn("flex flex-col gap-4", className)}>
       {breadcrumb}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex min-w-0 max-w-prose flex-col gap-1.5">
+      {/* The actions drop under the title when there is no room beside it, never squeeze it. */}
+      <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end md:justify-between">
+        <div className="flex min-w-0 max-w-prose flex-col gap-1.5 md:min-w-64 md:flex-1">
           <h1 className="text-balance text-h1">{title}</h1>
           {description ? <p className="text-pretty text-muted-foreground">{description}</p> : null}
         </div>
         {action || secondaryActions ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-2 *:max-md:grow">
+          <div className="flex flex-wrap items-center gap-2 *:max-md:grow">
             {secondaryActions}
             {action}
           </div>
