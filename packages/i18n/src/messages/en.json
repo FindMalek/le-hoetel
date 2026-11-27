@@ -672,6 +672,10 @@
     "sending": "Sending…",
     "submitHint": "No message is sent unless you switch one on.",
     "thanksPerk": "Show this screen at the front desk to get it.",
+    "perkShow": "Show this code at the front desk.",
+    "perkOpen": "Open my code page",
+    "perkSave": "Keep it: open your code page and save the link, or take a screenshot.",
+    "perkReturning": "Signed up before? Use the code you already got, or ask at the front desk.",
     "whatsappButton": "Continue on WhatsApp",
     "whatsappHint": "This opens a chat with Ritorno's number, which sends one automatic welcome for {hotel}. The hotel team sees your number and may write to you, but not what you write: for requests, ask the front desk. It does not sign you up for messages.",
     "departure": "When do you leave?",
@@ -1220,7 +1224,7 @@
       "inactive": "The offer is paused in Offers. Nothing to redeem for now.",
       "exhausted": "Every redemption of this code is used up.",
       "wrongHotel": "Ask the guest for the code this hotel sent them.",
-      "unknown": "Check the code with the guest and try again."
+      "unknown": "Check the code and try again. A guest who signed up before keeps their first code."
     },
     "viewGuest": "View guest",
     "undo": "Undo, tapped by mistake",

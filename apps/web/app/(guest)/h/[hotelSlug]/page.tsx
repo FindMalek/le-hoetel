@@ -26,9 +26,10 @@ export default async function CapturePage({ params, searchParams }: Props) {
   const location = (query.loc ?? "").slice(0, 40)
   // the hotel's own try-out from the QR page: it shows everything and sends nothing
   const preview = query.preview === "1"
-  const [t, tPicker] = await Promise.all([
+  const [t, tPicker, offerCopy] = await Promise.all([
     getTranslations({ locale: language, namespace: "capture" }),
     getTranslations({ locale: language, namespace: "countryPicker" }),
+    getTranslations({ locale: language, namespace: "offer" }),
   ])
   const whatsappUrl = preview
     ? null
@@ -131,6 +132,17 @@ export default async function CapturePage({ params, searchParams }: Props) {
           thanksTitle: t("thanksTitle", { name: "{name}" }),
           thanksBody: t("thanksBody", { hotel: hotel.displayName }),
           thanksPerk: t("thanksPerk"),
+          signUpPerk: {
+            code: offerCopy("code"),
+            // `{code}` stays in the text: the code is only known once the guest has signed up.
+            qrAlt: offerCopy("qrAlt", { code: "{code}" }),
+            validFrom: offerCopy("validFrom", { from: "{from}" }),
+            validBetween: offerCopy("validBetween", { from: "{from}", until: "{until}" }),
+            show: t("perkShow"),
+            save: t("perkSave"),
+            open: t("perkOpen"),
+            returning: t("perkReturning"),
+          },
           errorInvalid: t("errorInvalid"),
           errorTooMany: t("errorTooMany"),
           errorFailed: t("errorFailed"),
