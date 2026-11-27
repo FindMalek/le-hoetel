@@ -399,16 +399,16 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
           <div className="grid grid-cols-3 gap-3">
             {(
               [
-                ["newGuests", preview.created],
-                ["mergedGuests", preview.merged],
-                ["skipped", review.problems.length],
+                ["new", t("newGuests"), preview.created],
+                ["merged", t("mergedGuests"), preview.merged],
+                ["skipped", t("skipped"), review.problems.length],
               ] as const
-            ).map(([key, value]) => (
+            ).map(([key, label, value]) => (
               <div key={key} className="flex flex-col gap-1 rounded-lg border bg-card p-3 sm:p-4">
                 <span className="font-heading font-semibold text-3xl tabular-nums">
                   {value === null ? "…" : <Num value={value} locale={locale} />}
                 </span>
-                <span className="text-muted-foreground text-sm">{t(key)}</span>
+                <span className="text-muted-foreground text-sm">{label}</span>
               </div>
             ))}
           </div>

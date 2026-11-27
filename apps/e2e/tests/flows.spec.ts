@@ -194,7 +194,7 @@ test("an unhappy survey answer opens a case the hotel can follow up", async () =
 test("a CSV import adds guests and records consent only where the file says yes", async () => {
   await open(owner, `${URLS.dashboard}/guests/import`)
   const csv =
-    "name,phone,email,language,consent\nSalma Trabelsi,+216 98 333 444,,fr,yes\nKarim Jlassi,+216 98 555 666,,en,no\n"
+    "name,phone,email,language,whatsapp_consent\nSalma Trabelsi,+216 98 333 444,,fr,yes\nKarim Jlassi,+216 98 555 666,,en,no\n"
   await owner
     .locator("#import-file")
     .setInputFiles({ name: "guests.csv", mimeType: "text/csv", buffer: Buffer.from(csv) })
