@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
 import type { HotelRole } from "@ritorno/common/hotel"
-import { activeHref, navFor, visibleNav } from "../nav"
+import { activeHref, navFor, quickActions, visibleNav } from "../nav"
 
 const hrefs = (role: HotelRole | null, admin = false): string[] => visibleNav({ role, admin }).map((item) => item.href)
 const MANAGER_ONLY = ["/guests/import", "/campaigns", "/holidays", "/hotel", "/data", "/activity", "/usage"]
@@ -30,4 +30,11 @@ test("a nested page keeps its section active, home only matches itself", () => {
 test("the deepest entry wins, so import does not also light guests", () => {
   expect(navFor("/guests/import")?.label).toBe("import")
   expect(navFor("/guests/abc")?.label).toBe("guests")
+})
+
+test("quick actions follow the role: staff cannot start a campaign or an offer", () => {
+  const labels = (role: HotelRole | null) => quickActions({ role, admin: false }).map((action) => action.label)
+  expect(labels("staff")).toEqual(["addGuest", "redeemCode"])
+  expect(labels("manager")).toEqual(["addGuest", "redeemCode", "newCampaign", "newOffer"])
+  expect(labels(null)).toEqual([])
 })

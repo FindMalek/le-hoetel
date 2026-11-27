@@ -9,6 +9,16 @@
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher ou aller à…",
     "noResults": "Aucun résultat.",
+    "searchGuestsPlaceholder": "Nom ou téléphone d’un client, ou une page…",
+    "searching": "Recherche…",
+    "searchError": "La recherche a échoué. Réessayez.",
+    "quickActions": "Actions",
+    "actions": {
+      "addGuest": "Ajouter un client",
+      "redeemCode": "Valider un code",
+      "newCampaign": "Nouvelle campagne",
+      "newOffer": "Nouvelle offre"
+    },
     "goTo": "Aller à",
     "language": "Langue",
     "account": "Compte",

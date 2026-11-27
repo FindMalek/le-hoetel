@@ -9,6 +9,16 @@
     "search": "Search",
     "searchPlaceholder": "Search or jump to…",
     "noResults": "Nothing found.",
+    "searchGuestsPlaceholder": "Guest name or phone, or a page…",
+    "searching": "Searching…",
+    "searchError": "Search failed. Try again.",
+    "quickActions": "Actions",
+    "actions": {
+      "addGuest": "Add guest",
+      "redeemCode": "Redeem code",
+      "newCampaign": "New campaign",
+      "newOffer": "New offer"
+    },
     "goTo": "Go to",
     "language": "Language",
     "account": "Account",
