@@ -526,7 +526,11 @@
       "error": "Les changements n'ont pas été enregistrés. Réessayez.",
       "checkOut": "Date de départ",
       "checkOutHint": "Le questionnaire part le lendemain.",
-      "checkOutNeedsConsent": "Nécessite le consentement aux détails du séjour. Activez-le depuis la fiche client, si le client est d'accord."
+      "checkOutNeedsConsent": "Nécessite le consentement aux détails du séjour. Activez-le depuis la fiche client, si le client est d'accord.",
+      "phoneTaken": "Un autre client a déjà ce numéro.",
+      "openOther": "Ouvrir ce client",
+      "phoneWhatsappOff": "Le consentement WhatsApp a été donné pour l’ancien numéro. L’enregistrement le désactive. Demandez au client, puis réactivez-le depuis sa fiche.",
+      "savedWhatsappOff": "Client mis à jour. Le consentement WhatsApp est désactivé."
     }
   },
   "guestData": {
@@ -1815,7 +1819,8 @@
         "delete": "Client supprimé",
         "export-all": "Export de tous les clients",
         "export": "Export d'un client",
-        "import": "Import de clients"
+        "import": "Import de clients",
+        "phone-change": "Numéro de téléphone d’un client modifié"
       },
       "hotel": {
         "admin-update": "Offre, statut ou pilote modifié",
