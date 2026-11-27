@@ -232,6 +232,11 @@ export function CampaignForm({
               whatsapp: () => num(reach.data.whatsapp),
             })}
           </span>
+          {reach.data.undated > 0 && (
+            <span className="text-muted-foreground text-sm">
+              {t.rich("form.undated", { count: reach.data.undated, n: () => num(reach.data.undated) })}
+            </span>
+          )}
         </>
       ) : (
         <span className="text-muted-foreground text-sm">{t("form.reachLoading")}</span>

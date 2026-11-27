@@ -3,7 +3,7 @@
 import { readPhone, toInternational } from "@ritorno/common/dial"
 import type { HotelLanguage } from "@ritorno/common/hotel"
 import { parsePhone } from "@ritorno/common/phone"
-import { type Guest, guestUpdateSchema } from "@ritorno/common/schemas"
+import { type Guest, guestUpdateSchema, isStayOrdered } from "@ritorno/common/schemas"
 import { isConflict } from "@ritorno/orpc/errors"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -38,6 +38,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
   const [language, setLanguage] = useState<HotelLanguage>(guest.language)
   const [email, setEmail] = useState(guest.email ?? "")
   const [birthday, setBirthday] = useState(guest.birthday ?? "")
+  const [checkIn, setCheckIn] = useState(guest.stayCheckIn ?? "")
   const [checkOut, setCheckOut] = useState(guest.stayCheckOut ?? "")
   const [touched, setTouched] = useState<Touched>({})
   const back = `/guests/${guest.id}`
@@ -61,6 +62,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
     birthday: birthday === "" || (birthday >= "1900-01-01" && birthday <= today) ? null : t("birthdayInvalid"),
   }
   const shown = (field: keyof Touched) => (touched[field] ? problems[field] : null)
+  const stayProblem = isStayOrdered({ stayCheckIn: checkIn, stayCheckOut: checkOut }) ? null : tAdd("stayOrder")
   const touch = (field: keyof Touched) => setTouched((current) => ({ ...current, [field]: true }))
 
   const refreshLists = useRefreshLists()
@@ -83,7 +85,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (problems.name || problems.phone || problems.email || problems.birthday) {
+    if (problems.name || problems.phone || problems.email || problems.birthday || stayProblem) {
       setTouched({ name: true, phone: true, email: true, birthday: true })
       return
     }
@@ -94,7 +96,7 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
       language,
       email: email.trim() || null,
       birthday: birthday || null,
-      ...(guest.consents.profile ? { stayCheckOut: checkOut || null } : {}),
+      ...(guest.consents.profile ? { stayCheckIn: checkIn || null, stayCheckOut: checkOut || null } : {}),
     })
   }
 
@@ -180,8 +182,21 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
             />
           )}
         </FormField>
+        <FormField label={tAdd("arrival")} optional={t("optional")}>
+          {(aria) => (
+            <Input
+              {...aria}
+              type="date"
+              dir="ltr"
+              disabled={!guest.consents.profile}
+              value={checkIn}
+              onChange={(event) => setCheckIn(event.target.value)}
+            />
+          )}
+        </FormField>
         <FormField
           label={t("checkOut")}
+          error={stayProblem}
           optional={t("optional")}
           hint={guest.consents.profile ? t("checkOutHint") : t("checkOutNeedsConsent")}
         >

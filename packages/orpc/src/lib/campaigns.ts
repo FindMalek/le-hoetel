@@ -1,8 +1,8 @@
 import type { CampaignChannel, CampaignResults, CampaignSegment } from "@ritorno/common/campaigns"
 import type { MessageChannel } from "@ritorno/common/consent"
 import { localTime } from "@ritorno/common/hotel-time"
-import { campaignRecipients, type Db, guestConsents, guests, messages } from "@ritorno/db"
-import { and, count, eq, gte, inArray, notExists, sql } from "drizzle-orm"
+import { campaignRecipients, type Db, guestConsents, guests, guestVisits, messages } from "@ritorno/db"
+import { and, count, eq, exists, gte, inArray, isNull, notExists, or, sql } from "drizzle-orm"
 
 export const campaignChannels = (channel: CampaignChannel): MessageChannel[] =>
   channel === "both" ? ["email", "whatsapp"] : [channel]
@@ -22,6 +22,8 @@ export function recipientsQuery(
     timezone: string
     now: Date
     campaignId?: string
+    /** Instead of the last stay window, the guests it can't judge: no check-out and no visit. */
+    undated?: boolean
   },
 ) {
   const { hotelId, segment } = input
@@ -36,7 +38,26 @@ export function recipientsQuery(
   if (segment.lastVisitDays) {
     const today = localTime(input.now, input.timezone)
     const since = new Date(Date.UTC(today.year, today.month - 1, today.day - segment.lastVisitDays))
-    filters.push(gte(guests.stayCheckOut, since.toISOString().slice(0, 10)))
+      .toISOString()
+      .slice(0, 10)
+    const visit = (from?: string) =>
+      db
+        .select({ one: sql`1` })
+        .from(guestVisits)
+        .where(
+          and(
+            eq(guestVisits.guestId, guests.id),
+            eq(guestVisits.hotelId, hotelId),
+            // midnight of that day on the hotel's clock
+            from ? gte(guestVisits.at, sql`${from}::timestamp at time zone ${input.timezone}`) : undefined,
+          ),
+        )
+    // The later of check-out and last visit is in the window when either one is.
+    filters.push(
+      input.undated
+        ? and(isNull(guests.stayCheckOut), notExists(visit()))!
+        : or(gte(guests.stayCheckOut, since), exists(visit(since)))!,
+    )
   }
   if (input.campaignId) {
     filters.push(
@@ -61,12 +82,17 @@ export function recipientsQuery(
     .where(and(...filters))
 }
 
-/** How many guests a segment reaches on each channel right now, for the preview. */
+/**
+ * How many guests a segment reaches on each channel right now, for the preview. `undated` counts those a last stay
+ * window leaves out only because nothing says when they stayed.
+ */
 export async function countRecipients(db: Db, input: Parameters<typeof recipientsQuery>[1]) {
   const rows = await recipientsQuery(db, input)
   const byChannel = { email: 0, whatsapp: 0 }
   for (const row of rows) if (row.channel !== "profile") byChannel[row.channel]++
-  return { guests: new Set(rows.map((row) => row.guestId)).size, ...byChannel }
+  const unique = (list: typeof rows) => new Set(list.map((row) => row.guestId)).size
+  const undated = input.segment.lastVisitDays ? unique(await recipientsQuery(db, { ...input, undated: true })) : 0
+  return { guests: unique(rows), ...byChannel, undated }
 }
 
 /** What happened to a campaign's messages, read from the message log. */

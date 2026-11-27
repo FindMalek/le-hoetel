@@ -140,3 +140,27 @@ test("another hotel cannot read, change or send a campaign, and a sent one canno
   await mine.client.campaigns.schedule({ id: campaign.id, at: null })
   await expect(mine.client.campaigns.update({ ...campaign, name: "Changed" })).rejects.toThrow("Only a draft")
 })
+
+test("last stay takes the later of check-out and visit, and counts guests with neither", async () => {
+  const { client, add } = await hotel("camp-last-stay")
+  const ago = (days: number) => new Date(Date.now() - days * 864e5).toISOString().slice(0, 10)
+  const imported = (line: number, stayCheckOut?: string) => ({
+    line,
+    name: "Amel",
+    phone: `+2162081000${line}`,
+    email: `last-stay-${line}@example.test`,
+    consent: "yes",
+    stayCheckOut,
+    stayConsent: "yes",
+  })
+  await client.guests.import({
+    rows: [imported(1, ago(5)), imported(2, ago(200)), imported(3)],
+    defaultLanguage: "fr",
+    confirmConsent: true,
+  })
+  // added by staff today, so visited, with no check-out
+  await add("fr", { email: true, whatsapp: false })
+
+  const segment = { ...EMPTY_SEGMENT, lastVisitDays: 30 }
+  expect(await client.campaigns.preview({ channel: "email", segment })).toMatchObject({ guests: 2, undated: 1 })
+})

@@ -346,7 +346,14 @@
         "emailConsent": "consentement e-mail",
         "whatsappConsent": "consentement WhatsApp",
         "profileConsent": "consentement profil"
-      }
+      },
+      "arrival": "Arrivée",
+      "departure": "Départ",
+      "stayTitle": "Séjour (facultatif)",
+      "stayHint": "Sert à programmer l'enquête et à recontacter les anciens clients.",
+      "consentStay": "Le client accepte que nous gardions les détails de son séjour",
+      "stayOrder": "Le départ ne peut pas précéder l'arrivée.",
+      "stayNeedsConsent": "Cochez l'accord sur le séjour ou effacez les dates."
     },
     "import": {
       "title": "Importer des clients",
@@ -364,11 +371,14 @@
         "email": "E-mail",
         "birthday": "Date de naissance",
         "language": "Langue",
-        "consent": "Consentement (true ou false)"
+        "consent": "Consentement (true ou false)",
+        "stayCheckIn": "Date d'arrivée",
+        "stayCheckOut": "Date de départ",
+        "stayConsent": "Accord sur le séjour (true ou false)"
       },
       "defaultLanguage": "Langue quand le fichier ne l'indique pas",
       "confirm": "Je confirme que notre hôtel détient le consentement de chaque client marqué true",
-      "confirmHint": "Le consentement n'est enregistré que si la colonne dit true, yes, oui ou 1, et seulement si vous confirmez. Les autres sont ajoutés sans consentement marketing.",
+      "confirmHint": "Un accord n'est enregistré que si une colonne d'accord dit true, yes, oui ou 1, et seulement si vous confirmez. Les messages et les dates de séjour ont chacun leur colonne. Une date de départ récente peut envoyer l'enquête de séjour à ce client.",
       "needColumns": "Choisissez les colonnes du nom et du téléphone pour continuer.",
       "submit": "Importer {count, plural, one {# client} other {# clients}}",
       "consentKept": "{count, plural, one {# client avait retiré son consentement : il reste retiré.} other {# clients avaient retiré leur consentement : il reste retiré.}}",
@@ -403,7 +413,9 @@
         "email": "L'e-mail n'est pas valide",
         "birthday": "La date de naissance n'est pas une vraie date, utilisez AAAA-MM-JJ",
         "language": "La langue doit être en, fr ou ar",
-        "row": "Cette ligne n'a pas pu être enregistrée"
+        "row": "Cette ligne n'a pas pu être enregistrée",
+        "stayCheckIn": "La date d'arrivée n'est pas valide, utilisez AAAA-MM-JJ",
+        "stayCheckOut": "La date de départ n'est pas valide ou précède l'arrivée"
       },
       "consentTitle": "Consentement",
       "consentFound": "{count, plural, one {# client est marqué comme consentant dans votre fichier.} other {# clients sont marqués comme consentants dans votre fichier.}}",
@@ -418,7 +430,8 @@
         "merged": "déjà là, mis à jour",
         "failed": "ignorés",
         "kept": "désinscrits avant, accord laissé retiré"
-      }
+      },
+      "datesDropped": "Les dates de séjour ne sont enregistrées que si la colonne d'accord sur le séjour dit oui et que vous le confirmez. Les autres dates sont ignorées, le client est quand même ajouté."
     },
     "detail": {
       "contact": "Contact",
@@ -2016,7 +2029,8 @@
       "next": "Suivant",
       "reviewSend": "Envoyer maintenant",
       "reviewSchedule": "Programmer",
-      "savedDraft": "Brouillon enregistré"
+      "savedDraft": "Brouillon enregistré",
+      "undated": "{count, plural, one {<n></n> autre client n'est pas inclus : ni date de départ ni visite.} other {<n></n> autres clients ne sont pas inclus : ni date de départ ni visite.}}"
     },
     "guests": "{count, plural, one {<n></n> client} other {<n></n> clients}}",
     "counting": "Comptage…",
