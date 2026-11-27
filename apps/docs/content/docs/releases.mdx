@@ -31,6 +31,19 @@ Hidden types still ship, with the next release. If only those are waiting and th
 
 To fix the notes of an already merged PR, add a `BEGIN_COMMIT_OVERRIDE` / `END_COMMIT_OVERRIDE` block with the right `type(scope): subject` lines to its description, the next run picks it up.
 
+## Release notes on the site
+
+The public page `/roadmap` (`/fr/roadmap`, `/ar/roadmap`) reads `apps/web/lib/releases.ts`. `CHANGELOG.md` is for developers, this file is for hoteliers, so it is written by hand:
+
+1. for each version add an entry at the top of `RELEASES`: `version`, a one or two sentence `summary`, then any of `added`, `improved`, `fixed`, `removed`. Every text needs `en`, `fr` and `ar`
+2. write what changes for a hotel, not the commit subject, and check each line against the code or `CHANGELOG.md`. A release with nothing visible keeps only its summary
+3. never write security vulnerability details (say "stronger sign-in and invitation security"), internal work, pricing or billing internals, hotel names or infrastructure
+4. update `NEXT` from the open issues: drop what shipped, no dates or promises
+
+A version above the one in `package.json` shows as **Upcoming**, so notes can be written while the work lands. It turns into a normal entry when the release PR bumps `package.json`.
+
+`ci` fails (`.github/scripts/release-notes.test.mjs`) when the version in `package.json` has no entry or a text is missing a language. On a release PR for a version without notes, add them in a normal PR to `main`; release-please then updates the release PR.
+
 ## Checks on the release PR
 
 The `main` ruleset needs `ci`, `e2e`, `labels` and `pr hygiene` on the release PR too. `labels` and the issue link are skipped for it, and it gets no preview.

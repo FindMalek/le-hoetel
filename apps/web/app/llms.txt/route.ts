@@ -19,6 +19,7 @@ export async function GET() {
     "",
     "## Pages",
     `- [Home](${base}/): what ${SITE.name} does, pricing and a free trial request. Also in French (${base}/fr) and Arabic (${base}/ar).`,
+    `- [Roadmap and release notes](${base}/roadmap): what is next and what each version added, improved, fixed and removed.`,
     `- [Privacy](${base}/privacy)`,
     `- [Terms](${base}/terms)`,
     `- [Status](${base}/status)`,

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paths = ["/"]
-  paths.push("/privacy", "/terms")
+  paths.push("/roadmap", "/privacy", "/terms")
   paths.push("/status")
   paths.push(...LOCALES.slice(1).flatMap((locale) => paths.map((path) => localizedPath(locale, path))))
   return paths.map((path) => ({

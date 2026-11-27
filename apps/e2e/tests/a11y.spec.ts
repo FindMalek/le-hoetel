@@ -8,6 +8,7 @@ const BLOCKING = ["serious", "critical"]
 for (const locale of LOCALES.filter((l) => l !== "fr")) {
   const pages = [
     { name: "landing", url: () => webUrl(locale) },
+    { name: "roadmap", url: () => `${URLS.web}${locale === "en" ? "" : `/${locale}`}/roadmap` },
     { name: "QR capture", url: () => `${URLS.web}/h/dar-zitouna?lang=${locale}` },
     { name: "sign-in", url: () => `${URLS.dashboard}/sign-in`, cookie: true },
   ]

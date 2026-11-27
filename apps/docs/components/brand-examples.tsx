@@ -42,11 +42,7 @@ export function HeroExample() {
             { href: "#faq", label: "FAQ" },
           ]}
           cta={{ href: "#demo", label: "Request a demo" }}
-          language={
-            <Button variant="ghost" size="sm" className="h-10 text-muted-foreground">
-              EN
-            </Button>
-          }
+          signIn={{ href: "#sign-in", label: "Sign in" }}
         />
         <div data-sky-clear className="flex flex-col items-center">
           <Display as="h2" size="xl" reveal className="max-w-3xl">

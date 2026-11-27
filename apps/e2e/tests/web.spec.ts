@@ -11,6 +11,16 @@ for (const locale of LOCALES) {
   })
 }
 
+for (const locale of LOCALES) {
+  test(`roadmap page in ${locale} links back to the landing and the dashboard`, async ({ page }) => {
+    const prefix = locale === "en" ? "" : `/${locale}`
+    expect((await page.goto(`${URLS.web}${prefix}/roadmap`))?.status()).toBe(200)
+    await expectLocaleLayout(page, locale)
+    await expect(page.locator(`[data-slot=pill-nav] a[href="${prefix || "/"}#how"]`)).toHaveCount(1)
+    await expect(page.locator(`[data-slot=pill-nav] a[href^="${URLS.dashboard}"]`)).toHaveCount(1)
+  })
+}
+
 test("the cookie card floats above the bottom edge", async ({ page }) => {
   await page.goto(webUrl("ar"))
   const card = await page.getByRole("region", { name: "ملفات تعريف الارتباط التحليلية" }).boundingBox()
