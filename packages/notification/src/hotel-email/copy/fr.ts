@@ -55,5 +55,12 @@ export const fr: Copy = {
     body: "Un petit rappel de {hotel} : votre offre est toujours à vous, et nous serions heureux de vous revoir.",
     cta: "Profiter de mon offre",
   },
+  gift: {
+    subject: "Un cadeau de {hotel}",
+    title: "Un cadeau pour vous, {name}",
+    body: "Présentez le code ci-dessous à la réception pour en profiter.",
+    cta: "Voir mon offre",
+    whatsapp: "{offer} est à vous. Présentez le code {code} à la réception. La page de votre code : {url}",
+  },
   message: { cta: "En savoir plus" },
 }

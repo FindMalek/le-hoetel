@@ -1040,6 +1040,39 @@
       "ar": "العربية"
     }
   },
+  "giveOffer": {
+    "button": "Offrir une offre",
+    "title": "Offrir une offre",
+    "pickHint": "Choisissez ce que <name></name> reçoit.",
+    "showHint": "Le client peut scanner ou photographier ce code.",
+    "qrAlt": "QR code {code}",
+    "close": "Fermer",
+    "loading": "Chargement des offres",
+    "loadError": "Les offres n’ont pas chargé. Fermez et réessayez.",
+    "none": "Aucune offre ne peut être donnée pour le moment. Créez-en une dans Offres.",
+    "another": "Choisir une autre offre",
+    "noChannel": "Ce client n’a accepté aucun canal d’envoi possible. Montrez-lui le code.",
+    "justSent": "Déjà envoyé à l’instant. Attendez quelques minutes pour renvoyer.",
+    "send": {
+      "email": "Envoyer par e-mail",
+      "whatsapp": "Envoyer par WhatsApp"
+    },
+    "sent": {
+      "queued": "Message en file d’attente",
+      "sent": "Offre envoyée",
+      "delivered": "Offre remise",
+      "failed": "L’envoi a échoué. Montrez le code au client.",
+      "skipped_no_consent": "Non envoyé : pas de consentement pour ce canal.",
+      "skipped_no_balance": "Non envoyé : solde WhatsApp insuffisant."
+    },
+    "state": {
+      "redeemed": "Ce client a déjà utilisé cette offre.",
+      "inactive": "Cette offre est en pause.",
+      "notStarted": "Cette offre n’a pas encore commencé.",
+      "expired": "Cette offre a expiré.",
+      "exhausted": "Cette offre est entièrement utilisée."
+    }
+  },
   "offers": {
     "title": "Offres",
     "description": "Les avantages offerts à vos clients. Chacun a un code et un QR à présenter à la réception.",
@@ -1842,6 +1875,8 @@
         "delete": "Offre supprimée",
         "redeem": "Offre utilisée",
         "update": "Offre modifiée",
+        "give": "A offert une offre",
+        "send": "A envoyé une offre",
         "unredeem": "A annulé l'utilisation d'une offre"
       },
       "privacy": {

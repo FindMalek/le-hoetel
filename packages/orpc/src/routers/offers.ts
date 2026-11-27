@@ -1,9 +1,13 @@
 import { ORPCError } from "@orpc/server"
 import {
+  givenOfferSchema,
   offerCodeInputSchema,
   offerCreateSchema,
+  offerGiveInputSchema,
   offerLookupSchema,
   offerSchema,
+  offerSendInputSchema,
+  offerSendSchema,
   offerUpdateSchema,
   redemptionListInputSchema,
   redemptionListSchema,
@@ -14,7 +18,9 @@ import { and, count, desc, eq, getTableColumns, sql } from "drizzle-orm"
 import { z } from "zod"
 import { audit } from "../lib/audit"
 import { afterCursor, cursorAt, cursorPage } from "../lib/cursor"
+import { giveOffer, sendOffer } from "../lib/give-offer"
 import { firstName, lookupCode, redeemCode, undoRedemption } from "../lib/offers"
+import { enforceKey, RATE_LIMITS } from "../lib/rate-limit"
 import { can, hotelProcedure } from "../procedures"
 
 const notFound = () => new ORPCError("NOT_FOUND", { message: "Offer not found." })
@@ -96,6 +102,48 @@ export const offersRouter = {
       if (!deleted.length) throw notFound()
       await audit(context, { action: "offer.delete", targetId: input.id })
       return { ok: true as const }
+    }),
+
+  give: hotelProcedure
+    .use(can({ offer: ["redeem"] }))
+    .route({
+      method: "POST",
+      path: "/offers/give",
+      summary: "Hand an offer to a guest and get their code and QR",
+      tags: ["offers"],
+    })
+    .input(offerGiveInputSchema)
+    .output(givenOfferSchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const { made, ...given } = await giveOffer(context, { hotelId, ...input })
+      // Only a new code is a hand out. Showing it again is not.
+      if (made) await audit(context, { action: "offer.give", targetId: input.offerId, metadata: { hotelId, ...input } })
+      return given
+    }),
+
+  send: hotelProcedure
+    .use(can({ offer: ["redeem"] }))
+    .route({
+      method: "POST",
+      path: "/offers/send",
+      summary: "Send a guest their code on a channel they agreed to",
+      tags: ["offers"],
+    })
+    .input(offerSendInputSchema)
+    .output(offerSendSchema)
+    .handler(async ({ context, input }) => {
+      const { hotelId } = context.hotel
+      const { channel, ...gift } = input
+      const key = `offers.send:${hotelId}:${gift.guestId}:${gift.offerId}:${channel}`
+      await enforceKey(context.rateLimiter, key, RATE_LIMITS.offerSend)
+      const { status } = await sendOffer(context, { hotelId, ...gift }, channel)
+      await audit(context, {
+        action: "offer.send",
+        targetId: gift.offerId,
+        metadata: { hotelId, guestId: gift.guestId, channel, status },
+      })
+      return { status }
     }),
 
   lookup: hotelProcedure

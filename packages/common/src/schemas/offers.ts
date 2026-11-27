@@ -1,5 +1,7 @@
 import { z } from "zod"
+import { MESSAGE_CHANNELS } from "../consent"
 import { HOTEL_LANGUAGES } from "../hotel"
+import { MESSAGE_STATUSES } from "../message"
 import { OFFER_TRIGGERS, PROMO_CODE_PATTERN } from "../offers"
 import { cursorSchema } from "./cursor"
 
@@ -143,3 +145,18 @@ export const redemptionListSchema = z.object({
   ),
   nextCursor: z.string().nullable(),
 })
+
+export const offerGiveInputSchema = z.object({ guestId: z.uuid(), offerId: z.uuid() })
+export const offerSendInputSchema = offerGiveInputSchema.extend({ channel: z.enum(MESSAGE_CHANNELS) })
+
+/** The code staff show a guest after handing out an offer, and the channels it may also be sent on. */
+export const givenOfferSchema = z.object({
+  title: z.string(),
+  code: z.string(),
+  qrSvg: z.string(),
+  state: offerPageSchema.shape.state,
+  channels: z.array(z.enum(MESSAGE_CHANNELS)),
+})
+export type GivenOffer = z.infer<typeof givenOfferSchema>
+
+export const offerSendSchema = z.object({ status: z.enum(MESSAGE_STATUSES) })

@@ -1040,6 +1040,39 @@
       "ar": "العربية"
     }
   },
+  "giveOffer": {
+    "button": "Give offer",
+    "title": "Give an offer",
+    "pickHint": "Pick what <name></name> gets.",
+    "showHint": "Let the guest scan or photograph this code.",
+    "qrAlt": "QR code {code}",
+    "close": "Close",
+    "loading": "Loading offers",
+    "loadError": "Offers did not load. Close and try again.",
+    "none": "No offer can be given right now. Create one in Offers.",
+    "another": "Choose another offer",
+    "noChannel": "This guest has agreed to no channel we can send on. Show them the code.",
+    "justSent": "Already sent a moment ago. Wait a few minutes to send it again.",
+    "send": {
+      "email": "Send by email",
+      "whatsapp": "Send by WhatsApp"
+    },
+    "sent": {
+      "queued": "Message queued",
+      "sent": "Offer sent",
+      "delivered": "Offer delivered",
+      "failed": "The message failed. Show the guest the code.",
+      "skipped_no_consent": "Not sent: no consent for this channel.",
+      "skipped_no_balance": "Not sent: the WhatsApp balance is too low."
+    },
+    "state": {
+      "redeemed": "This guest already used this offer.",
+      "inactive": "This offer is paused.",
+      "notStarted": "This offer has not started yet.",
+      "expired": "This offer has expired.",
+      "exhausted": "Every redemption of this offer is used up."
+    }
+  },
   "offers": {
     "title": "Offers",
     "description": "Perks you give guests. Each one has a code, and a QR guests show at the desk.",
@@ -1842,6 +1875,8 @@
         "delete": "Deleted an offer",
         "redeem": "Redeemed an offer",
         "update": "Updated an offer",
+        "give": "Gave an offer",
+        "send": "Sent an offer",
         "unredeem": "Undid a redemption"
       },
       "privacy": {

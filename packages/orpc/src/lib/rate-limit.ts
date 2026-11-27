@@ -30,6 +30,8 @@ export const RATE_LIMITS = {
   // Every scan in a hotel comes from its one wifi ip. Low enough that guessing 8 character codes finds nothing.
   shortLinkIp: { limit: 300, windowMs: 10 * 60_000 },
   captureHotel: { limit: 200, windowMs: 60 * 60_000 },
+  // A second tap on "send" must not message the guest, or charge the hotel, twice.
+  offerSend: { limit: 1, windowMs: 5 * 60_000 },
   welcomeHotel: { limit: 60, windowMs: 60 * 60_000 },
   scanPhone: { limit: 5, windowMs: 24 * 60 * 60_000 },
   scanMessage: { limit: 1, windowMs: 24 * 60 * 60_000 },
