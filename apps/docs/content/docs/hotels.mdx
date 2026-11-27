@@ -10,7 +10,7 @@ A hotel is a better-auth organization. Guests are not auth users: they are rows 
 | Role | Can |
 |---|---|
 | `owner` | everything except deleting, renaming or re-slugging the hotel |
-| `manager` | branding, team, guests, offers, export and delete |
+| `manager` | branding and settings, team, guests, offers, campaigns, export and delete |
 | `staff` | read, add and edit guests, read offers |
 
 The app admin (user role `admin`) sees every hotel: a call can name any hotel with the `x-hotel-id` header and then acts as its owner. For everyone else the header can only repeat their own hotel, a different one is refused. Roles and their permissions live in `packages/auth/src/access.ts`.
