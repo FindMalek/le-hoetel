@@ -94,7 +94,7 @@ Six column grid on a surface panel (28 px radius), tiles stack under `md`. A til
 
 ## PillNav
 
-Floating white pill at inline-start with the `Logo` lockup (a link to `homeHref`), links and language pill, and the black "Request a demo" pill plus a 44 px arrow at inline-end (the arrow flips in RTL and is part of the same link). Under `md` the links and language move to a top `Sheet`. It is `fixed` by default; pass `className="absolute"` to pin it inside a section, as in the hero above.
+Floating white pill at inline-start with the `Logo` lockup (a link to `homeHref`), links, and the black "Request a demo" pill plus a 44 px arrow at inline-end. The arrow is its own link to `signIn` (named by its label, flips in RTL, hidden under `sm`). Under `lg` the links and the sign-in link move to a top `Sheet`. There is no language switcher here: the footer and the legal pages have it. It is `fixed` by default; pass `className="absolute"` to pin it inside a section, as in the hero above.
 
 ```tsx title="PillNav"
 <PillNav
@@ -103,7 +103,7 @@ Floating white pill at inline-start with the `Logo` lockup (a link to `homeHref`
   menuLabel={t("nav.menu")}
   links={[{ href: "#how", label: t("nav.how") }]}
   cta={{ href: "/demo", label: t("hero.cta") }}
-  language={<LanguagePill />}
+  signIn={{ href: dashboardUrl, label: t("nav.signIn") }}
 />
 ```
 

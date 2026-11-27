@@ -15,7 +15,7 @@ import { fontVariables } from "./fonts"
 /** Guest pages (`GuestShell`) ship none of the site chrome (feedback, consent banner, analytics, background): they must load fast on a weak connection. Umami never runs on them, so they need no banner. */
 const GUEST_PATHS = ["/h/", "/q/", "/u/", "/s/", "/o/", "/r/"]
 /** Marketing pages keep the floating feedback button out of the way of the content. */
-const NO_FEEDBACK_PATHS = ["/", "/privacy", "/terms"]
+const NO_FEEDBACK_PATHS = ["/", "/roadmap", "/privacy", "/terms"]
 
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, pathname] = await Promise.all([getLocale(), headers().then((h) => h.get(PATHNAME_HEADER) ?? "/")])

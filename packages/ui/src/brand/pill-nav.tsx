@@ -3,10 +3,10 @@
 import { Button } from "@ritorno/ui/components/button"
 import { cn } from "@ritorno/ui/lib/utils"
 import { ArrowRightIcon, MenuIcon } from "lucide-react"
-import { lazy, type ReactNode, Suspense, useState } from "react"
+import { lazy, Suspense, useState } from "react"
 import { Logo } from "./logo"
 
-// The menu sheet (a dialog) is only needed under md once tapped, so its code stays out of the first load.
+// The menu sheet (a dialog) is only needed under lg once tapped, so its code stays out of the first load.
 const PillNavSheet = lazy(() => import("./pill-nav-sheet"))
 
 export interface PillNavLink {
@@ -20,8 +20,8 @@ export interface PillNavProps {
   homeLabel?: string
   links: PillNavLink[]
   cta: PillNavLink
-  /** Ghost language pill (a select or links), shown in the bar from md and in the sheet below. */
-  language?: ReactNode
+  /** The app's sign-in: the arrow from sm, a link in the phone menu. */
+  signIn?: PillNavLink
   navLabel: string
   menuLabel: string
   /** `div` when the page already has its own banner, like a preview inside docs. */
@@ -29,13 +29,13 @@ export interface PillNavProps {
   className?: string
 }
 
-/** Floating white pill with the links at inline-start and the black demo pill plus arrow at inline-end. Links move to a top sheet under md. */
+/** Floating white pill with the links at inline-start and the black demo pill and sign-in arrow at inline-end. Links move to a top sheet under lg. */
 export function PillNav({
   homeHref,
   homeLabel,
   links,
   cta,
-  language,
+  signIn,
   navLabel,
   menuLabel,
   as: Root = "header",
@@ -53,10 +53,10 @@ export function PillNav({
       )}
     >
       <div className="pointer-events-auto flex h-12 min-w-0 items-center gap-1 rounded-full bg-background ps-2 pe-1 shadow-md">
-        <a href={homeHref} className="flex h-11 min-w-0 items-center rounded-full ps-1 pe-2 md:pe-4">
+        <a href={homeHref} className="flex h-11 min-w-0 items-center rounded-full ps-1 pe-2 lg:pe-4">
           <Logo size={32} label={homeLabel} />
         </a>
-        <nav aria-label={navLabel} className="hidden items-center md:flex">
+        <nav aria-label={navLabel} className="hidden items-center lg:flex">
           {links.map((link) => (
             <a
               key={link.href}
@@ -67,11 +67,10 @@ export function PillNav({
             </a>
           ))}
         </nav>
-        {language ? <div className="hidden md:block">{language}</div> : null}
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="lg:hidden"
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => {
@@ -87,28 +86,31 @@ export function PillNav({
             <PillNavSheet
               open={open}
               onOpenChange={setOpen}
-              links={links}
-              language={language}
+              links={signIn ? [...links, signIn] : links}
               navLabel={navLabel}
               menuLabel={menuLabel}
             />
           </Suspense>
         ) : null}
       </div>
-      <a
-        href={cta.href}
-        className="group/cta pointer-events-auto flex shrink-0 items-center gap-1 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <span className="flex h-12 items-center rounded-full bg-foreground px-5 text-small font-medium text-background shadow-md transition-colors duration-200 group-hover/cta:bg-foreground/85">
-          {cta.label}
-        </span>
-        <span
-          aria-hidden
-          className="hidden size-11 place-items-center rounded-full bg-foreground text-background shadow-md transition-transform duration-200 ease-out group-hover/cta:translate-x-0.5 sm:grid rtl:group-hover/cta:-translate-x-0.5"
+      <div className="pointer-events-auto flex shrink-0 items-center gap-1">
+        <a
+          href={cta.href}
+          className="flex h-12 items-center rounded-full bg-foreground px-5 text-small font-medium text-background shadow-md outline-none transition-colors duration-200 hover:bg-foreground/85 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <ArrowRightIcon className="size-4 rtl:rotate-180" />
-        </span>
-      </a>
+          {cta.label}
+        </a>
+        {signIn ? (
+          <a
+            href={signIn.href}
+            aria-label={signIn.label}
+            title={signIn.label}
+            className="hidden size-11 place-items-center rounded-full bg-foreground text-background shadow-md outline-none transition-transform duration-200 ease-out hover:translate-x-0.5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:grid rtl:hover:-translate-x-0.5"
+          >
+            <ArrowRightIcon aria-hidden className="size-4 rtl:rotate-180" />
+          </a>
+        ) : null}
+      </div>
     </Root>
   )
 }

@@ -14,23 +14,32 @@ interface FooterLink {
   external?: boolean
 }
 
-export async function Footer({ docsUrl, whatsappUrl }: { docsUrl: string; whatsappUrl: string | null }) {
+export async function Footer({
+  docsUrl,
+  whatsappUrl,
+  home = "",
+}: {
+  docsUrl: string
+  whatsappUrl: string | null
+  home?: string
+}) {
   const [t, locale] = await Promise.all([getTranslations("landing.footer"), getLocale()])
   const columns: { title: string; links: FooterLink[] }[] = [
     {
       title: t("product"),
       links: [
-        { href: "#how", label: t("how") },
-        { href: "#pricing", label: t("pricing") },
-        { href: "#faq", label: t("faq") },
+        { href: `${home}#how`, label: t("how") },
+        { href: `${home}#pricing`, label: t("pricing") },
+        { href: `${home}#faq`, label: t("faq") },
+        { href: localizedPath(locale, "/roadmap"), label: t("roadmap") },
       ],
     },
     {
       title: t("hotels"),
       links: [
-        { href: "#features", label: t("recognition") },
-        { href: "#features", label: t("consent") },
-        { href: "#features", label: t("offers") },
+        { href: `${home}#features`, label: t("recognition") },
+        { href: `${home}#features`, label: t("consent") },
+        { href: `${home}#features`, label: t("offers") },
       ],
     },
     {
@@ -51,7 +60,7 @@ export async function Footer({ docsUrl, whatsappUrl }: { docsUrl: string; whatsa
     {
       title: t("contact"),
       links: [
-        { href: "#demo", label: t("demo") },
+        { href: `${home}#demo`, label: t("demo") },
         ...(whatsappUrl ? [{ href: whatsappUrl, label: t("whatsapp"), external: true }] : []),
       ],
     },

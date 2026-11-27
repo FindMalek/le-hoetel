@@ -1296,7 +1296,9 @@
       "faq": "FAQ",
       "docs": "Docs",
       "demo": "Request a demo",
-      "menu": "Menu"
+      "menu": "Menu",
+      "roadmap": "Roadmap",
+      "signIn": "Sign in to your dashboard"
     },
     "hero": {
       "title": "Every guest,<br></br> <em>welcomed</em> back<br></br> by name",
@@ -1521,7 +1523,27 @@
       "contact": "Contact",
       "demo": "Request a demo",
       "whatsapp": "WhatsApp",
-      "rights": "Made in Tunisia"
+      "rights": "Made in Tunisia",
+      "roadmap": "Roadmap"
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "lead": "What we are working on, and what every release of Ritorno has changed.",
+      "upcoming": "Upcoming",
+      "next": {
+        "title": "What's next",
+        "lead": "What we plan to work on. The order can change, and we give no dates."
+      },
+      "releases": {
+        "title": "Releases",
+        "lead": "Newest first."
+      },
+      "groups": {
+        "added": "Added",
+        "improved": "Improved",
+        "fixed": "Fixed",
+        "removed": "Removed"
+      }
     }
   },
   "adminHotel": {

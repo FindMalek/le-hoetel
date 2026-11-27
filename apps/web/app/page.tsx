@@ -16,6 +16,7 @@ import { ProductShot } from "@/components/landing/product-shot"
 import { Trust } from "@/components/landing/trust"
 import { siteUrl, websiteJsonLd } from "@/lib/seo"
 import { SITE } from "@/lib/site"
+import { whatsappContactUrl } from "@/lib/whatsapp"
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale()
@@ -44,10 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Rendered per request: env (urls, the WhatsApp number) comes from the running container, not the build. */
 export default async function HomePage() {
   await connection()
-  const [env, t, faq] = await Promise.all([Promise.resolve(nextEnv()), getTranslations("landing.demo"), faqItems()])
-  const whatsappUrl = env.WHATSAPP_CONTACT_NUMBER
-    ? `https://wa.me/${env.WHATSAPP_CONTACT_NUMBER}?text=${encodeURIComponent(t("whatsappText"))}`
-    : null
+  const env = nextEnv()
+  const [faq, whatsappUrl] = await Promise.all([faqItems(), whatsappContactUrl(env.WHATSAPP_CONTACT_NUMBER)])
   return (
     <>
       <JsonLd data={websiteJsonLd()} />
@@ -62,7 +61,7 @@ export default async function HomePage() {
           })),
         }}
       />
-      <Header docsUrl={env.DOCS_URL} />
+      <Header docsUrl={env.DOCS_URL} dashboardUrl={env.DASHBOARD_URL} />
       <main className="flex-1 bg-canvas">
         <Hero />
         <ProductShot />

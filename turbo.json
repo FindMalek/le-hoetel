@@ -11,6 +11,12 @@
       "env": ["NEXT_PUBLIC_*"],
       "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**", "out/**"]
     },
+    "web#build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "$TURBO_ROOT$/package.json"],
+      "env": ["NEXT_PUBLIC_*"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    },
     "export": { "outputs": ["out/**"] },
     "check-types": { "dependsOn": ["^check-types"] },
     "test": {},
