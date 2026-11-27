@@ -64,11 +64,6 @@
     "open": "Open page",
     "tableCaption": "Latest guests",
     "hotelsAction": "Manage hotels",
-    "languages": {
-      "en": "English",
-      "fr": "French",
-      "ar": "Arabic"
-    },
     "noHotelsTitle": "No hotel yet",
     "noHotelsBody": "Create the first hotel and invite its owner. They will see their guests here.",
     "noAccessTitle": "You are not part of a hotel yet",

@@ -64,11 +64,6 @@
     "open": "Ouvrir la page",
     "tableCaption": "Derniers clients",
     "hotelsAction": "Gérer les hôtels",
-    "languages": {
-      "en": "Anglais",
-      "fr": "Français",
-      "ar": "Arabe"
-    },
     "noHotelsTitle": "Pas encore d'hôtel",
     "noHotelsBody": "Créez le premier hôtel et invitez son propriétaire. Il verra ses clients ici.",
     "noAccessTitle": "Vous ne faites pas encore partie d'un hôtel",
