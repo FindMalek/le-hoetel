@@ -43,6 +43,14 @@ A code can be a guest's code (`AB3D-EF7H`) or the offer's promo code. A promo co
 
 `offers.redeem` locks the offer row while it counts, then inserts, so two phones scanning the same code at once give one redemption and one "already redeemed". The unique `(offer_id, guest_id)` is the backstop. Each redemption writes an `offer.redeem` audit row (offer id, no guest data). A guest's code also counts their visit for the day and the result links to the guest. A wrong tap can be taken back for 10 minutes with `offers.undoRedeem`: the redemption and the visit it counted are removed and `offer.unredeem` is audited. Owners, managers and staff can redeem. `offers.redemptionStats` gives the counts (today in the hotel's timezone, last 7 days, total) and `offers.redemptions` lists every redemption of the hotel, newest first, which the screen loads as you scroll.
 
+## Staff hand out an offer
+
+**Give offer** on the guest page and on an unhappy guest's case lists the offers that can be redeemed now, whatever their audience. Picking one makes the guest's code (`offers.give`) or shows the one they already hold, with its QR. It redeems like any other code, once per guest. A used, expired or paused offer is not given again: a guest who holds a code sees why instead. Showing the code needs no consent.
+
+**Send** buttons appear only for channels the guest agreed to and can be reached on. `offers.send` goes through `sendToGuest`, so consent is checked again and the message is logged, with the unsubscribe link or STOP line. It uses the `message` template: email carries the offer card and a link to `/o`, WhatsApp the approved `guest_message` with the offer, code and link in its text. The same offer is sent to a guest at most once per 5 minutes and channel.
+
+Owners, managers and staff can give and send, the demo viewer cannot. A new code writes `offer.give` and each send `offer.send` in the audit log.
+
 ## Demo data
 
 The seed adds three offers per demo hotel (open, open, and one past its end date) with codes and redemptions spread over the last weeks (`packages/db/src/seed/offers.ts`).
