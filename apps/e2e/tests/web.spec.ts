@@ -40,6 +40,36 @@ test("a guest signs up from the QR page and sees the welcome at once", async ({ 
   await expect(page.getByRole("status").getByRole("heading", { name: "You are in, Amira" })).toBeVisible()
 })
 
+test("consent is off and above Join, and the email field opens under its toggle", async ({ page }) => {
+  await page.goto(`${URLS.web}/h/dar-zitouna?lang=en`)
+  const consent = page.locator("input[name=emailConsent]")
+  await expect(consent).not.toBeChecked()
+  await expect(page.locator("input[name=whatsapp]")).not.toBeChecked()
+  await expect(page.locator("#capture-email")).toHaveCount(0)
+
+  const join = page.getByRole("button", { name: "Join" })
+  const top = async (locator: typeof join) => (await locator.boundingBox())?.y ?? 0
+  expect(await top(join)).toBeGreaterThan(await top(page.locator("label").filter({ has: consent })))
+  await expect(join).not.toBeInViewport({ ratio: 1 })
+
+  await consent.check({ force: true })
+  const email = page.locator("#capture-email")
+  expect(await top(email)).toBeGreaterThan(await top(page.locator("label").filter({ has: consent })))
+  expect(await top(email)).toBeLessThan(await top(join))
+})
+
+test.describe("on a French phone", () => {
+  test.use({ locale: "fr-FR" })
+
+  test("the capture page reads French, and `?lang` still wins", async ({ page }) => {
+    await page.goto(`${URLS.web}/h/dar-zitouna`)
+    await expect(page.getByRole("button", { name: "Rejoindre" })).toBeVisible()
+    await expect(page.locator("input[name=language]")).toHaveValue("fr")
+    await page.goto(`${URLS.web}/h/dar-zitouna?lang=en`)
+    await expect(page.getByRole("button", { name: "Join" })).toBeVisible()
+  })
+})
+
 test.describe("on a German phone", () => {
   test.use({ locale: "de-DE" })
 
