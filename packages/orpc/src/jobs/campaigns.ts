@@ -15,7 +15,7 @@ export const CAMPAIGN_JOB = "campaign-dispatch"
  * Runs every minute. Takes the campaigns that are due (scheduled, or still sending), skips hotels in quiet hours
  * (21:00 to 08:00 local), and sends the next batch to guests the campaign has not reached yet. A campaign is done
  * when a batch finds nobody left. The recipient row is written before the send, so a crash or a second worker
- * never sends twice. Cancelling stops it at the next batch.
+ * never sends twice. Cancelling stops it at the next batch. Moving it to "sending" is what locks out "back to draft".
  */
 export const campaignJob = (services: JobServices, options: { batchSize?: number; pauseMs?: number } = {}) =>
   defineJob({
@@ -41,7 +41,7 @@ export const campaignJob = (services: JobServices, options: { batchSize?: number
             ne(hotelSettings.status, "suspended"),
           ),
         )
-      for (const { campaign, timezone, defaultLanguage } of due) {
+      for (const { campaign: listed, timezone, defaultLanguage } of due) {
         let local: ReturnType<typeof localTime>
         try {
           local = localTime(now(), timezone)
@@ -50,10 +50,19 @@ export const campaignJob = (services: JobServices, options: { batchSize?: number
           continue
         }
         if (isQuietHour(local.hour)) continue
-        await services.db
+        // the list above can be stale: only send what is still due, as it reads now
+        const [campaign] = await services.db
           .update(campaigns)
           .set({ status: "sending" })
-          .where(and(eq(campaigns.id, campaign.id), eq(campaigns.status, "scheduled")))
+          .where(
+            and(
+              eq(campaigns.id, listed.id),
+              inArray(campaigns.status, ["scheduled", "sending"]),
+              lte(campaigns.scheduledAt, now()),
+            ),
+          )
+          .returning()
+        if (!campaign) continue
         const batch = await recipientsQuery(services.db, {
           hotelId: campaign.hotelId,
           channel: campaign.channel,

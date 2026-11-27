@@ -1,6 +1,7 @@
 "use client"
 
 // i18n-used: campaigns
+import { CAMPAIGN_NAME_MAX } from "@ritorno/common/campaigns"
 import { HOTEL_LANGUAGES, type HotelLanguage } from "@ritorno/common/hotel"
 import { LOCALE_NAMES } from "@ritorno/i18n"
 import { errorMessage } from "@ritorno/orpc/errors"
@@ -14,7 +15,7 @@ import { Section } from "@ritorno/ui/components/section"
 import { SegmentedControl } from "@ritorno/ui/components/segmented-control"
 import { StatCard } from "@ritorno/ui/components/stat-card"
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { CalendarClockIcon, SendIcon, Trash2Icon, XCircleIcon } from "lucide-react"
+import { CalendarClockIcon, CopyIcon, PencilLineIcon, SendIcon, Trash2Icon, XCircleIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
@@ -91,6 +92,19 @@ export function CampaignDetail({
   const test = useMutation(
     orpc.campaigns.testSend.mutationOptions({
       onSuccess: (result) => toast.success(t("detail.testSent", { to: result.to })),
+      onError,
+    }),
+  )
+  const unschedule = useMutation(
+    orpc.campaigns.unschedule.mutationOptions({ onSuccess: done(t("detail.unscheduled")), onError }),
+  )
+  const duplicate = useMutation(
+    orpc.campaigns.duplicate.mutationOptions({
+      onSuccess: (copy) => {
+        toast.success(t("detail.duplicated"))
+        void queryClient.invalidateQueries({ queryKey: orpc.campaigns.key() })
+        router.push(`/campaigns/${copy.id}`)
+      },
       onError,
     }),
   )
@@ -224,15 +238,30 @@ export function CampaignDetail({
             offerTitle={offerTitle}
             copies={copies}
           />
-          <Button
-            type="button"
-            variant="outline"
-            className="self-start"
-            loading={test.isPending}
-            onClick={() => test.mutate({ id, language })}
-          >
-            {t("detail.testSend")}
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              loading={test.isPending}
+              onClick={() => test.mutate({ id, language })}
+            >
+              {t("detail.testSend")}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              loading={duplicate.isPending}
+              onClick={() =>
+                duplicate.mutate({
+                  id,
+                  name: t("detail.copyName", { name: campaign.name }).slice(0, CAMPAIGN_NAME_MAX),
+                })
+              }
+            >
+              <CopyIcon data-icon="inline-start" />
+              {t("detail.duplicate")}
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-6 lg:col-span-2">
@@ -282,6 +311,22 @@ export function CampaignDetail({
               >
                 <CalendarClockIcon data-icon="inline-start" />
                 {t("detail.schedule")}
+              </Button>
+            </Section>
+          ) : null}
+
+          {campaign.status === "scheduled" ? (
+            <Section title={t("detail.changeTitle")} className="rounded-xl border p-4 md:p-5">
+              <p className="text-muted-foreground text-sm">{t("detail.unscheduleHint")}</p>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                loading={unschedule.isPending}
+                onClick={() => unschedule.mutate({ id })}
+              >
+                <PencilLineIcon data-icon="inline-start" />
+                {t("detail.unschedule")}
               </Button>
             </Section>
           ) : null}

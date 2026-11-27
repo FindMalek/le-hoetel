@@ -1919,7 +1919,9 @@
         "cancel": "A annulé une campagne",
         "create": "A créé une campagne",
         "delete": "A supprimé une campagne",
-        "schedule": "A programmé une campagne"
+        "duplicate": "A dupliqué une campagne",
+        "schedule": "A programmé une campagne",
+        "unschedule": "A remis une campagne en brouillon"
       },
       "holiday": {
         "update": "A modifié les messages de fêtes"
@@ -2020,7 +2022,14 @@
         "sent": "Envoyée le {date}.",
         "failed": "Aucun message n'est passé. Vérifiez la configuration e-mail et WhatsApp.",
         "cancelled": "Annulée le {date}."
-      }
+      },
+      "duplicate": "Dupliquer",
+      "duplicated": "Copie enregistrée en brouillon",
+      "copyName": "{name} (copie)",
+      "changeTitle": "Modifier l'envoi",
+      "unschedule": "Remettre en brouillon",
+      "unscheduleHint": "Rien n'est encore parti. Remettez-la en brouillon pour corriger le message ou changer l'heure.",
+      "unscheduled": "Remise en brouillon. Rien ne part tant que vous ne la reprogrammez pas."
     },
     "form": {
       "newTitle": "Nouvelle campagne",

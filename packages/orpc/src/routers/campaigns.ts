@@ -1,6 +1,7 @@
 import { ORPCError } from "@orpc/server"
 import {
   CAMPAIGN_CHANNELS,
+  CAMPAIGN_NAME_MAX,
   type CampaignInput,
   campaignInputSchema,
   campaignSchema,
@@ -9,9 +10,9 @@ import {
 } from "@ritorno/common/campaigns"
 import { HOTEL_LANGUAGES } from "@ritorno/common/hotel"
 import { unsubscribePageUrl } from "@ritorno/common/unsubscribe"
-import { campaigns, hotelSettings, offers } from "@ritorno/db"
+import { campaignRecipients, campaigns, hotelSettings, offers } from "@ritorno/db"
 import { type EmailHotel, renderEmail, sampleGuest } from "@ritorno/notification"
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, inArray, notExists, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { audit } from "../lib/audit"
@@ -129,6 +130,26 @@ export const campaignsRouter = {
       return (await withResults(context, [row]))[0]!
     }),
 
+  duplicate: hotelProcedure
+    .use(can({ campaign: ["create"] }))
+    .route({
+      method: "POST",
+      path: "/campaigns/{id}/duplicate",
+      summary: "Copy a campaign into a new draft",
+      tags: ["campaigns"],
+    })
+    .input(idSchema.extend({ name: z.string().trim().min(1).max(CAMPAIGN_NAME_MAX) }))
+    .output(campaignSchema)
+    .handler(async ({ context, input }) => {
+      const { channel, content, segment, offerId, hotelId } = await loadCampaign(context, input.id)
+      const [row] = await context.db
+        .insert(campaigns)
+        .values({ name: input.name, channel, content, segment, offerId, hotelId })
+        .returning()
+      await audit(context, { action: "campaign.duplicate", targetId: row!.id })
+      return (await withResults(context, [row!]))[0]!
+    }),
+
   delete: hotelProcedure
     .use(can({ campaign: ["delete"] }))
     .route({
@@ -243,6 +264,44 @@ export const campaignsRouter = {
       return (await withResults(context, [row]))[0]!
     }),
 
+  unschedule: hotelProcedure
+    .use(can({ campaign: ["send"] }))
+    .route({
+      method: "POST",
+      path: "/campaigns/{id}/unschedule",
+      summary: "Put a scheduled campaign back to draft",
+      tags: ["campaigns"],
+    })
+    .input(idSchema)
+    .output(campaignSchema)
+    .handler(async ({ context, input }) => {
+      const campaign = await loadCampaign(context, input.id)
+      // one statement: the job moves a campaign to "sending" before it sends, so only one of the two can win
+      const [row] = await context.db
+        .update(campaigns)
+        .set({ status: "draft", scheduledAt: null })
+        .where(
+          and(
+            eq(campaigns.id, campaign.id),
+            eq(campaigns.status, "scheduled"),
+            notExists(
+              context.db
+                .select({ one: sql`1` })
+                .from(campaignRecipients)
+                .where(eq(campaignRecipients.campaignId, campaign.id)),
+            ),
+          ),
+        )
+        .returning()
+      if (!row) {
+        throw new ORPCError("CONFLICT", {
+          message: "Only a scheduled campaign that has not started can go back to draft.",
+        })
+      }
+      await audit(context, { action: "campaign.unschedule", targetId: row.id })
+      return (await withResults(context, [row]))[0]!
+    }),
+
   cancel: hotelProcedure
     .use(can({ campaign: ["send"] }))
     .route({
@@ -255,15 +314,15 @@ export const campaignsRouter = {
     .output(campaignSchema)
     .handler(async ({ context, input }) => {
       const campaign = await loadCampaign(context, input.id)
-      if (campaign.status !== "scheduled" && campaign.status !== "sending") {
-        throw new ORPCError("CONFLICT", { message: "Only a scheduled or running campaign can be cancelled." })
-      }
       const [row] = await context.db
         .update(campaigns)
         .set({ status: "cancelled", completedAt: context.now() })
-        .where(eq(campaigns.id, campaign.id))
+        .where(and(eq(campaigns.id, campaign.id), inArray(campaigns.status, ["scheduled", "sending"])))
         .returning()
+      if (!row) {
+        throw new ORPCError("CONFLICT", { message: "Only a scheduled or running campaign can be cancelled." })
+      }
       await audit(context, { action: "campaign.cancel", targetId: campaign.id })
-      return (await withResults(context, [row!]))[0]!
+      return (await withResults(context, [row]))[0]!
     }),
 }
