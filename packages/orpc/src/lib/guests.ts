@@ -170,12 +170,14 @@ type Stay = { stayCheckIn?: string | null; stayCheckOut?: string | null }
 
 /**
  * Staff dates win, but a stored date that would put arrival after departure belongs to an older stay and goes.
- * A csv row older than the stored check-out changes nothing: an old list must not rewind the last stay.
+ * A csv row older than the stored stay (its check-out, else its arrival) changes nothing: an old list must not rewind
+ * the last stay.
  */
 function mergedStay(current: typeof guests.$inferSelect, typed: Stay, fromCsv: boolean) {
   const kept = { stayCheckIn: current.stayCheckIn, stayCheckOut: current.stayCheckOut }
   const latest = typed.stayCheckOut ?? typed.stayCheckIn
-  if (fromCsv && latest && current.stayCheckOut && latest < current.stayCheckOut) return kept
+  const stored = current.stayCheckOut ?? current.stayCheckIn
+  if (fromCsv && latest && stored && latest < stored) return kept
   const merged = {
     stayCheckIn: typed.stayCheckIn ?? current.stayCheckIn,
     stayCheckOut: typed.stayCheckOut ?? current.stayCheckOut,

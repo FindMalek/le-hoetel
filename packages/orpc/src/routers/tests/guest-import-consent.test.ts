@@ -48,7 +48,7 @@ test("imported stay dates need their own consent, never rewind and never come ba
   const owner = await app.signUp("import-stay@ritorno.test")
   const hotelId = await app.createHotel("import-stay", owner)
   const { client } = await app.joinHotel(owner, hotelId, "owner")
-  const importRow = (row: { stayCheckIn: string; stayCheckOut: string; stayConsent?: string }) =>
+  const importRow = (row: { stayCheckIn: string; stayCheckOut?: string; stayConsent?: string }) =>
     client.guests.import({
       rows: [{ line: 2, name: "Amel", phone: "20 455 455", consent: "yes", ...row }],
       defaultLanguage: "fr",
@@ -64,6 +64,12 @@ test("imported stay dates need their own consent, never rewind and never come ba
   expect(await stored()).toMatchObject({ stayCheckIn: "2026-05-01", stayCheckOut: "2026-05-08" })
 
   const { id } = await stored()
+  // a current stay that only has an arrival is newer than the old list too
+  await client.guests.update({ id, stayCheckIn: "2026-11-20", stayCheckOut: null })
+  await importRow({ stayCheckIn: "2025-01-01", stayCheckOut: "2025-01-05", stayConsent: "yes" })
+  expect(await stored()).toMatchObject({ stayCheckIn: "2026-11-20", stayCheckOut: null })
+  await client.guests.update({ id, stayCheckIn: "2026-05-01", stayCheckOut: "2026-05-08" })
+
   await expect(client.guests.update({ id, stayCheckIn: "2026-06-01" })).rejects.toThrow("Departure")
 
   await client.guests.setConsent({ guestId: id, channel: "profile", granted: false, source: "guest_request" })
