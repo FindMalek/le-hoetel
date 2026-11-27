@@ -33,7 +33,16 @@ Pending invitations, in the dashboard:
 
 Deleting a hotel and changing its name or slug only go through the admin procedures. `admin.hotels.update` takes `name` and `slug` (same format as on create, refused with `CONFLICT` when another hotel has it), and the admin hotel page asks to confirm a new slug. Printed `/q/<code>` codes keep working ([short links](#short-links-behind-the-codes)), but links shared by hand and `/h/<old slug>` codes printed before short links stop working. `admin.hotels.remove` deletes. better-auth's own `/api/auth/organization/delete` is off and `/api/auth/organization/update` refuses `name` and `slug`, so an owner or manager can't do either.
 
-Accounts are never self-served either. Sign up over http only works for an email with a pending, unexpired invitation (password, GitHub and magic link alike, checked in the `user.create.before` hook of `packages/auth`). Accounts made server side (the `ADMIN_EMAIL` admin, the demo seed, `signUp()` in tests) and the admin plugin's create-user skip the check.
+Accounts are never self-served either. Sign up over http is checked in the `user.create.before` hook of `packages/auth`. It always needs a pending, unexpired invitation for that email whose sender still counts (`inviterMayInvite`), and never works for a demo address. On top of that, knowing an invited address is not enough:
+
+| Sign up path | What proves the person was invited |
+| --- | --- |
+| Email and password | The invitation id, sent in the `x-invitation-id` header. The dashboard takes it from `next=/accept-invitation/<id>`, so the invitee has to start from the invitation link (it leads to sign in, then **Create an account**). Opening `/sign-up` directly is refused |
+| Magic link | The link itself was delivered to the address, no id needed |
+| GitHub | GitHub reports the address as verified, no id needed. An unverified address is refused unless the request carries the id, which the dashboard redirect flow does not |
+| Accept page, existing account | No sign up: the user signs in and accepts |
+
+Accounts made server side (the `ADMIN_EMAIL` admin, the demo seed, `signUp()` in tests) and the admin plugin's create-user skip the check.
 
 App admins can ban a user from the Users page: it signs them out everywhere and blocks sign in until they are unbanned. You cannot ban yourself or another app admin. Every ban and unban is in the audit log.
 

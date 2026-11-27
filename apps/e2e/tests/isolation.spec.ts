@@ -1,4 +1,5 @@
 import { type APIRequestContext, expect, test } from "@playwright/test"
+import { INVITATION_ID_HEADER } from "@ritorno/common/constants"
 import { DEFAULT_DEMO_PASSWORD, DEMO_SUPER_ADMIN_EMAIL } from "@ritorno/common/demo"
 import postgres from "postgres"
 import { e2eDatabaseUrl, URLS } from "../env"
@@ -18,9 +19,9 @@ function remember(jar: Jar, response: { headersArray: () => { name: string; valu
   }
 }
 
-async function signUp(request: APIRequestContext, email: string) {
+async function signUp(request: APIRequestContext, email: string, invitationId: string) {
   const response = await request.post(`${URLS.api}/auth/sign-up/email`, {
-    headers: { origin: URLS.dashboard },
+    headers: { origin: URLS.dashboard, [INVITATION_ID_HEADER]: invitationId },
     data: { email, password: PASSWORD, name: email.split("@")[0] },
   })
   expect(response.status()).toBe(200)
@@ -72,10 +73,10 @@ test("one hotel can never read, change, export or delete another hotel's guests 
     })
     expect(created.status()).toBe(200)
     hotels[key] = (await created.json()).id
-    remember(owner.jar, await signUp(request, owner.email))
     const db = postgres(e2eDatabaseUrl(), { max: 1, onnotice: () => {} })
     const [invite] = await db`select id from invitation where organization_id = ${String(hotels[key])}`
     await db.end()
+    remember(owner.jar, await signUp(request, owner.email, String(invite?.id)))
     const accepted = await request.post(`${URLS.api}/auth/organization/accept-invitation`, {
       headers: { origin: URLS.dashboard, cookie: cookieHeader(owner.jar) },
       data: { invitationId: invite?.id },

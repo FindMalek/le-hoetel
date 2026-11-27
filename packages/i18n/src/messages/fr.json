@@ -155,7 +155,7 @@
     },
     "signUp": {
       "title": "Créez votre compte",
-      "description": "Les comptes se créent sur invitation. Inscrivez-vous avec l'adresse e-mail invitée par votre hôtel.",
+      "description": "Les comptes se créent sur invitation. Ouvrez le lien reçu par e-mail, puis inscrivez-vous avec l'adresse invitée.",
       "name": "Votre nom",
       "submit": "Créer le compte",
       "have": "Vous avez déjà un compte ?",
@@ -187,7 +187,7 @@
       "passwordShort": "Utilisez au moins 10 caractères.",
       "invalidCredentials": "E-mail ou mot de passe incorrect.",
       "exists": "Un compte existe déjà avec cet e-mail. Essayez de vous connecter.",
-      "notInvited": "Nous n'avons aucune invitation pour cet e-mail. Demandez au propriétaire de votre hôtel de vous inviter, puis inscrivez-vous avec la même adresse.",
+      "notInvited": "L'inscription se fait sur invitation. Ouvrez le lien reçu par e-mail et utilisez l'adresse invitée, ou demandez au propriétaire de votre hôtel de vous inviter.",
       "tooMany": "Trop d'essais. Attendez une minute et réessayez.",
       "generic": "Une erreur est survenue. Réessayez."
     },

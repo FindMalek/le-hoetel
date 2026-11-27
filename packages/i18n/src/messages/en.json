@@ -155,7 +155,7 @@
     },
     "signUp": {
       "title": "Create your account",
-      "description": "Accounts come from an invitation. Sign up with the email address your hotel invited.",
+      "description": "Accounts come from an invitation. Open the link in your invitation email, then sign up with the invited address.",
       "name": "Your name",
       "submit": "Create account",
       "have": "Already have an account?",
@@ -187,7 +187,7 @@
       "passwordShort": "Use at least 10 characters.",
       "invalidCredentials": "Wrong email or password.",
       "exists": "An account with this email already exists. Try signing in.",
-      "notInvited": "We have no invitation for this email. Ask your hotel owner to invite you, then sign up with the same address.",
+      "notInvited": "Sign up needs an invitation. Open the link in your invitation email and use the invited address, or ask your hotel owner to invite you.",
       "tooMany": "Too many tries. Wait a minute and try again.",
       "generic": "Something went wrong. Try again."
     },
