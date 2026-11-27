@@ -23,20 +23,48 @@ test("french headers map each consent to its channel, never to the phone or the 
   })
 })
 
-test("a consent header that names no channel, or that means refusal, grants nothing by itself", () => {
-  const guess = guessImportColumns(["name", "phone", "consent", "Opt-out email"], [])
-  expect(guess.mapping).toMatchObject({ emailConsent: -1, whatsappConsent: -1, email: -1 })
-  expect(guess.unnamedConsent).toEqual([2])
-
+test("only a header made entirely of known words is read as consent", () => {
+  const consents = (header: string) => {
+    const { mapping, unmatchedConsent } = guessImportColumns([header], [])
+    const fields = (["emailConsent", "whatsappConsent", "stayConsent"] as const).filter((field) => mapping[field] === 0)
+    return { fields, unmatched: unmatchedConsent.length === 1, email: mapping.email }
+  }
   for (const header of [
+    "consent",
+    "Opt-out email",
+    "Email consent withdrawn",
+    "Email consent revoked",
+    "Email consent declined",
+    "Accord e-mail non obtenu",
+    "Consentement e-mail retiré",
+    "N'accepte plus WhatsApp",
+    "N'accepte pas WhatsApp",
     "Pas de consentement e-mail",
     "No WhatsApp consent",
-    "N'accepte pas WhatsApp",
+    "لا يقبل واتساب",
+    "سحب الموافقة على واتساب",
     "عدم موافقة واتساب",
+    "Accord e-mail (pas WhatsApp)",
+    "Email stay consent",
   ]) {
-    expect(guessImportColumns([header], []).mapping, header).toMatchObject({ emailConsent: -1, whatsappConsent: -1 })
+    expect(consents(header), header).toEqual({ fields: [], unmatched: true, email: -1 })
   }
-  expect(guessImportColumns(["Accord e-mail (oui ou non)"], []).mapping.emailConsent).toBe(0)
+
+  for (const [header, fields] of [
+    ["email_consent", ["emailConsent"]],
+    ["Accord e-mail (oui ou non)", ["emailConsent"]],
+    ["Marketing email consent (yes/no)", ["emailConsent"]],
+    ["WhatsApp opt-in", ["whatsappConsent"]],
+    ["Consent email and WhatsApp", ["emailConsent", "whatsappConsent"]],
+    ["الموافقة على البريد الإلكتروني (نعم أو لا)", ["emailConsent"]],
+    ["الموافقة على واتساب", ["whatsappConsent"]],
+    ["Accord sur le séjour (oui ou non)", ["stayConsent"]],
+    ["Stay details consent (yes or no)", ["stayConsent"]],
+    ["الموافقة على تفاصيل الإقامة", ["stayConsent"]],
+    ["consent_profile", ["stayConsent"]],
+  ] as const) {
+    expect(consents(header).fields, header).toEqual([...fields])
+  }
 })
 
 test("oui and vrai grant only their own channel, non and anything unclear grant nothing", () => {

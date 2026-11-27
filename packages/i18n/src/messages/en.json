@@ -430,7 +430,7 @@
         "kept": "opted out before, consent kept withdrawn"
       },
       "datesDropped": "Stay dates are only saved where the stay consent column says yes and you confirm it. Other dates are left out, the guest is still added.",
-      "unnamedConsent": "The column “{column}” does not say which channel it covers. Choose it under email or WhatsApp consent only if the guests agreed to that channel.",
+      "unmatchedConsent": "We did not match the column “{column}” to a consent. Check what a yes in it means: choose it under email, WhatsApp or stay consent only if yes means the guest agreed to that.",
       "newGuests": "new",
       "mergedGuests": "already here",
       "checkFailed": "We could not check which guests are already here. Importing still merges them by phone.",

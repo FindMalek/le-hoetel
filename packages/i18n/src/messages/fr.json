@@ -430,7 +430,7 @@
         "kept": "désinscrits avant, accord laissé retiré"
       },
       "datesDropped": "Les dates de séjour ne sont enregistrées que si la colonne d'accord sur le séjour dit oui et que vous le confirmez. Les autres dates sont ignorées, le client est quand même ajouté.",
-      "unnamedConsent": "La colonne « {column} » ne dit pas quel canal elle couvre. Choisissez-la pour l'e-mail ou WhatsApp seulement si les clients ont accepté ce canal.",
+      "unmatchedConsent": "La colonne « {column} » n'a été associée à aucun accord. Vérifiez ce qu'un oui veut dire : choisissez-la pour l'e-mail, WhatsApp ou le séjour seulement si oui signifie que le client a accepté.",
       "newGuests": "nouveaux",
       "mergedGuests": "déjà là",
       "checkFailed": "Impossible de vérifier quels clients sont déjà là. L'import les fusionne quand même par téléphone.",

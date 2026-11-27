@@ -42,6 +42,7 @@ import { useRefreshLists } from "@/lib/use-refresh-lists"
 type Step = "upload" | "map" | "review" | "done"
 
 const REQUIRED: ImportField[] = ["name", "phone"]
+const CONSENT_IMPORT_FIELDS: ImportField[] = ["emailConsent", "whatsappConsent", "stayConsent"]
 const STEPS = ["upload", "map", "review"] as const
 const PROBLEM_FIELDS = ["name", "phone", "email", "birthday", "language", "stayCheckIn", "stayCheckOut"] as const
 const PREVIEW_ROWS = 5
@@ -72,7 +73,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
   const [table, setTable] = useState<string[][] | null>(null)
   const [mapping, setMapping] = useState<ImportMapping | null>(null)
   const [detected, setDetected] = useState<ImportMapping | null>(null)
-  const [unnamed, setUnnamed] = useState<number[]>([])
+  const [unmatched, setUnmatched] = useState<number[]>([])
   const [language, setLanguage] = useState(defaultLanguage)
   const [confirm, setConfirm] = useState(false)
   const [result, setResult] = useState<GuestImportResult | null>(null)
@@ -189,7 +190,7 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
     setFileName(file.name)
     setMapping(guess.mapping)
     setDetected(guess.mapping)
-    setUnnamed(guess.unnamedConsent)
+    setUnmatched(guess.unmatchedConsent)
     setConfirm(false)
     setStep("map")
   }
@@ -355,7 +356,11 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
                     <Select
                       {...aria}
                       value={String(mapping[field])}
-                      onValueChange={(value) => setMapping({ ...mapping, [field]: Number(value) })}
+                      onValueChange={(value) => {
+                        setMapping({ ...mapping, [field]: Number(value) })
+                        // the confirmation was for the columns as they were
+                        if (CONSENT_IMPORT_FIELDS.includes(field)) setConfirm(false)
+                      }}
                       options={[
                         { value: "-1", label: t("none") },
                         ...headers.map((header, index) => ({ value: String(index), label: header })),
@@ -366,12 +371,12 @@ export function GuestImport({ defaultLanguage }: { defaultLanguage: HotelLanguag
               )
             })}
           </div>
-          {unnamed
+          {unmatched
             .filter((index) => mapping.emailConsent !== index && mapping.whatsappConsent !== index)
             .filter((index) => mapping.stayConsent !== index)
             .map((index) => (
               <InlineAlert key={index} tone="warning">
-                {t("unnamedConsent", { column: headers[index] ?? "" })}
+                {t("unmatchedConsent", { column: headers[index] ?? "" })}
               </InlineAlert>
             ))}
           <LanguageChoice
