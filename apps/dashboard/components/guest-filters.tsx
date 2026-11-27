@@ -116,73 +116,78 @@ export function GuestFilters({ values }: { values: GuestFilterValues }) {
           className="h-11 bg-background ps-9"
         />
       </form>
-      <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
-        <Chip href={toggle("returning", "1")} active={values.returning === "1"}>
-          <RepeatIcon className="size-4" aria-hidden />
-          {t("filter.returning")}
-        </Chip>
-        <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
-        {GUEST_CONSENT_FILTERS.map((value) => {
-          const Icon = CONSENT_ICONS[value]
-          return (
-            <Chip key={value} href={toggle("consent", value)} active={values.consent === value}>
-              {Icon && <Icon className="size-4" aria-hidden />}
-              {t(`consent.${value}`)}
-            </Chip>
-          )
-        })}
-        <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
-        {LOCALES.map((value) => (
-          <Chip key={value} href={toggle("language", value)} active={values.language === value}>
-            {LOCALE_NAMES[value]}
+      {/* The fade tells a phone there are more chips past the edge; the end padding lets the last one clear it. */}
+      <div className="relative -mx-4 after:pointer-events-none after:absolute after:inset-y-0 after:end-0 after:w-12 after:bg-linear-to-l after:from-background md:mx-0 md:after:hidden rtl:after:bg-linear-to-r">
+        <div className="flex items-center gap-2 overflow-x-auto ps-4 pe-12 pb-1 md:flex-wrap md:overflow-visible md:px-0">
+          <Chip href={toggle("returning", "1")} active={values.returning === "1"}>
+            <RepeatIcon className="size-4" aria-hidden />
+            {t("filter.returning")}
           </Chip>
-        ))}
-        <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <button
-                type="button"
-                className={cn(
-                  chip,
-                  values.source
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-input bg-background hover:bg-muted",
-                )}
-              />
-            }
-          >
-            {values.source ? t(`source.${values.source as (typeof GUEST_SOURCES)[number]}`) : t("filter.source")}
-            <ChevronDownIcon className="size-4" aria-hidden />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuRadioGroup
-              value={values.source ?? ""}
-              onValueChange={(value) =>
-                startTransition(() => router.replace(href({ source: value || undefined }) as never, { scroll: false }))
+          <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
+          {GUEST_CONSENT_FILTERS.map((value) => {
+            const Icon = CONSENT_ICONS[value]
+            return (
+              <Chip key={value} href={toggle("consent", value)} active={values.consent === value}>
+                {Icon && <Icon className="size-4" aria-hidden />}
+                {t(`consent.${value}`)}
+              </Chip>
+            )
+          })}
+          <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
+          {LOCALES.map((value) => (
+            <Chip key={value} href={toggle("language", value)} active={values.language === value}>
+              {LOCALE_NAMES[value]}
+            </Chip>
+          ))}
+          <span aria-hidden className="h-5 w-px shrink-0 bg-border" />
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <button
+                  type="button"
+                  className={cn(
+                    chip,
+                    values.source
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-input bg-background hover:bg-muted",
+                  )}
+                />
               }
             >
-              <DropdownMenuRadioItem value="">{t("filter.any")}</DropdownMenuRadioItem>
-              {GUEST_SOURCES.map((value) => (
-                <DropdownMenuRadioItem key={value} value={value}>
-                  {t(`source.${value}`)}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {active && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="shrink-0 coarse:h-11"
-            render={<Link href={pathname as never} replace />}
-            nativeButton={false}
-          >
-            <XIcon data-icon="inline-start" />
-            {t("reset")}
-          </Button>
-        )}
+              {values.source ? t(`source.${values.source as (typeof GUEST_SOURCES)[number]}`) : t("filter.source")}
+              <ChevronDownIcon className="size-4" aria-hidden />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuRadioGroup
+                value={values.source ?? ""}
+                onValueChange={(value) =>
+                  startTransition(() =>
+                    router.replace(href({ source: value || undefined }) as never, { scroll: false }),
+                  )
+                }
+              >
+                <DropdownMenuRadioItem value="">{t("filter.any")}</DropdownMenuRadioItem>
+                {GUEST_SOURCES.map((value) => (
+                  <DropdownMenuRadioItem key={value} value={value}>
+                    {t(`source.${value}`)}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {active && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="shrink-0 coarse:h-11"
+              render={<Link href={pathname as never} replace />}
+              nativeButton={false}
+            >
+              <XIcon data-icon="inline-start" />
+              {t("reset")}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   )

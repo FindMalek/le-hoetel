@@ -228,12 +228,14 @@ export function CampaignForm({
       {reach.data ? (
         <>
           <span className="font-semibold text-h3">{guests(reachFor(channel, reach.data))}</span>
-          <span className="text-muted-foreground text-sm">
-            {t.rich("form.reachSplit", {
-              email: () => num(reach.data.email),
-              whatsapp: () => num(reach.data.whatsapp),
-            })}
-          </span>
+          {channel === "both" && (
+            <span className="text-muted-foreground text-sm">
+              {t.rich("form.reachSplit", {
+                email: () => num(reach.data.email),
+                whatsapp: () => num(reach.data.whatsapp),
+              })}
+            </span>
+          )}
           {reach.data.undated > 0 && (
             <span className="text-muted-foreground text-sm">
               {t.rich("form.undated", { count: reach.data.undated, n: () => num(reach.data.undated) })}
@@ -290,7 +292,8 @@ export function CampaignForm({
                     position + 1
                   )}
                 </span>
-                {t(`form.steps.${value}`)}
+                {/* Four named steps do not fit a phone: only the current one keeps its name there. */}
+                <span className={cn(value !== step && "max-sm:sr-only")}>{t(`form.steps.${value}`)}</span>
                 {stepHasError(value) ? <span className="sr-only">{t("form.stepHasError")}</span> : null}
               </TabsTrigger>
             ))}

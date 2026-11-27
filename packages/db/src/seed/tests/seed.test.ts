@@ -6,6 +6,7 @@ import {
   captureSpots,
   consentEvents,
   guests,
+  inboxItem,
   member,
   messages,
   notes,
@@ -73,6 +74,10 @@ test("every seeded guest and account is unreachable", async () => {
     ...accounts.map((a) => a.email),
   ]
   expect(addresses.filter((to) => !isDemoRecipient(to))).toEqual([])
+})
+
+test("the inbox gets no notification the app never creates", async () => {
+  expect(await testDb.db.select({ title: inboxItem.title }).from(inboxItem)).toEqual([])
 })
 
 test("the log has every status, previews for unsent messages, and surveys the job would not redo", async () => {

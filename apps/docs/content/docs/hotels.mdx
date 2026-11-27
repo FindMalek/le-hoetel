@@ -135,7 +135,7 @@ On a phone the same switcher sits at the top of the "More" sheet. One hotel is o
 
 The guest list (`/guests`) reads `guests.list`, which only returns the active hotel's guests. Filters live in the url (`q`, `consent`, `source`, `language`, `returning`), so a search can be shared. One search box matches the name, the email or the phone digits (`20 123 456` finds `+21620123456`). `consent=none` means no email and no WhatsApp consent, `returning=1` keeps guests with two visits or more, and each row carries its visit count for the returning badge. On phones each guest is a card, from `md` up it is a table.
 
-The guest page (`/guests/[id]`) shows the profile, consent per channel with its log, stays, offers used, survey answers (`guests.activity`) and messages. Staff with `guest.update` edit the details at `/guests/[id]/edit` and change a consent after a confirm: withdrawing is logged as a guest request, granting shows the exact wording in the guest's language and is logged as `staff`. Deleting a guest asks to type their name.
+The guest page (`/guests/[id]`) shows the profile, consent per channel with its log, stays, offers used, survey answers (`guests.activity`) and messages (each named by its type, with the campaign or holiday it came from). Staff with `guest.update` edit the details at `/guests/[id]/edit` and change a consent after a confirm: withdrawing is logged as a guest request, granting shows the exact wording in the guest's language and is logged as `staff`. Deleting a guest asks to type their name.
 
 ## Onboarding checklist
 
@@ -176,11 +176,11 @@ The Metrics page (`/metrics`, linked from the dashboard home) answers "what did 
 
 - Guests captured, as bars per day (7 days) or per week (30, 90), split by source. Plain markup, no chart library
 - Consent rate for WhatsApp and email among the guests captured in the period
-- Messages sent and the share delivered, from the `messages` table
+- Messages sent and the share delivered, from the `messages` table. Sent messages with no delivery report yet are counted next to it
 - Offer codes sent in the period and how many of those same codes were redeemed, so a redemption of an older code never inflates the rate
 - Reviews requested (guests who tapped the Google review link after the survey) and the survey score with the number of unhappy answers (0 to 6), from `survey_responses`. With no answers yet the cards show a dash and say so, the page never invents a number
 
-The chart says under its title whether a bar is a day or a week.
+The chart says under its title whether a bar is a day or a week. On a phone the axis shows the day number, with the month on the first bar and where it changes.
 
 ## Audit log
 

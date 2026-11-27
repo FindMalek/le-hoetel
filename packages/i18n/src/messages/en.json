@@ -64,11 +64,6 @@
     "open": "Open page",
     "tableCaption": "Latest guests",
     "hotelsAction": "Manage hotels",
-    "languages": {
-      "en": "English",
-      "fr": "French",
-      "ar": "Arabic"
-    },
     "noHotelsTitle": "No hotel yet",
     "noHotelsBody": "Create the first hotel and invite its owner. They will see their guests here.",
     "noAccessTitle": "You are not part of a hotel yet",
@@ -250,7 +245,8 @@
     "unhappyGuests": "Unhappy guests",
     "whatsappScans": "WhatsApp",
     "activityLog": "Activity log",
-    "billing": "Billing"
+    "billing": "Billing",
+    "inboxTab": "Inbox"
   },
   "hotel": {
     "switch": "Switch hotel",
@@ -322,7 +318,6 @@
       "nameRequired": "Enter the guest's name.",
       "phoneInvalid": "Enter a valid phone number, like 20 123 456.",
       "emailInvalid": "Enter a valid email, like name@example.com.",
-      "done": "Done",
       "view": "View guest",
       "error": "The guest could not be saved. Check the details and try again.",
       "known": "This number is already here",
@@ -351,7 +346,8 @@
       "stayHint": "Used to time the survey and to reach past guests.",
       "consentStay": "The guest agreed we keep their stay details",
       "stayOrder": "Departure can't be before arrival.",
-      "stayNeedsConsent": "Tick the stay details consent, or clear the dates."
+      "stayNeedsConsent": "Tick the stay details consent, or clear the dates.",
+      "back": "Back to guests"
     },
     "import": {
       "title": "Import guests",
@@ -1006,7 +1002,9 @@
       "birthday": "Birthday offer",
       "survey": "Stay survey",
       "reminder": "Offer reminder",
-      "message": "Campaign"
+      "message": "Campaign",
+      "holiday": "Holiday greeting",
+      "gift": "Offer"
     },
     "filters": {
       "channel": "Channel",
@@ -2009,7 +2007,8 @@
       "failed": "Failed",
       "skipped": "Skipped",
       "audience": "Audience today",
-      "skippedHint": "Skipped or still waiting"
+      "skippedHint": "Skipped or still waiting",
+      "planned": "Planned audience"
     },
     "detail": {
       "title": "Campaign",
@@ -2366,7 +2365,8 @@
       "messagesEmpty": "Nothing sent yet. Start a campaign to reach guests who said yes.",
       "failed": "Messages failed",
       "failedHint": "Open the guest to check the phone number or email.",
-      "failedNone": "Nothing failed in this period."
+      "failedNone": "Nothing failed in this period.",
+      "unconfirmedHint": "<n>{count}</n> with no delivery report yet"
     },
     "results": {
       "title": "Results",

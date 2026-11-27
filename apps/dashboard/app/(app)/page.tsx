@@ -1,6 +1,7 @@
 import { hotelRoles } from "@ritorno/auth/access"
 import { firstName } from "@ritorno/common/utils"
 import { nextEnv } from "@ritorno/env/next"
+import { LOCALE_NAMES } from "@ritorno/i18n"
 import { isForbidden } from "@ritorno/orpc/errors"
 import { Button } from "@ritorno/ui/components/button"
 import { ChartCard } from "@ritorno/ui/components/chart-card"
@@ -31,6 +32,7 @@ import { CapturedChart } from "@/components/captured-chart"
 import { CopyLink } from "@/components/copy-link"
 import { FirstRunChecklist } from "@/components/first-run-checklist"
 import { GuestFinder } from "@/components/guest-finder"
+import { Phone } from "@/components/guest-list"
 import { HomeAttention } from "@/components/home-attention"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
@@ -59,7 +61,6 @@ async function NoHotelHome({ name }: { name: string }) {
   )
 }
 
-// i18n-used: home.languages
 async function HotelHome({
   name,
   hotel,
@@ -68,7 +69,6 @@ async function HotelHome({
   hotel: { displayName: string; slug: string; timezone: string }
 }) {
   const t = await getTranslations("home")
-  const tLang = await getTranslations("home.languages")
   const locale = await getLocale()
   const [{ role }, overview, trend, inbox, { items }] = await Promise.all([
     call((api) => api.hotel.mine()),
@@ -104,13 +104,13 @@ async function HotelHome({
     {
       id: "phone",
       header: t("phone"),
-      cell: (guest) => <Num value={guest.phoneE164} className="tabular-nums" />,
+      cell: (guest) => <Phone value={guest.phoneE164} />,
       showFrom: "md",
     },
     {
       id: "language",
       header: t("language"),
-      cell: (guest) => <StatusBadge icon={null}>{tLang(guest.language)}</StatusBadge>,
+      cell: (guest) => <StatusBadge icon={null}>{LOCALE_NAMES[guest.language]}</StatusBadge>,
     },
     {
       id: "added",
@@ -217,10 +217,12 @@ async function HotelHome({
               <Link href={`/guests/${guest.id}`} className="-m-4 flex items-center justify-between gap-3 p-4">
                 <span className="flex min-w-0 flex-col gap-0.5">
                   <span className="truncate font-medium">{guest.name}</span>
-                  <Num value={guest.phoneE164} className="text-muted-foreground text-small tabular-nums" />
+                  <span className="text-muted-foreground text-small">
+                    <Phone value={guest.phoneE164} />
+                  </span>
                 </span>
                 <span className="flex shrink-0 flex-col items-end gap-1 text-caption text-muted-foreground">
-                  <StatusBadge icon={null}>{tLang(guest.language)}</StatusBadge>
+                  <StatusBadge icon={null}>{LOCALE_NAMES[guest.language]}</StatusBadge>
                   {formatDate(guest.createdAt, locale, hotel.timezone)}
                 </span>
               </Link>

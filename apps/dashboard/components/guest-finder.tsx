@@ -1,5 +1,6 @@
 "use client"
 
+import { LOCALE_NAMES } from "@ritorno/i18n"
 import { orpc } from "@ritorno/orpc/react"
 import { Badge } from "@ritorno/ui/components/badge"
 import { Input } from "@ritorno/ui/components/input"
@@ -15,7 +16,6 @@ import { useDebounced } from "@/lib/use-debounced"
 
 export function GuestFinder() {
   const t = useTranslations("guests.finder")
-  const tLang = useTranslations("home.languages")
   const [text, setText] = useState("")
   const q = useDebounced(text.trim())
   const enabled = q.length >= 2
@@ -82,7 +82,7 @@ export function GuestFinder() {
                   {guest.firstVisitAt ? <LocalDate value={guest.firstVisitAt} /> : "–"}
                 </Fact>
                 <Fact label={t("lastVisit")}>{guest.lastVisitAt ? <LocalDate value={guest.lastVisitAt} /> : "–"}</Fact>
-                <Fact label={t("language")}>{tLang(guest.language)}</Fact>
+                <Fact label={t("language")}>{LOCALE_NAMES[guest.language]}</Fact>
                 <Fact label={t("lastOffer")}>{guest.lastOffer?.title ?? "–"}</Fact>
                 <Fact label={t("consents")}>
                   <span className="flex flex-wrap gap-1">

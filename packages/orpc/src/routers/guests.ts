@@ -2,6 +2,7 @@ import { ORPCError } from "@orpc/server"
 import { type ConsentChannel, MESSAGE_CHANNELS } from "@ritorno/common/consent"
 import { phoneSearchDigits } from "@ritorno/common/dial"
 import { guestsToCsv } from "@ritorno/common/guest-export"
+import { HOLIDAY_KEYS, holidaysOn } from "@ritorno/common/holidays"
 import { UNDO_WINDOW_MS } from "@ritorno/common/hotel-time"
 import { MESSAGE_STATUSES } from "@ritorno/common/message"
 import {
@@ -27,10 +28,14 @@ import {
   STAY_ORDER_MESSAGE,
 } from "@ritorno/common/schemas"
 import {
+  automationSends,
+  campaignRecipients,
+  campaigns,
   consentEvents,
   guestConsents,
   guests,
   guestVisits,
+  hotelHolidays,
   messages,
   offerRedemptions,
   offers,
@@ -61,6 +66,8 @@ const guestMessageSchema = z.object({
   id: z.uuid(),
   channel: z.enum(MESSAGE_CHANNELS),
   templateKey: z.string(),
+  campaignName: z.string().nullable(),
+  holiday: z.enum(HOLIDAY_KEYS).nullable(),
   status: z.enum(MESSAGE_STATUSES),
   createdAt: z.date(),
 })
@@ -637,7 +644,7 @@ export const guestsRouter = {
     .route({
       method: "GET",
       path: "/guests/{id}/messages",
-      summary: "Messages sent to one guest, newest first. Never the text.",
+      summary: "Messages sent to one guest, newest first, with the campaign or holiday. Never the text.",
       tags: ["guests"],
     })
     .input(z.object({ id: z.uuid() }))
@@ -645,17 +652,45 @@ export const guestsRouter = {
     .handler(async ({ context, input }) => {
       const { hotelId } = context.hotel
       await loadGuest(context.db, hotelId, input.id)
-      return context.db
+      const rows = await context.db
         .select({
           id: messages.id,
           channel: messages.channel,
           templateKey: messages.templateKey,
           status: messages.status,
           createdAt: messages.createdAt,
+          campaignName: campaigns.name,
+          holidayDay: automationSends.period,
         })
         .from(messages)
+        .leftJoin(campaignRecipients, eq(campaignRecipients.messageId, messages.id))
+        .leftJoin(campaigns, eq(campaigns.id, campaignRecipients.campaignId))
+        // A holiday greeting keeps no link to its message, only the claim written just before the send.
+        .leftJoin(
+          automationSends,
+          and(
+            eq(messages.templateKey, "message"),
+            eq(automationSends.hotelId, messages.hotelId),
+            eq(automationSends.guestId, messages.guestId),
+            eq(automationSends.channel, messages.channel),
+            eq(automationSends.kind, "holiday"),
+            sql`${messages.createdAt} between ${automationSends.createdAt} and ${automationSends.createdAt} + interval '1 minute'`,
+          ),
+        )
         .where(and(eq(messages.hotelId, hotelId), eq(messages.guestId, input.id)))
         .orderBy(desc(messages.createdAt), messages.id)
         .limit(20)
+      const chosen = await context.db
+        .select({ key: hotelHolidays.holidayKey })
+        .from(hotelHolidays)
+        .where(and(eq(hotelHolidays.hotelId, hotelId), eq(hotelHolidays.enabled, true)))
+      const holidayOf = (day: string) => {
+        const keys = holidaysOn(day)
+        return keys.find((key) => chosen.some((row) => row.key === key)) ?? keys[0] ?? null
+      }
+      return rows.map(({ holidayDay, ...row }) => ({
+        ...row,
+        holiday: holidayDay && !row.campaignName ? holidayOf(holidayDay) : null,
+      }))
     }),
 }

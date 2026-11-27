@@ -196,7 +196,7 @@ export function CampaignDetail({
         </div>
         <div className={isDraft ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-4" : "grid grid-cols-2 gap-3 lg:grid-cols-4"}>
           <StatCard
-            label={isDraft ? t("results.audience") : t("results.targeted")}
+            label={t(`results.${isDraft ? "audience" : campaign.status === "scheduled" ? "planned" : "targeted"}`)}
             value={audience === null ? "…" : num(audience)}
             hint={channel}
           />

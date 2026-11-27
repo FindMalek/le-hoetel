@@ -1,5 +1,5 @@
 import { DEMO_EMAIL_DOMAIN } from "@ritorno/common/demo"
-import type { auditLog, hotelSettings, inboxItem, invitation, organization, user } from "../schema"
+import type { auditLog, hotelSettings, invitation, organization, user } from "../schema"
 import type { HotelScenario } from "./hotels"
 import type { MessageScenario } from "./messages"
 import type { OfferScenario } from "./offers"
@@ -11,7 +11,6 @@ export interface ActivityScenario {
   organizations: (typeof organization.$inferInsert)[]
   hotelSettings: (typeof hotelSettings.$inferInsert)[]
   invitations: (typeof invitation.$inferInsert)[]
-  inboxItems: (typeof inboxItem.$inferInsert)[]
   auditLog: (typeof auditLog.$inferInsert)[]
 }
 
@@ -19,15 +18,10 @@ const ADMIN = "demo-super-admin"
 /** Documentation ranges (RFC 5737), never a real visitor. */
 const IPS = ["192.0.2.14", "192.0.2.87", "198.51.100.23", "198.51.100.140", "203.0.113.9", "203.0.113.201"]
 
-const ALERTS = {
-  en: { score: "Low score to follow up", campaign: "Campaign sent", balance: "WhatsApp credit is low" },
-  fr: { score: "Note basse à traiter", campaign: "Campagne envoyée", balance: "Crédit WhatsApp faible" },
-  ar: { score: "تقييم منخفض يحتاج متابعة", campaign: "تم إرسال الحملة", balance: "رصيد واتساب منخفض" },
-}
-
 /**
- * What happened around the demo: notifications for the team, the audit log, and two hotels only the platform admin
- * sees (one waiting for its owner, one suspended), so the admin screens have every health to show.
+ * What happened around the demo: the audit log, and two hotels only the platform admin sees (one waiting for its
+ * owner, one suspended), so the admin screens have every health to show. No inbox notifications: only seed what the
+ * app itself creates.
  */
 export function buildActivityScenario(
   now: Date,
@@ -35,7 +29,6 @@ export function buildActivityScenario(
   offerRows: OfferScenario,
   surveys: SurveyScenario,
   sent: MessageScenario,
-  opts: { ownerId?: string } = {},
   seed = 20261128,
 ): ActivityScenario {
   const { rand, int, pick, uuid } = dice(seed)
@@ -64,7 +57,6 @@ export function buildActivityScenario(
     organizations: [],
     hotelSettings: [],
     invitations: [],
-    inboxItems: [],
     auditLog: [],
   }
   const log = (
@@ -124,10 +116,8 @@ export function buildActivityScenario(
     if (extra.status === "suspended") log(ago(20), ADMIN, "hotel.admin-update", id, { hotelId: id, fields: ["status"] })
   }
 
-  const admins = [ADMIN, ...(opts.ownerId ? [opts.ownerId] : [])]
   for (const settings of hotels.hotelSettings) {
     const hotelId = settings.organizationId
-    const copy = ALERTS[settings.defaultLanguage!]
     const team = hotels.members.filter((m) => m.organizationId === hotelId)
     const ownerId = team.find((m) => m.role === "owner")!.userId
     const managers = team.filter((m) => m.role !== "staff").map((m) => m.userId)
@@ -164,51 +154,14 @@ export function buildActivityScenario(
         log(new Date(+campaign.createdAt! + 5 * HOUR), ownerId, "campaign.cancel", campaign.id!, meta())
     }
 
-    const notes: { title: string; body: string; href: string; at: Date }[] = []
-    const responses = new Map(surveys.surveyResponses.map((r) => [r.id!, r]))
-    for (const feedback of surveys.feedbackCases.filter((c) => c.hotelId === hotelId)) {
-      if (feedback.status !== "new")
-        log(
-          feedback.updatedAt!,
-          feedback.handledBy!,
-          "feedback-case.update",
-          feedback.id!,
-          meta({ status: feedback.status }),
-        )
-      if (+now - +feedback.createdAt! > 30 * DAY) continue
-      const response = responses.get(feedback.responseId)!
-      notes.push({
-        title: copy.score,
-        body: `${response.nps}/10 · ${response.comment}`,
-        href: `/feedback/${feedback.id}`,
-        at: feedback.createdAt!,
-      })
-    }
-    for (const campaign of sent.campaigns.filter((c) => c.hotelId === hotelId && c.status === "sent"))
-      notes.push({
-        title: copy.campaign,
-        body: campaign.name,
-        href: `/campaigns/${campaign.id}`,
-        at: campaign.completedAt!,
-      })
-    const balance = sent.hotelBalance.find((b) => b.hotelId === hotelId)!.balanceMillimes!
-    if (balance < 5000)
-      notes.push({ title: copy.balance, body: `${(balance / 1000).toFixed(3)} TND`, href: "/usage", at: ago(1) })
-
-    for (const userId of [...managers, ...admins]) {
-      for (const note of admins.includes(userId) ? notes.slice(-3) : notes) {
-        const unread = +now - +note.at < 4 * DAY
-        out.inboxItems.push({
-          id: uuid(),
-          userId,
-          title: note.title,
-          body: note.body,
-          href: note.href,
-          createdAt: note.at,
-          readAt: unread ? null : earlier(now, new Date(+note.at + (1 + int(20)) * HOUR)),
-        })
-      }
-    }
+    for (const feedback of surveys.feedbackCases.filter((c) => c.hotelId === hotelId && c.status !== "new"))
+      log(
+        feedback.updatedAt!,
+        feedback.handledBy!,
+        "feedback-case.update",
+        feedback.id!,
+        meta({ status: feedback.status }),
+      )
   }
   return out
 }

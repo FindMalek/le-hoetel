@@ -1,3 +1,4 @@
+import { LOCALE_NAMES } from "@ritorno/i18n"
 import { Logo } from "@ritorno/ui/brand/logo"
 import { Chip } from "@ritorno/ui/components/chip"
 import { StatCard } from "@ritorno/ui/components/stat-card"
@@ -150,11 +151,7 @@ export async function DashboardMockup() {
 }
 
 async function GuestTable() {
-  const [t, home, languages] = await Promise.all([
-    getTranslations("landing.shot"),
-    getTranslations("home"),
-    getTranslations("home.languages"),
-  ])
+  const [t, home] = await Promise.all([getTranslations("landing.shot"), getTranslations("home")])
   return (
     <div className="min-h-0 flex-1 overflow-hidden rounded-card border">
       <div className="flex items-center justify-between gap-3 px-4 py-3">
@@ -189,7 +186,7 @@ async function GuestTable() {
               <span className="text-caption text-muted-foreground">{t("room", { room: guest.room })}</span>
             </span>
           </span>
-          <span className="hidden text-muted-foreground text-small md:block">{languages(guest.language)}</span>
+          <span className="hidden text-muted-foreground text-small md:block">{LOCALE_NAMES[guest.language]}</span>
           <ConsentChips whatsapp={guest.whatsapp} email={guest.email} />
         </div>
       ))}

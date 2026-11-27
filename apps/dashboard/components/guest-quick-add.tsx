@@ -257,10 +257,11 @@ export function GuestQuickAdd({ defaultLanguage, hotelName }: { defaultLanguage:
         <Button type="submit" size="lg" loading={add.isPending}>
           {t("submit")}
         </Button>
-        <Button variant="ghost" size="lg" render={<Link href="/guests" />} nativeButton={false}>
-          {t("done")}
-        </Button>
       </StickyFormActions>
+      {/* Outside the sticky bar: a second button stacked there covers the consent boxes on a phone. */}
+      <Button variant="link" className="self-center md:self-end" render={<Link href="/guests" />} nativeButton={false}>
+        {t("back")}
+      </Button>
     </form>
   )
 }

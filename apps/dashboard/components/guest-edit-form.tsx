@@ -216,10 +216,15 @@ export function GuestEditForm({ guest }: { guest: Guest }) {
         <Button type="submit" size="lg" loading={save.isPending}>
           {t("submit")}
         </Button>
-        <Button variant="ghost" size="lg" render={<Link href={back as never} />} nativeButton={false}>
-          {t("cancel")}
-        </Button>
       </StickyFormActions>
+      <Button
+        variant="link"
+        className="self-center md:self-end"
+        render={<Link href={back as never} />}
+        nativeButton={false}
+      >
+        {t("cancel")}
+      </Button>
     </form>
   )
 }
