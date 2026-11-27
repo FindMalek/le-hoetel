@@ -8,7 +8,6 @@ import {
   consentEventSchema,
   consentSetSchema,
   GUEST_EXTRA_FIELDS,
-  type Guest,
   guestActivitySchema,
   guestCreateSchema,
   guestExportSchema,
@@ -34,7 +33,7 @@ import {
   offers,
   surveyResponses,
 } from "@ritorno/db"
-import { and, count, desc, eq, exists, gt, ilike, inArray, not, or, sql } from "drizzle-orm"
+import { and, count, desc, eq, exists, gt, ilike, inArray, ne, not, or, sql } from "drizzle-orm"
 import { z } from "zod"
 import type { Context } from "../context"
 import { enqueueWelcome } from "../jobs"
@@ -97,32 +96,40 @@ const phoneTaken = (guestId?: string) =>
  */
 async function updateWithNewPhone(
   context: Pick<Context, "db" | "now">,
-  change: { hotelId: string; staffUserId: string; guest: Guest },
+  change: { hotelId: string; staffUserId: string; guestId: string },
   patch: Partial<typeof guests.$inferInsert> & { phoneE164: string },
 ): Promise<{ whatsappWithdrawn: boolean }> {
-  const { hotelId, staffUserId, guest } = change
+  const { hotelId, staffUserId, guestId } = change
   const holder = () =>
     context.db
       .select({ id: guests.id })
       .from(guests)
-      .where(and(eq(guests.hotelId, hotelId), eq(guests.phoneE164, patch.phoneE164)))
+      .where(and(eq(guests.hotelId, hotelId), eq(guests.phoneE164, patch.phoneE164), ne(guests.id, guestId)))
   const [other] = await holder()
   if (other) throw phoneTaken(other.id)
   try {
     return await context.db.transaction(async (tx) => {
+      // Locked, then read again: the consent may have changed since the request started.
+      const [locked] = await tx.select().from(guests).where(hotelGuest(hotelId, guestId)).for("update")
+      if (!locked) throw notFound()
+      const [fresh] = await withConsents(tx, hotelId, [locked])
       const whatsappWithdrawn =
-        guest.consents.whatsapp &&
+        fresh!.consents.whatsapp &&
         (await recordConsent(tx, {
           hotelId,
-          guestId: guest.id,
+          guestId,
           channel: "whatsapp",
           granted: false,
           source: "staff",
           at: context.now(),
           staffUserId,
         }))
-      await eraseGuestScans(tx, hotelId, guest.id)
-      await tx.update(guests).set(patch).where(hotelGuest(hotelId, guest.id))
+      await eraseGuestScans(tx, hotelId, guestId)
+      // The database clock, the same one that stamps `messages.created_at`.
+      await tx
+        .update(guests)
+        .set({ ...patch, phoneChangedAt: sql`now()` })
+        .where(hotelGuest(hotelId, guestId))
       return { whatsappWithdrawn }
     })
   } catch (error) {
@@ -356,7 +363,7 @@ export const guestsRouter = {
       if (phone && phone !== current.phoneE164) {
         const { whatsappWithdrawn } = await updateWithNewPhone(
           context,
-          { hotelId, staffUserId: context.user.id, guest: current },
+          { hotelId, staffUserId: context.user.id, guestId: id },
           { ...patch, phoneE164: phone },
         )
         // Never the numbers themselves: the audit log holds no guest contact details.

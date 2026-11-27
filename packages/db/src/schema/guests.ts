@@ -34,6 +34,8 @@ export const guests = pgTable(
       .references(() => organization.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     phoneE164: text("phone_e164").notNull(),
+    /** Messages created before this went to another number. Null while the number never changed. */
+    phoneChangedAt: timestamp("phone_changed_at", { withTimezone: true }),
     language: hotelLanguage("language").notNull(),
     email: text("email"),
     birthday: date("birthday", { mode: "string" }),
