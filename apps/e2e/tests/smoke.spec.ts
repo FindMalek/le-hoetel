@@ -32,12 +32,17 @@ test("an invited owner signs up, signs out, signs in, then asks for a password r
     data: { name: `E2E ${run}`, slug: `e2e-${run}`, ownerEmail: email },
   })
   expect(invited.status()).toBe(200)
+  const hotel = await request.get(`${URLS.api}/v1/admin/hotels/${(await invited.json()).id}`, {
+    headers: { "x-csrf-token": "orpc" },
+  })
+  const invitationId: string = (await hotel.json()).invitations[0].id
 
-  await page.goto(`${URLS.dashboard}/sign-up`)
+  await page.goto(`${URLS.dashboard}/sign-up?next=/accept-invitation/${invitationId}`)
   await page.getByLabel("Your name").fill("E2E")
   await page.getByLabel("Email").fill(email)
   await page.getByLabel("Password", { exact: true }).fill(PASSWORD)
   await page.getByRole("button", { name: "Create account" }).click()
+  await page.getByRole("button", { name: "Accept invitation" }).click()
   await expect(page.getByRole("heading", { name: "Hello E2E" })).toBeVisible()
 
   await page.getByRole("button", { name: "Account" }).click()

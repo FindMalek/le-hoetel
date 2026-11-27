@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { createRouterClient } from "@orpc/server"
+import { INVITATION_ID_HEADER } from "@ritorno/common/constants"
 import { DEMO_VIEWER_EMAIL } from "@ritorno/common/demo"
 import { shortLinks } from "@ritorno/db"
 import { createContext } from "../../context"
@@ -78,7 +79,7 @@ test("a seeded demo invitation cannot be claimed by signing up", async () => {
   const owner = await app.signUp("owner@claim.test")
   const hotelId = await app.createHotel("claim-hotel", owner)
   const email = "night.claim-hotel@demo.ritorno.test"
-  await app.services.auth.api.createInvitation({
+  const { id } = await app.services.auth.api.createInvitation({
     body: { email, role: "staff", organizationId: hotelId },
     headers: owner.headers,
   })
@@ -86,7 +87,7 @@ test("a seeded demo invitation cannot be claimed by signing up", async () => {
   const response = await app.services.auth.handler(
     new Request("http://localhost:3002/api/auth/sign-up/email", {
       method: "POST",
-      headers: { origin: "http://localhost:3002", "content-type": "application/json" },
+      headers: { origin: "http://localhost:3002", "content-type": "application/json", [INVITATION_ID_HEADER]: id },
       body: JSON.stringify({ email, password: "taken over 123", name: "Stranger" }),
     }),
   )

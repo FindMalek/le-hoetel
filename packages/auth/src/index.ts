@@ -1,3 +1,4 @@
+import { INVITATION_ID_HEADER } from "@ritorno/common/constants"
 import { isDemoRecipient } from "@ritorno/common/demo"
 import type { Db } from "@ritorno/db"
 import * as schema from "@ritorno/db/schema"
@@ -30,21 +31,6 @@ export interface AuthConfig {
 /** How long an invitation link works. */
 export const INVITATION_TTL_SECONDS = 48 * 60 * 60
 
-async function hasPendingInvitation(db: Db, email: string): Promise<boolean> {
-  const [row] = await db
-    .select({ id: schema.invitation.id })
-    .from(schema.invitation)
-    .where(
-      and(
-        eq(schema.invitation.email, email.toLowerCase()),
-        eq(schema.invitation.status, "pending"),
-        gt(schema.invitation.expiresAt, new Date()),
-      ),
-    )
-    .limit(1)
-  return Boolean(row)
-}
-
 /**
  * Whether an invitation still stands behind its sender: a hotel member, or an app admin (who leaves a hotel right
  * after creating it). Without this a removed manager could use an invite they sent to a second address of theirs.
@@ -67,6 +53,31 @@ export async function inviterMayInvite(
   return Boolean(membership)
 }
 
+/**
+ * Whether sign up may create `email`. Knowing an invited address proves nothing, so the caller also needs the id from
+ * the invitation link, unless the provider already proved the mailbox (magic link, a verified GitHub email).
+ */
+async function maySignUp(
+  db: Db,
+  account: { email: string; emailVerified: boolean },
+  invitationId: string | null | undefined,
+): Promise<boolean> {
+  if (!account.emailVerified && !invitationId) return false
+  const pending = await db
+    .select({ inviterId: schema.invitation.inviterId, organizationId: schema.invitation.organizationId })
+    .from(schema.invitation)
+    .where(
+      and(
+        account.emailVerified ? undefined : eq(schema.invitation.id, invitationId ?? ""),
+        eq(schema.invitation.email, account.email.toLowerCase()),
+        eq(schema.invitation.status, "pending"),
+        gt(schema.invitation.expiresAt, new Date()),
+      ),
+    )
+  for (const invite of pending) if (await inviterMayInvite(db, invite)) return true
+  return false
+}
+
 const quiet = (task: Promise<unknown>) => task.catch((error) => console.error("[auth] email failed", error))
 
 export function createAuth(config: AuthConfig) {
@@ -85,12 +96,12 @@ export function createAuth(config: AuthConfig) {
     databaseHooks: {
       user: {
         create: {
-          // No open sign up: over http only an invited email gets an account (any method: password, github, magic
-          // link). Server calls (env admin, seed, tests) and the admin plugin's create-user carry no outside request.
+          // No open sign up: over http only an invited email gets an account (see `maySignUp`). Server calls (env admin, seed, tests) and the admin plugin's create-user carry no outside request.
           before: async (created, ctx) => {
             if (!ctx?.request || ctx.path === "/admin/create-user") return
             // Never a demo address: the seeded invitations have public emails and ids, so anyone could claim one.
-            if (!isDemoRecipient(created.email) && (await hasPendingInvitation(config.db, created.email))) return
+            const invitationId = ctx.request.headers.get(INVITATION_ID_HEADER)
+            if (!isDemoRecipient(created.email) && (await maySignUp(config.db, created, invitationId))) return
             throw new APIError("FORBIDDEN", { code: "INVITATION_REQUIRED", message: "Sign up is by invitation only." })
           },
         },
