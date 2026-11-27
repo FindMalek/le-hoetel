@@ -165,3 +165,73 @@ test("last stay takes the later of check-out and visit, and counts guests with n
   const segment = { ...EMPTY_SEGMENT, lastVisitDays: 30 }
   expect(await client.campaigns.preview({ channel: "email", segment })).toMatchObject({ guests: 2, undated: 1 })
 })
+
+test("back to draft then reschedule sends once, and is refused once sending started", async () => {
+  const { client, add, draft } = await hotel("camp-reschedule")
+  for (let i = 0; i < 2; i++) await add("fr", { email: true, whatsapp: false })
+  const campaign = await draft()
+  await client.campaigns.schedule({ id: campaign.id, at: null })
+  expect(await client.campaigns.unschedule({ id: campaign.id })).toMatchObject({ status: "draft", scheduledAt: null })
+  sent.length = 0
+  // the job serves every hotel in this file, so only this one's guests count
+  const mine = () => sent.map((message) => message.to).filter((to) => to.endsWith("-camp-reschedule@example.test"))
+  await runAt("2027-03-01T10:00:00Z", 1)
+  expect(mine()).toHaveLength(0)
+
+  await client.campaigns.schedule({ id: campaign.id, at: null })
+  await runAt("2027-03-01T10:01:00Z", 1)
+  await expect(client.campaigns.unschedule({ id: campaign.id })).rejects.toThrow("has not started")
+  await runAt("2027-03-01T10:02:00Z", 1)
+  await runAt("2027-03-01T10:03:00Z", 1)
+  expect(mine()).toHaveLength(2)
+  expect(new Set(mine()).size).toBe(2)
+})
+
+test("a campaign sent back to draft while the job is running is not sent from its stale list", async () => {
+  const { client, add, draft } = await hotel("camp-race")
+  await runAt("2027-03-01T09:00:00Z")
+  await runAt("2027-03-01T09:01:00Z")
+  await add("fr", { email: true, whatsapp: false })
+  const both = [await draft(), await draft()]
+  for (const { id } of both) await client.campaigns.schedule({ id, at: null })
+  sent.length = 0
+  const send = notification.sendEmail
+  const moved: string[] = []
+  // while the first one is going out, the other is already on the job's list
+  notification.sendEmail = async (input) => {
+    for (const { id } of both) {
+      if (moved.length) break
+      await client.campaigns.unschedule({ id }).then(
+        () => moved.push(id),
+        () => undefined,
+      )
+    }
+    return send(input)
+  }
+  await runAt("2027-03-01T10:00:00Z").finally(() => {
+    notification.sendEmail = send
+  })
+  expect(moved).toHaveLength(1)
+  expect(sent).toHaveLength(1)
+  expect(await client.campaigns.get({ id: moved[0]! })).toMatchObject({ status: "draft", results: { targeted: 0 } })
+})
+
+test("a duplicate is a new unsent draft with the same message and audience", async () => {
+  const { client, add, draft } = await hotel("camp-duplicate")
+  const other = await hotel("camp-duplicate-other")
+  await add("fr", { email: true, whatsapp: false })
+  const source = await draft({ ...EMPTY_SEGMENT, languages: ["fr"] })
+  await client.campaigns.schedule({ id: source.id, at: null })
+  await runAt("2027-03-01T10:00:00Z")
+
+  const copy = await client.campaigns.duplicate({ id: source.id, name: "Ramadan evenings (copy)" })
+  expect(copy.id).not.toBe(source.id)
+  expect(copy).toMatchObject({
+    status: "draft",
+    scheduledAt: null,
+    content: source.content,
+    segment: source.segment,
+    results: { targeted: 0 },
+  })
+  await expect(other.client.campaigns.duplicate({ id: source.id, name: "x" })).rejects.toThrow("not found")
+})

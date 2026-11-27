@@ -1,6 +1,7 @@
 "use client"
 
 import { authClient } from "@ritorno/auth/client"
+import { INVITATION_ID_HEADER } from "@ritorno/common/constants"
 import { emailSchema } from "@ritorno/common/schemas"
 import { orpc } from "@ritorno/orpc/react"
 import { Button } from "@ritorno/ui/components/button"
@@ -12,6 +13,7 @@ import { useTranslations } from "next-intl"
 import { type FocusEvent, type FormEvent, useState } from "react"
 import { AuthField } from "@/components/auth-field"
 import { authErrorKey } from "@/lib/auth-errors"
+import { invitationIdFrom } from "@/lib/invitation-id"
 
 type Field = "name" | "email" | "password"
 type Errors = Partial<Record<Field, string>>
@@ -67,8 +69,11 @@ export function AuthForm({
       return
     }
     setBusy(true)
+    const invitationId = invitationIdFrom(next)
     const result = signUp
-      ? await authClient.signUp.email(values)
+      ? await authClient.signUp.email(values, {
+          headers: invitationId ? { [INVITATION_ID_HEADER]: invitationId } : {},
+        })
       : await authClient.signIn.email({ email: values.email, password: values.password })
     if (result.error) {
       setFormError(t(`errors.${authErrorKey(result.error)}`))

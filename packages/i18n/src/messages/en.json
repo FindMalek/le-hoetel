@@ -155,7 +155,7 @@
     },
     "signUp": {
       "title": "Create your account",
-      "description": "Accounts come from an invitation. Sign up with the email address your hotel invited.",
+      "description": "Accounts come from an invitation. Open the link in your invitation email, then sign up with the invited address.",
       "name": "Your name",
       "submit": "Create account",
       "have": "Already have an account?",
@@ -187,7 +187,7 @@
       "passwordShort": "Use at least 10 characters.",
       "invalidCredentials": "Wrong email or password.",
       "exists": "An account with this email already exists. Try signing in.",
-      "notInvited": "We have no invitation for this email. Ask your hotel owner to invite you, then sign up with the same address.",
+      "notInvited": "Sign up needs an invitation. Open the link in your invitation email and use the invited address, or ask your hotel owner to invite you.",
       "tooMany": "Too many tries. Wait a minute and try again.",
       "generic": "Something went wrong. Try again."
     },
@@ -1932,7 +1932,9 @@
         "cancel": "Cancelled a campaign",
         "create": "Created a campaign",
         "delete": "Deleted a campaign",
-        "schedule": "Scheduled a campaign"
+        "duplicate": "Duplicated a campaign",
+        "schedule": "Scheduled a campaign",
+        "unschedule": "Moved a campaign back to draft"
       },
       "holiday": {
         "update": "Updated holiday messages"
@@ -2033,7 +2035,14 @@
         "sent": "Sent {date}.",
         "failed": "No message got through. Check the email and WhatsApp setup.",
         "cancelled": "Cancelled {date}."
-      }
+      },
+      "duplicate": "Duplicate",
+      "duplicated": "Copy saved as a draft",
+      "copyName": "{name} (copy)",
+      "changeTitle": "Change it",
+      "unschedule": "Back to draft",
+      "unscheduleHint": "Nothing has gone out yet. Move it back to draft to fix the message or pick another time.",
+      "unscheduled": "Back to draft. Nothing goes out until you schedule it again."
     },
     "form": {
       "newTitle": "New campaign",

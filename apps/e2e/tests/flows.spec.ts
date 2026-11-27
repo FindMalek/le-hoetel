@@ -84,14 +84,14 @@ test("the super admin creates a hotel and its owner accepts the invitation", asy
   await expect(admin).toHaveURL(/\/admin\/hotels\/(?!new)[^/]+$/)
   hotel.id = admin.url().split("/").pop() ?? ""
 
-  await open(owner, `${URLS.dashboard}/sign-up`)
+  const [invite] = await db`select id from invitation where organization_id = ${hotel.id}`
+  // as from the email: the link leads to sign in, then sign up carries the invitation along
+  await open(owner, `${URLS.dashboard}/accept-invitation/${invite?.id}`)
+  await owner.getByRole("link", { name: "Create an account" }).click()
   await owner.getByLabel("Your name").fill("Olfa")
   await owner.getByLabel("Email").fill(email)
   await owner.getByLabel("Password", { exact: true }).fill(PASSWORD)
   await owner.getByRole("button", { name: "Create account" }).click()
-  await expect(owner.getByRole("heading", { name: "Hello Olfa" })).toBeVisible()
-  const [invite] = await db`select id from invitation where organization_id = ${hotel.id}`
-  await open(owner, `${URLS.dashboard}/accept-invitation/${invite?.id}`)
   await owner.getByRole("button", { name: "Accept invitation" }).click()
   await expect(owner).not.toHaveURL(/accept-invitation/)
 })
