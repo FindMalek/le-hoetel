@@ -23,7 +23,7 @@ No `.env` is needed: `pnpm dev` reads the Infisical `dev` environment, see [secr
 - four hotels with their own colors and logo: Dar Zitouna (Monastir guesthouse), Sunset Bay Resort (Hammamet), Villa Mimosa Spa (Djerba), Riad Dattier (Tozeur, pilot ending soon and low WhatsApp credit). Two more only the platform admin sees: one waiting for its owner, one suspended
 - about 1400 guests in fr, ar and en with consents, an append-only `consent_events` log, visits (some returning), birthdays (a few today and this week) and QR spots (rooms, tables)
 - offers (open, expired, paused, used up) with codes and redemptions, post-stay surveys with comments and feedback cases with notes
-- campaigns (sent, scheduled, draft, cancelled), holiday choices, the message log in every status with previews of the last week's unsent messages, the prepaid balance ledger, notifications and the audit log
+- campaigns (sent, scheduled, draft, cancelled), holiday choices, the message log in every status with previews of the last week's unsent messages, the prepaid balance ledger and the audit log. No inbox notifications: the inbox only shows what the app really creates (a [WhatsApp scan](/docs/messaging), an admin message)
 - a team per hotel (owner, manager, two staff) and a pending invitation
 
 Logos are uploaded only when the `S3_*` keys are set, otherwise a hotel shows its initial.

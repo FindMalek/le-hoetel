@@ -19,7 +19,6 @@ import {
   hotelBalance,
   hotelHolidays,
   hotelSettings,
-  inboxItem,
   invitation,
   member,
   messages,
@@ -96,7 +95,7 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
     apiUrl: opts.apiUrl ?? "http://localhost:3001",
     logoKeys,
   })
-  const activity = buildActivityScenario(now, hotels, offerRows, surveys, sent, opts)
+  const activity = buildActivityScenario(now, hotels, offerRows, surveys, sent)
 
   await db.transaction(async (tx) => {
     await tx.insert(user).values(scenario.users).onConflictDoNothing()
@@ -132,7 +131,6 @@ export async function seedDemo(db: Db, opts: SeedOptions): Promise<boolean> {
     await insertAll(tx, hotelBalance, sent.hotelBalance)
     await insertAll(tx, balanceLedger, sent.balanceLedger)
 
-    await insertAll(tx, inboxItem, activity.inboxItems)
     await insertAll(tx, auditLog, activity.auditLog)
   })
   return true
