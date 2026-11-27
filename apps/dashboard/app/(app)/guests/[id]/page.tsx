@@ -22,6 +22,7 @@ import {
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
+import { GiveOffer } from "@/components/give-offer"
 import { GuestActions } from "@/components/guest-actions"
 import { ConsentChange } from "@/components/guest-consent-controls"
 import { ConsentBadges, GuestDate, Phone, ReturningBadge } from "@/components/guest-list"
@@ -147,11 +148,12 @@ export default async function GuestPage({ params }: PageProps<"/guests/[id]">) {
             </StatusBadge>
           )}
           <ConsentBadges consents={guest.consents} />
-          {allowed("create") && (
-            <div className="w-full sm:ms-auto sm:w-auto">
-              <MarkVisitButton guestId={guest.id} visitedToday={visitedToday} className="w-full" />
-            </div>
-          )}
+          <div className="flex w-full flex-col gap-2 sm:ms-auto sm:w-auto sm:flex-row">
+            {allowed("create") && (
+              <MarkVisitButton guestId={guest.id} visitedToday={visitedToday} className="w-full sm:w-auto" />
+            )}
+            <GiveOffer guestId={guest.id} guestName={guest.name} className="w-full sm:w-auto" />
+          </div>
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-14">

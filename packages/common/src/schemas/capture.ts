@@ -44,6 +44,8 @@ export const captureInputSchema = z.object({
   /** Only stored with the `profile` consent. */
   stayCheckOut: departure.nullish(),
   consents: z.object({ email: z.boolean(), whatsapp: z.boolean(), profile: z.boolean().default(false) }),
+  /** Random per visit of the form, so a retried submit shows the same code. */
+  claim: z.string().max(64).nullish(),
   /** Hidden field no person fills: any value means a bot. */
   website: z.string().max(200).nullish(),
 })

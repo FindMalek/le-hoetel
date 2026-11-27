@@ -1,4 +1,4 @@
-export { COPY, type Copy } from "./copy"
+export { COPY, type Copy, fill } from "./copy"
 export { type RenderedEmail, renderEmail } from "./render"
 export { sampleGuest, sampleProps } from "./sample"
 export {

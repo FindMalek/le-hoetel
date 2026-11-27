@@ -10,6 +10,7 @@ import { feedbackCasesRouter } from "./feedback-cases"
 import { guestsRouter } from "./guests"
 import { holidaysRouter } from "./holidays"
 import { adminHotelsRouter, captureSpotsRouter, hotelLogoRouter, hotelRouter } from "./hotel"
+import { adminInvitationsRouter } from "./hotel-invitations"
 import { inboxAdminRouter, inboxRouter } from "./inbox"
 import { jobsRouter } from "./jobs"
 import { leadsRouter } from "./leads"
@@ -34,7 +35,7 @@ const admin = {
   inbox: inboxAdminRouter,
   audit: adminAuditRouter,
   billing: adminBillingRouter,
-  hotels: { ...adminHotelsRouter, balance: adminBalanceRouter },
+  hotels: { ...adminHotelsRouter, balance: adminBalanceRouter, invitations: adminInvitationsRouter },
   notification: notificationRouter,
 }
 

@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
+import { CopyLink } from "@/components/copy-link"
 import { useForm } from "@/lib/use-form"
 
 const ASSIGNABLE = ["manager", "staff"] as const
@@ -185,6 +186,8 @@ export function TeamBoard({
 
   const members = active.members as Member[]
   const pending = active.invitations.filter((invitation) => invitation.status === "pending")
+  const mine = members.find((member) => member.userId === meId)
+  const isOwner = mine ? topRole(mine.role) === "owner" : false
 
   const roleCell = (member: Member) => {
     const role = topRole(member.role)
@@ -287,7 +290,16 @@ export function TeamBoard({
                     </span>
                   </div>
                   {canManage ? (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      {/* an owner's link is only an owner's to hand over */}
+                      {isOwner || topRole(invitation.role ?? "staff") !== "owner" ? (
+                        <CopyLink
+                          size="sm"
+                          url={`/accept-invitation/${invitation.id}`}
+                          label={t("copyLink")}
+                          done={t("linkCopied")}
+                        />
+                      ) : null}
                       <Button
                         variant="outline"
                         size="sm"

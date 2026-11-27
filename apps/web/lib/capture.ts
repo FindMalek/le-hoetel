@@ -1,6 +1,6 @@
 import "server-only"
 import { invalidField } from "@ritorno/common/field-errors"
-import type { CaptureInput, LeadInput } from "@ritorno/common/schemas"
+import type { CaptureInput, LeadInput, SignUpPerk } from "@ritorno/common/schemas"
 import { guestApi as api } from "./api"
 
 export const getPublicHotel = (slug: string) => api.public.hotel({ slug }).catch(() => null)
@@ -21,15 +21,17 @@ function invalid(error: unknown): "invalid" | `invalid:${string}` {
   return field && FORM_FIELDS.includes(field) ? `invalid:${field}` : "invalid"
 }
 
+export type CaptureState = { status: CaptureResult | "failed"; perk: SignUpPerk | null }
+
 /** "failed" is everything that is not the guest's input or the limit: nothing was saved, they can try again. */
-export async function submitCapture(input: CaptureInput): Promise<CaptureResult | "failed"> {
+export async function submitCapture(input: CaptureInput): Promise<CaptureState> {
   try {
-    await api.public.capture(input)
-    return "done"
+    const { perk } = await api.public.capture(input)
+    return { status: "done", perk }
   } catch (error) {
     const { code } = error as { code?: string }
-    if (code === "TOO_MANY_REQUESTS") return "tooMany"
-    return code === "BAD_REQUEST" ? invalid(error) : "failed"
+    if (code === "TOO_MANY_REQUESTS") return { status: "tooMany", perk: null }
+    return { status: code === "BAD_REQUEST" ? invalid(error) : "failed", perk: null }
   }
 }
 

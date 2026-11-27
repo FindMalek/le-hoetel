@@ -17,6 +17,7 @@ import { notFound } from "next/navigation"
 import { getLocale, getTranslations } from "next-intl/server"
 import { CaseStatusBadge, ScoreBadge } from "@/components/feedback-case-badges"
 import { FeedbackCaseForm } from "@/components/feedback-case-form"
+import { GiveOffer } from "@/components/give-offer"
 import { Phone } from "@/components/guest-list"
 import { PageHeader } from "@/components/page-header"
 import { call } from "@/lib/api"
@@ -122,6 +123,7 @@ export default async function FeedbackCasePage({ params }: PageProps<"/feedback/
               : null
           }
         >
+          <GiveOffer guestId={item.guest.id} guestName={item.name} className="w-full md:w-fit" />
           <FeedbackCaseForm
             key={item.updatedAt.toISOString()}
             id={item.id}

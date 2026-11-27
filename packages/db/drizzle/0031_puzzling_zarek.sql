@@ -1,0 +1,1 @@
+ALTER TABLE "guests" ADD COLUMN "phone_changed_at" timestamp with time zone;

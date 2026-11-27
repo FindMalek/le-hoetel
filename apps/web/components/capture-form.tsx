@@ -2,6 +2,7 @@
 
 import { isPhoneComplete } from "@ritorno/common/dial"
 import type { HotelLanguage } from "@ritorno/common/hotel"
+import type { SignUpPerk } from "@ritorno/common/schemas"
 import { Button } from "@ritorno/ui/components/button"
 import { FormField } from "@ritorno/ui/components/form-field"
 import { Input } from "@ritorno/ui/components/input"
@@ -9,9 +10,11 @@ import { type CountryPickerCopy, PhoneInput, usePhoneNumber } from "@ritorno/ui/
 import { cn } from "@ritorno/ui/lib/utils"
 import { ChevronDownIcon, CircleAlertIcon } from "lucide-react"
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react"
-import { type CaptureState, captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
+import { captureAction } from "@/app/(guest)/h/[hotelSlug]/actions"
+import type { CaptureResult } from "@/lib/capture"
 import { ConsentToggle } from "./consent-toggle"
 import { type DepartureCopy, DepartureField } from "./departure-field"
+import { SignUpPerkCard, type SignUpPerkCopy } from "./sign-up-perk"
 
 export interface CaptureCopy {
   name: string
@@ -38,6 +41,7 @@ export interface CaptureCopy {
   thanksTitle: string
   thanksBody: string
   thanksPerk: string
+  signUpPerk: SignUpPerkCopy
   errorInvalid: string
   errorTooMany: string
   errorFailed: string
@@ -45,7 +49,7 @@ export interface CaptureCopy {
   emailWording: string
 }
 
-type Status = CaptureState | "sending"
+type Status = CaptureResult | "failed" | "idle" | "sending"
 
 /** Guest inputs are 48 px and stay 16 px on every width, so iOS never zooms. */
 const CONTROL = "h-12 rounded-input bg-background text-base md:text-base"
@@ -88,6 +92,8 @@ export function CaptureForm(props: {
 }) {
   const { copy } = props
   const [status, setStatus] = useState<Status>("idle")
+  const [signUpPerk, setSignUpPerk] = useState<SignUpPerk | null>(null)
+  const claim = useRef("")
   const [name, setName] = useState("")
   const phone = usePhoneNumber()
   const [email, setEmail] = useState("")
@@ -132,9 +138,13 @@ export function CaptureForm(props: {
       return
     }
     const data = new FormData(event.currentTarget)
+    // `randomUUID` needs https, and a phone testing a local build has none.
+    claim.current ||= Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(36)).join("-")
+    data.set("claim", claim.current)
     setStatus("sending")
     // The action rejects when the request itself is lost (offline, dropped wifi).
-    const result = await captureAction("idle", data).catch(() => "failed" as const)
+    const { status: result, perk } = await captureAction(data).catch(() => ({ status: "failed" as const, perk: null }))
+    setSignUpPerk(perk)
     setStatus(result)
     if (!result.startsWith("invalid:")) return
     const field = result.slice("invalid:".length)
@@ -165,10 +175,14 @@ export function CaptureForm(props: {
             </h2>
             <p className="text-muted-foreground">{copy.thanksBody}</p>
           </div>
-          <div className="grid w-full gap-3">
-            {props.perk}
-            <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
-          </div>
+          {signUpPerk ? (
+            <SignUpPerkCard perk={signUpPerk} language={props.language} copy={copy.signUpPerk} />
+          ) : (
+            <div className="grid w-full gap-3">
+              {props.perk}
+              <p className="text-muted-foreground text-sm">{copy.thanksPerk}</p>
+            </div>
+          )}
           {props.whatsapp}
         </div>
       ) : null}
