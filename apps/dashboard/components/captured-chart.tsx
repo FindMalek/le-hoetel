@@ -35,6 +35,15 @@ export async function CapturedChart({ points, bySource, compact = false }: Captu
   const narrow = formatter(compact ? { weekday: "narrow" } : { day: "numeric" })
   const day = (start: string) => new Date(`${start}T00:00:00Z`)
   const label = (start: string) => long.format(day(start))
+  const month = formatter({ month: "short" })
+  // Long ranges label every other bar on a phone.
+  const every = points.length > 7 ? 2 : 1
+  /** The month under a phone's day number: on the first bar, then where it changes. */
+  const monthAt = (index: number) => {
+    const name = month.format(day(points[index]!.start))
+    const before = points[index - every]
+    return before && month.format(day(before.start)) === name ? null : name
+  }
   const used = GUEST_SOURCES.filter((source) => bySource[source] > 0)
 
   return (
@@ -66,12 +75,13 @@ export async function CapturedChart({ points, bySource, compact = false }: Captu
           <span
             key={point.start}
             className={cn(
-              "min-w-0 flex-1 truncate text-center",
-              points.length > 7 && index % 2 === 1 && "max-md:invisible",
+              "flex min-w-0 flex-1 flex-col items-center whitespace-nowrap text-center",
+              index % every !== 0 && "max-md:invisible",
             )}
           >
-            <span className="max-md:hidden">{label(point.start)}</span>
+            <span className="max-w-full truncate max-md:hidden">{label(point.start)}</span>
             <span className="md:hidden">{narrow.format(day(point.start))}</span>
+            {!compact && index % every === 0 && <span className="md:hidden">{monthAt(index)}</span>}
           </span>
         ))}
       </div>

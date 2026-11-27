@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import { CONSENT_WORDING_VERSION } from "@ritorno/common/consent"
-import { auditLog, consentEvents } from "@ritorno/db"
+import { holidaysOn } from "@ritorno/common/holidays"
+import { auditLog, automationSends, campaignRecipients, campaigns, consentEvents, messages } from "@ritorno/db"
 import { eq, sql } from "drizzle-orm"
 import { hashGuestId } from "../../lib/guests"
 import { createTestApp, type TestApp } from "../../testing"
@@ -285,4 +286,44 @@ test("paging by cursor neither skips nor repeats guests added in the same millis
   expect(new Set(seen).size).toBe(times.length)
   const impossible = `2026-02-30 10:00:00+00|${seen[0]}`
   await expect(mine.client.guests.list({ cursor: impossible })).rejects.toMatchObject({ code: "BAD_REQUEST" })
+})
+
+test("a guest's messages name the campaign or holiday they came from", async () => {
+  const { client, hotelId } = await hotelAs("message-names")
+  const { id: guestId } = await client.guests.create(newGuest)
+  const { db } = app.services
+  const log = async (channel: "email" | "whatsapp", createdAt: Date) => {
+    const row = {
+      hotelId,
+      guestId,
+      channel,
+      templateKey: "message",
+      language: "fr",
+      status: "sent",
+      createdAt,
+    } as const
+    const [created] = await db.insert(messages).values(row).returning({ id: messages.id })
+    return created!.id
+  }
+  const [campaign] = await db
+    .insert(campaigns)
+    .values({ hotelId, name: "Summer terrace", channel: "email", content: {}, segment: {} as never })
+    .returning({ id: campaigns.id })
+  const fromCampaign = await log("email", new Date("2026-05-01T10:00:00Z"))
+  await db
+    .insert(campaignRecipients)
+    .values({ campaignId: campaign!.id, hotelId, guestId, channel: "email", messageId: fromCampaign })
+  const at = new Date("2026-03-20T08:00:00Z")
+  await db
+    .insert(automationSends)
+    .values({ hotelId, guestId, channel: "whatsapp", kind: "holiday", period: "2026-03-20", createdAt: at })
+  await log("whatsapp", at)
+  await log("whatsapp", new Date("2026-02-01T10:00:00Z"))
+
+  const sent = await client.guests.messages({ id: guestId })
+  expect(sent.map((message) => [message.campaignName, message.holiday])).toEqual([
+    ["Summer terrace", null],
+    [null, holidaysOn("2026-03-20")[0]!],
+    [null, null],
+  ])
 })

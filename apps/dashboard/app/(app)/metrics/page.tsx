@@ -128,13 +128,25 @@ export default async function MetricsPage({ searchParams }: PageProps<"/metrics"
               label={t("reach.delivered")}
               value={num(messages.delivered)}
               hint={
-                messages.sent
-                  ? t.rich("reach.deliveredHint", {
+                messages.sent ? (
+                  <>
+                    {t.rich("reach.deliveredHint", {
                       rate: rate(messages.delivered, messages.sent),
                       sent: num(messages.sent),
                       n: isolated,
-                    })
-                  : t("reach.messagesEmpty")
+                    })}
+                    {messages.sent > messages.delivered && (
+                      <span className="block">
+                        {t.rich("reach.unconfirmedHint", {
+                          count: num(messages.sent - messages.delivered),
+                          n: isolated,
+                        })}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  t("reach.messagesEmpty")
+                )
               }
             />
             <StatCard

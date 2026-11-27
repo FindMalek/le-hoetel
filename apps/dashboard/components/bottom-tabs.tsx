@@ -16,7 +16,7 @@ const TABS = [
   { href: "/guests", label: "guests", icon: UsersRoundIcon },
   { href: "/guests/new", label: "addGuest", icon: PlusIcon, primary: true },
   { href: "/redeem", label: "redeem", icon: ScanLineIcon },
-  { href: "/inbox", label: "inbox", icon: InboxIcon },
+  { href: "/inbox", label: "inboxTab", icon: InboxIcon },
 ] as const satisfies { href: Route; label: string; icon: typeof HomeIcon; primary?: boolean }[]
 
 /** The daily front desk tasks under the thumb, with adding a guest in the middle. The rest sits in the top bar's "More". */
