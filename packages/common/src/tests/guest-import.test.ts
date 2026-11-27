@@ -27,6 +27,16 @@ test("a consent header that names no channel, or that means refusal, grants noth
   const guess = guessImportColumns(["name", "phone", "consent", "Opt-out email"], [])
   expect(guess.mapping).toMatchObject({ emailConsent: -1, whatsappConsent: -1, email: -1 })
   expect(guess.unnamedConsent).toEqual([2])
+
+  for (const header of [
+    "Pas de consentement e-mail",
+    "No WhatsApp consent",
+    "N'accepte pas WhatsApp",
+    "عدم موافقة واتساب",
+  ]) {
+    expect(guessImportColumns([header], []).mapping, header).toMatchObject({ emailConsent: -1, whatsappConsent: -1 })
+  }
+  expect(guessImportColumns(["Accord e-mail (oui ou non)"], []).mapping.emailConsent).toBe(0)
 })
 
 test("oui and vrai grant only their own channel, non and anything unclear grant nothing", () => {

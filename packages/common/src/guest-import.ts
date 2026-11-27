@@ -40,7 +40,10 @@ const normalise = (header: string) =>
 
 const CONSENT = /consent|accept|accord|autoris|agree|\bopt ?in\b|\bopt\b|موافق|يقبل/
 /** A "yes" in these means no, so they are never read as anything. */
-const REFUSAL = /\bopt ?out\b|unsubscri|desabonn|desinscri|refus|\bne pas\b|do not|إلغاء|رفض/
+const REFUSAL = /\bopt ?out\b|unsubscri|desabonn|desinscri|refus|\bne pas\b|do not|إلغاء|رفض|عدم|بدون|غير مواف|لا يوافق/
+/** `Pas de consentement`, `No email consent`, `N'accepte pas`. A trailing `(oui ou non)` is not one. */
+const NEGATED =
+  /\b(no|not|non|sans|pas|aucun|never|without|don'?t|doesn'?t)\b[^()/]{0,20}?(consent|accept|accord|agree|autoris|\bopt)|(consent|accept|accord|agree|autoris)\S* pas\b/
 const EMAIL_WORD = /e ?mail|\bmail|courriel|newsletter|بريد|البريد/
 const WHATSAPP_WORD = /whats ?app|\bwa\b|واتس/
 const STAY_WORD = /stay|sejour|profile|إقامة|الإقامة/
@@ -72,7 +75,7 @@ export function guessImportColumns(
 
   // Consent columns first: "Accepte WhatsApp" is not the phone, "Consentement email" is not the address.
   for (const [index, name] of names.entries()) {
-    const refusal = REFUSAL.test(name)
+    const refusal = REFUSAL.test(name) || NEGATED.test(name)
     if (!refusal && !CONSENT.test(name)) continue
     taken.add(index)
     if (refusal) continue

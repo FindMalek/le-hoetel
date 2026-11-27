@@ -151,7 +151,7 @@ The test message is email only until WhatsApp templates are approved. Done steps
 
 Consent from a CSV is deliberately strict, with one column per channel. Email is only granted when the email consent cell is an explicit yes (`true`, `vrai`, `yes`, `oui`, `y`, `1`, `نعم`), the row has an address **and** the hotel ticked the confirmation that it holds that consent. WhatsApp reads its own column the same way, for numbers that can take it. It is logged like any other consent event with source `csv`, and the import itself is written to the audit log with counts only.
 
-Headers are matched in English, French and Arabic, ignoring case, accents, `_` and `-` (`packages/common/src/guest-import.ts`): `Accepte WhatsApp`, `Consentement e-mail`, `email_consent`, `Accord séjour`. A consent header that names no channel (`consent`, `accord`) is not matched: the hotel is told and picks it by hand, for one channel or both. Opt-out and refusal columns are never matched.
+Headers are matched in English, French and Arabic, ignoring case, accents, `_` and `-` (`packages/common/src/guest-import.ts`): `Accepte WhatsApp`, `Consentement e-mail`, `email_consent`, `Accord séjour`. A consent header that names no channel (`consent`, `accord`) is not matched: the hotel is told and picks it by hand, for one channel or both. Opt-out, refusal and negated columns (`Pas de consentement e-mail`) are never matched.
 
 The review step shows how many rows are new and how many merge into a guest already there (`guests.importCheck`, same hotel only; a number repeated in the file merges into its first row), with phones as they will be stored, formatted.
 
